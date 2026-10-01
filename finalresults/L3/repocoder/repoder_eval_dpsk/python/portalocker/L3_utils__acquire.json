@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 8.58,
+  "stdout": " _ _ _ _ _ \nsrc/portalocker/utils.py:320: in __enter__\n    return self.acquire()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f98180863e0>, timeout = 0.1\ncheck_interval = 0.25, fail_when_locked = False\n\n    def acquire(\n        self,\n        timeout: float | None = None,\n        check_interval: float | None = None,\n        fail_when_locked: bool | None = None,\n    ) -> typing.IO[typing.AnyStr]:\n        \"\"\"Acquire the locked filehandle\"\"\"\n        if self.fh is not None and not self.fh.closed:\n            return self.fh\n    \n        timeout = coalesce(timeout, self.timeout)\n        check_interval = coalesce(check_interval, self.check_interval)\n        fail_when_locked = coalesce(fail_when_locked, self.fail_when_locked)\n    \n        if not (self.flags & constants.LockFlags.NON_BLOCKING):\n            if timeout is not None:\n                warnings.warn(\n                    'timeout has no effect in blocking mode',\n                    stacklevel=1,\n                )\n    \n        filename = self.filename\n        if 'w' in self.mode or self.truncate:\n            open_mode = self.mode\n        else:\n            open_mode = self.mode\n    \n        fh: types.IO | None = None\n        last_lock_exception: exceptions.BaseLockException | None = None\n    \n        for _ in self._timeout_generator(timeout, check_interval):\n            try:\n                if fh is None:\n                    fh = open(filename, open_mode, **self.file_open_kwargs)\n    \n                portalocker.lock(fh, self.flags)\n            except exceptions.LockException as exc:\n                last_lock_exception = exc\n                if fail_when_locked:\n                    if fh is not None:\n                        try_close(fh)\n                    raise exceptions.AlreadyLocked(\n                        fh=fh,\n                    ) from exc\n            except Exception as exc:\n                if fh is not None:\n                    try_close(fh)\n                raise exceptions.LockException(\n                    fh=fh,\n                ) from exc\n            else:\n                if self.truncate:\n                    fh.seek(0)\n                    fh.truncate()\n                self.fh = fh\n                return fh\n    \n        if last_lock_exception is not None:\n            if fh is not None:\n>               try_close(fh)\nE               NameError: name 'try_close' is not defined\n\nsrc/portalocker/utils.py:309: NameError\n______________________________ test_without_fail _______________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-17/test_without_fail0')\n\n    def test_without_fail(tmpdir):\n        \"\"\"Test that LockException is raised when fail_when_locked is False.\"\"\"\n        tmpfile = tmpdir.join('test_without_fail.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n            with portalocker.Lock(tmpfile, timeout=0.1) as fh:\n                print('writing some stuff to my cache...', file=fh)\n                lock = portalocker.Lock(tmpfile, timeout=0.1)\n>               lock.acquire(check_interval=0.05, fail_when_locked=False)\n\ntests/unit_tests/test_timeout_behaviour.py:47: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f981803c940>, timeout = 0.1\ncheck_interval = 0.05, fail_when_locked = False\n\n    def acquire(\n        self,\n        timeout: float | None = None,\n        check_interval: float | None = None,\n        fail_when_locked: bool | None = None,\n    ) -> typing.IO[typing.AnyStr]:\n        \"\"\"Acquire the locked filehandle\"\"\"\n        if self.fh is not None and not self.fh.closed:\n            return self.fh\n    \n        timeout = coalesce(timeout, self.timeout)\n        check_interval = coalesce(check_interval, self.check_interval)\n        fail_when_locked = coalesce(fail_when_locked, self.fail_when_locked)\n    \n        if not (self.flags & constants.LockFlags.NON_BLOCKING):\n            if timeout is not None:\n                warnings.warn(\n                    'timeout has no effect in blocking mode',\n                    stacklevel=1,\n                )\n    \n        filename = self.filename\n        if 'w' in self.mode or self.truncate:\n            open_mode = self.mode\n        else:\n            open_mode = self.mode\n    \n        fh: types.IO | None = None\n        last_lock_exception: exceptions.BaseLockException | None = None\n    \n        for _ in self._timeout_generator(timeout, check_interval):\n            try:\n                if fh is None:\n                    fh = open(filename, open_mode, **self.file_open_kwargs)\n    \n                portalocker.lock(fh, self.flags)\n            except exceptions.LockException as exc:\n                last_lock_exception = exc\n                if fail_when_locked:\n                    if fh is not None:\n                        try_close(fh)\n                    raise exceptions.AlreadyLocked(\n                        fh=fh,\n                    ) from exc\n            except Exception as exc:\n                if fh is not None:\n                    try_close(fh)\n                raise exceptions.LockException(\n                    fh=fh,\n                ) from exc\n            else:\n                if self.truncate:\n                    fh.seek(0)\n                    fh.truncate()\n                self.fh = fh\n                return fh\n    \n        if last_lock_exception is not None:\n            if fh is not None:\n>               try_close(fh)\nE               NameError: name 'try_close' is not defined\n\nsrc/portalocker/utils.py:309: NameError\n=============================== warnings summary ===============================\ntests/unit_tests/test_mechanisms.py::test_locker_mechanism[flock]\ntests/unit_tests/test_mechanisms.py::test_locker_mechanism[lockf]\n  /workspace/src/portalocker/utils.py:266: UserWarning: timeout has no effect in blocking mode\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_core_locking.py::test_class - NameError: name 't...\nFAILED tests/unit_tests/test_core_locking.py::test_acquire_release - NameErro...\nFAILED tests/unit_tests/test_core_locking.py::test_exception - NameError: nam...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[flock] - Na...\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-False]\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked\nFAILED tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0] - N...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-None] - N...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0] - Name...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0.001] - ...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_with_timeout - NameEr...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_timeout - Nam...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_fail - NameEr...\n=========== 22 failed, 71 passed, 1 deselected, 2 warnings in 8.03s ============\n",
+  "stderr": "",
+  "task": "python/portalocker/L3_utils__acquire",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

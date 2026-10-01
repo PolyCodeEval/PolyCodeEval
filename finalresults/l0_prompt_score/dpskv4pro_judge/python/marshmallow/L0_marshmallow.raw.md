@@ -1,0 +1,21 @@
+{
+  "project": "marshmallow",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 覆盖 marshmallow 序列化库的核心：Schema 定义、fields（String/Integer/Float/Boolean/DateTime/List/Nested）、load/dump 序列化/反序列化、验证（required/validate/validators）。覆盖核心 schema-driven 序列化。"
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "Schema 类定义、fields 参数、load/dump 返回类型、验证错误（ValidationError）格式描述清楚。但某些高级特性（如 post_load/method/pre_dump）仅提及未展开。"
+    },
+    "testability": {
+      "score": 4.4,
+      "reason": "测试需求覆盖基本序列化、嵌套 Schema、验证错误、required 字段、自定义 validators。黑盒测试匹配度高。"
+    },
+    "consistency": {
+      "score": 3.4,
+      "reason": "核心 Schema/fields API 与真实 marshmallow 一致。但真实 marshmallow 经历了 v2→v3 的重大 API 变化，prompt 描述若无 v3 特定细节可能与最新版本有细微偏差。"
+    }
+  }
+}

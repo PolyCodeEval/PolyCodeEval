@@ -1,0 +1,13 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: computing the formatted string length by doubling a buffer and retrying with `_vsnprintf` until it succeeds (returns non-negative), then returning that length. It correctly notes the assert on non-negative result and the exclusion of the null terminator. One minor inaccuracy: the description says 'starts with a positive buffer size' but the implementation initializes `len = 512` and immediately doubles it to 1024 before the first allocation — so the effective starting size is 1024, not 512. The description also doesn't mention that the initial `len` value is 512 (doubled to 1024 on first iteration), nor that the temporary buffer is heap-allocated with `new char[len]()` and freed with `delete[]`. These are secondary implementation details, but the heap allocation pattern is worth noting for a complete reimplementation. The description is sufficient to implement the function correctly.",
+  "missing_functionality": [
+    "The initial buffer size is 512, doubled to 1024 before the first allocation attempt — the description vaguely says 'starts with a positive buffer size' without this detail.",
+    "The temporary buffer is heap-allocated via `new char[len]()` and explicitly freed with `delete[]` on each iteration — the description omits the allocation/deallocation mechanism.",
+    "The inner assert `TIXMLASSERT(required >= 0)` fires immediately when `required != -1`, before breaking — the description mentions only the final assert."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'starts with a positive buffer size and repeatedly retries', which slightly obscures that the doubling happens at the top of the loop before the first attempt, meaning the first actual buffer used is 1024, not 512."
+  ],
+  "complete_enough": true
+}

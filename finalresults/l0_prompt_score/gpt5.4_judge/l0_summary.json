@@ -1,0 +1,1999 @@
+{
+  "judge_model": "gpt-5.4",
+  "review_type": "l0_prompt_review",
+  "scoring_method": "weighted",
+  "weights": {
+    "completeness": 0.3,
+    "unambiguity": 0.2,
+    "consistency": 0.1,
+    "testability": 0.4
+  },
+  "total_tasks": 58,
+  "completed": 58,
+  "failed": 0,
+  "overall_avg_scores": {
+    "completeness": 4.32,
+    "unambiguity": 4.23,
+    "testability": 4.59,
+    "consistency": 4.09,
+    "overall": 4.39
+  },
+  "by_language": {
+    "go": {
+      "count": 12,
+      "avg_scores": {
+        "completeness": 4.39,
+        "unambiguity": 4.48,
+        "testability": 4.67,
+        "consistency": 4.33,
+        "overall": 4.52
+      },
+      "projects": [
+        {
+          "project": "go/alice",
+          "overall_score": 4.86,
+          "scores": {
+            "completeness": 4.8,
+            "unambiguity": 4.8,
+            "consistency": 5.0,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了仓库核心能力：Chain/Constructor 模型、New/Then/ThenFunc/Append/Extend 全部主接口、不可变语义、nil 处理、复用语义与中间件执行顺序；对该项目的核心实现与行为边界描述已经足以复现当前源码。仅少量工程细节如 go.mod、README 等未明确展开，但不影响核心能力覆盖。",
+            "unambiguity": "关键输入输出契约基本清晰，包导入路径、导出符号、Then 的 nil 回退、ThenFunc(nil) 的显式处理、声明顺序与执行顺序、Append/Extend 的不可变语义都写得明确，黑盒测试关注的行为点大多可直接从 prompt 推出。仅对 Chain 内部表示保留为抽象结构体，属于合理留白，不构成核心歧义。",
+            "consistency": "prompt 与真实实现保持一致：包路径为 github.com/justinas/alice，接口集合与方法签名一致，Then(nil) 和 ThenFunc(nil) 回退到 http.DefaultServeMux，一次 Then 调用会重新构造中间件实例，Append/Extend 返回新链且不修改原链，执行顺序也与 chain.go 和黑盒测试一致，未发现明显冲突。",
+            "testability": "prompt 明确列出需要实现的 API 与具体行为，包括空链、顺序执行、nil handler 回退、链复用、短路、中间件修改 request、Append/Extend 不变性及若干边界情况，几乎逐项对应黑盒测试，可直接据此构造可验证实现。未给出测试命令或目录结构，但对通过黑盒测试所需核心能力说明已经非常充分。"
+          }
+        },
+        {
+          "project": "go/go-cache",
+          "overall_score": 4.67,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.7,
+            "consistency": 4.6,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库主线能力：TTL缓存、并发安全、增删改查、过期清理、回调、持久化、Items/ItemCount，以及黑盒测试依赖的核心导出与行为。主要遗漏是源码中的分片缓存实现和更大范围的类型专用自增自减族，但这些不属于复现当前L0黑盒核心能力的主体。",
+            "unambiguity": "核心接口签名、常量语义、关键行为和多项边界条件都写得较明确，尤其对Add/Replace、Get/GetWithExpiration、默认过期、NoExpiration、回调触发和自动清理条件说明充分。少量接口仍有模糊处，例如完整的类型专用数值方法集合未逐一列出，持久化的合并细节也较简略。",
+            "consistency": "Prompt与真实实现整体一致：常量值、Cache/New/NewFrom、过期语义、janitor启动条件、GetWithExpiration零时间返回、Items仅返回未过期项、OnEvicted在Delete和DeleteExpired上触发等都匹配。轻微不一致在于源码还包含实验性的sharded实现，且数值操作的完整导出面比prompt列出的更广。",
+            "testability": "Prompt直接给出包路径、关键导出、部分精确方法签名以及与黑盒测试高度对齐的行为约束，足以支持实现可黑盒验证的核心能力。测试所覆盖的Set/Get、过期、DeleteExpired、NewFrom、Items、OnEvicted、Increment/Decrement等均有明确要求；仅个别测试细节如Items快照语义和错误信息精确文案未完全固定。"
+          }
+        },
+        {
+          "project": "go/cobra",
+          "overall_score": 4.6,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.4,
+            "consistency": 4.2,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了真实项目的核心能力：命令树、局部与持久flag、帮助与用法、shell completion、Active Help、生命周期hook、参数校验、flag group校验、doc生成helper，以及以Command为中心的包式架构；对L0黑盒所需API和行为也列得较全。主要不足是对真实仓库中的一些重要扩展能力仅轻描淡写或未提到，如建议纠错、命令分组、隐藏/废弃命令、模板细节、TraverseChildren、版本flag等。",
+            "unambiguity": "核心接口、执行流、hook顺序、必需flag、持久flag继承、子命令分发、help触发和若干参数校验规则都写得较明确，足以指导实现L0可验证能力。仍有少量表述留白，例如“default command-initialization behavior expected by Cobra”“custom usage/help rendering and error-handling flows”“doc-generation helpers”未细化到真实接口集合，且API示例中Flags/PersistentFlags返回flag.FlagSet而源码实际使用pflag.FlagSet，容易让实现者在依赖与兼容层上自行猜测。",
+            "consistency": "整体描述与真实cobra仓库方向一致，没有对命令树、hook继承、参数校验、completion或doc模块造成明显错误引导。主要一致性问题是测试API把Flags/PersistentFlags写成标准库flag.FlagSet而真实项目与测试实际依赖github.com/spf13/pflag；同时将MarkFlagsMutuallyExclusive/OneRequired/RequiredTogether列为顶层函数而真实接口是Command方法，且未提及若干真实公共行为如建议纠错与更多RunE/PreRunE/PostRunE变体。",
+            "testability": "Prompt专门给出黑盒测试所需的包路径、关键结构体字段、函数签名、行为约束、hook顺序与边界样例，和黑盒测试文件关注点高度对齐；实现者据此可以直接构造可验证行为。扣分点在于completion、Active Help、doc生成和flag group虽然被要求支持，但未像L0黑盒API那样给出足够具体的函数签名与输出约束，因此对仓库更广泛测试的可导向性略弱。"
+          }
+        },
+        {
+          "project": "go/sqlx",
+          "overall_score": 4.59,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.3,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "prompt 准确覆盖了项目的核心能力：sql.DB/sql.Tx/sql.Stmt/sql.Rows 的扩展封装、Get/Select/Queryx、命名参数、Rebind/BindType、MapScan/SliceScan/LoadFile/MustExec，以及 NameMapper 与 db tag 的基本规则；对 L0 黑盒要求的 BindType、Rebind、Named、In 也给出了较完整契约。主要缺口在于没有明显覆盖项目中同样重要的 reflectx 子包、上下文相关 API、批量 NamedExec、Unsafe/Stmtx 等真实源码中的较大能力面，因此完整性略低于满分。",
+            "unambiguity": "核心接口签名、输入输出和关键边界写得比较清楚，尤其是 Rebind、Named、In 的占位符重写、参数顺序、空切片报错、缺字段报错等黑盒关键行为都较明确。少量表述仍有轻微模糊，例如 Goals 中提到 Oracle :name 风格，而测试契约实际常量和主要行为集中在 QUESTION/DOLLAR/AT；另外 Named 对 map 与 struct 的支持范围没有深入说明数组/切片批量绑定等扩展行为，但这不影响核心实现判断。",
+            "consistency": "prompt 与真实实现总体一致：BindType('postgres'/'mysql')、Rebind 对 QUESTION/DOLLAR/AT 的处理、Named 的 db tag 与 map 绑定、In 的切片展开，都与源码和黑盒测试相符。扣分点在于若按项目真实代码看，常量集还包含 UNKNOWN 和 NAMED，驱动支持也多于 prompt 所述；同时 Goals 中把 Oracle 说成 :name 风格，真实 Rebind 对 NAMED 的位置参数输出是 :argN。整体没有明显冲突，但存在少量实现细节层面的偏差与省略。",
+            "testability": "prompt 直接列出了黑盒测试所依赖的包路径、导出常量、函数签名和一批关键 edge cases，足以支撑对 BindType、Rebind、Named、In 的黑盒实现与验证。虽然没有覆盖仓库全部测试基础设施和更广泛的数据库交互行为，但对 L0 任务而言可测试性非常强。"
+          }
+        },
+        {
+          "project": "go/go-nanoid",
+          "overall_score": 4.57,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.1,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library's core purpose, main exported APIs, default and custom generation paths, predefined alphabets, and key input constraints closely enough to reproduce the main package behavior. It omits some secondary implementation details and repository contents such as examples, internal helper logic shape, and exact error strings.",
+            "unambiguity": "Core interfaces, package import path, default alphabet behavior, optional size handling, panic variants, and main edge cases are stated clearly. The prompt is specific enough for the primary public contract, with only minor room for interpretation around nonessential implementation details and exact validation wording.",
+            "consistency": "Most described behavior matches the real implementation, including module path, exported functions, default size, panic wrappers, and supported alphabets. The main mismatch is that the prompt says size must be positive while the actual New(0) behavior succeeds and returns an empty string, so consistency is good but not perfect.",
+            "testability": "The prompt explicitly lists the functions under test and the main blackbox behaviors, including zero length, multiple arguments, invalid alphabets, Unicode support, and panic semantics. That gives a strong basis for implementing behavior that can be verified by the provided blackbox tests."
+          }
+        },
+        {
+          "project": "go/go-env",
+          "overall_score": 4.56,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.3,
+            "consistency": 4.6,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library's core purpose, primary parsing APIs, nested prefix behavior, defaults, required fields, slices, maps, custom parsers, generics, and key constraints. It omits several real-project details such as richer Options fields, error types, introspection depth, unset/notEmpty/init behaviors in the testing contract, and helper utilities like ToMap implementation details, so it is strong but not fully exhaustive.",
+            "unambiguity": "Core interfaces and expected behaviors are described clearly, especially the blackbox-facing contracts for Parse, ParseWithOptions, prefixes, separators, required/default handling, duration parsing, URL parsing, and nested structs. Some broader product-level statements remain slightly open-ended, such as the full scope of supported options and advanced tag semantics, which leaves minor room for interpretation outside the explicit testing subset.",
+            "consistency": "The prompt is largely consistent with the actual repository and blackbox expectations: package path, Parse and ParseWithOptions behavior, nested envPrefix composition, default precedence, required semantics, slice separators, duration parsing, and url.URL support all match the implementation. The main limitation is that the prompt presents a simplified view of the full library surface, but it does not materially conflict with the real code.",
+            "testability": "The prompt is highly testable because it states the exact import path, required exported API, supported field types, tag behavior, prefix concatenation rules, separator handling, map encoding, and concrete edge cases that align closely with the blackbox tests. Only minor gaps remain around exact error typing and some non-blackbox project features."
+          }
+        },
+        {
+          "project": "go/is",
+          "overall_score": 4.54,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.4,
+            "consistency": 4.5,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the core library purpose, main assertions, strict vs relaxed modes, runtime source parsing for expressions/comments, color toggles, and the required exported API. It omits some real implementation details such as stdout-based logging, exact failure string formatting nuances, and the pre-Go-1.7 compatibility split, but those are secondary to reproducing the current project.",
+            "unambiguity": "Core behaviors and signatures are stated clearly, including package path, strict/relaxed failure semantics, DeepEqual-based equality, nil edge cases, and Helper support. Minor ambiguity remains around exact decorated output formatting and how Helper influences caller resolution, but the main contract is sufficiently specific.",
+            "consistency": "Prompt is broadly consistent with the actual codebase: exported types and methods, reflect.DeepEqual semantics, source-based expression/comment extraction, color disabling options, and strict vs relaxed control flow all match. The main gap is that it simplifies some implementation specifics such as exact logging/output details and compatibility-file structure without introducing material contradictions.",
+            "testability": "The prompt gives explicit API contracts and edge cases that align closely with the blackbox tests, including New/NewRelaxed behavior, method wrappers, Helper, type-sensitive equality, wrapped errors, and module import path. It is highly actionable for implementing behavior that can be verified in blackbox form."
+          }
+        },
+        {
+          "project": "go/gobreaker",
+          "overall_score": 4.54,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.6,
+            "consistency": 4.1,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the core circuit breaker state machine, settings, counts, execute flow, two-step API, and the tested v1/v2 generic APIs well enough to reproduce the main library behavior. It omits notable repository capabilities present in the real codebase, especially v2 rolling-window settings such as BucketPeriod and IsExcluded, plus distributed and redis-related modules, so it does not fully represent the full project scope.",
+            "unambiguity": "Core states, transitions, exported types, default trip condition, timeout behavior, and main error contracts are described clearly, and the testing section gives concrete API signatures and edge cases. Minor ambiguity remains around whether half-open transition is observed on State() or only on the next request, and the prompt does not spell out some v2-specific behavioral details.",
+            "consistency": "Most described behavior matches the real implementation and blackbox expectations, including default ReadyToTrip, timeout to half-open, count resets, and synchronous Execute semantics. The main mismatch is that the prompt models the v2 Settings/API as sharing the simpler v1 field set and two-step shape, while the actual v2 code adds BucketPeriod and IsExcluded and uses an error-based done callback for two-step operation.",
+            "testability": "The prompt provides explicit package paths, exported APIs, state-machine transitions, error outcomes, count rules, and v2 generic expectations that map closely to the blackbox tests. A solver could implement the tested surface from the prompt with little guesswork, though a few callback and timing nuances still rely on careful interpretation."
+          }
+        },
+        {
+          "project": "go/script",
+          "overall_score": 4.53,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.5,
+            "consistency": 4.1,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了项目的核心定位、Pipe链式模型、主要source/filter/sink，以及黑盒测试所需的关键API与边界行为；虽未覆盖部分真实导出能力与实现细节，如Basename、Dirname、Concat的容错语义、stderr/stdout细节和更多辅助接口，但不影响理解仓库核心能力。",
+            "unambiguity": "黑盒测试相关契约写得较清楚，包含导入路径、方法签名、关键输入输出、边界条件和若干精确示例；少数表述仍略泛化，如“lazy evaluation”与“matching a pattern”等实现层细节不够严格，但整体歧义较小。",
+            "consistency": "Prompt与真实实现及黑盒测试整体一致，特别是File错误传播、Slice换行、Column按空白切分、Join保留尾换行、Reject空串语义等都匹配；但对库的真实执行模型和部分运行时语义有轻微抽象化，例如将行为概括为lazy evaluation，和源码细节并非完全等价。",
+            "testability": "Prompt直接列出测试所需API、行为与edge cases，和黑盒测试文件中的断言高度对齐，足以支持实现可验证的最小正确版本；对文件不存在、空输入、列提取、Join换行等可测点也给了明确约束。"
+          }
+        },
+        {
+          "project": "go/xid",
+          "overall_score": 4.43,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.2,
+            "consistency": 3.5,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心能力：12字节ID结构、生成与解析、字符串与JSON/文本/二进制编解码、字段提取、排序、database/sql集成，以及黑盒测试所需的大部分公开API与边界条件。主要欠缺在于没有覆盖真实源码中的若干实现细节与辅助模块，例如平台相关machine id读取文件、cpuset对pid扰动、独立错误常量与README层面的行为说明。",
+            "unambiguity": "核心输入输出契约总体明确，尤其是20字符base32hex格式、12字节布局、nil JSON行为、FromString/FromBytes错误条件、Compare/Sort语义和XID_MACHINE_ID约束，足以指导实现并通过主要黑盒测试。歧义点主要在于部分接口签名与真实代码不完全一致，例如Encode是否返回切片、排序是通过IDs类型还是Sort函数，以及machine ID来源描述与真实实现细节之间存在模糊地带。",
+            "consistency": "整体目标与大多数API和真实实现一致，但存在几处明显不一致：prompt声明machine ID在启动时计算一次，而真实代码在NewWithTime中每次调用readMachineID；prompt写明存在IDs类型并实现sort.Interface，但真实导出中并无该类型，仅有内部sorter和Sort函数；machine ID来源描述为hostname或/proc/self/cpuset，而真实代码中cpuset用于扰动pid，machine ID优先来自平台machine id、环境变量或hostname。这些冲突会影响按当前仓库复现的准确性。",
+            "testability": "Prompt显式列出了包路径、关键导出、黑盒测试行为和多个边界用例，测试导向很强，能够较直接地支持实现可验证版本。尤其对字符串长度与字符集、时间回读、JSON null、FromBytes长度检查、panic条件、排序与比较行为都给出了明确断言，和blackbox_tests覆盖面高度匹配。"
+          }
+        },
+        {
+          "project": "go/chi",
+          "overall_score": 4.16,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.4,
+            "consistency": 4.6,
+            "testability": 3.9
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了该仓库最核心的路由能力：路由注册、参数与通配符匹配、分组与挂载、中间件组合、404/405 行为，以及一批关键 middleware 契约，已足以指导复现主干功能。扣分点在于对真实仓库中存在且有测试覆盖的若干能力未提及或提及不足，如 Handle/MethodFunc 之外的部分遍历与匹配接口、更多 middleware 模块和示例层能力，因此对完整源码的覆盖仍不算全面。",
+            "unambiguity": "核心接口、主要输入输出、路由语法和 middleware 作用域基本都描述清楚，尤其对 404/405、Allow 头、With/Group/Route/Mount 的行为边界说明较明确，足以减少实现分歧。仍有少量实现空间未被完全钉死，例如压缩触发条件、部分 middleware 的精细语义和部分导出接口未逐一规格化，因此仍存在一定解释余地。",
+            "consistency": "prompt 对 chi 的整体定位、核心路由模型、参数语法、上下文取参方式、分组与挂载语义、405 与 Allow 头等关键契约，与真实源码实现基本一致，没有明显误导性的接口或行为冲突。扣分主要来自对真实实现范围的选择性覆盖，而不是与源码发生直接矛盾。",
+            "testability": "prompt 明确给出包导入路径、关键 API 签名和一组可黑盒验证的行为约束，足以支撑大部分核心测试的实现与验收。主要不足是对真实黑盒中涉及的部分 middleware 能力未完整列出，且部分行为描述仍偏高层，导致实现者可能通过主干路由测试但遗漏仓库里实际存在的若干可验证功能。"
+          }
+        },
+        {
+          "project": "go/gjson",
+          "overall_score": 4.16,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.3,
+            "consistency": 4.4,
+            "testability": 4.0
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心定位、主要公开API、关键路径语法、数组查询、过滤、modifier、自定义modifier与验证解析能力，足以描述项目主要功能与实现目标；但对真实源码中的部分重要能力如 Exists、IsObject、IsArray、Map、ForEach、Result.Index/Indexes，以及 line-oriented helpers 等没有系统展开，和仓库实际能力相比仍有一定缺口。",
+            "unambiguity": "核心输入输出契约较清楚，明确了包名、函数签名、Result主要字段与常见路径行为，并给出若干边界案例；实现者能够较明确地知道 `Get`、`GetMany`、`Parse`、`Valid` 及数组 `#` 相关语义。少数语法仍有歧义，例如 `?` 通配仅笼统描述、过滤条件写法未完整示例化、modifier 参数格式和多路径细节未完全约束。",
+            "consistency": "Prompt对项目的只读定位、点路径语法、数组索引、`#` 长度、`#.` 投影、Result 类型枚举、Valid/Parse/GetMany 等描述与真实源码和测试总体一致，没有明显错误契约；`null` 的 Exists 语义也与实现一致。主要问题是部分能力表述更偏高层，和真实仓库相比有遗漏，但几乎没有实质性冲突。",
+            "testability": "Prompt专门列出 blackbox tests 关注的导出接口和行为，对 `Get`、`GetMany`、`Parse`、`Valid`、Exists、Array、Map、对象/数组判定、null 与缺失值差异等都给了较直接的可验证契约，基本能支撑黑盒实现。扣分点在于实际黑盒还覆盖 `@pretty` modifier，而测试契约部分没有显式点出该 blackbox 依赖，需实现者从前文 general features 自行推断。"
+          }
+        }
+      ]
+    },
+    "python": {
+      "count": 13,
+      "avg_scores": {
+        "completeness": 4.27,
+        "unambiguity": 4.02,
+        "testability": 4.49,
+        "consistency": 3.63,
+        "overall": 4.25
+      },
+      "projects": [
+        {
+          "project": "python/geotext",
+          "overall_score": 4.51,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.1,
+            "consistency": 4.2,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library purpose, bundled data files, main module layout, GeoText constructor, and the core outputs countries, cities, nationalities, and country_mentions. It also mentions country filtering and data-driven extraction, which matches the repository's primary behavior. It omits helper functions such as read_table/build_index/get_data_path and does not spell out duplicate-preserving list behavior, so it is slightly short of fully describing the current implementation.",
+            "unambiguity": "Core API shape and blackbox-relevant behaviors are mostly explicit: import path, constructor signature, filter semantics, OrderedDict for country_mentions, case sensitivity for cities, and support for multi-word entities. Some important behavioral details remain implicit, including that outputs are lists rather than sets, repeated mentions are preserved in countries/cities/nationalities, and country_mentions also counts direct country and nationality matches in addition to city attribution.",
+            "consistency": "The prompt is broadly consistent with the current code and tests: GeoText in geotext.geotext, bundled data files, extraction of countries/cities/nationalities, country filtering affecting only cities, and OrderedDict country mention counts. The main mismatch is that the prompt says country_mentions is inferred through city attribution, while the implementation also counts direct country-name and nationality matches. The prompt also presents result containers generically, whereas the implementation returns lists with duplicates preserved.",
+            "testability": "The prompt gives concrete import paths, constructor parameters, attribute contracts, edge cases, and expected observable behavior that map closely to the blackbox tests. A developer could implement the tested functionality from the prompt with little guesswork. Minor gaps remain around duplicate handling and the exact composition of country_mentions beyond city-based counting."
+          }
+        },
+        {
+          "project": "python/stocktrends",
+          "overall_score": 4.42,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 3.9,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心能力与主要公开接口，明确包含Instrument、Renko、LineBreak、PnF及其关键可配置参数、输出列和典型使用流程，足以指导复现当前项目主体。缺失点在于没有提到真实实现中的get_bar_ohlc_data、Renko的chart_type/PRICE_MOVEMENT分支未实现现状，以及包导出面的细节，因此完整性略低于满分。",
+            "unambiguity": "核心输入输出和测试关注的API契约写得较清楚，所需列、返回DataFrame、参数含义和若干边界条件都已说明，黑盒实现方向明确。模糊处在于“normalize input column naming”表述偏泛，但真实实现并未做通用规范化；PnF的get_state仅写“Returns chart state”而未指出具体返回常量；Renko对period-close行为虽有提示，但chart_type行为边界没有完全说死。",
+            "consistency": "整体上与真实代码和黑盒测试较一致，类名、主要方法、参数和多数输出契约都对得上。但存在几处偏差：Prompt要求Instrument空DataFrame抛异常，而真实Instrument.__init__只校验列、不校验空表；Prompt声称可规范化列命名，而当前实现要求已存在小写open/high/low/close列；Prompt把PnF.roundit描述为按box_size取整，但真实方法签名带base参数且get_ohlc_data内部按box_size调用，表述上不完全贴合实现。",
+            "testability": "Prompt几乎直接给出了黑盒测试所需的导入路径、构造方式、可配置属性、返回类型、关键列、布尔列要求、参数变化导致行数变化、缺列与空表异常等，可据此实现可验证结果。唯一不足是个别断言级细节仍留有实现自由度，例如异常类型允许范围较宽、PnF状态值未枚举。"
+          }
+        },
+        {
+          "project": "python/hone",
+          "overall_score": 4.41,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.4,
+            "consistency": 3.9,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core purpose, main Hone APIs, nested-structure generation, utility-module split, and typical conversion flow well enough to reproduce the main library behavior. It omits some notable implementation details such as populate_structure_with_data, prefix-validation helpers, and the exact default delimiter set, so it is not fully complete.",
+            "unambiguity": "Core interfaces, inputs, outputs, and several representative nesting examples are stated clearly, including concrete method signatures and expected return shapes. Some behavior remains underspecified, such as exact schema leaf values, delimiter precedence, and how custom delimiters are provided, but the main contract is still largely clear.",
+            "consistency": "Most high-level statements match the real codebase: Hone is library-oriented, conversion is centered in hone.py, and CSV/JSON helpers are separated. However, the prompt overstates configurable CSV parsing details and package entry exposure relative to the actual implementation, and it suggests JSON output helper behavior as more central than the real tested surface.",
+            "testability": "The prompt defines the tested public class and methods explicitly and gives blackbox-verifiable expectations for convert, get_schema, generate_full_structure, get_valid_splits, and clean_split. Those contracts are strong enough to drive an implementation that satisfies the repository's core blackbox behaviors, despite leaving some lower-level edge semantics implicit."
+          }
+        },
+        {
+          "project": "python/Hybrid_Images",
+          "overall_score": 4.38,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.2,
+            "consistency": 3.0,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了项目核心能力：cross-correlation、convolution、Gaussian kernel、low/high pass，以及 hybrid image 组合；也说明了核心模块集中在 hybrid.py，并给出了主要数据形状、边界处理和典型使用流程。主要缺口是没有把 create_hybrid_image 的真实接口与 uint8 输出约束写成同等细度的测试契约，也未覆盖示例脚本和 acceptance 资源流。",
+            "unambiguity": "对黑盒测试关注的函数给了明确签名、输入输出 shape、dtype、零填充和数值容差，足以指导实现可验证版本。仍有少量歧义：'Support configurable sigma/kernel-size or equivalent filter parameters' 这类表述偏宽，且 hybrid-image 组合部分未像基础算子那样明确参数顺序、模式枚举和最终输出类型。",
+            "consistency": "Prompt 与仓库当前真实实现/文档存在明显接口不一致：源码和 architecture 文档中的 gaussian_blur_kernel_2d、low_pass、high_pass 参数顺序分别是 (sigma, width, height) 与 (img, sigma, size)，而 prompt 指定为 (sigma, height, width) 与 (img, kernel_size, sigma)。虽然 prompt 与黑盒测试彼此一致，但若目标是复现当前仓库实现，这些真实接口偏差会造成明显冲突。",
+            "testability": "Prompt 几乎直接给出了 blackbox tests 所需的 API contract：函数名、签名、shape、dtype、边界处理、恒等核/对称核/均值核行为、以及 low_pass 与 high_pass 的可断言关系，能够稳定支持黑盒验证核心功能。唯一不足是 acceptance 层 create_hybrid_image 的精确契约没有同样展开。"
+          }
+        },
+        {
+          "project": "python/portalocker",
+          "overall_score": 4.35,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's main value well: low-level file locking, exported helper classes, semaphore-style coordination, optional Redis locking, and the single-file packaging CLI. It also names the main modules and the key public API. Missing pieces are mostly secondary for L0 reconstruction, such as concrete semaphore constructor contracts, package metadata/version behavior, platform-specific locker variants, and some PID-file details.",
+            "unambiguity": "Core interfaces used by the blackbox tests are mostly specified with clear names, signatures, and expected behaviors, especially for Lock, RLock, lock/unlock, open_atomic, LockFlags, and exceptions. Ambiguity remains around semaphore APIs, the exact CLI surface, Redis constructor details, and some behavioral edge cases like reentrancy/thread semantics and overwrite behavior for open_atomic.",
+            "consistency": "Most prompt claims align with the real codebase: the package root re-exports the expected APIs, low-level locking is separated from helpers, Redis support lives in a dedicated optional module, and __main__ implements the combine utility. The main mismatches are that open_atomic in the real code only supports creating a new target file, and some real helper semantics such as PidFileLock and reentrancy details are more specific than the prompt states.",
+            "testability": "The prompt is strong for blackbox-driven implementation because it explicitly lists the APIs and behaviors that the tests exercise, including constructor signatures, exception expectations, atomic-write visibility, and flag combinability. A solver could implement the tested surface directly from the prompt, with only limited inference needed for untargeted helpers."
+          }
+        },
+        {
+          "project": "python/imapclient",
+          "overall_score": 4.34,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.1,
+            "consistency": 3.6,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了源码中的主要模块分层、根包导出关系、核心客户端能力面，以及黑盒测试涉及的 fixed_offset、imap_utf7、datetime_util、response_types。对 config、tls、exceptions、imap4、interact、testable_imapclient 等辅助模块也有点名。主要不足是对实际实现里的若干重要数据结构与行为细节覆盖较粗，例如 parse_fetch_response、Namespace、Quota/MailboxQuotaRoots、日志安全与部分低层协议流程仅高层提及。",
+            "unambiguity": "核心目标、源码布局、主类位置、模块职责和黑盒测试 API 合同都写得比较清楚，足以指导实现主要可测能力。歧义主要在于部分公共类型和字段语义与真实代码并不完全锁定，例如 response_types 中真实实现使用 dataclass 且 Envelope.date 为 datetime、Address/Envelope 字段在源码里并非都允许 None；同时主客户端的大量方法表面只按类别描述，没有逐个签名与返回契约。",
+            "consistency": "整体架构、模块边界、根包从 imapclient.py、response_parser.py、tls.py 重导出的描述与源码基本一致，也没有明显虚构 CLI 或无关构建产物。但存在几处与真实实现不完全一致的关键点：response_types 实际是 dataclass 而非 NamedTuple，Envelope.date 在真实代码中是 datetime 而非 bytes，Address/Envelope 多数字段在源码类型上也更偏向 bytes 非 Optional；这些会让按 prompt 复现的实现与当前项目真实接口发生偏差。",
+            "testability": "Prompt专门给出了 fixed_offset、imap_utf7、datetime_util、response_types 的明确接口与行为要求，和 blackbox_tests 高度对齐，足以支持实现并验证当前 L0 的核心测试面。虽然未细写更多内部解析器和主客户端的可验证示例，但对本项目现有黑盒关注点已经较充分。"
+          }
+        },
+        {
+          "project": "python/tinydb",
+          "overall_score": 4.33,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 3.8,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了TinyDB的核心能力，包括文档存储、多表、查询系统、存储层与中间件，也列出了主要黑盒接口；但对真实项目中的部分重要能力仍有遗漏，如Query.search、noop、update_multiple、可配置table_class/document_class、query cache，以及文档/工具链相关模块。",
+            "unambiguity": "核心API、主要查询操作、默认表名和关键行为基本写清，足以指导复现主体功能；但仍存在一些不够明确之处，例如默认构造实际使用JSONStorage而示例API写成MemoryStorage默认、tables真实返回set而非List，以及文档对象的doc_id属性与示例输出风格之间表述不够统一。",
+            "consistency": "整体方向与真实实现一致，但有几处与源码不完全贴合：构造签名把MemoryStorage写成默认值而源码默认是JSONStorage，tables标成List而源码返回set，示例返回普通dict而真实实现返回带doc_id属性的Document对象；这些不至于破坏主体实现，但确实构成可见偏差。",
+            "testability": "Prompt显式给出了黑盒测试所依赖的大多数导入方式、构造方式、查询运算、表管理、持久化与上下文管理行为，基本可以直接对照实现并验证；少量未写入的真实接口如regex search子串匹配、doc_ids版get等不会明显妨碍核心黑盒能力落地。"
+          }
+        },
+        {
+          "project": "python/lice",
+          "overall_score": 4.25,
+          "scores": {
+            "completeness": 3.9,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了模板发现、变量渲染、注释格式化、CLI入口与核心模块划分，也点到了默认许可证与header场景，足以概括仓库核心能力；但对真实CLI支持的`--vars`、`--licenses`、`--languages`、`--template`、写文件行为、组织名自动推断等重要能力覆盖不足，且未反映更广泛的语言映射与模板集合。",
+            "unambiguity": "黑盒相关接口的签名、主要输入输出和关键示例较明确，`extract_vars`、`generate_license`、`valid_year`、`get_suffix`、`load_template`、`format_license`的测试导向约束基本清晰；但`output rendered license text or update files according to the tool’s contract`这类CLI描述仍偏泛，部分真实返回约定如`get_suffix`返回falsy而非严格`None`也留有实现空间。",
+            "consistency": "整体描述与真实实现大体一致：入口在`lice.main()`，核心逻辑集中于`lice.core`，模板目录驱动许可证发现，注释格式化按语言映射处理；但仍有若干不完全贴合之处，例如源码实际默认许可证为`bsd3`、`get_suffix`对未知扩展返回`False`、真实项目还支持从git或用户信息猜测organization及多个CLI列举模式，这些关键实现细节未被准确反映。",
+            "testability": "Prompt直接列出了黑盒测试所依赖的核心API、签名与行为，并包含`load_template(header=True)`这一已知缺陷约束，基本可支持实现并通过当前黑盒测试；不足在于CLI层面的可验证契约没有像核心API一样细化，因此更偏向支持函数级测试而非完整项目行为测试。"
+          }
+        },
+        {
+          "project": "python/particle-swarm-optimization",
+          "overall_score": 4.23,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core PSO package, main modules, Particle state, top-level minimize routine, and bundled sphere cost function, which is enough to reconstruct the main functionality. It omits some real project elements such as the example/demo flow, requirements file, and the internal velocity/position update methods that are present in source, so coverage is strong but not exhaustive.",
+            "unambiguity": "The key blackbox-tested contracts are stated clearly: import paths, required signatures, returned tuple shape, important Particle attributes, and sphere behavior. There is still some ambiguity around optional progress output, deterministic behavior requirements, and exact internal update rules/constants, which are mentioned only at a high level.",
+            "consistency": "Most requirements align with the real implementation and tests, especially the main imports and behaviors. Minor inconsistencies remain: the prompt names `pso/__init__.py` as package surface while the real file is empty, it suggests deterministic behavior without specifying seeding even though the implementation uses randomness, and it frames `minimize` as a five-argument signature while source also exposes an optional `verbose` parameter.",
+            "testability": "The prompt gives concrete API specifications for `pso.pso_simple.minimize`, `pso.pso_simple.Particle`, and `pso.cost_functions.sphere`, matching what blackbox tests exercise: tuple return, non-negative error, bounds-respecting position, first-call personal-best update, and sphere outputs. It does not spell out every tested threshold or initialization detail, but it is sufficiently test-oriented for the core behaviors."
+          }
+        },
+        {
+          "project": "python/marshmallow",
+          "overall_score": 4.19,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.0,
+            "consistency": 3.4,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了 Schema、SchemaMeta、核心 fields、decorators、validators、异常、class registry 与 unknown/many/partial 等主能力，也补充了黑盒测试所需的核心 API 契约。缺点是对真实仓库中一些重要但非核心的能力描述不够完整，例如 `INCLUDE` 常量、`post_dump`/`validates_schema` 的更细行为、`data_key`/`attribute`、`dump_only`/`load_only` 的更具体契约，以及 `experimental.context` 仅一笔带过。",
+            "unambiguity": "核心目标、主要模块、常见字段类型、`dump/load/loads/dumps/validate`、以及 validator 与 decorator 的基本用途都写得较清楚，足以指导实现大部分黑盒能力。仍有若干表述偏泛，例如 unknown 只详细写了 `EXCLUDE`/`RAISE`，hooks 的参数传递与 `pass_collection`/`pass_original` 细节未系统化，`ValidationError.messages` 的形态把字段错误和实例属性混在一起描述，读者仍需从源码补齐边界。",
+            "consistency": "整体上 prompt 与真实实现大方向一致，但存在明确冲突：prompt 写明 `only` 和 `exclude` “affect serialization output only, not validation”，而源码 `Schema.__init__`/`_init_fields` 会同时影响 `load_fields` 与 `dump_fields`，并不只限序列化。另有少量与当前实现不完全贴合之处，例如仍提到 `Meta.ordered = True`，而源码注释显示 ordered 已移除且字段顺序默认保留；decorator 与 schema validator 的实际参数能力也比 prompt 更复杂。",
+            "testability": "prompt 单独列出黑盒测试 API Specifications，明确了基础字段、嵌套/列表/字典、邮箱与 URL 校验、`many`、`unknown`、required、validator 行为和错误聚合，已经能较好支持面向测试实现。扣分点在于部分测试相关行为没有完全精确定义，例如 decorator 在 `many=True` 下的调用语义、`only/exclude` 的真实作用范围、以及错误字典的更细粒度结构。"
+          }
+        },
+        {
+          "project": "python/ArXiv_digest",
+          "overall_score": 4.06,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.3,
+            "consistency": 3.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了项目的核心能力：参数化检索、按日期过滤、控制台输出、CSV导出，以及主要函数级接口与CLI用法，足以概括仓库主流程。缺口在于没有覆盖fetch_data和main这两个实际入口流程中的实现角色，且未反映源码里摘要截断、目录自动创建等次要但真实存在的行为。",
+            "unambiguity": "整体目标和大部分输入输出说得清楚，但内部存在几处关键歧义：一处要求“四个查询字段至少一个必填”，另一处又把category写成必填；construct_query_url的测试签名未包含abstract却前文要求支持abstract；保存结果时有时写link有时写url。这些冲突会让实现者难以确定唯一正确接口。",
+            "consistency": "Prompt与当前实现存在多处明显不一致：源码中的get_args并不要求category必填；construct_query_url实际支持abstract且参数顺序/默认值不同；process_entries与print_results使用link字段，而save_to_csv测试契约写的是url；Prompt要求输出category列，但真实实现并未输出该字段。因此它不能无冲突地指导复现当前仓库。",
+            "testability": "Prompt显式列出了多个可黑盒验证的函数签名、边界条件和CLI行为，测试导向很强，足以支持复现大部分黑盒校验。扣分点主要来自字段名和参数要求的冲突，可能导致实现者即使遵循文本也在个别测试点上选错契约。"
+          }
+        },
+        {
+          "project": "python/chakin",
+          "overall_score": 3.87,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.7,
+            "consistency": 3.5,
+            "testability": 3.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core purpose, the CSV-backed catalog, the main modules, and the primary search/download workflow well enough to reproduce the central utility. It only misses some implementation-level details such as the exact printed column subset, dependency choices, and the concrete shape of auxiliary packaging files.",
+            "unambiguity": "Core responsibilities are mostly clear, but several contracts are loose or internally mixed: search is described as print-oriented yet also specified as returning a DataFrame, and the download API section emphasizes numeric index while the feature section also requires exact-name lookup. Those ambiguities still leave the main behavior understandable, but not fully precise.",
+            "consistency": "Most high-level descriptions match the real project: CSV-driven metadata loading, print-oriented search, and index/name-based download all reflect the implementation. The main mismatch is that the prompt's API spec suggests a DataFrame-returning search contract, while the actual implementation prints results and returns None; the download signature in the spec also omits the implemented name-based parameter.",
+            "testability": "The prompt provides explicit import paths, function names, basic signatures, edge cases, and dataset column expectations, so blackbox validation of the main behaviors is feasible. Testability is reduced by permissive wording such as allowing search to either return a DataFrame or only print output, and by leaving progress/failure behavior only broadly observable rather than tightly specified."
+          }
+        },
+        {
+          "project": "python/zxcvbn",
+          "overall_score": 3.85,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 3.8,
+            "consistency": 2.9,
+            "testability": 3.7
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library's core purpose and most major subsystems present in the repository: top-level zxcvbn(password, user_inputs=None), dictionary/l33t/spatial/repeat/sequence/regex/date matching, dynamic-programming scoring, feedback generation, crack-time estimation, bundled frequency lists, packaging, and CLI/stdin usage. It omits some implementation-specific boundaries and repo realities such as the exact returned fields, Decimal-based crack time values, and the actual absence of several advertised configuration hooks.",
+            "unambiguity": "The main behaviors are described clearly enough to infer a password-strength estimator with JSON-capable CLI output and pattern-based scoring, but several interfaces are underspecified or blurred. The prompt does not pin down the exact result schema, leaves CLI behavior partly informal, and states optional capabilities like max_length override without clarifying whether they are API-only, CLI-only, or both.",
+            "consistency": "There are notable conflicts with the real codebase. The actual zxcvbn function in src/zxcvbn/__init__.py accepts only password and user_inputs, and the real CLI in src/zxcvbn/__main__.py supports --user-input only; the prompt incorrectly presents max_length as an implemented API and CLI option. It also claims Python 3.8-3.13 support and no legacy/runtime quirks, while setup.py advertises older Python versions and the current code still contains Python-2-era compatibility handling.",
+            "testability": "The prompt is sufficient to implement black-box-verifiable core behavior such as returning scores, guesses, crack-time displays, feedback, and user-input-sensitive scoring. However, it does not specify the concrete output keys exercised by tests and introduces nonexistent max_length API/CLI behavior, which would misdirect an implementation relative to the repository's actual black-box contract."
+          }
+        }
+      ]
+    },
+    "java": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.36,
+        "unambiguity": 4.23,
+        "testability": 4.62,
+        "consistency": 4.42,
+        "overall": 4.44
+      },
+      "projects": [
+        {
+          "project": "java/idcenter",
+          "overall_score": 4.79,
+          "scores": {
+            "completeness": 4.7,
+            "unambiguity": 4.8,
+            "consistency": 4.6,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了项目的四个核心公开构件Base62、IdWorker、SidWorker和Main，也说明了CLI子命令、输出文件写入、关键行为、边界条件和主要可见约束，已经足以复现仓库的核心能力。欠缺之处主要是没有体现真实仓库的具体Gradle目录层次和少量实现细节，例如IdWorker默认epoch取值与随机worker/datacenter生成方式，但这些不构成核心能力缺失。",
+            "unambiguity": "核心接口签名、异常类型、Base62字母表、SID位数与时间戳格式、Main的参数形式和输出行前缀都写得比较明确，黑盒测试关注的关键输入输出基本无歧义。仅有少量实现空间，例如Main对非法数字参数的处理、IdWorker内部位布局和默认构造器的随机策略未被完全规定，但不影响主要实现方向。",
+            "consistency": "Prompt与当前实现和黑盒测试整体一致：类集合、包名、子命令、输出格式、Base62字符集、IdWorker范围检查以及SidWorker的19位返回值都匹配。轻微不一致在于prompt将源码结构描述为常规src/main/java，而真实数据集源码位于嵌套的src/src/main/java；此外prompt把Base62描述为在项目需要处提供能力，而真实Main并未使用它，但这属于覆盖范围略宽，不构成关键冲突。",
+            "testability": "Prompt直接列出了黑盒测试所需的包名、类名、方法签名、示例值、异常场景以及CLI输出契约，足以支持围绕Base62编码解码、IdWorker唯一递增性、SidWorker时间戳前缀和Main文件输出进行可验证实现。测试所依赖的可观察行为几乎都被显式定义，只有极少数非关键工程细节未写明。"
+          }
+        },
+        {
+          "project": "java/Actor_relationship_game",
+          "overall_score": 4.73,
+          "scores": {
+            "completeness": 4.7,
+            "unambiguity": 4.6,
+            "consistency": 4.8,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core domain objects, graph construction, TMDB ingestion, serialization flow, actor export stage, batch shortest-path reporting stage, real runnable entrypoints, and key API contracts. Minor gaps remain around exact report text formatting, console messages, and some build/runtime details.",
+            "unambiguity": "Core classes, responsibilities, CLI argument shapes, and blackbox-tested behaviors are stated clearly, especially for Actor, Movie, and ActorGraph. Some batch-stage observable details, such as precise output wording and formatting for report files, are still underspecified.",
+            "consistency": "Descriptions align well with the actual codebase: the project is graph/query oriented, TMDBApi is isolated, Main is only a stub, and GraphCreation, ActorGraphUtil, and GameplayInterface are the real business entrypoints. Differences are mostly omissions of implementation details rather than contradictions.",
+            "testability": "The prompt includes explicit package/class signatures, edge cases, no-op behavior, null handling, and shortest-path expectations that closely match blackbox validation needs. It is slightly less exact for end-to-end file output formatting in the runnable workflow."
+          }
+        },
+        {
+          "project": "java/java_heap",
+          "overall_score": 4.73,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.8,
+            "consistency": 4.6,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core deliverables well: two heap implementations, separation of benchmark code, exact package and main public APIs, and the key behaviors blackbox tests exercise. It omits some real project details such as static Fibonacci statistics helpers, the public delete method, exact build layout, and concrete performance-test CLI/output shape, so it is not fully exhaustive.",
+            "unambiguity": "The required classes, package, method signatures, sentinel behavior, empty-heap behavior, merge semantics, and tested edge cases are stated very clearly. A model can infer the expected externally visible behavior with little room for confusion; only some secondary implementation details and benchmark-output specifics are left open.",
+            "consistency": "The described package, classes, major operations, and behavioral contracts are strongly aligned with the actual source and blackbox tests. Minor gaps remain because the real code also exposes additional Fibonacci methods and a concrete benchmark main routine not specified here, but there is no major conflict with the implementation.",
+            "testability": "The prompt gives near-direct blackbox contracts for the tested APIs, including constructor behavior, return values on empty heaps, merge side effects, traversal expectations, and sorted extraction properties. That makes the core functionality straightforward to implement and verify against the repository's blackbox tests."
+          }
+        },
+        {
+          "project": "java/lin-cms-spring-boot",
+          "overall_score": 4.46,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.3,
+            "consistency": 4.5,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了启动入口、CMS控制器、DTO/BO、配置、拦截器、异常处理、mapper/model/service 以及文件扩展等核心面，足以说明仓库主要用途与实现骨架；但对真实代码中的 WebSocket/message 模块、若干公共 VO/通用响应层以及更具体的用户接口面提及不足，完整性仍有缺口。",
+            "unambiguity": "核心分层、技术栈、运行方式和关键黑盒目标 PageResponseVO 都说得比较明确，输入输出约束也足以指导实现；但大部分 HTTP 接口、鉴权契约和文件扩展行为仍停留在概述层，无法从 prompt 单独推导出更细的公开接口。",
+            "consistency": "对 Spring Boot + MyBatis、LatticyApplication、CMS 控制器、配置驱动、文件上传扩展、分页/日志/鉴权等描述与真实仓库整体一致，没有明显错误契约；主要问题是遗漏部分真实模块，而不是与现有实现发生冲突。",
+            "testability": "Prompt显式给出了黑盒测试针对的包名、类签名、构造器、builder、equals、toString 与边界条件，基本可直接实现并通过 PageResponseVO 黑盒校验；其余系统能力虽描述较粗，但不影响当前核心可验证目标。"
+          }
+        },
+        {
+          "project": "java/ddd-example-ecommerce",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.3,
+            "consistency": 4.5,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了真实仓库的大部分核心边界与实现思路，包括Spring Boot入口、portal/web、catalog、cart、order、payment、delivery、warehouse、JDBC持久化和事件驱动链路，也明确补充了黑盒核心的warehouse契约。主要不足是没有点明shipping下还存在独立的dispatching子上下文，以及未提及部分真实公共值对象与页面模板层。",
+            "unambiguity": "核心架构、模块职责和warehouse的API/行为约束写得较清楚，足以指导实现主要黑盒能力。歧义主要在于若干HTTP接口只概括为REST/web controllers，未明确真实路由与返回结构；同时对shipping是delivery还是还包含dispatching、warehouse是stock还是fetch/remove goods流程也留有解释空间。",
+            "consistency": "整体描述与真实实现高度一致：项目确为Spring Boot单体、多DDD边界、显式事件发布、portal/web入口、payment/delivery REST接口以及JDBC适配层。轻微不一致在于prompt把warehouse表述为stock-oriented where present，弱化了真实代码中fetch/remove goods与事件监听职责；另外对shipping的dispatching子域提及不足。",
+            "testability": "Prompt给出了可直接黑盒验证的Amount与InStock精确契约，并要求保留可启动的Spring Boot应用、分层模块、事件发布和JDBC基础设施，能够支撑实现测试关注的核心能力。扣分点在于其余控制器和监听链路只描述到模块级，没有把真实HTTP契约、异步监听触发点和部分查询接口行为细化到测试级别。"
+          }
+        },
+        {
+          "project": "java/spring-boot-realworld-example-app",
+          "overall_score": 4.4,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 4.5,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了仓库核心目标：Spring Boot RealWorld 后端、REST 与 GraphQL 双接口、用户/文章/评论/标签/资料页、分层架构与安全层，也点到了查询服务和仓储抽象，并补充了黑盒测试要求。主要缺口是没有明显写出实际基础设施实现细节，如 MyBatis、SQLite、mapper/readservice/infrastructure 层职责，以及 GraphQL 采用的具体 datafetcher/mutation 组织方式。",
+            "unambiguity": "核心能力、主要包名、公共类及黑盒测试行为写得较明确，尤其是 Article/Page/DateTimeCursor/Util 的输入输出和边界条件基本可直接实现。仍有一定模糊处：REST/GraphQL 的真实返回结构、错误处理契约、GraphQL schema 细节、以及 application/core/infrastructure 的精确职责边界未完全落细。",
+            "consistency": "整体描述与真实项目高度一致：入口为 RealWorldApplication，仓库同时提供 REST 与 GraphQL，存在 security 层、application/core 分层以及查询服务。轻微不一致在于 prompt 将安全层表述为 api/security，而真实项目还包含 infrastructure/service、infrastructure/repository、mybatis/readservice 等重要实现分层；不过这更像细节遗漏，不构成核心冲突。",
+            "testability": "prompt 明确列出了黑盒测试关注的包、类、方法签名和关键行为，足以支撑实现并通过当前 L0 黑盒校验。扣分点在于可测试约束主要集中于四个公共类，对更大范围的 REST/GraphQL 行为虽然有描述，但没有给出同等精度的可验证契约。"
+          }
+        },
+        {
+          "project": "java/image-similarity",
+          "overall_score": 4.33,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 3.9,
+            "consistency": 4.2,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了仓库核心能力：pHash 与 histogram 两类图像相似度算法、`Main` 驱动的批处理 CLI、文件与 URL 输入，以及关键类拆分。它还给出了黑盒测试所需的主要公开接口和行为阈值，足以指导复现当前项目的主体实现。扣分点在于没有说明真实 CLI 输出格式是 `boolean + 两个路径` 的制表符分隔行，也未提到命令字实际是单字符 `h` 或默认走 pHash、输入文件按空格分隔每行两项等关键运行细节。",
+            "unambiguity": "核心接口定义相对清楚，`ImageHistogram.match(File, File)` 与 `ImagePHash.distance(File, File)` 的返回类型、取值范围和判定阈值都明确，足以支撑主要算法实现。歧义主要在 CLI：prompt 仅写 `<mode>` 和 “command/mode selector”，未说明合法取值与默认分支；输出文件说记录结果，但没有明确每行具体格式；输入行是“image pairs or comparison instructions”也比真实实现更宽泛，而源码实际上只接受每行两个路径。",
+            "consistency": "Prompt 与现有实现总体一致：确实存在 `ImagePHash`、`ImageHistogram`、`Main` 三个核心类，支持本地文件，也通过重载方法支持 URL；`match` 和 `distance` 的核心行为与阈值要求与源码表现方向一致。主要不一致或偏差在于 prompt 将 mode 选择描述得较抽象，像是多模式命令体系，而真实 `Main` 只把 `h` 作为 histogram，其余值都走 pHash；同时 prompt 没明确真实 CLI 输出契约，因此和实现存在轻微落差。",
+            "testability": "Prompt 直接列出了黑盒测试关注的公开构造器、方法签名和可验证行为，包括同图比较、相似图阈值、对称性、非负性与自定义构造器场景，因此对通过核心黑盒测试非常有帮助。相比源码，尚未把 CLI 的错误处理、命令字细节和输出文本格式精确固定下来，所以对完整端到端测试支撑略有欠缺，但对主要可测能力已经足够。"
+          }
+        },
+        {
+          "project": "java/springboot-jwt-starter",
+          "overall_score": 4.3,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.0,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了项目核心能力：Spring Boot 入口、JWT 登录与刷新、基于角色的受保护接口、用户领域模型、服务/仓储分层，以及 TokenHelper 和安全过滤链等主要实现方向；还明确补充了黑盒测试最关键的 User 与 UserTokenState API/行为契约。主要不足是没有点出静态前端资源、application.yml/import.sql、change-password 端点、refresh 端点返回 accepted 空 token state 等次要但真实存在的实现细节。",
+            "unambiguity": "核心模块分工和典型流程表达清楚，尤其是 model 包下 User、Authority、UserTokenState 的方法签名与行为约束较明确，足以指导实现黑盒要求。歧义主要在于公开接口层面没有给出 UserController 的精确路径和方法，也未说明 /auth/refresh、/auth/change-password 的具体语义与状态码，安全配置中的 permitAll/ignored 静态资源细节也未被明确。",
+            "consistency": "prompt 与当前实现总体一致：项目确实是 JWT starter，包含 AuthenticationController、UserController、WebSecurityConfig、TokenHelper、UserService/Repository、User/Authority/UserTokenState 等，并采用角色保护和安全过滤链。轻微不一致或遗漏包括真实代码还有 change-password、refresh token、静态页面与具体安全忽略规则，且 prompt 将若干公开接口描述得更抽象，没有完全反映现有端点和配置细节。",
+            "testability": "prompt 显式列出了黑盒测试所需的包名、类名、构造器、getter/setter、副作用与边界行为，特别是 User.setPassword 的时间戳副作用、UserDetails 恒为 true、UserTokenState 使用 boxed Long 等，这些都能直接支撑黑盒验证。扣分点在于对控制器与安全链的可观察契约描述仍偏高层，没有把真实测试涉及的刷新 token 返回形态、角色受限路径和部分 HTTP 行为完整钉死。"
+          }
+        },
+        {
+          "project": "java/MyUploader-Backend",
+          "overall_score": 4.29,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.0,
+            "consistency": 3.9,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了 Spring Boot 入口、控制器/服务/DAO/模型/配置/mapper/schema 等核心结构，也点出了普通上传、分块上传、秒传和异常测试端点，足以概括仓库主要能力；但未明确真实 REST 路径、日志切面/日志工具的具体职责，以及 quick-upload 的实际判定语义。",
+            "unambiguity": "黑盒测试相关的 File、FileUtils、UploadUtils 契约写得较清楚，输入输出和边界条件基本可实现；但项目级接口仍有模糊处，例如上传端点的具体 URL、参数绑定方式、返回体为空还是布尔值、quick-upload 的 true/false 含义，都没有被明确固定。",
+            "consistency": "整体分层和主要组件与真实仓库一致，普通上传、分块上传、秒传、DAO+mapper+schema 的描述都能对上；但存在若干实现层面的偏差或弱一致点，例如真实控制器路径为 /File、/BigFile、/QuickUpload、/Ex，秒传接口实际是按 md5 查询后返回 `fileDao.getByFile(...) == null`，其语义与常见“已存在即可秒传”表述并不完全直观。",
+            "testability": "prompt 明确列出了黑盒测试要满足的 Java 包名、类、构造器、方法签名和关键行为，足以支持实现 File/FileUtils/UploadUtils 并通过核心黑盒验证；项目其余控制器和持久化层虽然描述较抽象，但不妨碍主要可测能力落地。"
+          }
+        },
+        {
+          "project": "java/redis-cache",
+          "overall_score": 4.23,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.0,
+            "consistency": 4.1,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了仓库核心能力：RedisCache、两种序列化器、配置构建、回调接口与 DummyReadWriteLock，也点到了 Gradle、Java 11 与本地 Redis 依赖，足以理解项目主线并复现核心实现。主要不足是没有写清 RedisConfigurationBuilder 的真实属性加载约定、RedisConfig 继承 JedisPoolConfig、以及 RedisCache 基于 Redis hash 与 TTL 的具体行为边界。",
+            "unambiguity": "黑盒测试最关键的 DummyReadWriteLock、JDKSerializer、KryoSerializer 接口与行为约束写得比较明确，主包名和公开类型也给清楚了。仍有一些实现层面的歧义，例如 RedisCache 的具体接口契约依赖 MyBatis Cache、removeObject 返回什么、配置文件名与属性前缀、以及 callback 如何与 Jedis 资源生命周期配合，prompt 没有完全讲透。",
+            "consistency": "prompt 与真实代码总体一致：主类、序列化层、配置层、回调扩展点、DummyReadWriteLock、Gradle/Java 11、本地 Redis 依赖都能对上，且黑盒要求与现有实现兼容。轻微偏差在于 prompt 将 RedisConfigurationBuilder 和 DummyReadWriteLock 表述为公开可用组件，但源码里前者与后者本身不是 public；另外 prompt 对缓存的 update/invalidation 说法较泛，而真实实现更具体地绑定到 MyBatis Cache 与 Redis hash 操作。",
+            "testability": "prompt 专门给出了可直接对齐黑盒测试的 API 规格和边界样例，序列化与 DummyReadWriteLock 的测试目标很明确；对 RedisCache 也给出了可验证的接入流与验收标准。扣分点在于它没有明确指出 acceptance test 只实际覆盖 put/get/remove 的最小链路，也没有把 redis.properties 装载约定和 Redis 运行前置条件展开为可执行测试契约。"
+          }
+        },
+        {
+          "project": "java/spring-rest-ecommerce",
+          "overall_score": 4.17,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.7,
+            "consistency": 4.5,
+            "testability": 4.3
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's main capabilities and structure: Spring Boot entrypoint, REST controllers for product/group/cart/order, storage, validators, cache, security, HATEOAS, and startup initialization. It omits some important concrete details present in code such as the core controller/root surface, exact model/repository layout, Swagger/docs integration, and several endpoint-level behaviors, so it is not fully complete for reproducing the current project exactly.",
+            "unambiguity": "High-level architecture is clear, and the blackbox-critical Cart/CartItem contract is specified precisely. However, many public REST behaviors remain underspecified for exact reconstruction: concrete request/response schemas, exact route shapes and trailing-slash variants, persistence details, login flow specifics, and how cache/security/storage are wired in code.",
+            "consistency": "The prompt is broadly consistent with the actual codebase: EcommerceStarterApplication initializes storage, controllers/services/validators/storage/cache/security packages exist, and the backend exposes the stated product/group/cart/order surfaces. The main gaps are omissions and abstraction rather than contradictions, though the prompt is more generic than the repository's exact endpoint and implementation details.",
+            "testability": "The prompt is strong for blackbox validation because it explicitly defines package, methods, defaults, mutability, and equality semantics for Cart and CartItem, which are the provided blackbox tests. Testability is reduced for the rest of the backend because most REST endpoints and security/storage flows are described only at a feature level rather than with precise observable contracts."
+          }
+        }
+      ]
+    },
+    "cpp": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.36,
+        "unambiguity": 4.28,
+        "testability": 4.65,
+        "consistency": 4.01,
+        "overall": 4.42
+      },
+      "projects": [
+        {
+          "project": "cpp/xlsx2csv",
+          "overall_score": 4.77,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.8,
+            "consistency": 4.7,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core purpose and main implementation path: ZIP-backed workbook loading, sheet enumeration, shared-string resolution, CSV export, CLI behavior, module split, and key blackbox-tested APIs. It omits some lower-level details such as exact worksheet parsing flow, XML library files, and archive internals, but those are secondary relative to reconstructing the current project.",
+            "unambiguity": "Core interfaces and observable behavior are specified clearly: exact CLI arity, exact success/error messages, return-code quirk, required module layout, output naming, and concrete API contracts for utility and workbook functions. There is only minor room for interpretation around internal parsing details and how extensively CSV formatting should mirror spreadsheet semantics.",
+            "consistency": "Prompt aligns well with the actual implementation and tests: `main.cpp` uses the documented messages and returns 0 on usage/input-file errors, `workbook` throws on invalid files via archive construction, shared-string index 0 is empty, and CSV files are written as `<sheet-name>.csv`. Minor inconsistency risk comes from small signature/path wording differences, such as describing headers as `include/...` while the real project stores them under `src/include/...`, but this does not conflict with runtime behavior.",
+            "testability": "The prompt is highly testable because it includes concrete blackbox API expectations for `string_to_idx`, `string_to_row_column`, `strip`, `workbook` construction, `get_shared_string`, and `write_to_csv`, along with exact CLI messages and output-file behaviors. These map closely to the existing blackbox tests and leave little uncertainty for verification."
+          }
+        },
+        {
+          "project": "cpp/tinyxml2",
+          "overall_score": 4.64,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了解析、DOM导航与修改、属性、序列化、Visitor、错误处理、内存池与StrPair等核心能力，也点到了500层深度限制、UTF-8/BOM、实体处理和主要节点类型，足以指导复现该仓库主体。欠缺之处主要是未完整展开真实头文件中的更广泛接口面和部分工程细节。",
+            "unambiguity": "核心类、关键方法、测试所需接口与若干边界行为写得较明确，黑盒约束也直接给出成功/失败预期。仍有少量表述停留在产品层，例如构建布局、若干返回约定、部分API精确签名与格式化细节未完全钉死，因此不是满分。",
+            "consistency": "整体描述与真实tinyxml2源码结构和黑盒测试基本一致，包括XMLDocument/XMLElement/XMLPrinter、Visitor、LoadFile/SaveFile、ErrorIDToName、深度限制和实体/BOM处理。轻微偏差在于部分能力描述比L0黑盒实际要求更宽，且没有完整反映真实库中更细的接口与错误语义。",
+            "testability": "Prompt显式列出了黑盒测试所依赖的头文件入口、关键API、错误码、返回值以及多组边界行为，对实现可验证的最小公开契约定义得很充分。即使不覆盖仓库全部测试基础设施，也足以支撑L0级黑盒实现与回归验证。"
+          }
+        },
+        {
+          "project": "cpp/base64pp",
+          "overall_score": 4.62,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.2,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library purpose, core encode/decode capabilities, public API, expected layout, build files, and key edge cases well enough to reproduce the repository's main functionality. It omits some real-project details such as install/pkg-config behavior, export-header generation, optional docs/tests wiring, and the exact top-level src directory layout, but those are secondary relative to the repository's core Base64 library behavior.",
+            "unambiguity": "The required interfaces, namespace, include path, accepted alphabet, padding rules, invalid-input behavior, and representative input/output examples are stated clearly. Decode failure semantics are explicit via nullopt, and several malformed-input classes are spelled out. Remaining ambiguity is mostly around exact file placement versus the repository's real src-root layout and the precise header signatures for string-based overloads.",
+            "consistency": "The prompt is strongly aligned with the implemented repository behavior: namespace, encode/decode semantics, unpadded decode acceptance, and nullopt on invalid input all match the real code and tests. The main inconsistencies are that the prompt describes paths without the real src root and specifies string-based signatures using std::string references, while the actual public header uses std::string_view for encode_str and decode.",
+            "testability": "The prompt is highly testable because it specifies concrete API contracts, observable return types, deterministic failure cases, padding rules, known vectors, unpadded decode behavior, and a full-byte roundtrip requirement. These requirements map directly onto the blackbox tests with only minor room left for interpretation."
+          }
+        },
+        {
+          "project": "cpp/jsoncpp",
+          "overall_score": 4.55,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.3,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了仓库核心能力：DOM 风格 Json::Value、Reader/CharReaderBuilder 解析、StreamWriterBuilder/FastWriter 序列化、公开头文件与 lib_json 目录划分，也列出了黑盒测试所依赖的主要 API、转换语义、writer 设置和若干边界行为。相对真实项目，仍遗漏了更完整的公开头文件集合、迭代器/forwards/config/version 等外围接口，以及真实 CMake 中共享库/静态库/对象库、安装与测试开关等工程能力，因此不是满分。",
+            "unambiguity": "核心接口、命名空间、包含路径、文件分层、关键构造函数与成员函数签名都写得较明确，黑盒关注的返回值和若干边界条件也直接给出。少量地方仍有一定弹性，例如 StreamWriterBuilder 的 operator[] 返回类型、dropNullPlaceholders 未进入 API 规格、pretty 输出的精确格式未完全约束，但对复现当前核心能力的歧义不大。",
+            "consistency": "prompt 与真实仓库的主体实现方向基本一致：公共头位于 include/json，核心实现位于 lib_json，项目是可复用 C++ JSON 库而非 CLI。与真实代码相比，构建层面被显著简化为“CMakeLists.txt define the library build”，未体现实际多目标与安装配置；另外真实仓库 API 面更广，但 prompt 没有出现明显错误接口或冲突性行为描述，因此一致性仍然较高。",
+            "testability": "prompt 明确给出了黑盒测试会使用的头文件、命名空间、类与函数契约，并补充了关键转换语义、writer 配置项和错误处理预期，足以支持实现可黑盒验证的主体功能。相比真实黑盒测试，仍有少数测试点只在测试源码中出现而未在规格中直接强调，例如 writer builder 对 dropNullPlaceholders 的覆盖较弱，因此略扣。"
+          }
+        },
+        {
+          "project": "cpp/logistic_system",
+          "overall_score": 4.55,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.5,
+            "consistency": 4.1,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the repository's core CLI flows, persistence files, main modules, and the blackbox-tested APIs, including registration, login, balance changes, shipment creation, signing, and query behavior. It omits some important concrete behavior present in the real program, such as root/admin query-all privileges, the root account receiving shipping fees, the exact save-on-destruction behavior, and the single-record query API.",
+            "unambiguity": "Key inputs, outputs, commands, and tested API contracts are mostly explicit, including command vocabulary, file paths, success/failure strings, shipping cost, and several edge cases. Remaining ambiguity comes from underspecified details like the exact logistics ID numbering starting from current expressage count, role-specific query visibility, and the text-file field formatting assumptions.",
+            "consistency": "Most described behavior matches the actual codebase and blackbox expectations, especially for registration, login, money APIs, shipment assignment/signing, queryAll semantics, and CLI command names. Minor inconsistencies remain: the prompt models authority as enum class while the code uses a plain enum, it implies broader administrative management than the implementation really exposes, and it does not mention that sending to the root account is rejected and shipping fees are credited to root.",
+            "testability": "The prompt is highly testable because it spells out the required headers, public structs and methods, return-value expectations, observable CLI strings, and edge cases that align closely with the blackbox tests. The only notable gap is that some real behaviors exercised by acceptance-style flows, such as role-based access breadth and persistence formatting nuances, are not fully pinned down."
+          }
+        },
+        {
+          "project": "cpp/snappy",
+          "overall_score": 4.55,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了仓库核心能力：C++/C 压缩解压接口、Source/Sink 流式接口、CompressionOptions、长度与校验工具函数、内部组件与 CMake/gtest 构建测试方向，也点到了 iovec 与 partial uncompress。缺口在于真实公开 API 中还包含 RawCompress/RawUncompress、RawUncompressToIOVec、IsValidCompressed(Source*)、GetUncompressedLength(Source*, uint32_t*)、Compress(Source*, Sink*, CompressionOptions) 等接口，且仓库内还带有较完整的单测支持与平台 stub 细节，prompt 未完整展开。",
+            "unambiguity": "核心接口签名、命名空间、头文件路径、状态码、关键行为和若干精确断言都写得很清楚，足以约束主要实现并支持复现黑盒能力。少量表述仍有边界模糊，例如把 GetUncompressedLength 描述为从 header O(1) 解析但未说明 Source 版本会消费输入、流式解压与 iovec 接口的错误语义和 ownership 约束也未细讲，不过这些不妨碍主体实现。",
+            "consistency": "整体描述与真实仓库实现一致：Snappy 的定位、64KB block、C/C++ API、Source/Sink 抽象、CompressionOptions 仅 1/2 两级、C API 默认级别、MaxCompressedLength 公式及非法输入行为都和代码与黑盒测试相符。主要偏差是将 streaming decompression、iovec decompression、UncompressAsMuchAsPossible 等写成更对称/产品化的功能清单，而真实测试只依赖部分接口；另外“tested with Google Test via CTest”更像构建期目标，仓库实际 CMake 位于 src 子目录并带 bundled googletest，这些都属轻微不完全对齐。",
+            "testability": "Prompt 明确列出了黑盒测试所需 include path、必须实现的 C/C++ API、精确返回值、公式、非法输入样例、空输入、大数据和高压缩数据等行为，和真实 blackbox_tests 的断言高度一致，因此可直接驱动实现并验证核心能力。轻微不足是没有细化构建入口与测试可执行组织方式，但对黑盒通过影响很小。"
+          }
+        },
+        {
+          "project": "cpp/people_management",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.2,
+            "consistency": 4.2,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "按当前更宽松的口径看，这个 prompt 已经覆盖了仓库的核心功能、主要能力边界和大致实现思路：人物/学校 CRUD、导师关系、SQLite 初始化、CLI 调用方式、核心类与辅助函数分层都讲清楚了，足以让人理解这个仓库是做什么的以及主要部分应如何实现。它仍然没有完整覆盖真实工程里的所有构建与目录细节，例如实际可执行文件名和 makefile 约定，但这些更偏工程细节，不应显著拉低 completeness。",
+            "unambiguity": "当前版本里核心接口和关键行为已经比较清楚：`PeopleManagement` 的方法签名、各操作所需选项、`mentor` 的 `assign` / `lookup` 动作、以及 `-student` / `-mentor` 约定都说清楚了。仍有一些次一级歧义，例如示例可执行文件名写成 `pm` 而仓库实际产物是 `UMM`，以及部分 CLI/工程层细节没有完全钉死，但这些已经不太会妨碍按 prompt 实现核心能力。",
+            "consistency": "按照你现在要求的宽松一致性口径，这个 prompt 已经没有明显与当前实现冲突的核心描述了：`school` 用学校 ID、导师关系使用 `-student` / `-mentor`、核心类和方法结构也与源码一致。剩余差异主要是工程层面的，例如示例中可执行文件名与真实仓库的 `UMM` 不同，某些细枝末节没有完全按源码逐项展开，但这些更像未覆盖细节，而不是明显冲突。",
+            "testability": "对黑盒测试来说，这个 prompt 已经相当可测：类接口、返回码语义、`person` / `school` / `mentor` 的主要约束、`-student` / `-mentor` 的动作契约都与黑盒关注点基本对齐。虽然它没有完全描述真实仓库中的所有工程辅助细节，但对实现并通过核心黑盒能力来说已经足够，testability 应明显高于之前版本。"
+          }
+        },
+        {
+          "project": "cpp/tinyexpr-plusplus",
+          "overall_score": 4.39,
+          "scores": {
+            "completeness": 4.0,
+            "unambiguity": 4.2,
+            "consistency": 4.3,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library's core parser/evaluator flow, public te_parser API, variable and function binding, separators, comments, and key built-ins well enough to reproduce the main src/tinyexpr.h and src/tinyexpr.cpp structure. It does omit several real capabilities that exist in the codebase, such as richer built-ins, bitwise/comparison/logical breadth, unknown-symbol resolution, context-function support, and some parser conveniences like leading '=' handling, so it is not fully comprehensive.",
+            "unambiguity": "The blackbox-facing contract is mostly explicit: required class/method names, include path, failure behavior, selected built-ins, and several edge cases are clearly specified. Remaining ambiguity comes from phrases like 'where supported by the library' and 'fixed-arity and variadic ... as implemented by the library', which do not precisely define the full operator/function surface actually present in the implementation.",
+            "consistency": "Most requirements match the real project and tests: header-plus-implementation layout, no namespace, te_parser-centered API, NaN-on-error behavior, built-in constants/functions, live variable pointers, and comment stripping are all consistent with the actual code. Minor mismatches remain because the prompt simplifies the real library to double-precision and a smaller feature surface, while the actual implementation also supports additional compile-time type modes and broader parser capabilities.",
+            "testability": "This prompt is highly testable because it names the exact include path, required public API, observable success/error signals, comment stripping behavior, separator setters/getters, live pointer binding semantics, and concrete evaluation examples that align closely with the blackbox tests. A few implementation-adjacent behaviors are still unstated, but the prompt is sufficient to drive a blackbox-verifiable implementation of the required core behavior."
+          }
+        },
+        {
+          "project": "cpp/robotstxt",
+          "overall_score": 4.39,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 3.8,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了项目的核心能力：robots.txt 解析、匹配、reporting 组件、CLI、CMake 以及主要公开接口，并明确列出黑盒测试所需 API 与关键行为，足以指导复现当前仓库的主体功能。缺口在于未充分体现源码中的 ParseRobotsTxt 回调式解析器、LineMetadata、unsupported tags 统计、路径提取与转义等实现层面的重要细节，因此对完整性略有影响。",
+            "unambiguity": "核心输入输出和判定语义写得较清楚，尤其是 longest-match、Allow 平局优先、通配符和 $ 锚点、user-agent 校验规则、reporter 计数等黑盒行为约束较明确。仍存在一些歧义，例如 parse_results 的精确结构与 tag 枚举并未与真实代码完全对齐，CLI 的具体输出文案和返回码细节也未完全固化，导致实现时仍需结合源码推断。",
+            "consistency": "整体方向与真实仓库一致，文件划分、核心类名和大多数行为都能对应到源码与黑盒测试。但 prompt 中对 RobotsParsedLine 的描述与实际 reporting_robots.h 不一致，真实代码使用内部 RobotsTagName 枚举而非 KeyType；同时 CLI 只笼统要求 deterministic result，没有反映真实实现中的帮助参数、错误返回码和输出句式。这些都是与现有实现的可见偏差，因此一致性需明显下调。",
+            "testability": "prompt 直接给出了黑盒测试所依赖的 include path、namespace、类/函数名和一组关键行为契约，足以支持实现可被黑盒验证的核心能力；对 matcher、key type、reporter 三类测试关注点覆盖较好。扣分点在于少数接口签名表述与真实源码存在轻微抽象化，例如 string_view 与 string/char* 的差异、RobotsParsedLine 真实字段形态未完全展开。"
+          }
+        },
+        {
+          "project": "cpp/area_calculation",
+          "overall_score": 3.89,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 3.6,
+            "consistency": 2.8,
+            "testability": 4.0
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了项目的核心类层次、文件型 CLI、构建目标、主要头源文件拆分、构造析构输出和面积计算规则，足以让人理解仓库做什么以及核心实现方向。扣分点在于没有把真实程序会将构造/析构消息一并写入输出文件这一可观察行为说得足够明确，也没有提到 `Shape::calcArea()` 在当前实现中并非纯虚函数。",
+            "unambiguity": "输入顺序、支持的图形类型、构造析构文案和面积公式整体比较清楚，但仍有几处关键歧义：`Shape` 被写成 pure virtual 'or equivalent'，难以判断是否必须抽象；`Square` API 被写成同时继承 `Rectangle` 和 `Shape`，而真实代码只有单继承；另外 prompt 没有明确说明输出文件除了面积之外还包含生命周期打印。",
+            "consistency": "prompt 与现有实现存在明显接口级不一致：真实 `Shape.h` 中 `calcArea()` 不是纯虚函数，析构函数也不是虚的；真实 `Square` 仅继承 `Rectangle`，并不显式多继承 `Shape`；源码里 `Circle` 与 `Square` 的实现写在头文件中，而 prompt 将其概括为 `other source files`。CLI 的总体流程和构造析构文案与实现基本一致，但上述公共接口与继承结构冲突会直接影响按 prompt 复现当前仓库。",
+            "testability": "prompt 明确给出了 include 路径、CLI 调用方式、面积公式、默认构造面积为 0、以及若干数值容差和边界样例，足以支撑黑盒测试实现核心能力。主要问题是测试相关契约里把 `Square` 的继承结构和 `Shape` 的抽象性描述得偏离真实源码，可能让实现者为了满足 prompt 写出与当前项目不同但同样可测的版本。"
+          }
+        },
+        {
+          "project": "cpp/graph-cpp",
+          "overall_score": 3.87,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.4,
+            "consistency": 2.9,
+            "testability": 4.1
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了自定义队列/栈、邻接表/邻接矩阵、非递归 DFS、BFS、文件型 CLI、构建文件与主要头文件路径，足以说明仓库核心功能与大致实现方向。扣分点在于没有反映当前实现里邻接矩阵类能力边界与若干真实细节，无法完整指导复现现有源码的所有关键特征。",
+            "unambiguity": "核心输入输出、遍历起点、异常场景和 CLI 调用方式写得较明确，但仍存在关键歧义：邻接矩阵类被描述为与邻接表同接口，却未明确其真实只实现 locate/setVexes/setArcs/打印；同时 API 里混用了 initializer_list、vector、const 成员函数和 0/1 基索引约定，读者较难判断应以哪套契约为准。",
+            "consistency": "与现有实现存在数个明显不一致点：prompt 声称 AdjacencyMatrixGraph 与邻接表图拥有相同接口并支持 bfs/dfs，但真实 am_graph.hpp 没有这些遍历接口；其 setArcs 真实签名使用 tuple<int,int,int> 而非 tuple<T,T,int>；Queue::front 和 Stack::top 在源码中也不是 const 成员。虽然 CLI 总体描述与源码接近，但这些公共接口层面的冲突会直接影响按 prompt 复现当前仓库。",
+            "testability": "prompt 显式列出 include 路径、类接口、遍历与异常行为，黑盒验证入口比较清晰，足以支撑实现主要可测能力。主要问题是测试契约中对邻接矩阵接口的要求高于真实源码，例如声明了与邻接表同接口，这会让按 prompt 实现的人偏离当前项目实际测试/实现边界。"
+          }
+        }
+      ]
+    },
+    "javascript": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.24,
+        "unambiguity": 4.16,
+        "testability": 4.55,
+        "consistency": 4.1,
+        "overall": 4.34
+      },
+      "projects": [
+        {
+          "project": "javascript/nanoid",
+          "overall_score": 4.59,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.3,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心能力：安全ID生成、customAlphabet、customRandom、random、urlAlphabet，以及Node与browser双环境支持和非安全版本入口，足以复现主要实现。扣分点在于未覆盖真实仓库中存在的CLI入口、TypeScript类型声明与package exports等项目级重要组成。",
+            "unambiguity": "核心API签名、默认长度、URL-safe字符集、custom generator行为、随机字节返回类型与若干边界条件都写得比较清楚，黑盒实现目标明确。少量表述仍有模糊空间，例如customAlphabet仅说明非空字符串，但未像真实实现那样强调256字符上限只是约束而非运行时报错契约。",
+            "consistency": "大部分描述与真实实现一致，包括默认21位、urlAlphabet常量、rejection sampling、自定义随机源、Node/browser分入口与non-secure变体。主要不一致在于prompt将Node端random明确写成使用crypto.getRandomValues，而真实Node实现通过webcrypto填充池并导出池的subarray；此外customAlphabet的“非空字符串”约束并非真实实现中的显式校验契约。",
+            "testability": "Prompt直接给出了黑盒测试所需的导入路径、导出面、函数签名、常量值、非安全版本入口和关键边界行为，足以支持实现可验证的核心功能。未覆盖CLI测试或包元数据，但对L0核心黑盒能力影响较小。"
+          }
+        },
+        {
+          "project": "javascript/mitt",
+          "overall_score": 4.57,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.6,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了 mitt 的核心能力：创建 emitter、on/off/emit、wildcard、类型导出、黑盒测试所需的包导入与接口契约，足以复现仓库主体功能；但对源码与黑盒中实际存在的 `off(type)` 清空整类监听、`symbol` 事件类型支持、以及构建产物细节覆盖不完整。",
+            "unambiguity": "核心 API、参数、返回值、事件分发语义、顺序和“当前 emit 中新增 handler 不生效”等关键行为描述清楚，黑盒实现目标明确；主要歧义点在于 `off` 前文只写了移除指定 handler，而测试契约和真实实现还支持省略 handler 清空该类型全部监听。",
+            "consistency": "大部分描述与真实源码实现一致，包括 Map 存储、同步调用、wildcard 参数、注册顺序和 emit 时复制 handler 列表；但 prompt 未体现源码和测试支持的 `symbol` 事件类型，以及 `off(type)` 无 handler 时清空全部监听这一真实行为，因此与当前实现存在轻微遗漏。",
+            "testability": "prompt 直接给出了 `require('../../dist/mitt.js')` 的导入方式、Emitter 结构、逐项行为约束和关键 edge cases，足以支撑黑盒验证核心功能；仅对符号事件与部分实现侧能力的测试指引未显式写出。"
+          }
+        },
+        {
+          "project": "javascript/login-registration",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了仓库核心能力，包括登录注册流程、Vuex 状态、路由保护、localStorage 持久化、service 层与 fake backend 分层，也点到了入口、核心目录和用户 CRUD。缺失之处主要是没有明确提到 users 模块首页加载/删除用户列表、App 壳层的告警展示方式，以及部分构建细节，但这些不构成核心能力缺失。",
+            "unambiguity": "核心技术栈、目录职责、关键行为和两项黑盒测试契约都写得比较清楚，alert 模块与 authHeader 的输入输出几乎无歧义。仍有一些实现级空白，例如路由是否必须 history 模式、首页用户列表的具体行为、登录页创建时触发 logout 的约定未明确，因此不是满分。",
+            "consistency": "prompt 与真实实现整体一致：Vue 2 + Vuex + Vue Router + VeeValidate、入口挂载、fake backend、自定义 helpers、account/alert/users 模块、user service CRUD 与 localStorage 持久化都吻合。偏差主要在于对受保护首页用户列表、删除用户行为及若干页面细节描述不足，但没有与现有实现发生明显冲突。",
+            "testability": "prompt 明确给出了黑盒测试直接依赖的导入路径、模块结构、状态变化和边界行为，足以支持实现并验证 alert 模块和 authHeader。虽然没有展开其它页面级测试或 fake backend 的细节，但对当前黑盒可验证核心能力的支持已经很强。"
+          }
+        },
+        {
+          "project": "javascript/dayjs",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.2,
+            "consistency": 4.1,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心能力：不可变的 Dayjs 包装、解析、格式化、增删改查、diff、startOf/endOf、全局 locale、plugin 扩展，以及 blackbox 所需的主要 API 契约。对真实源码中的更丰富格式 token、locale 数据结构、内部工具与类型文件、构建发布细节没有展开，但这些不属于复现当前核心库能力的主要缺口。",
+            "unambiguity": "核心入口、实例方法、不可变约束、month 0-index、number 按毫秒处理、unix 按秒处理等关键行为描述较清晰，黑盒实现方向明确。仍有少量边界不够精确，例如 isSame 实际支持 unit 参数、diff 的 float 语义、format 默认值与 toISOString 的区别、plugin/locale 的具体扩展接口未细化。",
+            "consistency": "整体上与真实实现一致：默认导出 dayjs 工厂、不可变实例、dayjs.unix、dayjs.isDayjs、add/subtract、startOf/endOf、daysInMonth、locale/extend 均符合源码结构。主要偏差在于 prompt 将 format 无参描述为类似带时区偏移的 ISO 字符串，而真实源码默认格式是 YYYY-MM-DDTHH:mm:ssZ，toISOString 才是原生 ISO；此外 isSame 在源码中支持 unit 参数而规格摘要处弱化了这一点。",
+            "testability": "Prompt直接给出了测试导入路径、函数签名、实例方法列表、关键行为和若干 edge cases，足以支撑 blackbox_tests 中 construction、getters-setters、arithmetic-comparison 的实现与验证。虽然未逐项列出所有支持的格式 token和比较单位，但对黑盒核心能力的可验证性已经很强。"
+          }
+        },
+        {
+          "project": "javascript/babel-parser",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt covers the library nature, the two main parse entry points, sourceType behavior, plugin-driven syntax, AST locations/tokens/errors, parser/tokenizer layering, and public exports, which is enough to reconstruct the core repository behavior. It omits many important real options and advanced syntax/plugin surfaces present in the codebase, plus the existing CLI and broader fixture ecosystem, so it is not fully comprehensive.",
+            "unambiguity": "Core API contracts, returned node shapes, key sourceType semantics, and incompatible plugin handling are stated clearly enough for implementation and blackbox verification. Some requirements remain broad or underspecified, such as the exact set of supported experimental plugins, Babel-compatibility boundaries, and concrete error object structure beyond throwing SyntaxError with location data.",
+            "consistency": "Most statements match the real implementation: parse/parseExpression exports, unambiguous fallback, tokTypes exposure, plugin validation, and explicit parse-error/tokenizer layers are all present. The main inconsistency is that the repository also includes a CLI entry and supports additional real options such as commonjs sourceType and many plugin-specific validations that the prompt does not acknowledge, while it also mentions removed syntax like record/tuple as supported examples.",
+            "testability": "The prompt gives directly testable contracts for package import path, parse and parseExpression behavior, AST wrapper expectations, location fields, module/script handling, plugin toggles, and invalid plugin combinations. It aligns well with the blackbox tests even though it does not fully specify optional metadata behaviors and recovery semantics in the depth covered by the full repository tests."
+          }
+        },
+        {
+          "project": "javascript/pug",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了模板编译、文件编译、客户端编译、运行时导出、register钩子和词法到代码生成的核心流水线，也点到了缓存与模块化架构；但对真实项目中同样公开且重要的compileFile、compileFileClient、renderFile、__express、插件扩展与filters能力未充分展开，因此距离完整复现当前仓库仍有缺口。",
+            "unambiguity": "黑盒测试关注的render、compile、compileClient、compileClientWithDependenciesTracked接口、基本语法和部分边界行为都写得较清楚，足以实现核心能力；但“options.locals或second arg提供变量”与真实API主要通过单个options对象传参的方式表述略混，且对include/extends、缓存、回调式API和register导出形态没有完全钉死。",
+            "consistency": "整体描述与真实实现高度一致：主入口是lib/index.js，register.js通过require.extensions注册，内部确实按lex、stripComments、parse、load、filters、link、codegen流水线组织，并暴露runtime；主要偏差是将变量提供方式写成options.locals或second arg，而当前render实现是把整个options对象作为locals上下文使用，这一点有轻微不一致。",
+            "testability": "Prompt直接给出了黑盒测试需要的导入路径、4个关键API签名、典型语法样例、空模板和语法错误等可验证行为，能够支持实现并通过主要黑盒能力测试；不足在于未明确部分真实可测接口如compileFileClient、renderFile和回调分支，但不影响核心测试落地。"
+          }
+        },
+        {
+          "project": "javascript/jest-core",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.3,
+            "consistency": 4.4,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt准确覆盖了仓库的核心职责：测试发现、调度执行、reporter协同、watch/interactive 流程、global hook 与插件式扩展，并点名了 SearchSource、TestScheduler 等关键模块；同时给出了黑盒测试所需的 FailedTestsCache 契约。不足在于对 CLI 入口、ReporterDispatcher、若干无测试场景提示与辅助模块只做了高层概述，离完整复现当前仓库仍有一定信息缺口。",
+            "unambiguity": "核心定位、主要模块分工、典型执行流程以及黑盒测试目标都描述得比较清楚，尤其 FailedTestsCache 的输入、输出和边界行为写得明确，可直接实现。歧义主要在于大范围 orchestration 能力仍停留在概念层，未细化具体导出面、交互模式行为细节和部分输出约束。",
+            "consistency": "Prompt对仓库的总体定位与真实实现基本一致：SearchSource 负责发现，TestScheduler 负责调度，watch/plugin/global hook 都是实际存在的模块；FailedTestsCache 的行为也与源码和测试相符。轻微问题是 public interface 和 package surface 写得偏宽泛，没有明确反映当前 index 导出较少这一现实，但不构成明显冲突。",
+            "testability": "Prompt明确给出了需要通过黑盒测试的具体类、方法签名与行为边界，足以支持实现可验证的核心能力；仓库中 blackbox_tests 也确实聚焦 FailedTestsCache。扣分点在于对其余高层 orchestration 能力缺少可操作的验收细则，因此除黑盒目标外，很多功能难以仅凭 prompt 进行严格验证。"
+          }
+        },
+        {
+          "project": "javascript/minimist",
+          "overall_score": 4.34,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.1,
+            "consistency": 4.0,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "prompt 覆盖了解析长短参数、布尔/字符串/默认值、别名、unknown、stopEarly、-- 分隔符、数字自动转换等核心能力，也说明了导入入口与返回结构，足以复现仓库主功能。缺失点主要是 dotted keys 生成嵌套对象、重复参数聚合为数组、原型污染防护等真实实现中的重要边界。",
+            "unambiguity": "核心输入输出和大部分选项语义写得较清楚，黑盒可依此实现主要行为。但若干边界仍有歧义，例如 boolean:true 只影响双短横无等号长参数还是所有 flag、-- 在 opts['--'] 下的精确落点、unknown 的“未识别”判定范围，以及重复参数/点路径键的处理方式。",
+            "consistency": "整体与真实实现和 README 基本一致，关于 --no-flag、数值转换、alias/default、stopEarly 等都没有明显冲突。主要不一致在于 prompt 将 -- 后参数统一描述为进入 _，而真实实现在 opts['--'] 为 true 时写入 argv['--']；同时 prompt 对 unknown flag 的表述偏简化，未反映源码按 argDefined 判定的实际逻辑。",
+            "testability": "prompt 明确给出了 require('../index.js') 的入口、函数签名、返回对象结构和多项可黑盒验证的行为示例，足以支持实现并通过主要测试。会影响满分的点是部分仓库测试覆盖的边界行为未显式写出，如 dotted keys、数组累积、原型相关防护与更细的短参数解析细节。"
+          }
+        },
+        {
+          "project": "javascript/got",
+          "overall_score": 4.24,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.0,
+            "consistency": 3.9,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 已覆盖该仓库的核心能力与主干结构，包括 promise/stream 双 API、extend/defaults、重试、超时、重定向、hooks、分页、HTTP/2 以及 `source/index.ts`、`source/create.ts`、`source/core/*`、`source/as-promise/*` 的模块划分，足以让实现者把握 got 的主体设计；但对源码里同样较重要的缓存、cookie jar、agent/DNS 细节、进度事件、额外错误类型与部分公共辅助能力提及较少，因此仍有一定缺口。",
+            "unambiguity": "黑盒测试相关的关键契约写得较明确：包导入路径、必须导出的错误类、`extend`/`mergeOptions`/`defaults`、若干边界行为都被点名；但不少核心语义仍停留在高层描述，例如 option merge 的精确策略、stream/request 对象的具体行为、超时与重试的细节、各错误构造参数与附加字段来源，足以指导大方向实现，但仍会留下实现分歧空间。",
+            "consistency": "整体描述与真实源码基本一致：项目确为 Node.js HTTP 客户端，主入口、实例工厂、core transport、as-promise 分层以及错误类和 `extend`/`defaults` 等公共接口都对得上；但仍存在少量不够贴合实现的地方，例如 prompt 将 `got.stream(url)` 描述为返回 `PassThrough` duplex stream，而源码实际是自定义 `Request` duplex 对象，并且真实导出面还包含 CacheError、ReadError、UploadError 等额外类型，说明 prompt 与当前实现并非完全严丝合缝。",
+            "testability": "Prompt 明确给出了可直接对照黑盒测试的公共接口和若干 edge case，且要求固定导入入口与模块布局，使实现结果具备较强可验证性；对错误导出、实例扩展、选项合并和默认值对象的测试支撑尤其充分。扣分点在于对流式行为、分页实际观测面、若干 hook/retry/timeout 的外部可见表现仍主要是概述，未完全细化成可断言契约。"
+          }
+        },
+        {
+          "project": "javascript/ejs",
+          "overall_score": 4.19,
+          "scores": {
+            "completeness": 3.7,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt covers the core templating engine well: tag syntax, compile/render/renderFile, includes, caching, escaping, async mode, Express adapter, and key exports. However, the real project also includes important behavior and surface area not meaningfully specified here, such as _with/locals semantics, broader include resolution options like root and views, browser and CLI-related packaging, and several public options and runtime behaviors that matter if the goal is to recreate the current repository rather than only its blackbox core.",
+            "unambiguity": "Core API signatures, major tags, escaping behavior, cache requirements, and several edge cases are stated clearly enough to guide a compatible implementation. Remaining ambiguity is mainly around include resolution details, strict mode interactions with locals access, and how some options should behave in combination, which leaves room for incompatible implementations outside the narrow happy path.",
+            "consistency": "Most described behavior aligns with the actual codebase and exported interfaces: template tags, escaping, compile/render APIs, renderFile, cache keyed by filename, include requiring filename for relative resolution, and package entrypoints. The main gaps are omissions rather than contradictions, though the prompt simplifies the full repository by underrepresenting some real options and runtime modes.",
+            "testability": "The prompt gives explicit import path, concrete API contracts, options, and observable edge cases that map well to blackbox verification of render, compile, escaping, caching, and error behavior. It misses some tested semantics from the real project such as _with behavior and stricter compatibility details, but it is still strong for implementing a blackbox-verifiable core."
+          }
+        },
+        {
+          "project": "javascript/node-cron",
+          "overall_score": 3.75,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 3.2,
+            "consistency": 2.8,
+            "testability": 4.0
+          },
+          "reasons": {
+            "completeness": "Prompt覆盖了仓库核心能力：CronTime 解析与下次触发计算、CronJob 生命周期、时区/UTC offset、命令执行、静态工厂和辅助导出，也点到了 threshold、waitForCompletion 等重要行为。缺失点在于没有说明真实项目中的部分关键导出与状态命名细节，如 isActive/isCallbackRunning、errorHandler、name，以及未覆盖 toString/toJSON/getNextDateFrom 等实际公开能力。",
+            "unambiguity": "核心目标和大部分接口较清楚，但存在会误导实现的歧义：prompt 将运行状态写成 running，而真实实现和黑盒测试使用 isActive；validateCronExpression 的错误字段示例写成 string，但真实实现返回 Error 对象；nextDates(count) 的零参数/默认行为未讲清；CronJob 构造签名也被简化，容易让实现者忽略后续参数。",
+            "consistency": "Prompt与当前实现存在几处明显冲突：API 规格和行为部分都写 running，但源码与黑盒测试使用 isActive；validateCronExpression 说明返回 error:string，而源码返回 error: CronError；Key Exports 列出 CronError 和 ExclusiveParametersError，但 src/index.ts 并未导出这两个错误类。这些都属于真实接口层面的不一致。",
+            "testability": "Prompt给出了黑盒测试关注的主要导入方式、构造方式、start/stop、nextDate/nextDates、sendAt/timeout 和表达式校验，足以驱动大部分可验证实现。扣分点是它把部分真实断言说错了，例如测试检查 isActive 而非 running，且 lastDate、CronTime 的 preset/范围/步长校验等边界虽然在功能描述里提到，但测试契约描述不够精确。"
+          }
+        }
+      ]
+    }
+  },
+  "all_projects": [
+    {
+      "project": "go/alice",
+      "language": "go",
+      "overall_score": 4.86,
+      "scores": {
+        "completeness": 4.8,
+        "unambiguity": 4.8,
+        "consistency": 5.0,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了仓库核心能力：Chain/Constructor 模型、New/Then/ThenFunc/Append/Extend 全部主接口、不可变语义、nil 处理、复用语义与中间件执行顺序；对该项目的核心实现与行为边界描述已经足以复现当前源码。仅少量工程细节如 go.mod、README 等未明确展开，但不影响核心能力覆盖。",
+        "unambiguity": "关键输入输出契约基本清晰，包导入路径、导出符号、Then 的 nil 回退、ThenFunc(nil) 的显式处理、声明顺序与执行顺序、Append/Extend 的不可变语义都写得明确，黑盒测试关注的行为点大多可直接从 prompt 推出。仅对 Chain 内部表示保留为抽象结构体，属于合理留白，不构成核心歧义。",
+        "consistency": "prompt 与真实实现保持一致：包路径为 github.com/justinas/alice，接口集合与方法签名一致，Then(nil) 和 ThenFunc(nil) 回退到 http.DefaultServeMux，一次 Then 调用会重新构造中间件实例，Append/Extend 返回新链且不修改原链，执行顺序也与 chain.go 和黑盒测试一致，未发现明显冲突。",
+        "testability": "prompt 明确列出需要实现的 API 与具体行为，包括空链、顺序执行、nil handler 回退、链复用、短路、中间件修改 request、Append/Extend 不变性及若干边界情况，几乎逐项对应黑盒测试，可直接据此构造可验证实现。未给出测试命令或目录结构，但对通过黑盒测试所需核心能力说明已经非常充分。"
+      }
+    },
+    {
+      "project": "java/idcenter",
+      "language": "java",
+      "overall_score": 4.79,
+      "scores": {
+        "completeness": 4.7,
+        "unambiguity": 4.8,
+        "consistency": 4.6,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了项目的四个核心公开构件Base62、IdWorker、SidWorker和Main，也说明了CLI子命令、输出文件写入、关键行为、边界条件和主要可见约束，已经足以复现仓库的核心能力。欠缺之处主要是没有体现真实仓库的具体Gradle目录层次和少量实现细节，例如IdWorker默认epoch取值与随机worker/datacenter生成方式，但这些不构成核心能力缺失。",
+        "unambiguity": "核心接口签名、异常类型、Base62字母表、SID位数与时间戳格式、Main的参数形式和输出行前缀都写得比较明确，黑盒测试关注的关键输入输出基本无歧义。仅有少量实现空间，例如Main对非法数字参数的处理、IdWorker内部位布局和默认构造器的随机策略未被完全规定，但不影响主要实现方向。",
+        "consistency": "Prompt与当前实现和黑盒测试整体一致：类集合、包名、子命令、输出格式、Base62字符集、IdWorker范围检查以及SidWorker的19位返回值都匹配。轻微不一致在于prompt将源码结构描述为常规src/main/java，而真实数据集源码位于嵌套的src/src/main/java；此外prompt把Base62描述为在项目需要处提供能力，而真实Main并未使用它，但这属于覆盖范围略宽，不构成关键冲突。",
+        "testability": "Prompt直接列出了黑盒测试所需的包名、类名、方法签名、示例值、异常场景以及CLI输出契约，足以支持围绕Base62编码解码、IdWorker唯一递增性、SidWorker时间戳前缀和Main文件输出进行可验证实现。测试所依赖的可观察行为几乎都被显式定义，只有极少数非关键工程细节未写明。"
+      }
+    },
+    {
+      "project": "cpp/xlsx2csv",
+      "language": "cpp",
+      "overall_score": 4.77,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.8,
+        "consistency": 4.7,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core purpose and main implementation path: ZIP-backed workbook loading, sheet enumeration, shared-string resolution, CSV export, CLI behavior, module split, and key blackbox-tested APIs. It omits some lower-level details such as exact worksheet parsing flow, XML library files, and archive internals, but those are secondary relative to reconstructing the current project.",
+        "unambiguity": "Core interfaces and observable behavior are specified clearly: exact CLI arity, exact success/error messages, return-code quirk, required module layout, output naming, and concrete API contracts for utility and workbook functions. There is only minor room for interpretation around internal parsing details and how extensively CSV formatting should mirror spreadsheet semantics.",
+        "consistency": "Prompt aligns well with the actual implementation and tests: `main.cpp` uses the documented messages and returns 0 on usage/input-file errors, `workbook` throws on invalid files via archive construction, shared-string index 0 is empty, and CSV files are written as `<sheet-name>.csv`. Minor inconsistency risk comes from small signature/path wording differences, such as describing headers as `include/...` while the real project stores them under `src/include/...`, but this does not conflict with runtime behavior.",
+        "testability": "The prompt is highly testable because it includes concrete blackbox API expectations for `string_to_idx`, `string_to_row_column`, `strip`, `workbook` construction, `get_shared_string`, and `write_to_csv`, along with exact CLI messages and output-file behaviors. These map closely to the existing blackbox tests and leave little uncertainty for verification."
+      }
+    },
+    {
+      "project": "java/Actor_relationship_game",
+      "language": "java",
+      "overall_score": 4.73,
+      "scores": {
+        "completeness": 4.7,
+        "unambiguity": 4.6,
+        "consistency": 4.8,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core domain objects, graph construction, TMDB ingestion, serialization flow, actor export stage, batch shortest-path reporting stage, real runnable entrypoints, and key API contracts. Minor gaps remain around exact report text formatting, console messages, and some build/runtime details.",
+        "unambiguity": "Core classes, responsibilities, CLI argument shapes, and blackbox-tested behaviors are stated clearly, especially for Actor, Movie, and ActorGraph. Some batch-stage observable details, such as precise output wording and formatting for report files, are still underspecified.",
+        "consistency": "Descriptions align well with the actual codebase: the project is graph/query oriented, TMDBApi is isolated, Main is only a stub, and GraphCreation, ActorGraphUtil, and GameplayInterface are the real business entrypoints. Differences are mostly omissions of implementation details rather than contradictions.",
+        "testability": "The prompt includes explicit package/class signatures, edge cases, no-op behavior, null handling, and shortest-path expectations that closely match blackbox validation needs. It is slightly less exact for end-to-end file output formatting in the runnable workflow."
+      }
+    },
+    {
+      "project": "java/java_heap",
+      "language": "java",
+      "overall_score": 4.73,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.8,
+        "consistency": 4.6,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core deliverables well: two heap implementations, separation of benchmark code, exact package and main public APIs, and the key behaviors blackbox tests exercise. It omits some real project details such as static Fibonacci statistics helpers, the public delete method, exact build layout, and concrete performance-test CLI/output shape, so it is not fully exhaustive.",
+        "unambiguity": "The required classes, package, method signatures, sentinel behavior, empty-heap behavior, merge semantics, and tested edge cases are stated very clearly. A model can infer the expected externally visible behavior with little room for confusion; only some secondary implementation details and benchmark-output specifics are left open.",
+        "consistency": "The described package, classes, major operations, and behavioral contracts are strongly aligned with the actual source and blackbox tests. Minor gaps remain because the real code also exposes additional Fibonacci methods and a concrete benchmark main routine not specified here, but there is no major conflict with the implementation.",
+        "testability": "The prompt gives near-direct blackbox contracts for the tested APIs, including constructor behavior, return values on empty heaps, merge side effects, traversal expectations, and sorted extraction properties. That makes the core functionality straightforward to implement and verify against the repository's blackbox tests."
+      }
+    },
+    {
+      "project": "go/go-cache",
+      "language": "go",
+      "overall_score": 4.67,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.7,
+        "consistency": 4.6,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库主线能力：TTL缓存、并发安全、增删改查、过期清理、回调、持久化、Items/ItemCount，以及黑盒测试依赖的核心导出与行为。主要遗漏是源码中的分片缓存实现和更大范围的类型专用自增自减族，但这些不属于复现当前L0黑盒核心能力的主体。",
+        "unambiguity": "核心接口签名、常量语义、关键行为和多项边界条件都写得较明确，尤其对Add/Replace、Get/GetWithExpiration、默认过期、NoExpiration、回调触发和自动清理条件说明充分。少量接口仍有模糊处，例如完整的类型专用数值方法集合未逐一列出，持久化的合并细节也较简略。",
+        "consistency": "Prompt与真实实现整体一致：常量值、Cache/New/NewFrom、过期语义、janitor启动条件、GetWithExpiration零时间返回、Items仅返回未过期项、OnEvicted在Delete和DeleteExpired上触发等都匹配。轻微不一致在于源码还包含实验性的sharded实现，且数值操作的完整导出面比prompt列出的更广。",
+        "testability": "Prompt直接给出包路径、关键导出、部分精确方法签名以及与黑盒测试高度对齐的行为约束，足以支持实现可黑盒验证的核心能力。测试所覆盖的Set/Get、过期、DeleteExpired、NewFrom、Items、OnEvicted、Increment/Decrement等均有明确要求；仅个别测试细节如Items快照语义和错误信息精确文案未完全固定。"
+      }
+    },
+    {
+      "project": "cpp/tinyxml2",
+      "language": "cpp",
+      "overall_score": 4.64,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了解析、DOM导航与修改、属性、序列化、Visitor、错误处理、内存池与StrPair等核心能力，也点到了500层深度限制、UTF-8/BOM、实体处理和主要节点类型，足以指导复现该仓库主体。欠缺之处主要是未完整展开真实头文件中的更广泛接口面和部分工程细节。",
+        "unambiguity": "核心类、关键方法、测试所需接口与若干边界行为写得较明确，黑盒约束也直接给出成功/失败预期。仍有少量表述停留在产品层，例如构建布局、若干返回约定、部分API精确签名与格式化细节未完全钉死，因此不是满分。",
+        "consistency": "整体描述与真实tinyxml2源码结构和黑盒测试基本一致，包括XMLDocument/XMLElement/XMLPrinter、Visitor、LoadFile/SaveFile、ErrorIDToName、深度限制和实体/BOM处理。轻微偏差在于部分能力描述比L0黑盒实际要求更宽，且没有完整反映真实库中更细的接口与错误语义。",
+        "testability": "Prompt显式列出了黑盒测试所依赖的头文件入口、关键API、错误码、返回值以及多组边界行为，对实现可验证的最小公开契约定义得很充分。即使不覆盖仓库全部测试基础设施，也足以支撑L0级黑盒实现与回归验证。"
+      }
+    },
+    {
+      "project": "cpp/base64pp",
+      "language": "cpp",
+      "overall_score": 4.62,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.2,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library purpose, core encode/decode capabilities, public API, expected layout, build files, and key edge cases well enough to reproduce the repository's main functionality. It omits some real-project details such as install/pkg-config behavior, export-header generation, optional docs/tests wiring, and the exact top-level src directory layout, but those are secondary relative to the repository's core Base64 library behavior.",
+        "unambiguity": "The required interfaces, namespace, include path, accepted alphabet, padding rules, invalid-input behavior, and representative input/output examples are stated clearly. Decode failure semantics are explicit via nullopt, and several malformed-input classes are spelled out. Remaining ambiguity is mostly around exact file placement versus the repository's real src-root layout and the precise header signatures for string-based overloads.",
+        "consistency": "The prompt is strongly aligned with the implemented repository behavior: namespace, encode/decode semantics, unpadded decode acceptance, and nullopt on invalid input all match the real code and tests. The main inconsistencies are that the prompt describes paths without the real src root and specifies string-based signatures using std::string references, while the actual public header uses std::string_view for encode_str and decode.",
+        "testability": "The prompt is highly testable because it specifies concrete API contracts, observable return types, deterministic failure cases, padding rules, known vectors, unpadded decode behavior, and a full-byte roundtrip requirement. These requirements map directly onto the blackbox tests with only minor room left for interpretation."
+      }
+    },
+    {
+      "project": "go/cobra",
+      "language": "go",
+      "overall_score": 4.6,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.4,
+        "consistency": 4.2,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了真实项目的核心能力：命令树、局部与持久flag、帮助与用法、shell completion、Active Help、生命周期hook、参数校验、flag group校验、doc生成helper，以及以Command为中心的包式架构；对L0黑盒所需API和行为也列得较全。主要不足是对真实仓库中的一些重要扩展能力仅轻描淡写或未提到，如建议纠错、命令分组、隐藏/废弃命令、模板细节、TraverseChildren、版本flag等。",
+        "unambiguity": "核心接口、执行流、hook顺序、必需flag、持久flag继承、子命令分发、help触发和若干参数校验规则都写得较明确，足以指导实现L0可验证能力。仍有少量表述留白，例如“default command-initialization behavior expected by Cobra”“custom usage/help rendering and error-handling flows”“doc-generation helpers”未细化到真实接口集合，且API示例中Flags/PersistentFlags返回flag.FlagSet而源码实际使用pflag.FlagSet，容易让实现者在依赖与兼容层上自行猜测。",
+        "consistency": "整体描述与真实cobra仓库方向一致，没有对命令树、hook继承、参数校验、completion或doc模块造成明显错误引导。主要一致性问题是测试API把Flags/PersistentFlags写成标准库flag.FlagSet而真实项目与测试实际依赖github.com/spf13/pflag；同时将MarkFlagsMutuallyExclusive/OneRequired/RequiredTogether列为顶层函数而真实接口是Command方法，且未提及若干真实公共行为如建议纠错与更多RunE/PreRunE/PostRunE变体。",
+        "testability": "Prompt专门给出黑盒测试所需的包路径、关键结构体字段、函数签名、行为约束、hook顺序与边界样例，和黑盒测试文件关注点高度对齐；实现者据此可以直接构造可验证行为。扣分点在于completion、Active Help、doc生成和flag group虽然被要求支持，但未像L0黑盒API那样给出足够具体的函数签名与输出约束，因此对仓库更广泛测试的可导向性略弱。"
+      }
+    },
+    {
+      "project": "go/sqlx",
+      "language": "go",
+      "overall_score": 4.59,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.3,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "prompt 准确覆盖了项目的核心能力：sql.DB/sql.Tx/sql.Stmt/sql.Rows 的扩展封装、Get/Select/Queryx、命名参数、Rebind/BindType、MapScan/SliceScan/LoadFile/MustExec，以及 NameMapper 与 db tag 的基本规则；对 L0 黑盒要求的 BindType、Rebind、Named、In 也给出了较完整契约。主要缺口在于没有明显覆盖项目中同样重要的 reflectx 子包、上下文相关 API、批量 NamedExec、Unsafe/Stmtx 等真实源码中的较大能力面，因此完整性略低于满分。",
+        "unambiguity": "核心接口签名、输入输出和关键边界写得比较清楚，尤其是 Rebind、Named、In 的占位符重写、参数顺序、空切片报错、缺字段报错等黑盒关键行为都较明确。少量表述仍有轻微模糊，例如 Goals 中提到 Oracle :name 风格，而测试契约实际常量和主要行为集中在 QUESTION/DOLLAR/AT；另外 Named 对 map 与 struct 的支持范围没有深入说明数组/切片批量绑定等扩展行为，但这不影响核心实现判断。",
+        "consistency": "prompt 与真实实现总体一致：BindType('postgres'/'mysql')、Rebind 对 QUESTION/DOLLAR/AT 的处理、Named 的 db tag 与 map 绑定、In 的切片展开，都与源码和黑盒测试相符。扣分点在于若按项目真实代码看，常量集还包含 UNKNOWN 和 NAMED，驱动支持也多于 prompt 所述；同时 Goals 中把 Oracle 说成 :name 风格，真实 Rebind 对 NAMED 的位置参数输出是 :argN。整体没有明显冲突，但存在少量实现细节层面的偏差与省略。",
+        "testability": "prompt 直接列出了黑盒测试所依赖的包路径、导出常量、函数签名和一批关键 edge cases，足以支撑对 BindType、Rebind、Named、In 的黑盒实现与验证。虽然没有覆盖仓库全部测试基础设施和更广泛的数据库交互行为，但对 L0 任务而言可测试性非常强。"
+      }
+    },
+    {
+      "project": "javascript/nanoid",
+      "language": "javascript",
+      "overall_score": 4.59,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.3,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心能力：安全ID生成、customAlphabet、customRandom、random、urlAlphabet，以及Node与browser双环境支持和非安全版本入口，足以复现主要实现。扣分点在于未覆盖真实仓库中存在的CLI入口、TypeScript类型声明与package exports等项目级重要组成。",
+        "unambiguity": "核心API签名、默认长度、URL-safe字符集、custom generator行为、随机字节返回类型与若干边界条件都写得比较清楚，黑盒实现目标明确。少量表述仍有模糊空间，例如customAlphabet仅说明非空字符串，但未像真实实现那样强调256字符上限只是约束而非运行时报错契约。",
+        "consistency": "大部分描述与真实实现一致，包括默认21位、urlAlphabet常量、rejection sampling、自定义随机源、Node/browser分入口与non-secure变体。主要不一致在于prompt将Node端random明确写成使用crypto.getRandomValues，而真实Node实现通过webcrypto填充池并导出池的subarray；此外customAlphabet的“非空字符串”约束并非真实实现中的显式校验契约。",
+        "testability": "Prompt直接给出了黑盒测试所需的导入路径、导出面、函数签名、常量值、非安全版本入口和关键边界行为，足以支持实现可验证的核心功能。未覆盖CLI测试或包元数据，但对L0核心黑盒能力影响较小。"
+      }
+    },
+    {
+      "project": "go/go-nanoid",
+      "language": "go",
+      "overall_score": 4.57,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.1,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library's core purpose, main exported APIs, default and custom generation paths, predefined alphabets, and key input constraints closely enough to reproduce the main package behavior. It omits some secondary implementation details and repository contents such as examples, internal helper logic shape, and exact error strings.",
+        "unambiguity": "Core interfaces, package import path, default alphabet behavior, optional size handling, panic variants, and main edge cases are stated clearly. The prompt is specific enough for the primary public contract, with only minor room for interpretation around nonessential implementation details and exact validation wording.",
+        "consistency": "Most described behavior matches the real implementation, including module path, exported functions, default size, panic wrappers, and supported alphabets. The main mismatch is that the prompt says size must be positive while the actual New(0) behavior succeeds and returns an empty string, so consistency is good but not perfect.",
+        "testability": "The prompt explicitly lists the functions under test and the main blackbox behaviors, including zero length, multiple arguments, invalid alphabets, Unicode support, and panic semantics. That gives a strong basis for implementing behavior that can be verified by the provided blackbox tests."
+      }
+    },
+    {
+      "project": "javascript/mitt",
+      "language": "javascript",
+      "overall_score": 4.57,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.6,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了 mitt 的核心能力：创建 emitter、on/off/emit、wildcard、类型导出、黑盒测试所需的包导入与接口契约，足以复现仓库主体功能；但对源码与黑盒中实际存在的 `off(type)` 清空整类监听、`symbol` 事件类型支持、以及构建产物细节覆盖不完整。",
+        "unambiguity": "核心 API、参数、返回值、事件分发语义、顺序和“当前 emit 中新增 handler 不生效”等关键行为描述清楚，黑盒实现目标明确；主要歧义点在于 `off` 前文只写了移除指定 handler，而测试契约和真实实现还支持省略 handler 清空该类型全部监听。",
+        "consistency": "大部分描述与真实源码实现一致，包括 Map 存储、同步调用、wildcard 参数、注册顺序和 emit 时复制 handler 列表；但 prompt 未体现源码和测试支持的 `symbol` 事件类型，以及 `off(type)` 无 handler 时清空全部监听这一真实行为，因此与当前实现存在轻微遗漏。",
+        "testability": "prompt 直接给出了 `require('../../dist/mitt.js')` 的导入方式、Emitter 结构、逐项行为约束和关键 edge cases，足以支撑黑盒验证核心功能；仅对符号事件与部分实现侧能力的测试指引未显式写出。"
+      }
+    },
+    {
+      "project": "go/go-env",
+      "language": "go",
+      "overall_score": 4.56,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.3,
+        "consistency": 4.6,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library's core purpose, primary parsing APIs, nested prefix behavior, defaults, required fields, slices, maps, custom parsers, generics, and key constraints. It omits several real-project details such as richer Options fields, error types, introspection depth, unset/notEmpty/init behaviors in the testing contract, and helper utilities like ToMap implementation details, so it is strong but not fully exhaustive.",
+        "unambiguity": "Core interfaces and expected behaviors are described clearly, especially the blackbox-facing contracts for Parse, ParseWithOptions, prefixes, separators, required/default handling, duration parsing, URL parsing, and nested structs. Some broader product-level statements remain slightly open-ended, such as the full scope of supported options and advanced tag semantics, which leaves minor room for interpretation outside the explicit testing subset.",
+        "consistency": "The prompt is largely consistent with the actual repository and blackbox expectations: package path, Parse and ParseWithOptions behavior, nested envPrefix composition, default precedence, required semantics, slice separators, duration parsing, and url.URL support all match the implementation. The main limitation is that the prompt presents a simplified view of the full library surface, but it does not materially conflict with the real code.",
+        "testability": "The prompt is highly testable because it states the exact import path, required exported API, supported field types, tag behavior, prefix concatenation rules, separator handling, map encoding, and concrete edge cases that align closely with the blackbox tests. Only minor gaps remain around exact error typing and some non-blackbox project features."
+      }
+    },
+    {
+      "project": "cpp/jsoncpp",
+      "language": "cpp",
+      "overall_score": 4.55,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.3,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了仓库核心能力：DOM 风格 Json::Value、Reader/CharReaderBuilder 解析、StreamWriterBuilder/FastWriter 序列化、公开头文件与 lib_json 目录划分，也列出了黑盒测试所依赖的主要 API、转换语义、writer 设置和若干边界行为。相对真实项目，仍遗漏了更完整的公开头文件集合、迭代器/forwards/config/version 等外围接口，以及真实 CMake 中共享库/静态库/对象库、安装与测试开关等工程能力，因此不是满分。",
+        "unambiguity": "核心接口、命名空间、包含路径、文件分层、关键构造函数与成员函数签名都写得较明确，黑盒关注的返回值和若干边界条件也直接给出。少量地方仍有一定弹性，例如 StreamWriterBuilder 的 operator[] 返回类型、dropNullPlaceholders 未进入 API 规格、pretty 输出的精确格式未完全约束，但对复现当前核心能力的歧义不大。",
+        "consistency": "prompt 与真实仓库的主体实现方向基本一致：公共头位于 include/json，核心实现位于 lib_json，项目是可复用 C++ JSON 库而非 CLI。与真实代码相比，构建层面被显著简化为“CMakeLists.txt define the library build”，未体现实际多目标与安装配置；另外真实仓库 API 面更广，但 prompt 没有出现明显错误接口或冲突性行为描述，因此一致性仍然较高。",
+        "testability": "prompt 明确给出了黑盒测试会使用的头文件、命名空间、类与函数契约，并补充了关键转换语义、writer 配置项和错误处理预期，足以支持实现可黑盒验证的主体功能。相比真实黑盒测试，仍有少数测试点只在测试源码中出现而未在规格中直接强调，例如 writer builder 对 dropNullPlaceholders 的覆盖较弱，因此略扣。"
+      }
+    },
+    {
+      "project": "cpp/logistic_system",
+      "language": "cpp",
+      "overall_score": 4.55,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.5,
+        "consistency": 4.1,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core CLI flows, persistence files, main modules, and the blackbox-tested APIs, including registration, login, balance changes, shipment creation, signing, and query behavior. It omits some important concrete behavior present in the real program, such as root/admin query-all privileges, the root account receiving shipping fees, the exact save-on-destruction behavior, and the single-record query API.",
+        "unambiguity": "Key inputs, outputs, commands, and tested API contracts are mostly explicit, including command vocabulary, file paths, success/failure strings, shipping cost, and several edge cases. Remaining ambiguity comes from underspecified details like the exact logistics ID numbering starting from current expressage count, role-specific query visibility, and the text-file field formatting assumptions.",
+        "consistency": "Most described behavior matches the actual codebase and blackbox expectations, especially for registration, login, money APIs, shipment assignment/signing, queryAll semantics, and CLI command names. Minor inconsistencies remain: the prompt models authority as enum class while the code uses a plain enum, it implies broader administrative management than the implementation really exposes, and it does not mention that sending to the root account is rejected and shipping fees are credited to root.",
+        "testability": "The prompt is highly testable because it spells out the required headers, public structs and methods, return-value expectations, observable CLI strings, and edge cases that align closely with the blackbox tests. The only notable gap is that some real behaviors exercised by acceptance-style flows, such as role-based access breadth and persistence formatting nuances, are not fully pinned down."
+      }
+    },
+    {
+      "project": "cpp/snappy",
+      "language": "cpp",
+      "overall_score": 4.55,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了仓库核心能力：C++/C 压缩解压接口、Source/Sink 流式接口、CompressionOptions、长度与校验工具函数、内部组件与 CMake/gtest 构建测试方向，也点到了 iovec 与 partial uncompress。缺口在于真实公开 API 中还包含 RawCompress/RawUncompress、RawUncompressToIOVec、IsValidCompressed(Source*)、GetUncompressedLength(Source*, uint32_t*)、Compress(Source*, Sink*, CompressionOptions) 等接口，且仓库内还带有较完整的单测支持与平台 stub 细节，prompt 未完整展开。",
+        "unambiguity": "核心接口签名、命名空间、头文件路径、状态码、关键行为和若干精确断言都写得很清楚，足以约束主要实现并支持复现黑盒能力。少量表述仍有边界模糊，例如把 GetUncompressedLength 描述为从 header O(1) 解析但未说明 Source 版本会消费输入、流式解压与 iovec 接口的错误语义和 ownership 约束也未细讲，不过这些不妨碍主体实现。",
+        "consistency": "整体描述与真实仓库实现一致：Snappy 的定位、64KB block、C/C++ API、Source/Sink 抽象、CompressionOptions 仅 1/2 两级、C API 默认级别、MaxCompressedLength 公式及非法输入行为都和代码与黑盒测试相符。主要偏差是将 streaming decompression、iovec decompression、UncompressAsMuchAsPossible 等写成更对称/产品化的功能清单，而真实测试只依赖部分接口；另外“tested with Google Test via CTest”更像构建期目标，仓库实际 CMake 位于 src 子目录并带 bundled googletest，这些都属轻微不完全对齐。",
+        "testability": "Prompt 明确列出了黑盒测试所需 include path、必须实现的 C/C++ API、精确返回值、公式、非法输入样例、空输入、大数据和高压缩数据等行为，和真实 blackbox_tests 的断言高度一致，因此可直接驱动实现并验证核心能力。轻微不足是没有细化构建入口与测试可执行组织方式，但对黑盒通过影响很小。"
+      }
+    },
+    {
+      "project": "go/is",
+      "language": "go",
+      "overall_score": 4.54,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.4,
+        "consistency": 4.5,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the core library purpose, main assertions, strict vs relaxed modes, runtime source parsing for expressions/comments, color toggles, and the required exported API. It omits some real implementation details such as stdout-based logging, exact failure string formatting nuances, and the pre-Go-1.7 compatibility split, but those are secondary to reproducing the current project.",
+        "unambiguity": "Core behaviors and signatures are stated clearly, including package path, strict/relaxed failure semantics, DeepEqual-based equality, nil edge cases, and Helper support. Minor ambiguity remains around exact decorated output formatting and how Helper influences caller resolution, but the main contract is sufficiently specific.",
+        "consistency": "Prompt is broadly consistent with the actual codebase: exported types and methods, reflect.DeepEqual semantics, source-based expression/comment extraction, color disabling options, and strict vs relaxed control flow all match. The main gap is that it simplifies some implementation specifics such as exact logging/output details and compatibility-file structure without introducing material contradictions.",
+        "testability": "The prompt gives explicit API contracts and edge cases that align closely with the blackbox tests, including New/NewRelaxed behavior, method wrappers, Helper, type-sensitive equality, wrapped errors, and module import path. It is highly actionable for implementing behavior that can be verified in blackbox form."
+      }
+    },
+    {
+      "project": "go/gobreaker",
+      "language": "go",
+      "overall_score": 4.54,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.6,
+        "consistency": 4.1,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the core circuit breaker state machine, settings, counts, execute flow, two-step API, and the tested v1/v2 generic APIs well enough to reproduce the main library behavior. It omits notable repository capabilities present in the real codebase, especially v2 rolling-window settings such as BucketPeriod and IsExcluded, plus distributed and redis-related modules, so it does not fully represent the full project scope.",
+        "unambiguity": "Core states, transitions, exported types, default trip condition, timeout behavior, and main error contracts are described clearly, and the testing section gives concrete API signatures and edge cases. Minor ambiguity remains around whether half-open transition is observed on State() or only on the next request, and the prompt does not spell out some v2-specific behavioral details.",
+        "consistency": "Most described behavior matches the real implementation and blackbox expectations, including default ReadyToTrip, timeout to half-open, count resets, and synchronous Execute semantics. The main mismatch is that the prompt models the v2 Settings/API as sharing the simpler v1 field set and two-step shape, while the actual v2 code adds BucketPeriod and IsExcluded and uses an error-based done callback for two-step operation.",
+        "testability": "The prompt provides explicit package paths, exported APIs, state-machine transitions, error outcomes, count rules, and v2 generic expectations that map closely to the blackbox tests. A solver could implement the tested surface from the prompt with little guesswork, though a few callback and timing nuances still rely on careful interpretation."
+      }
+    },
+    {
+      "project": "go/script",
+      "language": "go",
+      "overall_score": 4.53,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.5,
+        "consistency": 4.1,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了项目的核心定位、Pipe链式模型、主要source/filter/sink，以及黑盒测试所需的关键API与边界行为；虽未覆盖部分真实导出能力与实现细节，如Basename、Dirname、Concat的容错语义、stderr/stdout细节和更多辅助接口，但不影响理解仓库核心能力。",
+        "unambiguity": "黑盒测试相关契约写得较清楚，包含导入路径、方法签名、关键输入输出、边界条件和若干精确示例；少数表述仍略泛化，如“lazy evaluation”与“matching a pattern”等实现层细节不够严格，但整体歧义较小。",
+        "consistency": "Prompt与真实实现及黑盒测试整体一致，特别是File错误传播、Slice换行、Column按空白切分、Join保留尾换行、Reject空串语义等都匹配；但对库的真实执行模型和部分运行时语义有轻微抽象化，例如将行为概括为lazy evaluation，和源码细节并非完全等价。",
+        "testability": "Prompt直接列出测试所需API、行为与edge cases，和黑盒测试文件中的断言高度对齐，足以支持实现可验证的最小正确版本；对文件不存在、空输入、列提取、Join换行等可测点也给了明确约束。"
+      }
+    },
+    {
+      "project": "python/geotext",
+      "language": "python",
+      "overall_score": 4.51,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.1,
+        "consistency": 4.2,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library purpose, bundled data files, main module layout, GeoText constructor, and the core outputs countries, cities, nationalities, and country_mentions. It also mentions country filtering and data-driven extraction, which matches the repository's primary behavior. It omits helper functions such as read_table/build_index/get_data_path and does not spell out duplicate-preserving list behavior, so it is slightly short of fully describing the current implementation.",
+        "unambiguity": "Core API shape and blackbox-relevant behaviors are mostly explicit: import path, constructor signature, filter semantics, OrderedDict for country_mentions, case sensitivity for cities, and support for multi-word entities. Some important behavioral details remain implicit, including that outputs are lists rather than sets, repeated mentions are preserved in countries/cities/nationalities, and country_mentions also counts direct country and nationality matches in addition to city attribution.",
+        "consistency": "The prompt is broadly consistent with the current code and tests: GeoText in geotext.geotext, bundled data files, extraction of countries/cities/nationalities, country filtering affecting only cities, and OrderedDict country mention counts. The main mismatch is that the prompt says country_mentions is inferred through city attribution, while the implementation also counts direct country-name and nationality matches. The prompt also presents result containers generically, whereas the implementation returns lists with duplicates preserved.",
+        "testability": "The prompt gives concrete import paths, constructor parameters, attribute contracts, edge cases, and expected observable behavior that map closely to the blackbox tests. A developer could implement the tested functionality from the prompt with little guesswork. Minor gaps remain around duplicate handling and the exact composition of country_mentions beyond city-based counting."
+      }
+    },
+    {
+      "project": "java/lin-cms-spring-boot",
+      "language": "java",
+      "overall_score": 4.46,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.3,
+        "consistency": 4.5,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了启动入口、CMS控制器、DTO/BO、配置、拦截器、异常处理、mapper/model/service 以及文件扩展等核心面，足以说明仓库主要用途与实现骨架；但对真实代码中的 WebSocket/message 模块、若干公共 VO/通用响应层以及更具体的用户接口面提及不足，完整性仍有缺口。",
+        "unambiguity": "核心分层、技术栈、运行方式和关键黑盒目标 PageResponseVO 都说得比较明确，输入输出约束也足以指导实现；但大部分 HTTP 接口、鉴权契约和文件扩展行为仍停留在概述层，无法从 prompt 单独推导出更细的公开接口。",
+        "consistency": "对 Spring Boot + MyBatis、LatticyApplication、CMS 控制器、配置驱动、文件上传扩展、分页/日志/鉴权等描述与真实仓库整体一致，没有明显错误契约；主要问题是遗漏部分真实模块，而不是与现有实现发生冲突。",
+        "testability": "Prompt显式给出了黑盒测试针对的包名、类签名、构造器、builder、equals、toString 与边界条件，基本可直接实现并通过 PageResponseVO 黑盒校验；其余系统能力虽描述较粗，但不影响当前核心可验证目标。"
+      }
+    },
+    {
+      "project": "java/ddd-example-ecommerce",
+      "language": "java",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.3,
+        "consistency": 4.5,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了真实仓库的大部分核心边界与实现思路，包括Spring Boot入口、portal/web、catalog、cart、order、payment、delivery、warehouse、JDBC持久化和事件驱动链路，也明确补充了黑盒核心的warehouse契约。主要不足是没有点明shipping下还存在独立的dispatching子上下文，以及未提及部分真实公共值对象与页面模板层。",
+        "unambiguity": "核心架构、模块职责和warehouse的API/行为约束写得较清楚，足以指导实现主要黑盒能力。歧义主要在于若干HTTP接口只概括为REST/web controllers，未明确真实路由与返回结构；同时对shipping是delivery还是还包含dispatching、warehouse是stock还是fetch/remove goods流程也留有解释空间。",
+        "consistency": "整体描述与真实实现高度一致：项目确为Spring Boot单体、多DDD边界、显式事件发布、portal/web入口、payment/delivery REST接口以及JDBC适配层。轻微不一致在于prompt把warehouse表述为stock-oriented where present，弱化了真实代码中fetch/remove goods与事件监听职责；另外对shipping的dispatching子域提及不足。",
+        "testability": "Prompt给出了可直接黑盒验证的Amount与InStock精确契约，并要求保留可启动的Spring Boot应用、分层模块、事件发布和JDBC基础设施，能够支撑实现测试关注的核心能力。扣分点在于其余控制器和监听链路只描述到模块级，没有把真实HTTP契约、异步监听触发点和部分查询接口行为细化到测试级别。"
+      }
+    },
+    {
+      "project": "cpp/people_management",
+      "language": "cpp",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.2,
+        "consistency": 4.2,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "按当前更宽松的口径看，这个 prompt 已经覆盖了仓库的核心功能、主要能力边界和大致实现思路：人物/学校 CRUD、导师关系、SQLite 初始化、CLI 调用方式、核心类与辅助函数分层都讲清楚了，足以让人理解这个仓库是做什么的以及主要部分应如何实现。它仍然没有完整覆盖真实工程里的所有构建与目录细节，例如实际可执行文件名和 makefile 约定，但这些更偏工程细节，不应显著拉低 completeness。",
+        "unambiguity": "当前版本里核心接口和关键行为已经比较清楚：`PeopleManagement` 的方法签名、各操作所需选项、`mentor` 的 `assign` / `lookup` 动作、以及 `-student` / `-mentor` 约定都说清楚了。仍有一些次一级歧义，例如示例可执行文件名写成 `pm` 而仓库实际产物是 `UMM`，以及部分 CLI/工程层细节没有完全钉死，但这些已经不太会妨碍按 prompt 实现核心能力。",
+        "consistency": "按照你现在要求的宽松一致性口径，这个 prompt 已经没有明显与当前实现冲突的核心描述了：`school` 用学校 ID、导师关系使用 `-student` / `-mentor`、核心类和方法结构也与源码一致。剩余差异主要是工程层面的，例如示例中可执行文件名与真实仓库的 `UMM` 不同，某些细枝末节没有完全按源码逐项展开，但这些更像未覆盖细节，而不是明显冲突。",
+        "testability": "对黑盒测试来说，这个 prompt 已经相当可测：类接口、返回码语义、`person` / `school` / `mentor` 的主要约束、`-student` / `-mentor` 的动作契约都与黑盒关注点基本对齐。虽然它没有完全描述真实仓库中的所有工程辅助细节，但对实现并通过核心黑盒能力来说已经足够，testability 应明显高于之前版本。"
+      }
+    },
+    {
+      "project": "javascript/login-registration",
+      "language": "javascript",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了仓库核心能力，包括登录注册流程、Vuex 状态、路由保护、localStorage 持久化、service 层与 fake backend 分层，也点到了入口、核心目录和用户 CRUD。缺失之处主要是没有明确提到 users 模块首页加载/删除用户列表、App 壳层的告警展示方式，以及部分构建细节，但这些不构成核心能力缺失。",
+        "unambiguity": "核心技术栈、目录职责、关键行为和两项黑盒测试契约都写得比较清楚，alert 模块与 authHeader 的输入输出几乎无歧义。仍有一些实现级空白，例如路由是否必须 history 模式、首页用户列表的具体行为、登录页创建时触发 logout 的约定未明确，因此不是满分。",
+        "consistency": "prompt 与真实实现整体一致：Vue 2 + Vuex + Vue Router + VeeValidate、入口挂载、fake backend、自定义 helpers、account/alert/users 模块、user service CRUD 与 localStorage 持久化都吻合。偏差主要在于对受保护首页用户列表、删除用户行为及若干页面细节描述不足，但没有与现有实现发生明显冲突。",
+        "testability": "prompt 明确给出了黑盒测试直接依赖的导入路径、模块结构、状态变化和边界行为，足以支持实现并验证 alert 模块和 authHeader。虽然没有展开其它页面级测试或 fake backend 的细节，但对当前黑盒可验证核心能力的支持已经很强。"
+      }
+    },
+    {
+      "project": "javascript/dayjs",
+      "language": "javascript",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.2,
+        "consistency": 4.1,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心能力：不可变的 Dayjs 包装、解析、格式化、增删改查、diff、startOf/endOf、全局 locale、plugin 扩展，以及 blackbox 所需的主要 API 契约。对真实源码中的更丰富格式 token、locale 数据结构、内部工具与类型文件、构建发布细节没有展开，但这些不属于复现当前核心库能力的主要缺口。",
+        "unambiguity": "核心入口、实例方法、不可变约束、month 0-index、number 按毫秒处理、unix 按秒处理等关键行为描述较清晰，黑盒实现方向明确。仍有少量边界不够精确，例如 isSame 实际支持 unit 参数、diff 的 float 语义、format 默认值与 toISOString 的区别、plugin/locale 的具体扩展接口未细化。",
+        "consistency": "整体上与真实实现一致：默认导出 dayjs 工厂、不可变实例、dayjs.unix、dayjs.isDayjs、add/subtract、startOf/endOf、daysInMonth、locale/extend 均符合源码结构。主要偏差在于 prompt 将 format 无参描述为类似带时区偏移的 ISO 字符串，而真实源码默认格式是 YYYY-MM-DDTHH:mm:ssZ，toISOString 才是原生 ISO；此外 isSame 在源码中支持 unit 参数而规格摘要处弱化了这一点。",
+        "testability": "Prompt直接给出了测试导入路径、函数签名、实例方法列表、关键行为和若干 edge cases，足以支撑 blackbox_tests 中 construction、getters-setters、arithmetic-comparison 的实现与验证。虽然未逐项列出所有支持的格式 token和比较单位，但对黑盒核心能力的可验证性已经很强。"
+      }
+    },
+    {
+      "project": "go/xid",
+      "language": "go",
+      "overall_score": 4.43,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.2,
+        "consistency": 3.5,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心能力：12字节ID结构、生成与解析、字符串与JSON/文本/二进制编解码、字段提取、排序、database/sql集成，以及黑盒测试所需的大部分公开API与边界条件。主要欠缺在于没有覆盖真实源码中的若干实现细节与辅助模块，例如平台相关machine id读取文件、cpuset对pid扰动、独立错误常量与README层面的行为说明。",
+        "unambiguity": "核心输入输出契约总体明确，尤其是20字符base32hex格式、12字节布局、nil JSON行为、FromString/FromBytes错误条件、Compare/Sort语义和XID_MACHINE_ID约束，足以指导实现并通过主要黑盒测试。歧义点主要在于部分接口签名与真实代码不完全一致，例如Encode是否返回切片、排序是通过IDs类型还是Sort函数，以及machine ID来源描述与真实实现细节之间存在模糊地带。",
+        "consistency": "整体目标与大多数API和真实实现一致，但存在几处明显不一致：prompt声明machine ID在启动时计算一次，而真实代码在NewWithTime中每次调用readMachineID；prompt写明存在IDs类型并实现sort.Interface，但真实导出中并无该类型，仅有内部sorter和Sort函数；machine ID来源描述为hostname或/proc/self/cpuset，而真实代码中cpuset用于扰动pid，machine ID优先来自平台machine id、环境变量或hostname。这些冲突会影响按当前仓库复现的准确性。",
+        "testability": "Prompt显式列出了包路径、关键导出、黑盒测试行为和多个边界用例，测试导向很强，能够较直接地支持实现可验证版本。尤其对字符串长度与字符集、时间回读、JSON null、FromBytes长度检查、panic条件、排序与比较行为都给出了明确断言，和blackbox_tests覆盖面高度匹配。"
+      }
+    },
+    {
+      "project": "python/stocktrends",
+      "language": "python",
+      "overall_score": 4.42,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 3.9,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心能力与主要公开接口，明确包含Instrument、Renko、LineBreak、PnF及其关键可配置参数、输出列和典型使用流程，足以指导复现当前项目主体。缺失点在于没有提到真实实现中的get_bar_ohlc_data、Renko的chart_type/PRICE_MOVEMENT分支未实现现状，以及包导出面的细节，因此完整性略低于满分。",
+        "unambiguity": "核心输入输出和测试关注的API契约写得较清楚，所需列、返回DataFrame、参数含义和若干边界条件都已说明，黑盒实现方向明确。模糊处在于“normalize input column naming”表述偏泛，但真实实现并未做通用规范化；PnF的get_state仅写“Returns chart state”而未指出具体返回常量；Renko对period-close行为虽有提示，但chart_type行为边界没有完全说死。",
+        "consistency": "整体上与真实代码和黑盒测试较一致，类名、主要方法、参数和多数输出契约都对得上。但存在几处偏差：Prompt要求Instrument空DataFrame抛异常，而真实Instrument.__init__只校验列、不校验空表；Prompt声称可规范化列命名，而当前实现要求已存在小写open/high/low/close列；Prompt把PnF.roundit描述为按box_size取整，但真实方法签名带base参数且get_ohlc_data内部按box_size调用，表述上不完全贴合实现。",
+        "testability": "Prompt几乎直接给出了黑盒测试所需的导入路径、构造方式、可配置属性、返回类型、关键列、布尔列要求、参数变化导致行数变化、缺列与空表异常等，可据此实现可验证结果。唯一不足是个别断言级细节仍留有实现自由度，例如异常类型允许范围较宽、PnF状态值未枚举。"
+      }
+    },
+    {
+      "project": "python/hone",
+      "language": "python",
+      "overall_score": 4.41,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.4,
+        "consistency": 3.9,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core purpose, main Hone APIs, nested-structure generation, utility-module split, and typical conversion flow well enough to reproduce the main library behavior. It omits some notable implementation details such as populate_structure_with_data, prefix-validation helpers, and the exact default delimiter set, so it is not fully complete.",
+        "unambiguity": "Core interfaces, inputs, outputs, and several representative nesting examples are stated clearly, including concrete method signatures and expected return shapes. Some behavior remains underspecified, such as exact schema leaf values, delimiter precedence, and how custom delimiters are provided, but the main contract is still largely clear.",
+        "consistency": "Most high-level statements match the real codebase: Hone is library-oriented, conversion is centered in hone.py, and CSV/JSON helpers are separated. However, the prompt overstates configurable CSV parsing details and package entry exposure relative to the actual implementation, and it suggests JSON output helper behavior as more central than the real tested surface.",
+        "testability": "The prompt defines the tested public class and methods explicitly and gives blackbox-verifiable expectations for convert, get_schema, generate_full_structure, get_valid_splits, and clean_split. Those contracts are strong enough to drive an implementation that satisfies the repository's core blackbox behaviors, despite leaving some lower-level edge semantics implicit."
+      }
+    },
+    {
+      "project": "java/spring-boot-realworld-example-app",
+      "language": "java",
+      "overall_score": 4.4,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 4.5,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了仓库核心目标：Spring Boot RealWorld 后端、REST 与 GraphQL 双接口、用户/文章/评论/标签/资料页、分层架构与安全层，也点到了查询服务和仓储抽象，并补充了黑盒测试要求。主要缺口是没有明显写出实际基础设施实现细节，如 MyBatis、SQLite、mapper/readservice/infrastructure 层职责，以及 GraphQL 采用的具体 datafetcher/mutation 组织方式。",
+        "unambiguity": "核心能力、主要包名、公共类及黑盒测试行为写得较明确，尤其是 Article/Page/DateTimeCursor/Util 的输入输出和边界条件基本可直接实现。仍有一定模糊处：REST/GraphQL 的真实返回结构、错误处理契约、GraphQL schema 细节、以及 application/core/infrastructure 的精确职责边界未完全落细。",
+        "consistency": "整体描述与真实项目高度一致：入口为 RealWorldApplication，仓库同时提供 REST 与 GraphQL，存在 security 层、application/core 分层以及查询服务。轻微不一致在于 prompt 将安全层表述为 api/security，而真实项目还包含 infrastructure/service、infrastructure/repository、mybatis/readservice 等重要实现分层；不过这更像细节遗漏，不构成核心冲突。",
+        "testability": "prompt 明确列出了黑盒测试关注的包、类、方法签名和关键行为，足以支撑实现并通过当前 L0 黑盒校验。扣分点在于可测试约束主要集中于四个公共类，对更大范围的 REST/GraphQL 行为虽然有描述，但没有给出同等精度的可验证契约。"
+      }
+    },
+    {
+      "project": "cpp/tinyexpr-plusplus",
+      "language": "cpp",
+      "overall_score": 4.39,
+      "scores": {
+        "completeness": 4.0,
+        "unambiguity": 4.2,
+        "consistency": 4.3,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library's core parser/evaluator flow, public te_parser API, variable and function binding, separators, comments, and key built-ins well enough to reproduce the main src/tinyexpr.h and src/tinyexpr.cpp structure. It does omit several real capabilities that exist in the codebase, such as richer built-ins, bitwise/comparison/logical breadth, unknown-symbol resolution, context-function support, and some parser conveniences like leading '=' handling, so it is not fully comprehensive.",
+        "unambiguity": "The blackbox-facing contract is mostly explicit: required class/method names, include path, failure behavior, selected built-ins, and several edge cases are clearly specified. Remaining ambiguity comes from phrases like 'where supported by the library' and 'fixed-arity and variadic ... as implemented by the library', which do not precisely define the full operator/function surface actually present in the implementation.",
+        "consistency": "Most requirements match the real project and tests: header-plus-implementation layout, no namespace, te_parser-centered API, NaN-on-error behavior, built-in constants/functions, live variable pointers, and comment stripping are all consistent with the actual code. Minor mismatches remain because the prompt simplifies the real library to double-precision and a smaller feature surface, while the actual implementation also supports additional compile-time type modes and broader parser capabilities.",
+        "testability": "This prompt is highly testable because it names the exact include path, required public API, observable success/error signals, comment stripping behavior, separator setters/getters, live pointer binding semantics, and concrete evaluation examples that align closely with the blackbox tests. A few implementation-adjacent behaviors are still unstated, but the prompt is sufficient to drive a blackbox-verifiable implementation of the required core behavior."
+      }
+    },
+    {
+      "project": "cpp/robotstxt",
+      "language": "cpp",
+      "overall_score": 4.39,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 3.8,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了项目的核心能力：robots.txt 解析、匹配、reporting 组件、CLI、CMake 以及主要公开接口，并明确列出黑盒测试所需 API 与关键行为，足以指导复现当前仓库的主体功能。缺口在于未充分体现源码中的 ParseRobotsTxt 回调式解析器、LineMetadata、unsupported tags 统计、路径提取与转义等实现层面的重要细节，因此对完整性略有影响。",
+        "unambiguity": "核心输入输出和判定语义写得较清楚，尤其是 longest-match、Allow 平局优先、通配符和 $ 锚点、user-agent 校验规则、reporter 计数等黑盒行为约束较明确。仍存在一些歧义，例如 parse_results 的精确结构与 tag 枚举并未与真实代码完全对齐，CLI 的具体输出文案和返回码细节也未完全固化，导致实现时仍需结合源码推断。",
+        "consistency": "整体方向与真实仓库一致，文件划分、核心类名和大多数行为都能对应到源码与黑盒测试。但 prompt 中对 RobotsParsedLine 的描述与实际 reporting_robots.h 不一致，真实代码使用内部 RobotsTagName 枚举而非 KeyType；同时 CLI 只笼统要求 deterministic result，没有反映真实实现中的帮助参数、错误返回码和输出句式。这些都是与现有实现的可见偏差，因此一致性需明显下调。",
+        "testability": "prompt 直接给出了黑盒测试所依赖的 include path、namespace、类/函数名和一组关键行为契约，足以支持实现可被黑盒验证的核心能力；对 matcher、key type、reporter 三类测试关注点覆盖较好。扣分点在于少数接口签名表述与真实源码存在轻微抽象化，例如 string_view 与 string/char* 的差异、RobotsParsedLine 真实字段形态未完全展开。"
+      }
+    },
+    {
+      "project": "python/Hybrid_Images",
+      "language": "python",
+      "overall_score": 4.38,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.2,
+        "consistency": 3.0,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了项目核心能力：cross-correlation、convolution、Gaussian kernel、low/high pass，以及 hybrid image 组合；也说明了核心模块集中在 hybrid.py，并给出了主要数据形状、边界处理和典型使用流程。主要缺口是没有把 create_hybrid_image 的真实接口与 uint8 输出约束写成同等细度的测试契约，也未覆盖示例脚本和 acceptance 资源流。",
+        "unambiguity": "对黑盒测试关注的函数给了明确签名、输入输出 shape、dtype、零填充和数值容差，足以指导实现可验证版本。仍有少量歧义：'Support configurable sigma/kernel-size or equivalent filter parameters' 这类表述偏宽，且 hybrid-image 组合部分未像基础算子那样明确参数顺序、模式枚举和最终输出类型。",
+        "consistency": "Prompt 与仓库当前真实实现/文档存在明显接口不一致：源码和 architecture 文档中的 gaussian_blur_kernel_2d、low_pass、high_pass 参数顺序分别是 (sigma, width, height) 与 (img, sigma, size)，而 prompt 指定为 (sigma, height, width) 与 (img, kernel_size, sigma)。虽然 prompt 与黑盒测试彼此一致，但若目标是复现当前仓库实现，这些真实接口偏差会造成明显冲突。",
+        "testability": "Prompt 几乎直接给出了 blackbox tests 所需的 API contract：函数名、签名、shape、dtype、边界处理、恒等核/对称核/均值核行为、以及 low_pass 与 high_pass 的可断言关系，能够稳定支持黑盒验证核心功能。唯一不足是 acceptance 层 create_hybrid_image 的精确契约没有同样展开。"
+      }
+    },
+    {
+      "project": "javascript/babel-parser",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library nature, the two main parse entry points, sourceType behavior, plugin-driven syntax, AST locations/tokens/errors, parser/tokenizer layering, and public exports, which is enough to reconstruct the core repository behavior. It omits many important real options and advanced syntax/plugin surfaces present in the codebase, plus the existing CLI and broader fixture ecosystem, so it is not fully comprehensive.",
+        "unambiguity": "Core API contracts, returned node shapes, key sourceType semantics, and incompatible plugin handling are stated clearly enough for implementation and blackbox verification. Some requirements remain broad or underspecified, such as the exact set of supported experimental plugins, Babel-compatibility boundaries, and concrete error object structure beyond throwing SyntaxError with location data.",
+        "consistency": "Most statements match the real implementation: parse/parseExpression exports, unambiguous fallback, tokTypes exposure, plugin validation, and explicit parse-error/tokenizer layers are all present. The main inconsistency is that the repository also includes a CLI entry and supports additional real options such as commonjs sourceType and many plugin-specific validations that the prompt does not acknowledge, while it also mentions removed syntax like record/tuple as supported examples.",
+        "testability": "The prompt gives directly testable contracts for package import path, parse and parseExpression behavior, AST wrapper expectations, location fields, module/script handling, plugin toggles, and invalid plugin combinations. It aligns well with the blackbox tests even though it does not fully specify optional metadata behaviors and recovery semantics in the depth covered by the full repository tests."
+      }
+    },
+    {
+      "project": "javascript/pug",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了模板编译、文件编译、客户端编译、运行时导出、register钩子和词法到代码生成的核心流水线，也点到了缓存与模块化架构；但对真实项目中同样公开且重要的compileFile、compileFileClient、renderFile、__express、插件扩展与filters能力未充分展开，因此距离完整复现当前仓库仍有缺口。",
+        "unambiguity": "黑盒测试关注的render、compile、compileClient、compileClientWithDependenciesTracked接口、基本语法和部分边界行为都写得较清楚，足以实现核心能力；但“options.locals或second arg提供变量”与真实API主要通过单个options对象传参的方式表述略混，且对include/extends、缓存、回调式API和register导出形态没有完全钉死。",
+        "consistency": "整体描述与真实实现高度一致：主入口是lib/index.js，register.js通过require.extensions注册，内部确实按lex、stripComments、parse、load、filters、link、codegen流水线组织，并暴露runtime；主要偏差是将变量提供方式写成options.locals或second arg，而当前render实现是把整个options对象作为locals上下文使用，这一点有轻微不一致。",
+        "testability": "Prompt直接给出了黑盒测试需要的导入路径、4个关键API签名、典型语法样例、空模板和语法错误等可验证行为，能够支持实现并通过主要黑盒能力测试；不足在于未明确部分真实可测接口如compileFileClient、renderFile和回调分支，但不影响核心测试落地。"
+      }
+    },
+    {
+      "project": "javascript/jest-core",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.3,
+        "consistency": 4.4,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt准确覆盖了仓库的核心职责：测试发现、调度执行、reporter协同、watch/interactive 流程、global hook 与插件式扩展，并点名了 SearchSource、TestScheduler 等关键模块；同时给出了黑盒测试所需的 FailedTestsCache 契约。不足在于对 CLI 入口、ReporterDispatcher、若干无测试场景提示与辅助模块只做了高层概述，离完整复现当前仓库仍有一定信息缺口。",
+        "unambiguity": "核心定位、主要模块分工、典型执行流程以及黑盒测试目标都描述得比较清楚，尤其 FailedTestsCache 的输入、输出和边界行为写得明确，可直接实现。歧义主要在于大范围 orchestration 能力仍停留在概念层，未细化具体导出面、交互模式行为细节和部分输出约束。",
+        "consistency": "Prompt对仓库的总体定位与真实实现基本一致：SearchSource 负责发现，TestScheduler 负责调度，watch/plugin/global hook 都是实际存在的模块；FailedTestsCache 的行为也与源码和测试相符。轻微问题是 public interface 和 package surface 写得偏宽泛，没有明确反映当前 index 导出较少这一现实，但不构成明显冲突。",
+        "testability": "Prompt明确给出了需要通过黑盒测试的具体类、方法签名与行为边界，足以支持实现可验证的核心能力；仓库中 blackbox_tests 也确实聚焦 FailedTestsCache。扣分点在于对其余高层 orchestration 能力缺少可操作的验收细则，因此除黑盒目标外，很多功能难以仅凭 prompt 进行严格验证。"
+      }
+    },
+    {
+      "project": "python/portalocker",
+      "language": "python",
+      "overall_score": 4.35,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's main value well: low-level file locking, exported helper classes, semaphore-style coordination, optional Redis locking, and the single-file packaging CLI. It also names the main modules and the key public API. Missing pieces are mostly secondary for L0 reconstruction, such as concrete semaphore constructor contracts, package metadata/version behavior, platform-specific locker variants, and some PID-file details.",
+        "unambiguity": "Core interfaces used by the blackbox tests are mostly specified with clear names, signatures, and expected behaviors, especially for Lock, RLock, lock/unlock, open_atomic, LockFlags, and exceptions. Ambiguity remains around semaphore APIs, the exact CLI surface, Redis constructor details, and some behavioral edge cases like reentrancy/thread semantics and overwrite behavior for open_atomic.",
+        "consistency": "Most prompt claims align with the real codebase: the package root re-exports the expected APIs, low-level locking is separated from helpers, Redis support lives in a dedicated optional module, and __main__ implements the combine utility. The main mismatches are that open_atomic in the real code only supports creating a new target file, and some real helper semantics such as PidFileLock and reentrancy details are more specific than the prompt states.",
+        "testability": "The prompt is strong for blackbox-driven implementation because it explicitly lists the APIs and behaviors that the tests exercise, including constructor signatures, exception expectations, atomic-write visibility, and flag combinability. A solver could implement the tested surface directly from the prompt, with only limited inference needed for untargeted helpers."
+      }
+    },
+    {
+      "project": "python/imapclient",
+      "language": "python",
+      "overall_score": 4.34,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.1,
+        "consistency": 3.6,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了源码中的主要模块分层、根包导出关系、核心客户端能力面，以及黑盒测试涉及的 fixed_offset、imap_utf7、datetime_util、response_types。对 config、tls、exceptions、imap4、interact、testable_imapclient 等辅助模块也有点名。主要不足是对实际实现里的若干重要数据结构与行为细节覆盖较粗，例如 parse_fetch_response、Namespace、Quota/MailboxQuotaRoots、日志安全与部分低层协议流程仅高层提及。",
+        "unambiguity": "核心目标、源码布局、主类位置、模块职责和黑盒测试 API 合同都写得比较清楚，足以指导实现主要可测能力。歧义主要在于部分公共类型和字段语义与真实代码并不完全锁定，例如 response_types 中真实实现使用 dataclass 且 Envelope.date 为 datetime、Address/Envelope 字段在源码里并非都允许 None；同时主客户端的大量方法表面只按类别描述，没有逐个签名与返回契约。",
+        "consistency": "整体架构、模块边界、根包从 imapclient.py、response_parser.py、tls.py 重导出的描述与源码基本一致，也没有明显虚构 CLI 或无关构建产物。但存在几处与真实实现不完全一致的关键点：response_types 实际是 dataclass 而非 NamedTuple，Envelope.date 在真实代码中是 datetime 而非 bytes，Address/Envelope 多数字段在源码类型上也更偏向 bytes 非 Optional；这些会让按 prompt 复现的实现与当前项目真实接口发生偏差。",
+        "testability": "Prompt专门给出了 fixed_offset、imap_utf7、datetime_util、response_types 的明确接口与行为要求，和 blackbox_tests 高度对齐，足以支持实现并验证当前 L0 的核心测试面。虽然未细写更多内部解析器和主客户端的可验证示例，但对本项目现有黑盒关注点已经较充分。"
+      }
+    },
+    {
+      "project": "javascript/minimist",
+      "language": "javascript",
+      "overall_score": 4.34,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.1,
+        "consistency": 4.0,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了解析长短参数、布尔/字符串/默认值、别名、unknown、stopEarly、-- 分隔符、数字自动转换等核心能力，也说明了导入入口与返回结构，足以复现仓库主功能。缺失点主要是 dotted keys 生成嵌套对象、重复参数聚合为数组、原型污染防护等真实实现中的重要边界。",
+        "unambiguity": "核心输入输出和大部分选项语义写得较清楚，黑盒可依此实现主要行为。但若干边界仍有歧义，例如 boolean:true 只影响双短横无等号长参数还是所有 flag、-- 在 opts['--'] 下的精确落点、unknown 的“未识别”判定范围，以及重复参数/点路径键的处理方式。",
+        "consistency": "整体与真实实现和 README 基本一致，关于 --no-flag、数值转换、alias/default、stopEarly 等都没有明显冲突。主要不一致在于 prompt 将 -- 后参数统一描述为进入 _，而真实实现在 opts['--'] 为 true 时写入 argv['--']；同时 prompt 对 unknown flag 的表述偏简化，未反映源码按 argDefined 判定的实际逻辑。",
+        "testability": "prompt 明确给出了 require('../index.js') 的入口、函数签名、返回对象结构和多项可黑盒验证的行为示例，足以支持实现并通过主要测试。会影响满分的点是部分仓库测试覆盖的边界行为未显式写出，如 dotted keys、数组累积、原型相关防护与更细的短参数解析细节。"
+      }
+    },
+    {
+      "project": "python/tinydb",
+      "language": "python",
+      "overall_score": 4.33,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 3.8,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了TinyDB的核心能力，包括文档存储、多表、查询系统、存储层与中间件，也列出了主要黑盒接口；但对真实项目中的部分重要能力仍有遗漏，如Query.search、noop、update_multiple、可配置table_class/document_class、query cache，以及文档/工具链相关模块。",
+        "unambiguity": "核心API、主要查询操作、默认表名和关键行为基本写清，足以指导复现主体功能；但仍存在一些不够明确之处，例如默认构造实际使用JSONStorage而示例API写成MemoryStorage默认、tables真实返回set而非List，以及文档对象的doc_id属性与示例输出风格之间表述不够统一。",
+        "consistency": "整体方向与真实实现一致，但有几处与源码不完全贴合：构造签名把MemoryStorage写成默认值而源码默认是JSONStorage，tables标成List而源码返回set，示例返回普通dict而真实实现返回带doc_id属性的Document对象；这些不至于破坏主体实现，但确实构成可见偏差。",
+        "testability": "Prompt显式给出了黑盒测试所依赖的大多数导入方式、构造方式、查询运算、表管理、持久化与上下文管理行为，基本可以直接对照实现并验证；少量未写入的真实接口如regex search子串匹配、doc_ids版get等不会明显妨碍核心黑盒能力落地。"
+      }
+    },
+    {
+      "project": "java/image-similarity",
+      "language": "java",
+      "overall_score": 4.33,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 3.9,
+        "consistency": 4.2,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了仓库核心能力：pHash 与 histogram 两类图像相似度算法、`Main` 驱动的批处理 CLI、文件与 URL 输入，以及关键类拆分。它还给出了黑盒测试所需的主要公开接口和行为阈值，足以指导复现当前项目的主体实现。扣分点在于没有说明真实 CLI 输出格式是 `boolean + 两个路径` 的制表符分隔行，也未提到命令字实际是单字符 `h` 或默认走 pHash、输入文件按空格分隔每行两项等关键运行细节。",
+        "unambiguity": "核心接口定义相对清楚，`ImageHistogram.match(File, File)` 与 `ImagePHash.distance(File, File)` 的返回类型、取值范围和判定阈值都明确，足以支撑主要算法实现。歧义主要在 CLI：prompt 仅写 `<mode>` 和 “command/mode selector”，未说明合法取值与默认分支；输出文件说记录结果，但没有明确每行具体格式；输入行是“image pairs or comparison instructions”也比真实实现更宽泛，而源码实际上只接受每行两个路径。",
+        "consistency": "Prompt 与现有实现总体一致：确实存在 `ImagePHash`、`ImageHistogram`、`Main` 三个核心类，支持本地文件，也通过重载方法支持 URL；`match` 和 `distance` 的核心行为与阈值要求与源码表现方向一致。主要不一致或偏差在于 prompt 将 mode 选择描述得较抽象，像是多模式命令体系，而真实 `Main` 只把 `h` 作为 histogram，其余值都走 pHash；同时 prompt 没明确真实 CLI 输出契约，因此和实现存在轻微落差。",
+        "testability": "Prompt 直接列出了黑盒测试关注的公开构造器、方法签名和可验证行为，包括同图比较、相似图阈值、对称性、非负性与自定义构造器场景，因此对通过核心黑盒测试非常有帮助。相比源码，尚未把 CLI 的错误处理、命令字细节和输出文本格式精确固定下来，所以对完整端到端测试支撑略有欠缺，但对主要可测能力已经足够。"
+      }
+    },
+    {
+      "project": "java/springboot-jwt-starter",
+      "language": "java",
+      "overall_score": 4.3,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.0,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了项目核心能力：Spring Boot 入口、JWT 登录与刷新、基于角色的受保护接口、用户领域模型、服务/仓储分层，以及 TokenHelper 和安全过滤链等主要实现方向；还明确补充了黑盒测试最关键的 User 与 UserTokenState API/行为契约。主要不足是没有点出静态前端资源、application.yml/import.sql、change-password 端点、refresh 端点返回 accepted 空 token state 等次要但真实存在的实现细节。",
+        "unambiguity": "核心模块分工和典型流程表达清楚，尤其是 model 包下 User、Authority、UserTokenState 的方法签名与行为约束较明确，足以指导实现黑盒要求。歧义主要在于公开接口层面没有给出 UserController 的精确路径和方法，也未说明 /auth/refresh、/auth/change-password 的具体语义与状态码，安全配置中的 permitAll/ignored 静态资源细节也未被明确。",
+        "consistency": "prompt 与当前实现总体一致：项目确实是 JWT starter，包含 AuthenticationController、UserController、WebSecurityConfig、TokenHelper、UserService/Repository、User/Authority/UserTokenState 等，并采用角色保护和安全过滤链。轻微不一致或遗漏包括真实代码还有 change-password、refresh token、静态页面与具体安全忽略规则，且 prompt 将若干公开接口描述得更抽象，没有完全反映现有端点和配置细节。",
+        "testability": "prompt 显式列出了黑盒测试所需的包名、类名、构造器、getter/setter、副作用与边界行为，特别是 User.setPassword 的时间戳副作用、UserDetails 恒为 true、UserTokenState 使用 boxed Long 等，这些都能直接支撑黑盒验证。扣分点在于对控制器与安全链的可观察契约描述仍偏高层，没有把真实测试涉及的刷新 token 返回形态、角色受限路径和部分 HTTP 行为完整钉死。"
+      }
+    },
+    {
+      "project": "java/MyUploader-Backend",
+      "language": "java",
+      "overall_score": 4.29,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.0,
+        "consistency": 3.9,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了 Spring Boot 入口、控制器/服务/DAO/模型/配置/mapper/schema 等核心结构，也点出了普通上传、分块上传、秒传和异常测试端点，足以概括仓库主要能力；但未明确真实 REST 路径、日志切面/日志工具的具体职责，以及 quick-upload 的实际判定语义。",
+        "unambiguity": "黑盒测试相关的 File、FileUtils、UploadUtils 契约写得较清楚，输入输出和边界条件基本可实现；但项目级接口仍有模糊处，例如上传端点的具体 URL、参数绑定方式、返回体为空还是布尔值、quick-upload 的 true/false 含义，都没有被明确固定。",
+        "consistency": "整体分层和主要组件与真实仓库一致，普通上传、分块上传、秒传、DAO+mapper+schema 的描述都能对上；但存在若干实现层面的偏差或弱一致点，例如真实控制器路径为 /File、/BigFile、/QuickUpload、/Ex，秒传接口实际是按 md5 查询后返回 `fileDao.getByFile(...) == null`，其语义与常见“已存在即可秒传”表述并不完全直观。",
+        "testability": "prompt 明确列出了黑盒测试要满足的 Java 包名、类、构造器、方法签名和关键行为，足以支持实现 File/FileUtils/UploadUtils 并通过核心黑盒验证；项目其余控制器和持久化层虽然描述较抽象，但不妨碍主要可测能力落地。"
+      }
+    },
+    {
+      "project": "python/lice",
+      "language": "python",
+      "overall_score": 4.25,
+      "scores": {
+        "completeness": 3.9,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了模板发现、变量渲染、注释格式化、CLI入口与核心模块划分，也点到了默认许可证与header场景，足以概括仓库核心能力；但对真实CLI支持的`--vars`、`--licenses`、`--languages`、`--template`、写文件行为、组织名自动推断等重要能力覆盖不足，且未反映更广泛的语言映射与模板集合。",
+        "unambiguity": "黑盒相关接口的签名、主要输入输出和关键示例较明确，`extract_vars`、`generate_license`、`valid_year`、`get_suffix`、`load_template`、`format_license`的测试导向约束基本清晰；但`output rendered license text or update files according to the tool’s contract`这类CLI描述仍偏泛，部分真实返回约定如`get_suffix`返回falsy而非严格`None`也留有实现空间。",
+        "consistency": "整体描述与真实实现大体一致：入口在`lice.main()`，核心逻辑集中于`lice.core`，模板目录驱动许可证发现，注释格式化按语言映射处理；但仍有若干不完全贴合之处，例如源码实际默认许可证为`bsd3`、`get_suffix`对未知扩展返回`False`、真实项目还支持从git或用户信息猜测organization及多个CLI列举模式，这些关键实现细节未被准确反映。",
+        "testability": "Prompt直接列出了黑盒测试所依赖的核心API、签名与行为，并包含`load_template(header=True)`这一已知缺陷约束，基本可支持实现并通过当前黑盒测试；不足在于CLI层面的可验证契约没有像核心API一样细化，因此更偏向支持函数级测试而非完整项目行为测试。"
+      }
+    },
+    {
+      "project": "javascript/got",
+      "language": "javascript",
+      "overall_score": 4.24,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.0,
+        "consistency": 3.9,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 已覆盖该仓库的核心能力与主干结构，包括 promise/stream 双 API、extend/defaults、重试、超时、重定向、hooks、分页、HTTP/2 以及 `source/index.ts`、`source/create.ts`、`source/core/*`、`source/as-promise/*` 的模块划分，足以让实现者把握 got 的主体设计；但对源码里同样较重要的缓存、cookie jar、agent/DNS 细节、进度事件、额外错误类型与部分公共辅助能力提及较少，因此仍有一定缺口。",
+        "unambiguity": "黑盒测试相关的关键契约写得较明确：包导入路径、必须导出的错误类、`extend`/`mergeOptions`/`defaults`、若干边界行为都被点名；但不少核心语义仍停留在高层描述，例如 option merge 的精确策略、stream/request 对象的具体行为、超时与重试的细节、各错误构造参数与附加字段来源，足以指导大方向实现，但仍会留下实现分歧空间。",
+        "consistency": "整体描述与真实源码基本一致：项目确为 Node.js HTTP 客户端，主入口、实例工厂、core transport、as-promise 分层以及错误类和 `extend`/`defaults` 等公共接口都对得上；但仍存在少量不够贴合实现的地方，例如 prompt 将 `got.stream(url)` 描述为返回 `PassThrough` duplex stream，而源码实际是自定义 `Request` duplex 对象，并且真实导出面还包含 CacheError、ReadError、UploadError 等额外类型，说明 prompt 与当前实现并非完全严丝合缝。",
+        "testability": "Prompt 明确给出了可直接对照黑盒测试的公共接口和若干 edge case，且要求固定导入入口与模块布局，使实现结果具备较强可验证性；对错误导出、实例扩展、选项合并和默认值对象的测试支撑尤其充分。扣分点在于对流式行为、分页实际观测面、若干 hook/retry/timeout 的外部可见表现仍主要是概述，未完全细化成可断言契约。"
+      }
+    },
+    {
+      "project": "python/particle-swarm-optimization",
+      "language": "python",
+      "overall_score": 4.23,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core PSO package, main modules, Particle state, top-level minimize routine, and bundled sphere cost function, which is enough to reconstruct the main functionality. It omits some real project elements such as the example/demo flow, requirements file, and the internal velocity/position update methods that are present in source, so coverage is strong but not exhaustive.",
+        "unambiguity": "The key blackbox-tested contracts are stated clearly: import paths, required signatures, returned tuple shape, important Particle attributes, and sphere behavior. There is still some ambiguity around optional progress output, deterministic behavior requirements, and exact internal update rules/constants, which are mentioned only at a high level.",
+        "consistency": "Most requirements align with the real implementation and tests, especially the main imports and behaviors. Minor inconsistencies remain: the prompt names `pso/__init__.py` as package surface while the real file is empty, it suggests deterministic behavior without specifying seeding even though the implementation uses randomness, and it frames `minimize` as a five-argument signature while source also exposes an optional `verbose` parameter.",
+        "testability": "The prompt gives concrete API specifications for `pso.pso_simple.minimize`, `pso.pso_simple.Particle`, and `pso.cost_functions.sphere`, matching what blackbox tests exercise: tuple return, non-negative error, bounds-respecting position, first-call personal-best update, and sphere outputs. It does not spell out every tested threshold or initialization detail, but it is sufficiently test-oriented for the core behaviors."
+      }
+    },
+    {
+      "project": "java/redis-cache",
+      "language": "java",
+      "overall_score": 4.23,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.0,
+        "consistency": 4.1,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了仓库核心能力：RedisCache、两种序列化器、配置构建、回调接口与 DummyReadWriteLock，也点到了 Gradle、Java 11 与本地 Redis 依赖，足以理解项目主线并复现核心实现。主要不足是没有写清 RedisConfigurationBuilder 的真实属性加载约定、RedisConfig 继承 JedisPoolConfig、以及 RedisCache 基于 Redis hash 与 TTL 的具体行为边界。",
+        "unambiguity": "黑盒测试最关键的 DummyReadWriteLock、JDKSerializer、KryoSerializer 接口与行为约束写得比较明确，主包名和公开类型也给清楚了。仍有一些实现层面的歧义，例如 RedisCache 的具体接口契约依赖 MyBatis Cache、removeObject 返回什么、配置文件名与属性前缀、以及 callback 如何与 Jedis 资源生命周期配合，prompt 没有完全讲透。",
+        "consistency": "prompt 与真实代码总体一致：主类、序列化层、配置层、回调扩展点、DummyReadWriteLock、Gradle/Java 11、本地 Redis 依赖都能对上，且黑盒要求与现有实现兼容。轻微偏差在于 prompt 将 RedisConfigurationBuilder 和 DummyReadWriteLock 表述为公开可用组件，但源码里前者与后者本身不是 public；另外 prompt 对缓存的 update/invalidation 说法较泛，而真实实现更具体地绑定到 MyBatis Cache 与 Redis hash 操作。",
+        "testability": "prompt 专门给出了可直接对齐黑盒测试的 API 规格和边界样例，序列化与 DummyReadWriteLock 的测试目标很明确；对 RedisCache 也给出了可验证的接入流与验收标准。扣分点在于它没有明确指出 acceptance test 只实际覆盖 put/get/remove 的最小链路，也没有把 redis.properties 装载约定和 Redis 运行前置条件展开为可执行测试契约。"
+      }
+    },
+    {
+      "project": "python/marshmallow",
+      "language": "python",
+      "overall_score": 4.19,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.0,
+        "consistency": 3.4,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了 Schema、SchemaMeta、核心 fields、decorators、validators、异常、class registry 与 unknown/many/partial 等主能力，也补充了黑盒测试所需的核心 API 契约。缺点是对真实仓库中一些重要但非核心的能力描述不够完整，例如 `INCLUDE` 常量、`post_dump`/`validates_schema` 的更细行为、`data_key`/`attribute`、`dump_only`/`load_only` 的更具体契约，以及 `experimental.context` 仅一笔带过。",
+        "unambiguity": "核心目标、主要模块、常见字段类型、`dump/load/loads/dumps/validate`、以及 validator 与 decorator 的基本用途都写得较清楚，足以指导实现大部分黑盒能力。仍有若干表述偏泛，例如 unknown 只详细写了 `EXCLUDE`/`RAISE`，hooks 的参数传递与 `pass_collection`/`pass_original` 细节未系统化，`ValidationError.messages` 的形态把字段错误和实例属性混在一起描述，读者仍需从源码补齐边界。",
+        "consistency": "整体上 prompt 与真实实现大方向一致，但存在明确冲突：prompt 写明 `only` 和 `exclude` “affect serialization output only, not validation”，而源码 `Schema.__init__`/`_init_fields` 会同时影响 `load_fields` 与 `dump_fields`，并不只限序列化。另有少量与当前实现不完全贴合之处，例如仍提到 `Meta.ordered = True`，而源码注释显示 ordered 已移除且字段顺序默认保留；decorator 与 schema validator 的实际参数能力也比 prompt 更复杂。",
+        "testability": "prompt 单独列出黑盒测试 API Specifications，明确了基础字段、嵌套/列表/字典、邮箱与 URL 校验、`many`、`unknown`、required、validator 行为和错误聚合，已经能较好支持面向测试实现。扣分点在于部分测试相关行为没有完全精确定义，例如 decorator 在 `many=True` 下的调用语义、`only/exclude` 的真实作用范围、以及错误字典的更细粒度结构。"
+      }
+    },
+    {
+      "project": "javascript/ejs",
+      "language": "javascript",
+      "overall_score": 4.19,
+      "scores": {
+        "completeness": 3.7,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt covers the core templating engine well: tag syntax, compile/render/renderFile, includes, caching, escaping, async mode, Express adapter, and key exports. However, the real project also includes important behavior and surface area not meaningfully specified here, such as _with/locals semantics, broader include resolution options like root and views, browser and CLI-related packaging, and several public options and runtime behaviors that matter if the goal is to recreate the current repository rather than only its blackbox core.",
+        "unambiguity": "Core API signatures, major tags, escaping behavior, cache requirements, and several edge cases are stated clearly enough to guide a compatible implementation. Remaining ambiguity is mainly around include resolution details, strict mode interactions with locals access, and how some options should behave in combination, which leaves room for incompatible implementations outside the narrow happy path.",
+        "consistency": "Most described behavior aligns with the actual codebase and exported interfaces: template tags, escaping, compile/render APIs, renderFile, cache keyed by filename, include requiring filename for relative resolution, and package entrypoints. The main gaps are omissions rather than contradictions, though the prompt simplifies the full repository by underrepresenting some real options and runtime modes.",
+        "testability": "The prompt gives explicit import path, concrete API contracts, options, and observable edge cases that map well to blackbox verification of render, compile, escaping, caching, and error behavior. It misses some tested semantics from the real project such as _with behavior and stricter compatibility details, but it is still strong for implementing a blackbox-verifiable core."
+      }
+    },
+    {
+      "project": "java/spring-rest-ecommerce",
+      "language": "java",
+      "overall_score": 4.17,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.7,
+        "consistency": 4.5,
+        "testability": 4.3
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's main capabilities and structure: Spring Boot entrypoint, REST controllers for product/group/cart/order, storage, validators, cache, security, HATEOAS, and startup initialization. It omits some important concrete details present in code such as the core controller/root surface, exact model/repository layout, Swagger/docs integration, and several endpoint-level behaviors, so it is not fully complete for reproducing the current project exactly.",
+        "unambiguity": "High-level architecture is clear, and the blackbox-critical Cart/CartItem contract is specified precisely. However, many public REST behaviors remain underspecified for exact reconstruction: concrete request/response schemas, exact route shapes and trailing-slash variants, persistence details, login flow specifics, and how cache/security/storage are wired in code.",
+        "consistency": "The prompt is broadly consistent with the actual codebase: EcommerceStarterApplication initializes storage, controllers/services/validators/storage/cache/security packages exist, and the backend exposes the stated product/group/cart/order surfaces. The main gaps are omissions and abstraction rather than contradictions, though the prompt is more generic than the repository's exact endpoint and implementation details.",
+        "testability": "The prompt is strong for blackbox validation because it explicitly defines package, methods, defaults, mutability, and equality semantics for Cart and CartItem, which are the provided blackbox tests. Testability is reduced for the rest of the backend because most REST endpoints and security/storage flows are described only at a feature level rather than with precise observable contracts."
+      }
+    },
+    {
+      "project": "go/chi",
+      "language": "go",
+      "overall_score": 4.16,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.4,
+        "consistency": 4.6,
+        "testability": 3.9
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了该仓库最核心的路由能力：路由注册、参数与通配符匹配、分组与挂载、中间件组合、404/405 行为，以及一批关键 middleware 契约，已足以指导复现主干功能。扣分点在于对真实仓库中存在且有测试覆盖的若干能力未提及或提及不足，如 Handle/MethodFunc 之外的部分遍历与匹配接口、更多 middleware 模块和示例层能力，因此对完整源码的覆盖仍不算全面。",
+        "unambiguity": "核心接口、主要输入输出、路由语法和 middleware 作用域基本都描述清楚，尤其对 404/405、Allow 头、With/Group/Route/Mount 的行为边界说明较明确，足以减少实现分歧。仍有少量实现空间未被完全钉死，例如压缩触发条件、部分 middleware 的精细语义和部分导出接口未逐一规格化，因此仍存在一定解释余地。",
+        "consistency": "prompt 对 chi 的整体定位、核心路由模型、参数语法、上下文取参方式、分组与挂载语义、405 与 Allow 头等关键契约，与真实源码实现基本一致，没有明显误导性的接口或行为冲突。扣分主要来自对真实实现范围的选择性覆盖，而不是与源码发生直接矛盾。",
+        "testability": "prompt 明确给出包导入路径、关键 API 签名和一组可黑盒验证的行为约束，足以支撑大部分核心测试的实现与验收。主要不足是对真实黑盒中涉及的部分 middleware 能力未完整列出，且部分行为描述仍偏高层，导致实现者可能通过主干路由测试但遗漏仓库里实际存在的若干可验证功能。"
+      }
+    },
+    {
+      "project": "go/gjson",
+      "language": "go",
+      "overall_score": 4.16,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.3,
+        "consistency": 4.4,
+        "testability": 4.0
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心定位、主要公开API、关键路径语法、数组查询、过滤、modifier、自定义modifier与验证解析能力，足以描述项目主要功能与实现目标；但对真实源码中的部分重要能力如 Exists、IsObject、IsArray、Map、ForEach、Result.Index/Indexes，以及 line-oriented helpers 等没有系统展开，和仓库实际能力相比仍有一定缺口。",
+        "unambiguity": "核心输入输出契约较清楚，明确了包名、函数签名、Result主要字段与常见路径行为，并给出若干边界案例；实现者能够较明确地知道 `Get`、`GetMany`、`Parse`、`Valid` 及数组 `#` 相关语义。少数语法仍有歧义，例如 `?` 通配仅笼统描述、过滤条件写法未完整示例化、modifier 参数格式和多路径细节未完全约束。",
+        "consistency": "Prompt对项目的只读定位、点路径语法、数组索引、`#` 长度、`#.` 投影、Result 类型枚举、Valid/Parse/GetMany 等描述与真实源码和测试总体一致，没有明显错误契约；`null` 的 Exists 语义也与实现一致。主要问题是部分能力表述更偏高层，和真实仓库相比有遗漏，但几乎没有实质性冲突。",
+        "testability": "Prompt专门列出 blackbox tests 关注的导出接口和行为，对 `Get`、`GetMany`、`Parse`、`Valid`、Exists、Array、Map、对象/数组判定、null 与缺失值差异等都给了较直接的可验证契约，基本能支撑黑盒实现。扣分点在于实际黑盒还覆盖 `@pretty` modifier，而测试契约部分没有显式点出该 blackbox 依赖，需实现者从前文 general features 自行推断。"
+      }
+    },
+    {
+      "project": "python/ArXiv_digest",
+      "language": "python",
+      "overall_score": 4.06,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.3,
+        "consistency": 3.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了项目的核心能力：参数化检索、按日期过滤、控制台输出、CSV导出，以及主要函数级接口与CLI用法，足以概括仓库主流程。缺口在于没有覆盖fetch_data和main这两个实际入口流程中的实现角色，且未反映源码里摘要截断、目录自动创建等次要但真实存在的行为。",
+        "unambiguity": "整体目标和大部分输入输出说得清楚，但内部存在几处关键歧义：一处要求“四个查询字段至少一个必填”，另一处又把category写成必填；construct_query_url的测试签名未包含abstract却前文要求支持abstract；保存结果时有时写link有时写url。这些冲突会让实现者难以确定唯一正确接口。",
+        "consistency": "Prompt与当前实现存在多处明显不一致：源码中的get_args并不要求category必填；construct_query_url实际支持abstract且参数顺序/默认值不同；process_entries与print_results使用link字段，而save_to_csv测试契约写的是url；Prompt要求输出category列，但真实实现并未输出该字段。因此它不能无冲突地指导复现当前仓库。",
+        "testability": "Prompt显式列出了多个可黑盒验证的函数签名、边界条件和CLI行为，测试导向很强，足以支持复现大部分黑盒校验。扣分点主要来自字段名和参数要求的冲突，可能导致实现者即使遵循文本也在个别测试点上选错契约。"
+      }
+    },
+    {
+      "project": "cpp/area_calculation",
+      "language": "cpp",
+      "overall_score": 3.89,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 3.6,
+        "consistency": 2.8,
+        "testability": 4.0
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了项目的核心类层次、文件型 CLI、构建目标、主要头源文件拆分、构造析构输出和面积计算规则，足以让人理解仓库做什么以及核心实现方向。扣分点在于没有把真实程序会将构造/析构消息一并写入输出文件这一可观察行为说得足够明确，也没有提到 `Shape::calcArea()` 在当前实现中并非纯虚函数。",
+        "unambiguity": "输入顺序、支持的图形类型、构造析构文案和面积公式整体比较清楚，但仍有几处关键歧义：`Shape` 被写成 pure virtual 'or equivalent'，难以判断是否必须抽象；`Square` API 被写成同时继承 `Rectangle` 和 `Shape`，而真实代码只有单继承；另外 prompt 没有明确说明输出文件除了面积之外还包含生命周期打印。",
+        "consistency": "prompt 与现有实现存在明显接口级不一致：真实 `Shape.h` 中 `calcArea()` 不是纯虚函数，析构函数也不是虚的；真实 `Square` 仅继承 `Rectangle`，并不显式多继承 `Shape`；源码里 `Circle` 与 `Square` 的实现写在头文件中，而 prompt 将其概括为 `other source files`。CLI 的总体流程和构造析构文案与实现基本一致，但上述公共接口与继承结构冲突会直接影响按 prompt 复现当前仓库。",
+        "testability": "prompt 明确给出了 include 路径、CLI 调用方式、面积公式、默认构造面积为 0、以及若干数值容差和边界样例，足以支撑黑盒测试实现核心能力。主要问题是测试相关契约里把 `Square` 的继承结构和 `Shape` 的抽象性描述得偏离真实源码，可能让实现者为了满足 prompt 写出与当前项目不同但同样可测的版本。"
+      }
+    },
+    {
+      "project": "python/chakin",
+      "language": "python",
+      "overall_score": 3.87,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.7,
+        "consistency": 3.5,
+        "testability": 3.8
+      },
+      "reasons": {
+        "completeness": "Prompt covers the repository's core purpose, the CSV-backed catalog, the main modules, and the primary search/download workflow well enough to reproduce the central utility. It only misses some implementation-level details such as the exact printed column subset, dependency choices, and the concrete shape of auxiliary packaging files.",
+        "unambiguity": "Core responsibilities are mostly clear, but several contracts are loose or internally mixed: search is described as print-oriented yet also specified as returning a DataFrame, and the download API section emphasizes numeric index while the feature section also requires exact-name lookup. Those ambiguities still leave the main behavior understandable, but not fully precise.",
+        "consistency": "Most high-level descriptions match the real project: CSV-driven metadata loading, print-oriented search, and index/name-based download all reflect the implementation. The main mismatch is that the prompt's API spec suggests a DataFrame-returning search contract, while the actual implementation prints results and returns None; the download signature in the spec also omits the implemented name-based parameter.",
+        "testability": "The prompt provides explicit import paths, function names, basic signatures, edge cases, and dataset column expectations, so blackbox validation of the main behaviors is feasible. Testability is reduced by permissive wording such as allowing search to either return a DataFrame or only print output, and by leaving progress/failure behavior only broadly observable rather than tightly specified."
+      }
+    },
+    {
+      "project": "cpp/graph-cpp",
+      "language": "cpp",
+      "overall_score": 3.87,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.4,
+        "consistency": 2.9,
+        "testability": 4.1
+      },
+      "reasons": {
+        "completeness": "prompt 覆盖了自定义队列/栈、邻接表/邻接矩阵、非递归 DFS、BFS、文件型 CLI、构建文件与主要头文件路径，足以说明仓库核心功能与大致实现方向。扣分点在于没有反映当前实现里邻接矩阵类能力边界与若干真实细节，无法完整指导复现现有源码的所有关键特征。",
+        "unambiguity": "核心输入输出、遍历起点、异常场景和 CLI 调用方式写得较明确，但仍存在关键歧义：邻接矩阵类被描述为与邻接表同接口，却未明确其真实只实现 locate/setVexes/setArcs/打印；同时 API 里混用了 initializer_list、vector、const 成员函数和 0/1 基索引约定，读者较难判断应以哪套契约为准。",
+        "consistency": "与现有实现存在数个明显不一致点：prompt 声称 AdjacencyMatrixGraph 与邻接表图拥有相同接口并支持 bfs/dfs，但真实 am_graph.hpp 没有这些遍历接口；其 setArcs 真实签名使用 tuple<int,int,int> 而非 tuple<T,T,int>；Queue::front 和 Stack::top 在源码中也不是 const 成员。虽然 CLI 总体描述与源码接近，但这些公共接口层面的冲突会直接影响按 prompt 复现当前仓库。",
+        "testability": "prompt 显式列出 include 路径、类接口、遍历与异常行为，黑盒验证入口比较清晰，足以支撑实现主要可测能力。主要问题是测试契约中对邻接矩阵接口的要求高于真实源码，例如声明了与邻接表同接口，这会让按 prompt 实现的人偏离当前项目实际测试/实现边界。"
+      }
+    },
+    {
+      "project": "python/zxcvbn",
+      "language": "python",
+      "overall_score": 3.85,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 3.8,
+        "consistency": 2.9,
+        "testability": 3.7
+      },
+      "reasons": {
+        "completeness": "Prompt covers the library's core purpose and most major subsystems present in the repository: top-level zxcvbn(password, user_inputs=None), dictionary/l33t/spatial/repeat/sequence/regex/date matching, dynamic-programming scoring, feedback generation, crack-time estimation, bundled frequency lists, packaging, and CLI/stdin usage. It omits some implementation-specific boundaries and repo realities such as the exact returned fields, Decimal-based crack time values, and the actual absence of several advertised configuration hooks.",
+        "unambiguity": "The main behaviors are described clearly enough to infer a password-strength estimator with JSON-capable CLI output and pattern-based scoring, but several interfaces are underspecified or blurred. The prompt does not pin down the exact result schema, leaves CLI behavior partly informal, and states optional capabilities like max_length override without clarifying whether they are API-only, CLI-only, or both.",
+        "consistency": "There are notable conflicts with the real codebase. The actual zxcvbn function in src/zxcvbn/__init__.py accepts only password and user_inputs, and the real CLI in src/zxcvbn/__main__.py supports --user-input only; the prompt incorrectly presents max_length as an implemented API and CLI option. It also claims Python 3.8-3.13 support and no legacy/runtime quirks, while setup.py advertises older Python versions and the current code still contains Python-2-era compatibility handling.",
+        "testability": "The prompt is sufficient to implement black-box-verifiable core behavior such as returning scores, guesses, crack-time displays, feedback, and user-input-sensitive scoring. However, it does not specify the concrete output keys exercised by tests and introduces nonexistent max_length API/CLI behavior, which would misdirect an implementation relative to the repository's actual black-box contract."
+      }
+    },
+    {
+      "project": "javascript/node-cron",
+      "language": "javascript",
+      "overall_score": 3.75,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 3.2,
+        "consistency": 2.8,
+        "testability": 4.0
+      },
+      "reasons": {
+        "completeness": "Prompt覆盖了仓库核心能力：CronTime 解析与下次触发计算、CronJob 生命周期、时区/UTC offset、命令执行、静态工厂和辅助导出，也点到了 threshold、waitForCompletion 等重要行为。缺失点在于没有说明真实项目中的部分关键导出与状态命名细节，如 isActive/isCallbackRunning、errorHandler、name，以及未覆盖 toString/toJSON/getNextDateFrom 等实际公开能力。",
+        "unambiguity": "核心目标和大部分接口较清楚，但存在会误导实现的歧义：prompt 将运行状态写成 running，而真实实现和黑盒测试使用 isActive；validateCronExpression 的错误字段示例写成 string，但真实实现返回 Error 对象；nextDates(count) 的零参数/默认行为未讲清；CronJob 构造签名也被简化，容易让实现者忽略后续参数。",
+        "consistency": "Prompt与当前实现存在几处明显冲突：API 规格和行为部分都写 running，但源码与黑盒测试使用 isActive；validateCronExpression 说明返回 error:string，而源码返回 error: CronError；Key Exports 列出 CronError 和 ExclusiveParametersError，但 src/index.ts 并未导出这两个错误类。这些都属于真实接口层面的不一致。",
+        "testability": "Prompt给出了黑盒测试关注的主要导入方式、构造方式、start/stop、nextDate/nextDates、sendAt/timeout 和表达式校验，足以驱动大部分可验证实现。扣分点是它把部分真实断言说错了，例如测试检查 isActive 而非 running，且 lastDate、CronTime 的 preset/范围/步长校验等边界虽然在功能描述里提到，但测试契约描述不够精确。"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "task": "javascript/node-cron/L0_node-cron",
+  "project": "javascript/node-cron",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/node-cron/tasks/L0_node-cron/prompt.md",
+  "project_root": "datasets/javascript/node-cron",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.1,
+      "reason": "Prompt覆盖了仓库核心能力：CronTime 解析与下次触发计算、CronJob 生命周期、时区/UTC offset、命令执行、静态工厂和辅助导出，也点到了 threshold、waitForCompletion 等重要行为。缺失点在于没有说明真实项目中的部分关键导出与状态命名细节，如 isActive/isCallbackRunning、errorHandler、name，以及未覆盖 toString/toJSON/getNextDateFrom 等实际公开能力。"
+    },
+    "unambiguity": {
+      "score": 3.2,
+      "reason": "核心目标和大部分接口较清楚，但存在会误导实现的歧义：prompt 将运行状态写成 running，而真实实现和黑盒测试使用 isActive；validateCronExpression 的错误字段示例写成 string，但真实实现返回 Error 对象；nextDates(count) 的零参数/默认行为未讲清；CronJob 构造签名也被简化，容易让实现者忽略后续参数。"
+    },
+    "testability": {
+      "score": 4.0,
+      "reason": "Prompt给出了黑盒测试关注的主要导入方式、构造方式、start/stop、nextDate/nextDates、sendAt/timeout 和表达式校验，足以驱动大部分可验证实现。扣分点是它把部分真实断言说错了，例如测试检查 isActive 而非 running，且 lastDate、CronTime 的 preset/范围/步长校验等边界虽然在功能描述里提到，但测试契约描述不够精确。"
+    },
+    "consistency": {
+      "score": 2.8,
+      "reason": "Prompt与当前实现存在几处明显冲突：API 规格和行为部分都写 running，但源码与黑盒测试使用 isActive；validateCronExpression 说明返回 error:string，而源码返回 error: CronError；Key Exports 列出 CronError 和 ExclusiveParametersError，但 src/index.ts 并未导出这两个错误类。这些都属于真实接口层面的不一致。"
+    }
+  },
+  "overall_score": 3.75,
+  "raw_response_file": "L0_node-cron.raw.md"
+}

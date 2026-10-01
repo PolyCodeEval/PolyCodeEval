@@ -1,0 +1,9 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely: it decrements a uint16 cache item by the given amount, returns the new value, reports not-found for missing or expired items, and reports a type error when the stored value is not uint16. It also correctly notes that the value is updated in place and preserved in the cache. The only notable omission is that the implementation performs the operation under a cache mutex, but that is an internal concurrency detail rather than core functional behavior.",
+  "missing_functionality": [
+    "The implementation locks the cache mutex for the duration of the lookup, type check, update, and write-back."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

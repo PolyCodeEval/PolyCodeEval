@@ -1,0 +1,10 @@
+{
+  "score": 4.7,
+  "reason": "The description accurately captures all the core behavior: the input ranges for determining UTF-8 width, the failure case for values >= 0x200000 (setting *length to 0 and returning), the continuation byte encoding pattern, the correct byte order in output, and the lack of null termination. The description is complete enough to implement the function correctly. The only minor omission is the specific encoding detail of how the leading byte is formed using a FIRST_BYTE_MARK lookup table (the description says 'marked according to the total sequence length' which is accurate but vague), and it doesn't mention the fallthrough switch pattern used to write bytes in reverse order from the end of the output buffer — though the observable behavior (bytes written in normal UTF-8 order) is correctly described.",
+  "missing_functionality": [
+    "The description does not mention that bytes are written in reverse order internally (pointer advanced to end, then decremented) using a fallthrough switch — though the externally visible result is correctly described.",
+    "The specific FIRST_BYTE_MARK values (0xC0, 0xE0, 0xF0 for 2-, 3-, 4-byte sequences) are not mentioned, though the description says the leading byte is 'marked according to the total sequence length' which is functionally equivalent."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

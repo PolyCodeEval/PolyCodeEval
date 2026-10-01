@@ -1,0 +1,55 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.11,
+  "stdout": "= fields.Int(data_key=\"fooKey\")\n    \n            @validates(\"foo\")\n            def validate_foo(self, value, **kwargs):\n                raise ValidationError(\"from validates\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema(self, data, **kwargs):\n                raise ValidationError(\"from validates_schema str\", field_name=\"foo\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema2(self, data, **kwargs):\n                raise ValidationError({\"fooKey\": \"from validates_schema dict\"})\n    \n        with pytest.raises(ValidationError) as excinfo:\n>           MySchema().load({\"fooKey\": 42})\n\ntests/unit_tests/test_decorators.py:714: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:900: in _do_load\n    self._invoke_field_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MySchema(many=False)>\n\n    def _invoke_field_validators(self, *, error_store: ErrorStore, data, many: bool):\n        for attr_name, _, validator_kwargs in self._hooks[VALIDATES]:\n                    validator = getattr(self, attr_name)\n                    field_names = validator_kwargs[\"field_names\"]\n                    for field_name in field_names:\n                        try:\n                            field_obj = self.fields[field_name]\n                        except KeyError:\n                            if field_name in self.declared_fields:\n                                field_obj = self.declared_fields[field_name]\n                            else:\n                                raise\n                        data_key = field_obj.data_key if field_obj.data_key is not None else field_name\n                        if many:\n                            for idx, item in enumerate(data):\n                                try:\n                                    validator(item[data_key])\n                                except ValidationError as error:\n                                    error_store.store_error(error.messages, data_key, index=idx)\n                        else:\n                            try:\n>                               validator(data[data_key])\nE                               KeyError: 'fooKey'\n\nsrc/marshmallow/schema.py:1146: KeyError\n_____ TestFieldValidation.test_handle_error_skips_missing_item_key_in_many _____\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f92701a3eb0>\n\n    def test_handle_error_skips_missing_item_key_in_many(self):\n        class ItemSchema(Schema):\n            value = fields.Int(required=True)\n    \n            @validates(\"value\")\n            def validate_value(self, value, **kwargs):\n                if value < 0:\n                    raise ValidationError(\"Must be positive.\")\n    \n        schema = ItemSchema(many=True)\n    \n>       errors = schema.validate([{}, {\"value\": -1}])\n\ntests/unit_tests/test_schema.py:1754: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:836: in validate\n    self._do_load(data, many=many, partial=partial, postprocess=False)\nsrc/marshmallow/schema.py:900: in _do_load\n    self._invoke_field_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ItemSchema(many=True)>\n\n    def _invoke_field_validators(self, *, error_store: ErrorStore, data, many: bool):\n        for attr_name, _, validator_kwargs in self._hooks[VALIDATES]:\n                    validator = getattr(self, attr_name)\n                    field_names = validator_kwargs[\"field_names\"]\n                    for field_name in field_names:\n                        try:\n                            field_obj = self.fields[field_name]\n                        except KeyError:\n                            if field_name in self.declared_fields:\n                                field_obj = self.declared_fields[field_name]\n                            else:\n                                raise\n                        data_key = field_obj.data_key if field_obj.data_key is not None else field_name\n                        if many:\n                            for idx, item in enumerate(data):\n                                try:\n>                                   validator(item[data_key])\nE                                   KeyError: 'value'\n\nsrc/marshmallow/schema.py:1141: KeyError\n_______________ TestFieldValidation.test_ignored_if_not_in_only ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f92701ceda0>\n\n    def test_ignored_if_not_in_only(self):\n        class MySchema(Schema):\n            a = fields.Raw()\n            b = fields.Raw()\n    \n            @validates(\"a\")\n            def validate_a(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_a\"})\n    \n            @validates(\"b\")\n            def validate_b(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_b\"})\n    \n        s = MySchema(only=(\"b\",))\n>       errors = s.validate({\"b\": \"data\"})\n\ntests/unit_tests/test_schema.py:1814: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:836: in validate\n    self._do_load(data, many=many, partial=partial, postprocess=False)\nsrc/marshmallow/schema.py:900: in _do_load\n    self._invoke_field_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MySchema(many=False)>\n\n    def _invoke_field_validators(self, *, error_store: ErrorStore, data, many: bool):\n        for attr_name, _, validator_kwargs in self._hooks[VALIDATES]:\n                    validator = getattr(self, attr_name)\n                    field_names = validator_kwargs[\"field_names\"]\n                    for field_name in field_names:\n                        try:\n                            field_obj = self.fields[field_name]\n                        except KeyError:\n                            if field_name in self.declared_fields:\n                                field_obj = self.declared_fields[field_name]\n                            else:\n                                raise\n                        data_key = field_obj.data_key if field_obj.data_key is not None else field_name\n                        if many:\n                            for idx, item in enumerate(data):\n                                try:\n                                    validator(item[data_key])\n                                except ValidationError as error:\n                                    error_store.store_error(error.messages, data_key, index=idx)\n                        else:\n                            try:\n>                               validator(data[data_key])\nE                               KeyError: 'a'\n\nsrc/marshmallow/schema.py:1146: KeyError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\n======================== 9 failed, 1170 passed in 5.16s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_field_validators",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 8,
+    "total": 8
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

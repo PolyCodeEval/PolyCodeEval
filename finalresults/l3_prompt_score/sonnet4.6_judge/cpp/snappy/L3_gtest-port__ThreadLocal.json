@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_gtest-port__ThreadLocal",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-port__ThreadLocal/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-port__ThreadLocal/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/include/gtest/internal/gtest-port.h",
+  "target_symbol": "third_party/googletest/googletest/include/gtest/internal/gtest-port.h::ThreadLocal",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description accurately captures all the core behaviors of the `ThreadLocal<T>` implementation: pthread-based TLS, two construction modes (default and value-based), lazy per-thread creation via `GetOrCreateValue()`, the public API (`pointer()`, `get()`, `set()`), the `ThreadLocalValueHolderBase` hierarchy enabling C-linkage destruction callbacks, the destructor behavior (deletes current thread's value only, then calls `pthread_key_delete`), and the non-copyable constraint. The description is precise enough that an implementer could reproduce the class faithfully. One minor gap is that `pointer()` has both mutable and const overloads returning `T*` and `const T*` respectively — the description says it returns mutable or const access but doesn't explicitly note both overloads exist. Also, the factory pattern (`DefaultValueHolderFactory` / `InstanceValueHolderFactory`) used internally to defer construction is not explicitly mentioned, though the observable behavior is correctly described.",
+  "missing_functionality": [
+    "Does not mention the internal factory pattern (ValueHolderFactory, DefaultValueHolderFactory, InstanceValueHolderFactory) used to defer and parameterize per-thread object construction.",
+    "Does not explicitly note that pointer() has both a mutable (T*) and a const (const T*) overload."
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says pointer() 'returns mutable or const access' which is slightly ambiguous — both overloads exist simultaneously, not as alternatives."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-port__ThreadLocal.raw.md"
+}

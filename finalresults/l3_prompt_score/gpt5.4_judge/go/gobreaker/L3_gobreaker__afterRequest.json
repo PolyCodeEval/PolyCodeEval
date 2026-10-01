@@ -1,0 +1,24 @@
+{
+  "task": "go/gobreaker/L3_gobreaker__afterRequest",
+  "project": "go/gobreaker",
+  "language": "go",
+  "prompt_path": "datasets/go/gobreaker/tasks/L3_gobreaker__afterRequest/prompt.md",
+  "task_json_path": "datasets/go/gobreaker/tasks/L3_gobreaker__afterRequest/task.json",
+  "source_file_path": "datasets/go/gobreaker/src/v2/gobreaker.go",
+  "target_symbol": "v2/gobreaker.go::afterRequest",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation closely. It correctly captures that the function locks, checks the current generation against the request's original generation and ignores stale results, then distinguishes excluded errors from normal success/failure handling, and routes to success or failure updates using state, age, and current time. The main omission is that the function explicitly recomputes the current state/time before making decisions, and that excluded errors call a dedicated exclusion handler with only age rather than participating in success/failure bookkeeping. Those are relatively minor because the core control flow and purpose are accurately described.",
+  "missing_functionality": [
+    "It does not explicitly say that the function recomputes the current state, generation, and current time via currentState(time.Now()) before deciding what to do.",
+    "It does not make explicit that excluded errors invoke onExclusion(age) and return immediately.",
+    "It does not mention that the current state's returned age value is ignored after recomputation."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_gobreaker__afterRequest.raw.md"
+}

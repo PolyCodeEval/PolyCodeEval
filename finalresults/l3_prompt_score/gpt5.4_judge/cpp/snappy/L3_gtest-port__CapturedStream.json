@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_gtest-port__CapturedStream",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-port__CapturedStream/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-port__CapturedStream/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-port.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest-port.cc::CapturedStream",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the constructor implementation very well: it correctly identifies duplication of the original fd, creation of a platform-specific temporary file, flushing stdio, redirecting the target descriptor with dup2, closing the temporary fd, and storing state for later use. It also captures the main platform branches and the difference between Windows fatal failure and non-Windows warning-on-mkstemp failure. The main weakness is that it slightly overstates graceful behavior after non-Windows temp-file creation failure, since the code still unconditionally calls dup2(captured_fd, fd_) and close(captured_fd) even when `captured_fd == -1`, and it omits some concrete implementation details such as the exact Android/iOS temp path handling and the lack of checking `dup(fd)` failure.",
+  "missing_functionality": [
+    "Does not mention that `dup(fd)` is performed directly in the member initializer and its failure is not checked.",
+    "Does not mention that on non-Windows, after `mkstemp` failure the code still proceeds to `fflush`, `dup2(captured_fd, fd_)`, and `close(captured_fd)`."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying non-Windows failure 'still leaves the capture setup in place as far as possible' is somewhat misleading, because the implementation does not handle the failure robustly; it logs a warning but then still uses the invalid fd `-1` in `dup2` and `close`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-port__CapturedStream.raw.md"
+}

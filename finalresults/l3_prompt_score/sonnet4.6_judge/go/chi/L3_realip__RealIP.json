@@ -1,0 +1,25 @@
+{
+  "task": "go/chi/L3_realip__RealIP",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_realip__RealIP/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_realip__RealIP/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/realip.go",
+  "target_symbol": "middleware/realip.go::RealIP",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: it's an HTTP middleware that reads True-Client-IP, X-Real-IP, and X-Forwarded-For headers in priority order and replaces RemoteAddr when a valid IP is found. The priority order is correct. However, it misses one important detail from the `realIP` helper: for X-Forwarded-For, only the first comma-separated value is used (not the whole header string). It also omits the validation step — `net.ParseIP` is called and the result is only used if it parses as a valid IP address; an unparseable value is treated as empty. The description says 'non-empty parsed IP value' which hints at parsing but doesn't make the validation behavior explicit enough to reliably reproduce it.",
+  "missing_functionality": [
+    "For X-Forwarded-For, only the first comma-separated IP is extracted (strings.Cut on ','), not the full header value",
+    "The extracted IP string is validated with net.ParseIP; if it fails to parse as a valid IP, RemoteAddr is left unchanged — this validation step is not clearly described"
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'non-empty parsed IP value' is ambiguous — it could be read as just a non-empty string rather than a string that passes net.ParseIP validation"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_realip__RealIP.raw.md"
+}

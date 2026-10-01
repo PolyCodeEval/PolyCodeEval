@@ -1,0 +1,15 @@
+{
+  "score": 3.8,
+  "reason": "The description captures the overall purpose, the three wildcard types, and the general backtracking-on-failure concept correctly. However, it mischaracterizes the algorithm in an important way: the real implementation is a linear-time glob algorithm (based on the Russ Cox approach) that does NOT do recursive or progressive backtracking in the traditional sense. Instead, on encountering `*`, it saves `pattern_next = pattern` and `name_next = name + 1`, advances past `*`, and on any subsequent failure restores to those saved positions — effectively replaying from the `*` but with `name` advanced by one more character each time. The description says 'retries from that same `*` with the wildcard expanded to cover progressively more characters' which is roughly correct in outcome but implies a different mechanism than what is implemented. More critically, the description omits the key detail that `name_next` is initialized to `name + 1` (not `name`) when `*` is encountered, which is central to the algorithm's correctness and linear-time behavior. The description also does not mention that `pattern_next` and `name_next` are initialized to `pattern` and `name` respectively before the loop, which affects behavior when no `*` has been seen yet (backtracking is only possible when `name_begin < name_next`). These omissions would make it difficult to implement the exact algorithm correctly.",
+  "missing_functionality": [
+    "When `*` is encountered, `name_next` is set to `name + 1` (not `name`), which is critical to the linear-time algorithm's correctness",
+    "The backtracking guard condition: restart is only possible when `name_begin < name_next && name_next <= name_end`, meaning no backtracking occurs if no `*` has been seen",
+    "`pattern_next` and `name_next` are initialized to `pattern` and `name` before the loop, not to some sentinel, affecting initial state",
+    "The algorithm is explicitly linear-time (based on the Russ Cox glob algorithm), not a general backtracking approach"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says `*` 'first treats it as matching zero characters, and if later matching fails, it retries... with the wildcard expanded to cover progressively more characters' — this implies a retry loop driven by the `*` handler, but actually the retry is driven by the failure handler restoring saved positions, and `name_next = name + 1` means the first retry already skips one character",
+    "The phrase 'backtracking only for `*`' is correct in spirit but the mechanism described suggests a different (less efficient) implementation than the actual linear-time algorithm"
+  ],
+  "complete_enough": false
+}

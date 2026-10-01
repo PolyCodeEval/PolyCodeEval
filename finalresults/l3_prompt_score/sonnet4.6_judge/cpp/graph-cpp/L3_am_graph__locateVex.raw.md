@@ -1,0 +1,7 @@
+{
+  "score": 4.8,
+  "reason": "The description accurately captures both the core behavior (linear search through the vertex list returning the index of a matching vertex) and the failure case (returning -1 when no match is found). It is concise yet complete enough to implement the function correctly. No incorrect claims are made, and no meaningful behavior is omitted.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

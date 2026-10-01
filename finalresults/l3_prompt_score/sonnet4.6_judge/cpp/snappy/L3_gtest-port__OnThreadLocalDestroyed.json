@@ -1,0 +1,24 @@
+{
+  "task": "cpp/snappy/L3_gtest-port__OnThreadLocalDestroyed",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-port__OnThreadLocalDestroyed/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-port__OnThreadLocalDestroyed/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-port.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest-port.cc::OnThreadLocalDestroyed",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.5,
+  "reason": "The description accurately captures all the key behaviors: iterating over all threads to find and remove entries for the given thread-local instance, holding the mutex during the map cleanup, deferring destruction of value holders until after the lock is released, and doing nothing if the instance isn't found. The description is complete enough to implement the function correctly. The only minor omission is that the description says 'remove all per-thread values' implying multiple removals are expected, while the code comment notes the find can only succeed at most once (one entry per thread-local instance per thread), though the loop continues anyway. This is a subtle implementation detail that doesn't materially affect correctness of a reimplementation.",
+  "missing_functionality": [
+    "The description does not mention that the loop continues even after finding a match (the code explicitly notes it could break but doesn't), which is a minor behavioral nuance."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying 'remove all per-thread values' slightly implies multiple matches are expected, whereas the data structure guarantees at most one match per thread entry. This is a minor framing issue, not a factual error."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-port__OnThreadLocalDestroyed.raw.md"
+}

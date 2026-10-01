@@ -1,0 +1,31 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.52,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-7.4.4, pluggy-1.6.0\nrootdir: /workspace\nplugins: cov-4.1.0\ncollected 207 items\n\ntests/unit_tests/test_middlewares.py ........                            [  3%]\ntests/unit_tests/test_mypy_plugin.py ...                                 [  5%]\ntests/unit_tests/test_operations.py ..............                       [ 12%]\ntests/unit_tests/test_queries.py ................................        [ 27%]\ntests/unit_tests/test_storages.py .............                          [ 33%]\ntests/unit_tests/test_tables.py ............FF................           [ 48%]\ntests/unit_tests/test_tinydb.py ........................................ [ 67%]\n........................................................F                [ 95%]\ntests/unit_tests/test_utils.py ..........                                [100%]\n\n=================================== FAILURES ===================================\n________________ test_query_cache_with_mutable_callable[memory] ________________\n\ndb = <TinyDB tables=['_default', 'table'], tables_count=2, default_table_documents_count=3, all_tables_documents_count=['_default=3', 'table=1']>\n\n    def test_query_cache_with_mutable_callable(db):\n        table = db.table('table')\n        table.insert({'val': 5})\n    \n        mutable = 5\n        increase = lambda x: x + mutable\n    \n        assert where('val').is_cacheable()\n        assert not where('val').map(increase).is_cacheable()\n        assert not (where('val').map(increase) == 10).is_cacheable()\n    \n        search = where('val').map(increase) == 10\n        assert table.count(search) == 1\n    \n        # now `increase` would yield 15, not 10\n        mutable = 10\n    \n>       assert table.count(search) == 0\nE       AssertionError: assert 1 == 0\nE        +  where 1 = <bound method Table.count of <Table name='table', total=1, storage=<tinydb.storages.MemoryStorage object at 0x7f1e80484c70>>>(QueryImplNone)\nE        +    where <bound method Table.count of <Table name='table', total=1, storage=<tinydb.storages.MemoryStorage object at 0x7f1e80484c70>>> = <Table name='table', total=1, storage=<tinydb.storages.MemoryStorage object at 0x7f1e80484c70>>.count\n\ntests/unit_tests/test_tables.py:94: AssertionError\n_________________ test_query_cache_with_mutable_callable[json] _________________\n\ndb = <TinyDB tables=['_default', 'table'], tables_count=2, default_table_documents_count=3, all_tables_documents_count=['_default=3', 'table=1']>\n\n    def test_query_cache_with_mutable_callable(db):\n        table = db.table('table')\n        table.insert({'val': 5})\n    \n        mutable = 5\n        increase = lambda x: x + mutable\n    \n        assert where('val').is_cacheable()\n        assert not where('val').map(increase).is_cacheable()\n        assert not (where('val').map(increase) == 10).is_cacheable()\n    \n        search = where('val').map(increase) == 10\n        assert table.count(search) == 1\n    \n        # now `increase` would yield 15, not 10\n        mutable = 10\n    \n>       assert table.count(search) == 0\nE       AssertionError: assert 1 == 0\nE        +  where 1 = <bound method Table.count of <Table name='table', total=1, storage=<tinydb.storages.JSONStorage object at 0x7f1e804cf910>>>(QueryImplNone)\nE        +    where <bound method Table.count of <Table name='table', total=1, storage=<tinydb.storages.JSONStorage object at 0x7f1e804cf910>>> = <Table name='table', total=1, storage=<tinydb.storages.JSONStorage object at 0x7f1e804cf910>>.count\n\ntests/unit_tests/test_tables.py:94: AssertionError\n______________________________ test_lambda_query _______________________________\n\n    def test_lambda_query():\n        db = TinyDB(storage=MemoryStorage)\n        db.insert({'foo': 'bar'})\n    \n        query = lambda doc: doc.get('foo') == 'bar'\n        query.is_cacheable = lambda: False\n        assert db.search(query) == [{'foo': 'bar'}]\n>       assert not db._query_cache\nE       AssertionError: assert not <tinydb.utils.LRUCache object at 0x7f1e804d7670>\nE        +  where <tinydb.utils.LRUCache object at 0x7f1e804d7670> = <TinyDB tables=['_default'], tables_count=1, default_table_documents_count=1, all_tables_documents_count=['_default=1']>._query_cache\n\ntests/unit_tests/test_tinydb.py:716: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[memory]\nFAILED tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[json]\nFAILED tests/unit_tests/test_tinydb.py::test_lambda_query - AssertionError: a...\n======================== 3 failed, 204 passed in 6.09s =========================\n",
+  "stderr": "",
+  "task": "python/tinydb/L3_table__search",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[memory]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[json]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 2,
+    "total": 2
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures the two-stage ambiguity handling between JSX and Flow generic arrow parsing, the initial fallback to `super.parseMaybeAssign`, the cleanup of leaked JSX parse context after a failed JSX attempt, the Flow type-parameter parse followed by assignment-expression parsing, the rejection of parenthesized results and non-arrow results via abort, the attachment of `typeParameters` and start-location reset, the async-arrow Flow error, the fallback preference order between JSX and recoverable arrow candidates, and the final error precedence. It is also detailed enough to guide an implementation. The only minor issue is that it slightly overstates that the function adjusts both expression and start locations; in practice it specifically resets the start location on the intermediate result and then on the unwrapped arrow node, not some broader location handling.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The phrase about adjusting the expression/start locations is a bit broader than the implementation, which specifically resets start locations from the parsed type parameters on the intermediate result and the final arrow node."
+  ],
+  "complete_enough": true
+}

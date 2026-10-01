@@ -1,0 +1,21 @@
+{
+  "project": "robotstxt",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 覆盖 robots.txt 解析、匹配规则、CLI 工具、报告功能。GetKeyType（含拼写错误检测）、RobotsMatcher（最长匹配/通配符/锚点）、RobotsParsingReporter 均有描述。"
+    },
+    "unambiguity": {
+      "score": 4.4,
+      "reason": "GetKeyType 的大小写不敏感和 typo 变体（useragent/disalow 等）描述精确。RobotsMatcher 的匹配优先级（最长匹配→Allow 优先）、通配符 * 和锚点 $ 语义清晰。IsValidUserAgentToObey 规则明确。"
+    },
+    "testability": {
+      "score": 4.7,
+      "reason": "详细测试用例：空 body、全禁止 Disallow: /、通配符匹配、typo 识别、valid_directives/unused_directives 计数等，与黑盒测试覆盖一致。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "命名空间 googlebot、类名 GetKeyType/RobotsMatcher/RobotsParsingReporter 均与源码匹配。匹配语义描述与实现一致。轻微：部分内部实现（如 RobotsParsedLine 结构）prompt 简化。"
+    }
+  }
+}

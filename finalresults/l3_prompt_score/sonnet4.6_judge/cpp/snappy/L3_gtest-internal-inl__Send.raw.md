@@ -1,0 +1,9 @@
+{
+  "score": 4.7,
+  "reason": "The description accurately captures all key behaviors: the fatal check when no socket is available (including the exact error message context), the single write attempt for the full message, the warning log on partial/failed transmission including host and port details, and the absence of retries or return values. The description is complete enough to implement the function faithfully.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description says 'triggers a fatal check' which is accurate for GTEST_CHECK_, but calling it 'fatal' could be slightly misleading depending on how GTEST_CHECK_ is configured — though this is a minor nuance and not incorrect in practice."
+  ],
+  "complete_enough": true
+}

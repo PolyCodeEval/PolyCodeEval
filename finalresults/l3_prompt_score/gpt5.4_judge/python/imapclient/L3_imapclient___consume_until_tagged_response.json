@@ -1,0 +1,22 @@
+{
+  "task": "python/imapclient/L3_imapclient___consume_until_tagged_response",
+  "project": "python/imapclient",
+  "language": "python",
+  "prompt_path": "datasets/python/imapclient/tasks/L3_imapclient___consume_until_tagged_response/prompt.md",
+  "task_json_path": "datasets/python/imapclient/tasks/L3_imapclient___consume_until_tagged_response/task.json",
+  "source_file_path": "datasets/python/imapclient/src/imapclient/imapclient.py",
+  "target_symbol": "imapclient.py::_consume_until_tagged_response",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures the loop that repeatedly reads responses until the given tag has a tagged result, the collection of parsed untagged responses in order, the removal of the tagged command entry, validation via `_checkok`, and the return value `(data[0], resps)`. It is also sufficiently complete to reimplement the function. The only minor issue is that it slightly overstates that every response read before completion is an intermediate untagged response; in the implementation, `_get_response()` is called before checking whether the tag is now populated, so the final read that causes the tagged response to become available is not parsed or stored in `resps`.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "It implies every raw response line read while waiting is converted and collected as an untagged response, but the implementation first reads a line, then checks whether the tagged response has become available, and if so breaks without parsing/appending that final line."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_imapclient___consume_until_tagged_response.raw.md"
+}

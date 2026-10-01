@@ -1,0 +1,55 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.27,
+  "stdout": "a.copy()\n                ret[\"_post_dump\"] = obj[\"sentinel\"]\n                return ret\n    \n        schema = MySchema(unknown=EXCLUDE)\n        datum = {\"foo\": 42, \"sentinel\": 24}\n        item_loaded = schema.load(datum)\n        assert item_loaded[\"foo\"] == 42\n        assert item_loaded[\"_post_load\"] == 24\n    \n        item_dumped = schema.dump(datum)\n    \n>       assert item_dumped[\"foo\"] == 42\nE       TypeError: 'NoneType' object is not subscriptable\n\ntests/unit_tests/test_decorators.py:157: TypeError\n___________________ TestPassOriginal.test_pass_original_many ___________________\n\nself = <tests.unit_tests.test_decorators.TestPassOriginal object at 0x7f735ad72ef0>\n\n    def test_pass_original_many(self):\n        class MySchema(Schema):\n            foo = fields.Raw()\n    \n            @post_load(pass_collection=True, pass_original=True)\n            def post_load(self, data, original, many, **kwargs):\n                if many:\n                    ret = []\n                    for item, orig_item in zip(data, original, strict=True):\n                        item[\"_post_load\"] = orig_item[\"sentinel\"]\n                        ret.append(item)\n                else:\n                    ret = data.copy()\n                    ret[\"_post_load\"] = original[\"sentinel\"]\n                return ret\n    \n            @post_dump(pass_collection=True, pass_original=True)\n            def post_dump(self, data, original, many, **kwargs):\n                if many:\n                    ret = []\n                    for item, orig_item in zip(data, original, strict=True):\n                        item[\"_post_dump\"] = orig_item[\"sentinel\"]\n                        ret.append(item)\n                else:\n                    ret = data.copy()\n                    ret[\"_post_dump\"] = original[\"sentinel\"]\n                return ret\n    \n        schema = MySchema(unknown=EXCLUDE)\n        data = [{\"foo\": 42, \"sentinel\": 24}, {\"foo\": 424, \"sentinel\": 242}]\n        items_loaded = schema.load(data, many=True)\n        assert items_loaded == [\n            {\"foo\": 42, \"_post_load\": 24},\n            {\"foo\": 424, \"_post_load\": 242},\n        ]\n        test_values = [e[\"_post_load\"] for e in items_loaded]\n        assert test_values == [24, 242]\n    \n        items_dumped = schema.dump(data, many=True)\n>       assert items_dumped == [\n            {\"foo\": 42, \"_post_dump\": 24},\n            {\"foo\": 424, \"_post_dump\": 242},\n        ]\nE       AssertionError: assert None == [{'_post_dump': 24, 'foo': 42}, {'_post_dump': 242, 'foo': 424}]\n\ntests/unit_tests/test_decorators.py:199: AssertionError\n_____________________ test_decorated_processor_inheritance _____________________\n\n    def test_decorated_processor_inheritance():\n        class ParentSchema(Schema):\n            @post_dump\n            def inherited(self, item, **kwargs):\n                item[\"inherited\"] = \"inherited\"\n                return item\n    \n            @post_dump\n            def overridden(self, item, **kwargs):\n                item[\"overridden\"] = \"base\"\n                return item\n    \n            @post_dump\n            def deleted(self, item, **kwargs):\n                item[\"deleted\"] = \"retained\"\n                return item\n    \n        class ChildSchema(ParentSchema):\n            @post_dump\n            def overridden(self, item, **kwargs):\n                item[\"overridden\"] = \"overridden\"\n                return item\n    \n            deleted = None  # type: ignore[assignment]\n    \n        parent_dumped = ParentSchema().dump({})\n>       assert parent_dumped == {\n            \"inherited\": \"inherited\",\n            \"overridden\": \"base\",\n            \"deleted\": \"retained\",\n        }\nE       AssertionError: assert None == {'deleted': 'retained', 'inherited': 'inherited', 'overridden': 'base'}\n\ntests/unit_tests/test_decorators.py:240: AssertionError\n______________ test_decorator_error_handling_with_dump[pre_dump] _______________\n\ndecorator = <function pre_dump at 0x7f735ad3eef0>\n\n    @pytest.mark.parametrize(\"decorator\", [pre_dump, post_dump])\n    def test_decorator_error_handling_with_dump(decorator):\n        class ExampleSchema(Schema):\n            @decorator\n            def raise_value_error(self, item, **kwargs):\n                raise ValidationError({\"foo\": \"error\"})\n    \n        schema = ExampleSchema()\n>       with pytest.raises(ValidationError) as exc:\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_decorators.py:847: Failed\n______________ test_decorator_error_handling_with_dump[post_dump] ______________\n\ndecorator = <function post_dump at 0x7f735ad3ef80>\n\n    @pytest.mark.parametrize(\"decorator\", [pre_dump, post_dump])\n    def test_decorator_error_handling_with_dump(decorator):\n        class ExampleSchema(Schema):\n            @decorator\n            def raise_value_error(self, item, **kwargs):\n                raise ValidationError({\"foo\": \"error\"})\n    \n        schema = ExampleSchema()\n>       with pytest.raises(ValidationError) as exc:\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_decorators.py:847: Failed\n_ test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0] _\n\ndata = <tests.unit_tests.test_decorators.Example object at 0x7f735ad73a00>\nexpected_data = {'foo': 0}\nexpected_original_data = <tests.unit_tests.test_decorators.Nested object at 0x7f735ad73a30>\n\n    @pytest.mark.parametrize(\n        (\"data\", \"expected_data\", \"expected_original_data\"),\n        ([example, {\"foo\": 0}, example.nested[0]],),\n    )\n    def test_decorator_post_dump_with_nested_original_and_pass_collection(\n        data, expected_data, expected_original_data\n    ):\n        class NestedSchema(Schema):\n            foo = fields.Int(required=True)\n    \n            @post_dump(pass_collection=False, pass_original=True)\n            def check_pass_original_when_pass_collection_false(\n                self, data, original_data, **kwargs\n            ):\n                assert data == expected_data\n                assert original_data == expected_original_data\n                return data\n    \n            @post_dump(pass_collection=True, pass_original=True)\n            def check_pass_original_when_pass_collection_true(\n                self, data, original_data, many, **kwargs\n            ):\n                assert many is True\n                assert data == [expected_data]\n                assert original_data == [expected_original_data]\n                return data\n    \n        class ExampleSchema(Schema):\n            nested = fields.Nested(NestedSchema, required=True, many=True)\n    \n        schema = ExampleSchema()\n>       assert schema.dump(data) == {\"nested\": [{\"foo\": 0}]}\nE       AssertionError: assert {'nested': None} == {'nested': [{'foo': 0}]}\nE         \nE         Differing items:\nE         {'nested': None} != {'nested': [{'foo': 0}]}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:897: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[pre_dump]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]\n======================== 9 failed, 1170 passed in 2.99s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_dump_processors",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[pre_dump]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 8,
+    "total": 8
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

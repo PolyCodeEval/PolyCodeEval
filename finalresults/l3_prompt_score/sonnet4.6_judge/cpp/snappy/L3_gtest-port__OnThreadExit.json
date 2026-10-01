@@ -1,0 +1,22 @@
+{
+  "task": "cpp/snappy/L3_gtest-port__OnThreadExit",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-port__OnThreadExit/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-port__OnThreadExit/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-port.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest-port.cc::OnThreadExit",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description accurately captures all key behaviors: the nonzero thread ID check with last error reporting, the mutex-protected removal of the thread's entry from the global mapping, the collection of shared_ptr value holders before erasing the map entry, and the deliberate deferral of holder destruction to outside the lock. The description is precise enough that an implementer would reproduce the exact structure — pre-allocate the vector, lock, find-and-collect-then-erase, unlock, let vector destructor run. No incorrect claims are made.",
+  "missing_functionality": [
+    "The description does not explicitly mention that all per-thread-local values (the inner map entries) are iterated and each shared_ptr is pushed into the vector before the thread entry is erased — it says 'all associated value holders' which is close but slightly abstract about the iteration step."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-port__OnThreadExit.raw.md"
+}

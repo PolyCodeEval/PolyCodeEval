@@ -1,0 +1,21 @@
+{
+  "project": "spring-rest-ecommerce",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "Prompt covers the repository's main capabilities and structure: Spring Boot entrypoint, REST controllers for product/group/cart/order, storage, validators, cache, security, HATEOAS, and startup initialization. It omits some important concrete details present in code such as the core controller/root surface, exact model/repository layout, Swagger/docs integration, and several endpoint-level behaviors, so it is not fully complete for reproducing the current project exactly."
+    },
+    "unambiguity": {
+      "score": 3.7,
+      "reason": "High-level architecture is clear, and the blackbox-critical Cart/CartItem contract is specified precisely. However, many public REST behaviors remain underspecified for exact reconstruction: concrete request/response schemas, exact route shapes and trailing-slash variants, persistence details, login flow specifics, and how cache/security/storage are wired in code."
+    },
+    "testability": {
+      "score": 4.3,
+      "reason": "The prompt is strong for blackbox validation because it explicitly defines package, methods, defaults, mutability, and equality semantics for Cart and CartItem, which are the provided blackbox tests. Testability is reduced for the rest of the backend because most REST endpoints and security/storage flows are described only at a feature level rather than with precise observable contracts."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "The prompt is broadly consistent with the actual codebase: EcommerceStarterApplication initializes storage, controllers/services/validators/storage/cache/security packages exist, and the backend exposes the stated product/group/cart/order surfaces. The main gaps are omissions and abstraction rather than contradictions, though the prompt is more generic than the repository's exact endpoint and implementation details."
+    }
+  }
+}

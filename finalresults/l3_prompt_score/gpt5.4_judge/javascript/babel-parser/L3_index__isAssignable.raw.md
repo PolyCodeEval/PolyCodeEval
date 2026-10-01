@@ -1,0 +1,9 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely and covers essentially all meaningful branches. It correctly distinguishes always-assignable node types, recursive handling of object/array/object-property/spread nodes, the special rule for object spread placement, assignment operator checking, parenthesized recursion, and the binding-sensitive behavior of member expressions. It is also complete enough to reimplement the function with high fidelity. The only minor omission is that recursive calls inside nested object/property/spread/array/parenthesized cases do not pass through the `isBinding` flag, which is an implementation detail that could matter in edge cases.",
+  "missing_functionality": [
+    "The description does not mention that recursive `isAssignable` calls for ObjectExpression properties, ObjectProperty values, SpreadElement arguments, ArrayExpression elements, and ParenthesizedExpression contents are invoked without forwarding the `isBinding` parameter."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

@@ -1,0 +1,27 @@
+{
+  "task": "go/cobra/L3_bash_completions__writePreamble",
+  "project": "go/cobra",
+  "language": "go",
+  "prompt_path": "datasets/go/cobra/tasks/L3_bash_completions__writePreamble/prompt.md",
+  "task_json_path": "datasets/go/cobra/tasks/L3_bash_completions__writePreamble/task.json",
+  "source_file_path": "datasets/go/cobra/src/bash_completions.go",
+  "target_symbol": "bash_completions.go::writePreamble",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description is remarkably thorough and accurately captures nearly every helper function emitted by `writePreamble`: the debug helper, init_completion replacement, index_of_word, contains_word, handle_go_custom_completion (including directive parsing, alias-via-words[0], ActiveHelp disabling, empty-arg injection, all five directives), handle_reply (flag branch, flag-value-with-equals, flag_parsing_disabled fallthrough, prev-flag special handler, noun/command/alias completion, noun_aliases fallback, custom_func fallback, ltrim_colon_completions, single-flag nospace), handle_filename_extension_flag, handle_subdirs_in_dir_flag, handle_flag (flaghash, local_nonpersistent_flags clearing commands, two_word_flags skip, must_have_one_flag clearing), handle_noun (noun_aliases clearing must_have_one_noun), handle_command (last_command chaining, root_command at c==0), and handle_word (recursive traversal, alias resolution with aliashash, bash>3 guard). One minor omission is that handle_flag also clears `commands=()` when a local_nonpersistent_flag is seen, which the description does not mention. The description also does not explicitly mention that handle_word calls itself recursively at the end (tail recursion pattern). These are secondary details and do not materially impair implementability.",
+  "missing_functionality": [
+    "handle_flag clears the `commands` array when the current flag is found in `local_nonpersistent_flags`; this side-effect is not mentioned.",
+    "handle_word calls itself recursively at the end of every branch (tail recursion), which is the mechanism that advances through all words; the description says 'recursively walk' but attributes the recursion to handle_command rather than handle_word itself.",
+    "handle_command resolves the next function name by replacing colons with double-underscores (`words[c]//:/__`); this naming convention is not described."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the debug helper uses 'an environment variable' without naming it; the implementation uses `BASH_COMP_DEBUG_FILE`, which is a concrete detail but not strictly wrong.",
+    "The description attributes alias resolution to handle_command, but in the implementation alias lookup (aliashash) happens in handle_word before delegating to handle_command."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_bash_completions__writePreamble.raw.md"
+}

@@ -1,0 +1,29 @@
+{
+  "task": "cpp/tinyexpr-plusplus/L2_tinyexpr_cpp",
+  "project": "cpp/tinyexpr-plusplus",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyexpr-plusplus/tasks/L2_tinyexpr_cpp/prompt.md",
+  "task_json_path": "datasets/cpp/tinyexpr-plusplus/tasks/L2_tinyexpr_cpp/task.json",
+  "source_file_path": "datasets/cpp/tinyexpr-plusplus/src/tinyexpr.cpp",
+  "target_file": "tinyexpr.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.2,
+  "reason": "The file-level and function-level descriptions are highly accurate and match the implementation closely across all 67 hollowed functions. The financial functions (NPER, FV, PMT, IPMT, PV, PPMT, CUMIPMT, CUMPRINC), bitwise operations, rotation functions, variadic helpers, and parser infrastructure are all described with correct algorithmic detail. The descriptions capture key implementation nuances such as the 63-bit limit for 64-bit rotations, the `if constexpr` dispatch pattern, the `te_and_maybe_nan`/`te_or_maybe_nan` folding pattern, the closure context slot layout in `te_free_parameters`, and the comment-stripping logic in `compile()`. A few minor gaps exist: the `te_average` description says it uses `te_divide()` for division-by-zero behavior but doesn't mention the local lambda counting pattern; the `next_token` description omits the `assert(theState)` null guard and the specific `TOK_NULL` do-while loop structure; the `te_eval` description mentions `std::visit` and `make_function_arg_list`/`make_closure_arg_list` but doesn't clarify the `te_confun0` (nullary closure with context) special case; and the `te_ipmt` description's 'Excel type==1 period==1 returns 0' special case is mentioned but the full intermediate FV computation detail is slightly underspecified. Overall the descriptions are complete enough to reconstruct the file with high fidelity.",
+  "missing_functionality": [
+    "te_eval: the te_confun0 (nullary closure-with-context) branch is not mentioned in the function description, only generic closures and generic functions are called out",
+    "next_token: the assert(theState)/null guard at the top and the do-while TOK_NULL loop structure are not described",
+    "te_average: the local lambda counting pattern (isValidMaybeNan) is not described; only 'count finite inputs' is mentioned",
+    "te_ipmt: the special-case 'type==1 && period==1 returns 0' early exit (Excel behavior) is not explicitly called out in the description",
+    "te_asset_depreciation: the iterative loop that accumulates prior depreciation (costAfterDepreciation tracking) is not described in enough detail to reconstruct the exact loop structure"
+  ],
+  "incorrect_or_misleading_points": [
+    "te_round description says 'derive a power-of-10 scale from abs(decimalPlaces)' but does not clarify that decimalPlaces is cast to size_t after taking abs, which affects behavior for fractional decimal place inputs",
+    "te_left_rotate/te_right_rotate dispatch descriptions say 'else-if constexpr exactly in the current style' but te_right_rotate uses plain if constexpr (not else-if) while te_left_rotate uses else-if — the descriptions treat them as identical when they differ slightly",
+    "te_fac description says 'Cast to size_t/uint32_t' but the implementation casts to size_t for the loop bound and uses uint32_t for the accumulator — the dual-type detail could mislead a reconstructor"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_tinyexpr_cpp.raw.md"
+}

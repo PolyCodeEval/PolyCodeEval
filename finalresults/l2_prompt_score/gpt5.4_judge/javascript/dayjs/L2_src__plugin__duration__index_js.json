@@ -1,0 +1,26 @@
+{
+  "task": "javascript/dayjs/L2_src__plugin__duration__index_js",
+  "project": "javascript/dayjs",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/dayjs/tasks/L2_src__plugin__duration__index_js/prompt.md",
+  "task_json_path": "datasets/javascript/dayjs/tasks/L2_src__plugin__duration__index_js/task.json",
+  "source_file_path": "datasets/javascript/dayjs/src/src/plugin/duration/index.js",
+  "target_file": "src/plugin/duration/index.js",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level summary and all six function descriptions align very closely with the actual implementation. They correctly capture the duration plugin’s purpose, plugin wiring, constructor input modes, millisecond decomposition, ISO serialization, token formatting, unit getters, and immutable arithmetic. The descriptions are detailed enough to reconstruct the hollowed bodies with high fidelity. Only a few small implementation details are omitted or slightly softened, but none significantly distort the target behavior.",
+  "missing_functionality": [
+    "The constructor description does not explicitly note that `undefined` input does not immediately return, though later branches do not apply in practice.",
+    "The ISO-string constructor description does not mention that the leading sign capture group is ignored by the implementation; only per-component signed numeric fields are converted with `Number(...)`.",
+    "The plugin/file description does not mention the helper `manipulateDuration` implementation detail that Dayjs add/subtract with a Duration is performed by chaining year/month/day/hour/minute/second/millisecond adds rather than by adding total milliseconds."
+  ],
+  "incorrect_or_misleading_points": [
+    "The constructor description says unsupported or unmatched string input 'simply returns the instance as-is'; this is effectively true, but the implementation also leaves `this.$d` initialized to `{}` and locale set, which may matter for exact reconstruction.",
+    "The `toISOString` description says the method prefixes `-` if any formatted component is negative, which matches behavior, but it may imply proper whole-duration sign handling; the implementation actually derives negativity from component formatting rather than from a preserved leading ISO sign."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_src__plugin__duration__index_js.raw.md"
+}

@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.21,
+  "stdout": ", _ranked_dictionaries=RANKED_DICTIONARIES,\n                   _l33t_table=L33T_TABLE):\n        subs = relevant_l33t_subtable(password, _l33t_table)\n        for sub in enumerate_l33t_subs(subs):\n            if not sub:\n                continue\n            subbed_password = translate(password, sub)\n            for match in dictionary_match(subbed_password, _ranked_dictionaries):\n                token = password[match['i']:match['j'] + 1]\n                if token.lower() == match['matched_word']:\n                    continue\n    \n                used_sub = {}\n                for i, c in enumerate(token):\n                    subbed_chr = sub.get(c)\n                    if subbed_chr and subbed_password[match['i'] + i] == subbed_chr:\n                        used_sub[c] = subbed_chr\n    \n                if not used_sub:\n                    continue\n    \n                match_sub = {}\n                for k, v in used_sub.items():\n                    match_sub[k] = v\n    \n                match['token'] = token\n                match['sub'] = match_sub\n                match['sub_display'] = ', '.join(['%s -> %s' % (k, v) for k, v in sorted(match_sub.items())])\n                match['l33t'] = True\n                matches.append(match)\n    \n>       return sorted(matches, key=lambda x: (x['i'], x['j']))\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:246: NameError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojw...ejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej'\n_ranked_dictionaries = {'english_wikipedia': {\"'aliabad\": 26981, \"'best\": 9383, \"'black\": 17306, \"'blue\": 26324, ...}, 'female_names': {'abbe... 'abel': 420, ...}, 'passwords': {'!qaz2wsx': 8441, '!qazxsw2': 22176, '%%passwo': 9943, '%e2%82%ac': 27913, ...}, ...}\n_l33t_table = {'a': ['4', '@'], 'b': ['8'], 'c': ['(', '{', '[', '<'], 'e': ['3'], ...}\n\n    def l33t_match(password, _ranked_dictionaries=RANKED_DICTIONARIES,\n                   _l33t_table=L33T_TABLE):\n        subs = relevant_l33t_subtable(password, _l33t_table)\n        for sub in enumerate_l33t_subs(subs):\n            if not sub:\n                continue\n            subbed_password = translate(password, sub)\n            for match in dictionary_match(subbed_password, _ranked_dictionaries):\n                token = password[match['i']:match['j'] + 1]\n                if token.lower() == match['matched_word']:\n                    continue\n    \n                used_sub = {}\n                for i, c in enumerate(token):\n                    subbed_chr = sub.get(c)\n                    if subbed_chr and subbed_password[match['i'] + i] == subbed_chr:\n                        used_sub[c] = subbed_chr\n    \n                if not used_sub:\n                    continue\n    \n                match_sub = {}\n                for k, v in used_sub.items():\n                    match_sub[k] = v\n    \n                match['token'] = token\n                match['sub'] = match_sub\n                match['sub_display'] = ', '.join(['%s -> %s' % (k, v) for k, v in sorted(match_sub.items())])\n                match['l33t'] = True\n                matches.append(match)\n    \n>       return sorted(matches, key=lambda x: (x['i'], x['j']))\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:246: NameError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe4d760a650>\ncapsys = <_pytest.capture.CaptureFixture object at 0x7fe4d760a2f0>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'password'\n_ranked_dictionaries = {'english_wikipedia': {\"'aliabad\": 26981, \"'best\": 9383, \"'black\": 17306, \"'blue\": 26324, ...}, 'female_names': {'abbe... 'abel': 420, ...}, 'passwords': {'!qaz2wsx': 8441, '!qazxsw2': 22176, '%%passwo': 9943, '%e2%82%ac': 27913, ...}, ...}\n_l33t_table = {'a': ['4', '@'], 'b': ['8'], 'c': ['(', '{', '[', '<'], 'e': ['3'], ...}\n\n    def l33t_match(password, _ranked_dictionaries=RANKED_DICTIONARIES,\n                   _l33t_table=L33T_TABLE):\n        subs = relevant_l33t_subtable(password, _l33t_table)\n        for sub in enumerate_l33t_subs(subs):\n            if not sub:\n                continue\n            subbed_password = translate(password, sub)\n            for match in dictionary_match(subbed_password, _ranked_dictionaries):\n                token = password[match['i']:match['j'] + 1]\n                if token.lower() == match['matched_word']:\n                    continue\n    \n                used_sub = {}\n                for i, c in enumerate(token):\n                    subbed_chr = sub.get(c)\n                    if subbed_chr and subbed_password[match['i'] + i] == subbed_chr:\n                        used_sub[c] = subbed_chr\n    \n                if not used_sub:\n                    continue\n    \n                match_sub = {}\n                for k, v in used_sub.items():\n                    match_sub[k] = v\n    \n                match['token'] = token\n                match['sub'] = match_sub\n                match['sub_display'] = ', '.join(['%s -> %s' % (k, v) for k, v in sorted(match_sub.items())])\n                match['l33t'] = True\n                matches.append(match)\n    \n>       return sorted(matches, key=lambda x: (x['i'], x['j']))\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:246: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_l33t_matching - NameError: nam...\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - NameError: n...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - NameError: name 'm...\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - NameError: nam...\nFAILED tests/unit_tests/zxcvbn_test.py::test_unicode_user_inputs - NameError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_invalid_user_inputs - NameError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - NameError: name ...\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - NameError: na...\n========================= 8 failed, 26 passed in 0.78s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__l33t_match",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      },
+      {
+        "name": "failed_7",
+        "passed": false
+      }
+    ],
+    "passed": 26,
+    "failed": 8,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7647,
+  "compile_score": 0.5,
+  "test_score": 0.3824,
+  "score": 0.8824
+}

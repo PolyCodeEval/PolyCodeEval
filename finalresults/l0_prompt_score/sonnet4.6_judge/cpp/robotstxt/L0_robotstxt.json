@@ -1,0 +1,29 @@
+{
+  "task": "cpp/robotstxt/L0_robotstxt",
+  "project": "cpp/robotstxt",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/robotstxt/tasks/L0_robotstxt/prompt.md",
+  "project_root": "datasets/cpp/robotstxt",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.0,
+      "reason": "Covers GetKeyType, RobotsMatcher (OneAgentAllowedByRobots, AllowedByRobots, IsValidUserAgentToObey, status accessors), RobotsParsingReporter (valid_directives, unused_directives, last_line_seen, parse_results), and ParseRobotsTxt. File layout and abseil dependency are specified. Key missing piece: matching semantics (longest match wins, allow-beats-disallow on tie, wildcard * and $ support) are not described in behavioral constraints."
+    },
+    "unambiguity": {
+      "score": 3.5,
+      "reason": "The KeyType enum values and the basic API shapes are defined. However, the matching rules for wildcards (*), end-of-path anchors ($), precedence between allow and disallow, and specific-agent vs global-agent precedence are not described. An implementation without knowledge of RFC 9309 semantics would lack the rules to pass wildcard and precedence tests."
+    },
+    "testability": {
+      "score": 3.5,
+      "reason": "Basic tests (empty robots allows all, DisallowAll, named agent rules) are supportable from the prompt. But tests for wildcard path matching, dollar anchors, longest-match wins, allow-wins-on-tie, and specific-agent overriding the global '*' rule require semantics not in the prompt. These are tested in the blackbox test suite."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "Verified against robots.h header. The KeyType enum (USER_AGENT=0, SITEMAP=1, ALLOW=2, DISALLOW=3, UNKNOWN=128) matches. GetKeyType signature (string_view, bool*) matches. RobotsMatcher and RobotsParsingReporter method names match exactly what's tested. RobotsParsedLine struct with kUserAgent constant is listed. No conflicts."
+    }
+  },
+  "overall_score": 3.88
+}

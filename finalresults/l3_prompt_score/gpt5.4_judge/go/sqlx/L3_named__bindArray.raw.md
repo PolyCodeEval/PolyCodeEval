@@ -1,0 +1,13 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely: it correctly explains that the query is first compiled using question-mark placeholders, that the input is treated as an array/slice, that zero length is rejected, that each element is bound in order and flattened into one argument list, that the SQL is expanded only when there is more than one element, and that rebinding to the requested bind type happens at the end. It is also appropriately cautious about parse/bind failures returning empty results plus an error. The main omissions are minor implementation details, such as preallocating the argument slice capacity and the fact that SQL expansion is specifically delegated to `fixBound`, which may leave the SQL unchanged if it cannot find the expected VALUES bracket structure. Overall, it is accurate and complete enough to reproduce the function's essential behavior.",
+  "missing_functionality": [
+    "It does not mention that the argument list is preallocated with capacity `len(names) * arrayLen`.",
+    "It does not mention that SQL repetition is performed via `fixBound`, whose behavior depends on finding the expected placeholder group structure."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying the elements are 'structs (or otherwise bindable values)' is slightly broader than the implementation comment, though it is consistent with the actual call to `bindAnyArgs`.",
+    "The phrase 'requires it to have non-zero length' omits that the function assumes `arg` is reflectively indexable and directly calls `Len()`; invalid non-slice/non-array inputs are not explicitly checked here."
+  ],
+  "complete_enough": true
+}

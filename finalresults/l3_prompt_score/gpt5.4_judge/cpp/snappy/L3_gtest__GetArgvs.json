@@ -1,0 +1,28 @@
+{
+  "task": "cpp/snappy/L3_gtest__GetArgvs",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__GetArgvs/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__GetArgvs/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest.cc::GetArgvs",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description correctly captures the main purpose: a no-argument function that returns the program/test argv collection and has no visible side effects or explicit error handling. However, it misses the function’s key implementation detail: it conditionally returns either a copy of a custom argv container from `GTEST_CUSTOM_GET_ARGVS_()` converted into `std::vector<std::string>`, or the stored global `g_argvs`. That conditional behavior is important for implementing the actual function, not just understanding its intent.",
+  "missing_functionality": [
+    "The function has compile-time conditional behavior based on `GTEST_CUSTOM_GET_ARGVS_`.",
+    "When `GTEST_CUSTOM_GET_ARGVS_` is defined, it reads from that custom source and converts the returned container into `std::vector<std::string>` using iterator construction.",
+    "When no custom macro is defined, it returns the global stored copy `g_argvs`.",
+    "The function returns a vector by value, i.e. a copy rather than a reference/view."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying no side effects are visible is acceptable, but the description may imply the function simply returns a single stored argv collection, whereas the implementation may instead delegate to a custom provider.",
+    "The statement that the context does not show storage details is somewhat misleading because the implementation clearly shows the default storage is the global `g_argvs`."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest__GetArgvs.raw.md"
+}

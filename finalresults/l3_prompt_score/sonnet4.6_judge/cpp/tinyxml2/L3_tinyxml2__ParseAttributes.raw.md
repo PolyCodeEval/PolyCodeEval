@@ -1,0 +1,12 @@
+{
+  "score": 4.6,
+  "reason": "The description is highly accurate and covers all major behavioral paths: whitespace skipping, attribute parsing with entity processing, normal '>' termination, self-closing '/>' termination, error conditions (unexpected end, invalid token, parse failure, duplicate detection), and the incremental linking of attributes. The duplicate-detection caveat in the last bullet accurately reflects the comment in the source code about the known minor bug. The only minor gap is that the description says 'discards the just-created attribute when applicable' without clarifying that `DeleteAttribute` is always called on failure (both when `ParseDeep` fails and when a duplicate is found), but this is a small detail. Overall the description is complete and accurate enough to support a faithful reimplementation.",
+  "missing_functionality": [
+    "Does not explicitly mention that the error set on parse failure uses XML_ERROR_PARSING_ELEMENT (not XML_ERROR_PARSING_ATTRIBUTE) when the unexpected-end or invalid-token branch is hit, versus XML_ERROR_PARSING_ATTRIBUTE for the attribute-specific failure — a subtle but implementable distinction.",
+    "Does not mention that the line number used for the attribute error is captured before ParseDeep is called (attrLineNum), not the line number after parsing."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says duplicate attributes 'may not be fully detected in all cases' — this is accurate but slightly vague; the actual behavior is that only duplicates against the pre-existing attribute list (before the current parse run) are missed, while duplicates within the newly parsed attributes in the same run are also missed due to the prevAttribute optimization."
+  ],
+  "complete_enough": true
+}

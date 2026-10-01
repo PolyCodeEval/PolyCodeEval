@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_gtest__ScopedPrematureExitFile",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__ScopedPrematureExitFile/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__ScopedPrematureExitFile/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest.cc::ScopedPrematureExitFile",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.0,
+  "reason": "The description matches the constructor implementation well: it correctly states that the path is stored with a null input becoming an empty string, that a non-empty path triggers creation/overwrite of the file with a single '0', and that failures are treated as best-effort only. However, it slightly overstates the error-handling behavior: the code comments say I/O errors are ignored, but the implementation does not actually check whether fopen succeeded before calling fwrite and fclose. Also, the description is only about the constructor and omits the class's destructor behavior, which is relevant to the full ScopedPrematureExitFile class shown in the implementation context.",
+  "missing_functionality": [
+    "The class destructor removes the premature-exit file when the stored path is non-empty, except on ESP8266 builds.",
+    "If file removal fails in the destructor, an error is logged."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies file I/O failures are safely handled/ignored, but the implementation does not check whether FOpen returned null before calling fwrite and fclose."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest__ScopedPrematureExitFile.raw.md"
+}

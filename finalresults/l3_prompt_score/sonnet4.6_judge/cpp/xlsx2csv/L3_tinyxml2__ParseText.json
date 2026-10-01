@@ -1,0 +1,29 @@
+{
+  "task": "cpp/xlsx2csv/L3_tinyxml2__ParseText",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_tinyxml2__ParseText/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_tinyxml2__ParseText/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/tinyxml2.cpp",
+  "target_symbol": "tinyxml2.cpp::ParseText",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.2,
+  "reason": "The description captures the general purpose (parsing text until an end tag, updating a StrPair, tracking line numbers, returning next position or 0 on failure) reasonably well. However, it hedges heavily with 'likely' and 'not visible here' language, which undermines completeness. The actual implementation is straightforward and fully visible: it scans character-by-character, matches the full endTag string (not just a delimiter), calls Set() on match, increments the line counter on newlines, and returns 0 if the end tag is never found. The description misses the critical detail that the end tag is matched via strncmp (full string match, not just first char), and that returning 0 means the end tag was not found before null terminator. The 'Invalid input behavior' section explicitly admits it cannot see the implementation, which is inaccurate since the implementation is present and shows TIXMLASSERT guards for null p, null/empty endTag, and null curLineNumPtr. The mention of 'line-ending normalization' is slightly misleading — the function only counts newlines, it does not normalize them.",
+  "missing_functionality": [
+    "The end tag is matched using strncmp against the full endTag string (not just the first character), which is a key algorithmic detail",
+    "Returns 0 (null pointer) specifically when the null terminator is reached before finding the end tag",
+    "TIXMLASSERT guards enforce that p, endTag (non-empty), and curLineNumPtr are all non-null — these are the actual invalid-input behaviors",
+    "On successful match, calls Set(start, p, strFlags) to store the parsed text range before returning p + length"
+  ],
+  "incorrect_or_misleading_points": [
+    "States 'the context does not show the implementation' for invalid input behavior, but the implementation is fully present and shows assertion-based guards",
+    "Mentions 'line-ending normalization' which is not what the function does — it only counts '\\n' occurrences to update the line number",
+    "Describes the end tag as an 'explicit end tag delimiter' without clarifying it is a full string match, not a single-character delimiter"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_tinyxml2__ParseText.raw.md"
+}

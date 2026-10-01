@@ -1,0 +1,544 @@
+{
+  "task": "java/java_heap/L0_java_heap",
+  "solver": "chatdev_gpt54_java",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 22.38,
+  "stdout": "To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/7.6.4/userguide/gradle_daemon.html#sec:disabling_the_daemon.\nDaemon will be stopped at the end of the build \n> Task :compileJava\n> Task :processResources NO-SOURCE\n> Task :classes\n\n> Task :compileTestJava FAILED\n/workspaces/java__java_heap__L0_java_heap/tests/src/test/java/code/HeapEdgeCaseBlackboxTest.java:195: error: cannot find symbol\n        HeapPerformanceTest pt = new HeapPerformanceTest(10);\n        ^\n  symbol:   class HeapPerformanceTest\n  location: class HeapEdgeCaseBlackboxTest\n/workspaces/java__java_heap__L0_java_heap/tests/src/test/java/code/HeapEdgeCaseBlackboxTest.java:195: error: cannot find symbol\n        HeapPerformanceTest pt = new HeapPerformanceTest(10);\n                                     ^\n  symbol:   class HeapPerformanceTest\n  location: class HeapEdgeCaseBlackboxTest\n2 errors\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':compileTestJava'.\n> Compilation failed; see the compiler error output for details.\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n\n* Get more help at https://help.gradle.org\n\nBUILD FAILED in 23s\n2 actionable tasks: 2 executed\n",
+  "stderr": "",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.34,
+    "Architecture": 2.2,
+    "Health": 5.0
+  },
+  "overall_score": 2.13,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap()"
+            },
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "util.HashSet;\nimport java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "java.util.Random;\n/*\nBenchmark runner for comparing heap implementations without mixing logic into the heap classes.\n*/\npublic class HeapPerformanceTest {\n    private final int numElements;\n    public HeapPerformanceTest(int numElements) {\n        this.numElements = Math.max(0, numElements);\n    }\n    public HashMap<String, Long> test() {\n        HashMap<String, Long> results = new HashMap<>();"
+            }
+          ],
+          "status": "partial",
+          "reason": "Required entry points are only partially present: `FibonacciHeap` and `LeftistHeap` are under `src/main/java/code`, but `HeapPerformanceTest` exists only at repo root and some project-shape constraints are not fully met."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Gradle project structure rooted at package `code`",
+          "evidence": [
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "(\"java\")\n    id(\"application\")\n    id(\"jacoco\")\n}\njacoco {\n    toolVersion = \"0.8.7\"\n}\napplication {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentral()\n}\ntasks.withType<Jar> {\n    manifest {\n        attributes[\"Main-Class\"] = \"code.HeapPerformanceTest\"\n    }\n}\ndependencies {\n    implementation(\"junit:junit:4.13.1\")\n    i"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.PriorityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo is a Gradle project and uses package `code`, but the structure is not cleanly rooted there because `HeapPerformanceTest.java` is outside `src/main/java/code` and duplicate root-level source files are present."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "classes `FibonacciHeap`, `LeftistHeap`, and `HeapPerformanceTest` in package `code`",
+          "evidence": [
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "Map;\nimport java.util.Random;\n/*\nBenchmark runner for comparing heap implementations without mixing logic into the heap classes.\n*/\npublic class HeapPerformanceTest {\n    private final int numElements;\n    public HeapPerformanceTest(int numElements) {\n        this.numElements = Math.max(0, numElements);\n    }\n    public HashMap<String, Long> test() {\n        HashMap<String, Long> results = new Has"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "ityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FibonacciHeap`, `LeftistHeap`, and `HeapPerformanceTest` are all declared with `package code;` in the repository."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`LeftistHeap.extract_min()` returns `-1` when called on an empty heap (sentinel value, not an exception)",
+          "evidence": [
+            {
+              "path": "LeftistHeap.java",
+              "excerpt": "import java.util.PriorityQueue;\n/*\nLeftist heap implementation with merge and sorted traversal output.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "ityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "ts = new HashMap<>();\n        int[] values = generateValues(numElements);\n        long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"leftist_insert\", end - start);\n        start ="
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LeftistHeap.extract_min()` explicitly returns `-1` when `root == null`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`LeftistHeap.merge(other)` empties `other` after the merge (other.isEmpty() becomes true)",
+          "evidence": [
+            {
+              "path": "LeftistHeap.java",
+              "excerpt": "import java.util.PriorityQueue;\n/*\nLeftist heap implementation with merge and sorted traversal output.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "ityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "ts = new HashMap<>();\n        int[] values = generateValues(numElements);\n        long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"leftist_insert\", end - start);\n        start ="
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LeftistHeap.merge(LeftistHeap other)` sets `other.root = null` after merging, so the other heap is emptied."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`LeftistHeap.in_order()` returns elements in non-decreasing (sorted) order",
+          "evidence": [
+            {
+              "path": "LeftistHeap.java",
+              "excerpt": "import java.util.PriorityQueue;\n/*\nLeftist heap implementation with merge and sorted traversal output.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "ityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value) {\n        root = mergeNodes(root, new Node(value));\n    }\n    public int extract_min"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "ts = new HashMap<>();\n        int[] values = generateValues(numElements);\n        long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"leftist_insert\", end - start);\n        start ="
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LeftistHeap.in_order()` collects all values into a `PriorityQueue` and returns them by repeated `poll()`, producing non-decreasing order."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`FibonacciHeap.deleteMin()` on an empty heap completes without error",
+          "evidence": [
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "import java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "leftistA.merge(leftistB);\n        end = System.nanoTime();\n        results.put(\"leftist_merge\", end - start);\n        FibonacciHeap fibonacciInsertDelete = new FibonacciHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            fibonacciInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"fibonacci_insert\", end - start);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FibonacciHeap.deleteMin()` begins with `if (min == null) { return; }`, so calling it on an empty heap does not error."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`FibonacciHeap.delete(HeapNode)` removes the given node from the heap and decreases size by 1; if the deleted node was the minimum, `findMin()` returns the next smallest key",
+          "evidence": [
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "import java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "leftistA.merge(leftistB);\n        end = System.nanoTime();\n        results.put(\"leftist_merge\", end - start);\n        FibonacciHeap fibonacciInsertDelete = new FibonacciHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            fibonacciInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"fibonacci_insert\", end - start);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FibonacciHeap.delete(HeapNode)` checks heap membership, removes the node, decrements `size`, and the min-removal path goes through `deleteMin()`, which re-establishes the next minimum."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`FibonacciHeap.totalLinks()` and `FibonacciHeap.totalCuts()` are static counters that are non-negative and increase monotonically over the program lifetime",
+          "evidence": [
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "import java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "leftistA.merge(leftistB);\n        end = System.nanoTime();\n        results.put(\"leftist_merge\", end - start);\n        FibonacciHeap fibonacciInsertDelete = new FibonacciHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            fibonacciInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"fibonacci_insert\", end - start);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`totalLinksCounter` and `totalCutsCounter` are static counters initialized to `0` and only incremented in `link()` and `cut()`, so they are non-negative and monotonic."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`FibonacciHeap.potential()` returns a non-negative value reflecting internal heap structure; after inserts only (no deleteMin/delete), `potential()` equals the number of inserted elements because each is a separate tree with no marked nodes",
+          "evidence": [
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "import java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.si"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "leftistA.merge(leftistB);\n        end = System.nanoTime();\n        results.put(\"leftist_merge\", end - start);\n        FibonacciHeap fibonacciInsertDelete = new FibonacciHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            fibonacciInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"fibonacci_insert\", end - start);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`potential()` returns `Math.max(0, treeCount + 2 * markedCount)`, and `insert()` increments `treeCount` without marking nodes, so after inserts only the potential equals the number of inserted elements."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`HeapPerformanceTest(int numElements).test()` returns a `HashMap<String, Long>` containing insert/delete/merge timing data for each heap type",
+          "evidence": [
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "dom;\n/*\nBenchmark runner for comparing heap implementations without mixing logic into the heap classes.\n*/\npublic class HeapPerformanceTest {\n    private final int numElements;\n    public HeapPerformanceTest(int numElements) {\n        this.numElements = Math.max(0, numElements);\n    }\n    public HashMap<String, Long> test() {\n        HashMap<String, Long> results = new HashMap<>();\n        int[] v"
+            },
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "a\")\n    id(\"application\")\n    id(\"jacoco\")\n}\njacoco {\n    toolVersion = \"0.8.7\"\n}\napplication {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentral()\n}\ntasks.withType<Jar> {\n    manifest {\n        attributes[\"Main-Class\"] = \"code.HeapPerformanceTest\"\n    }\n}\ndependencies {\n    implementation(\"junit:junit:4.13.1\")\n    implem"
+            },
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "n supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int totalCutsCounter = 0;\n    public FibonacciHeap() {\n        this.min = null;\n        this.size = 0;\n        this.treeCount = 0;\n        this.marke"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`HeapPerformanceTest.test()` returns `HashMap<String, Long>` and records insert/delete/merge timings for both leftist and Fibonacci heaps."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Fibonacci Heap",
+          "evidence": [
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.HashSet;\nimport java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static i"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "leftistA.merge(leftistB);\n        end = System.nanoTime();\n        results.put(\"leftist_merge\", end - start);\n        FibonacciHeap fibonacciInsertDelete = new FibonacciHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            fibonacciInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"fibonacci_insert\", end - start);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes dedicated Fibonacci heap implementations in both `repo/FibonacciHeap.java` and `repo/src/main/java/code/FibonacciHeap.java`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Leftist Heap",
+          "evidence": [
+            {
+              "path": "LeftistHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.PriorityQueue;\n/*\nLeftist heap implementation with merge and sorted traversal output.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void insert(int value)"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.PriorityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "ts = new HashMap<>();\n        int[] values = generateValues(numElements);\n        long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"leftist_insert\", end - start);\n        start ="
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes dedicated leftist heap implementations in both `repo/LeftistHeap.java` and `repo/src/main/java/code/LeftistHeap.java`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Performance / Comparison",
+          "evidence": [
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "/*\nBenchmark runner for comparing heap implementations without mixing logic into the heap classes.\n*/\npublic class HeapPerformanceTest {\n    private final int numElements;\n    public HeapPerformanceTest(int numElements) {\n        this.numElements = Math.max(0, numElements);\n    }\n    public HashMap<String, Long> test() {\n        HashMap<String, Long> results = new HashMap<>();\n        int[] value"
+            },
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "id(\"application\")\n    id(\"jacoco\")\n}\njacoco {\n    toolVersion = \"0.8.7\"\n}\napplication {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentral()\n}\ntasks.withType<Jar> {\n    manifest {\n        attributes[\"Main-Class\"] = \"code.HeapPerformanceTest\"\n    }\n}\ndependencies {\n    implementation(\"junit:junit:4.13.1\")\n    implementa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`HeapPerformanceTest` performs timing-based comparison across heap operations, covering the performance/comparison requirement."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Generate paths relative to the Java project root. In evaluation, the project root is `/workspace/src/`, so your relative paths are written as `/workspace/src/<relative_path>`.",
+          "evidence": [
+            {
+              "path": "FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.HashSet;\nimport java.util.Set;\n/*\nFibonacci heap implementation supporting insert, meld, deleteMin, and delete.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedC"
+            },
+            {
+              "path": "Main.java",
+              "excerpt": "#\n##############################################################################\n#\n#   Gradle start up script for POSIX generated by Gradle.\n#\n##############################################################################\napp_path=$0\nwhile\n    APP_HOME=${app_path%\"${app_path##*/}\"}\n    [ -h \"$app_path\" ]\ndo\n    ls=$( ls -ld \"$app_path\" )\n    link=${ls#*' -> '}\n    case $link in\n      /*)   app_pat"
+            },
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo includes correctly rooted files like `src/main/java/code/...`, but it also contains misplaced root-level Java sources and other extra files, so the requested path discipline was not followed consistently."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "For a standard Maven or Gradle layout, generate paths such as `src/main/java/...`, `src/main/resources/...`, and the root build files (`pom.xml`, `build.gradle`, `settings.gradle`, wrapper files) relative to that project root.",
+          "evidence": [
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "ion {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentral()\n}\ntasks.withType<Jar> {\n    manifest {\n        attributes[\"Main-Class\"] = \"code.HeapPerformanceTest\"\n    }\n}\ndependencies {\n    implementation(\"junit:junit:4.13.1\")\n    implementation(\"org.junit.jupiter:junit-jupiter:5.8.1\")\n    testImplementation(\"org.junit.jupite"
+            },
+            {
+              "path": "Main.java",
+              "excerpt": "# limitations under the License.\n#\n##############################################################################\n#\n#   Gradle start up script for POSIX generated by Gradle.\n#\n##############################################################################\napp_path=$0\nwhile\n    APP_HOME=${app_path%\"${app_path##*/}\"}\n    [ -h \"$app_path\" ]\ndo\n    ls=$( ls -ld \"$app_path\" )\n    link=${ls#*' -> '}"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "public HashMap<String, Long> test() {\n        HashMap<String, Long> results = new HashMap<>();\n        int[] values = generateValues(numElements);\n        long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nano"
+            }
+          ],
+          "status": "partial",
+          "reason": "The project has Gradle root files and some standard layout under `src/main/java`, but `HeapPerformanceTest.java` is not under the standard source tree and the wrapper/layout is inconsistent."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "long start;\n        long end;\n        LeftistHeap leftistInsertDelete = new LeftistHeap();\n        start = System.nanoTime();\n        for (int value : values) {\n            leftistInsertDelete.insert(value);\n        }\n        end = System.nanoTime();\n        results.put(\"leftist_insert\", end - start);\n        start = System.nanoTime();\n        while (!leftistInsertDelete.isEmpty()) {"
+            },
+            {
+              "path": "Main.java",
+              "excerpt": "pyright © 2015-2021 the original authors.\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this file except in compliance with the License.\n#\n# You may obtain a copy of the License at\n#\n#      https://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \""
+            },
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "lication\")\n    id(\"jacoco\")\n}\njacoco {\n    toolVersion = \"0.8.7\"\n}\napplication {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentral()\n}\ntasks.withType<Jar> {\n    manifest {\n        attributes[\"Main-Class\"] = \"code.HeapPerformanceTest\"\n    }\n}\ndependencies {\n    implementation(\"junit:junit:4.13.1\")\n    implementation(\"org.j"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No test files, `blackbox_tests/`, or outer wrapper directory are present in the repository tree."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Use a Gradle project and place the tested heap classes under package `code`.",
+          "evidence": [
+            {
+              "path": "src\\main\\java\\code\\FibonacciHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\n/*\nFibonacci heap implementation with public operations required by the benchmark.\n*/\npublic class FibonacciHeap {\n    private HeapNode min;\n    private int size;\n    private int treeCount;\n    private int markedCount;\n    private static int totalLinksCounter = 0;\n    private static int total"
+            },
+            {
+              "path": "src\\main\\java\\code\\LeftistHeap.java",
+              "excerpt": "package code;\nimport java.util.ArrayList;\nimport java.util.PriorityQueue;\n/*\nLeftist heap implementation supporting merge, insertion, extraction, and sorted traversal.\n*/\npublic class LeftistHeap {\n    private Node root;\n    public LeftistHeap() {\n        this.root = null;\n    }\n    public boolean isEmpty() {\n        return root == null;\n    }\n    public void ins"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "package code;\nimport java.util.HashMap;\nimport java.util.Random;\n/*\nBenchmark runner for comparing heap implementations without mixing logic into the heap classes.\n*/\npublic class HeapPerformanceTest {\n    private final int numElements;\n    public HeapPerformanceTest(int numElements) {\n        this.numElements = Math.max(0, numElements);\n    }\n    public HashMap<String, Long>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "This is a Gradle project, and the heap classes actually under the source tree (`FibonacciHeap` and `LeftistHeap`) are placed in package `code`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`build.gradle` must set `sourceSets.test.java.srcDirs = ['../tests/src/test/java']` so the eval framework's blackbox tests are found at build time.",
+          "evidence": [
+            {
+              "path": "build.gradle.kts",
+              "excerpt": "/*\nBuild configuration for java_heap.\n*/\nplugins {\n    id(\"java\")\n    id(\"application\")\n    id(\"jacoco\")\n}\njacoco {\n    toolVersion = \"0.8.7\"\n}\napplication {\n    mainClass.set(\"code.HeapPerformanceTest\")\n}\ngroup = \"org.example\"\nversion = \"1.0-SNAPSHOT\"\nrepositories {\n    mavenCentra"
+            },
+            {
+              "path": "HeapPerformanceTest.java",
+              "excerpt": "erformanceTest(n);\n        HashMap<String, Long> results = performanceTest.test();\n        for (String key : results.keySet()) {\n            System.out.println(key + \"=\" + results.get(key));\n        }\n    }\n}"
+            },
+            {
+              "path": "Main.java",
+              "excerpt": "# limitations under the License.\n#\n##############################################################################\n#\n#   Gradle start up script for POSIX generated by Gradle.\n#\n##############################################################################\napp_path=$0\nwhile\n    APP_HOME=${app_path%\"${app_path##*/}\"}\n    [ -h \"$app_path\" ]\ndo\n    ls=$( ls -ld \"$app_path\" )\n    link=${ls#*' -> '}"
+            }
+          ],
+          "status": "partial",
+          "reason": "The test source directory is configured to `../tests/src/test/java`, but it is done in `build.gradle.kts` rather than the requested `build.gradle`, so the intent is met but not the exact file form."
+        }
+      ],
+      "feature_count": 19,
+      "constraint_count": 0,
+      "implemented_count": 14,
+      "partial_count": 5,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 0.8684,
+      "constraint_coverage": 0.8684,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 161664,
+        "completion_tokens": 6743,
+        "total_tokens": 168407
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "java",
+        "framework": "java",
+        "app_style": "library",
+        "build_system": "gradle",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.0,
+        "stack_alignment": 2.1,
+        "reference_alignment": 2.5
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 96715,
+        "completion_tokens": 2821,
+        "total_tokens": 99536
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nCore heap behavior is largely present in visible source: `LeftistHeap` satisfies the sentinel empty extract, destructive merge, and sorted `in_order`; `FibonacciHeap` exposes the required public operations, static cut/link counters, empty-safe `deleteMin`, delete-by-node behavior, and potential accounting; `HeapPerformanceTest.test()` returns timing data for insert/delete/merge across both heap types. The main gaps are structural rather than algorithmic: project layout is inconsistent with the requested minimal Gradle shape, especially because `HeapPerformanceTest` is not under `src/main/java/code` and duplicate root-level Java files remain.\n\n### Missing List\n\n- Move `HeapPerformanceTest.java` into `src/main/java/code/` to match the required Gradle source layout.\n- Remove or avoid duplicate root-level Java source files so the project cleanly follows the requested relative-path structure.\n- Match the requested build file shape exactly if strict evaluation expects `build.gradle` rather than `build.gradle.kts`.\n\n### Critical Constraint Misses\n\n- `HeapPerformanceTest` is not placed under `src/main/java/code`, so the main required public class is outside the standard Gradle source tree.\n- The repository does not follow the requested minimal project shape consistently because several Java files are duplicated at repo root.\n- The blackbox test source path is configured only in `build.gradle.kts`, not the explicitly requested `build.gradle` form.",
+    "architecture_review": "### Stack Inference\n\nThe repository is intended to be a Java data-structure library project built with Gradle Kotlin DSL. Its natural architecture should be a small library-like codebase with core heap implementations under `src/main/java/code` and a separate benchmark/helper class, but the actual repository only partially follows that model and leaves build and source boundaries blurred.\n\n### Scoring Mode\n\nThis is an architecture-focused review of a Java library-style Gradle project. I judged it primarily on whether the real repository structure is coherent, follows standard Java/Gradle conventions, and places the required heap classes and benchmark entry points in coordinated build locations, rather than on algorithm correctness or repository size.\n\n### Strengths\n\n- The repository does include a recognizable Gradle build script and settings file, so the intended build system is clear.\n- There is at least a partial standard Java source layout under `src/main/java/code`, and the two core heap classes are placed there.\n- Benchmark logic is separated from the heap classes at the file level rather than being embedded directly inside the data-structure implementations.\n\n### Issues\n\n- `repo/` mixes source files between the repository root and `src/main/java/code`, creating two competing source layouts for the same package and making the project structure ambiguous.\n- `HeapPerformanceTest.java` exists only at the repository root instead of under `src/main/java/code`, so the required public entry point is not placed in the build's standard source set.\n- `Main.java` is not a Java class at all; it contains a POSIX Gradle launcher script, which is a strong structural error and makes the repository layout misleading.\n- The root contains duplicate heap implementations (`FibonacciHeap.java`, `LeftistHeap.java`) that differ from the versions under `src/main/java/code`, so it is unclear which code is authoritative.\n- Gradle wrapper/config files are incomplete and oddly placed: there is `gradlew.bat` but no Unix `gradlew`, plus an extra root-level `gradle-wrapper.properties`, which does not match normal Gradle wrapper layout.\n- Checked-in `.gradle/` build cache artifacts add noise to the repository and weaken the separation between source, configuration, and generated files.\n\n### Stack Mismatches\n\n- For a Java/Gradle project, source files should live under `src/main/java`; keeping package-scoped Java classes at the repository root is not aligned with common Gradle conventions.\n- Using `application.mainClass = \"code.HeapPerformanceTest\"` suggests a runnable app entry point, but that class is not located in the configured main source tree.\n- A file named `Main.java` is expected to be Java source, but here it is a shell script, which is a direct mismatch with Java project conventions.\n- Gradle projects normally keep wrapper files as `gradlew`, `gradlew.bat`, and `gradle/wrapper/*`; this repository's wrapper layout is incomplete and irregular.\n\n### Reference Gaps\n\n- The prompt requires `FibonacciHeap`, `LeftistHeap`, and `HeapPerformanceTest` in package `code`; only the two heap classes are under `src/main/java/code`, while `HeapPerformanceTest` is not.\n- The prompt asks for a Gradle project shape centered on standard source paths; the repository partially follows that shape but also keeps key Java files at the root, so alignment is incomplete.\n- The prompt expects build configuration that supports the evaluation tests; although the test source-set path is configured, the surrounding project layout is inconsistent enough that the intended entry points are not cleanly integrated."
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 258379,
+    "completion_tokens": 9564,
+    "total_tokens": 267943,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 161664,
+        "completion_tokens": 6743,
+        "total_tokens": 168407
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 96715,
+        "completion_tokens": 2821,
+        "total_tokens": 99536
+      }
+    ]
+  },
+  "language": "java",
+  "project_name": "java_heap",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.34,
+  "architecture_score": 2.2,
+  "health_score": 5.0,
+  "all_tests_passed": false
+}

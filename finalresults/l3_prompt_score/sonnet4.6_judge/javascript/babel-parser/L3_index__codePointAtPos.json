@@ -1,0 +1,24 @@
+{
+  "task": "javascript/babel-parser/L3_index__codePointAtPos",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__codePointAtPos/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__codePointAtPos/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/tokenizer/index.ts",
+  "target_symbol": "tokenizer/index.ts::codePointAtPos",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description accurately captures all core behavior: returning the code point at a position, handling the surrogate pair combination case, and falling back to the raw code unit when no valid low surrogate follows or when the position is out of bounds. The surrogate detection logic (high surrogate check, bounds check, low surrogate check, and the UTF-16 decoding formula) is all implied or stated. The only minor omission is that the description doesn't mention the performance motivation (reimplementing `codePointAt` to allow TurboFan inlining via `charCodeAt`), but that is an implementation detail rather than functional behavior.",
+  "missing_functionality": [
+    "No mention of the performance rationale (inlining charCodeAt instead of using the native codePointAt builtin), though this is an implementation detail rather than a functional requirement."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'If the position is at or beyond the end of the string' returns the first code unit as-is, but the implementation actually returns NaN (from charCodeAt on an out-of-bounds index) in that case — the bounds check only applies to the trail character lookup, not the initial read."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__codePointAtPos.raw.md"
+}

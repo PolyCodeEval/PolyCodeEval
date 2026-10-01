@@ -1,0 +1,25 @@
+{
+  "task": "cpp/tinyexpr-plusplus/L3_tinyexpr__power",
+  "project": "cpp/tinyexpr-plusplus",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__power/prompt.md",
+  "task_json_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__power/task.json",
+  "source_file_path": "datasets/cpp/tinyexpr-plusplus/src/tinyexpr.cpp",
+  "target_symbol": "tinyexpr.cpp::power",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: consuming leading unary `+`/`-` operators with sign parity logic, handling bitwise NOT in non-float builds, delegating to `base()`, and returning the appropriate expression. The parity logic for multiple `-` operators is correctly described. The bitwise NOT precedence note is slightly misleading — the implementation doesn't truly give bitwise NOT 'precedence over sign handling'; rather, if a `~` is seen anywhere in the prefix sequence, `bitwiseNot` is set to true and the sign is ignored in the final expression construction. Multiple `~` operators would also just keep setting `bitwiseNot = true` without toggling. These are minor inaccuracies. The description is complete enough to implement the function correctly in its main cases.",
+  "missing_functionality": [
+    "Multiple bitwise NOT operators in sequence are not toggled — the flag is only set to true and never reset, so `~~x` would still produce a single bitwise NOT rather than canceling out. The description implies a single `~` scenario but doesn't clarify this edge case.",
+    "The description doesn't mention that `next_token` is called after each consumed prefix operator to advance the parser state."
+  ],
+  "incorrect_or_misleading_points": [
+    "The claim that bitwise NOT 'takes precedence over any accumulated sign handling' is misleading. In reality, both `bitwiseNot` and `theSign` are tracked independently through the loop; it's only in the final if/else-if/else block that `bitwiseNot` is checked first, effectively discarding the sign. The sign is still modified during the loop even when a `~` is present."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_tinyexpr__power.raw.md"
+}

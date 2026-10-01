@@ -1,0 +1,27 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__tinfl_decompress",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tinfl_decompress/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tinfl_decompress/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::tinfl_decompress",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures that this is a resumable/incremental DEFLATE decoder with optional zlib header/trailer handling, in/out byte counts, support for stored/fixed/dynamic blocks, canonical Huffman table construction, back-reference expansion with wrapping vs non-wrapping output behavior, suspension statuses, lookahead byte pushback, and Adler-32 update/check behavior. It is also detailed enough to guide an implementation of the core logic. The only notable gaps are a few implementation-specific validation nuances and optimizations, but these are secondary.",
+  "missing_functionality": [
+    "The implementation specifically accepts incomplete Huffman trees when only a single symbol is used (`(65536 != total) && (used_syms > 1)` fails only in that case); the description summarizes this as rejecting over-subscribed/malformed trees but does not mention this permissive edge case.",
+    "The function computes and stores produced-byte Adler-32 in `m_check_adler32`, while the zlib trailer is accumulated separately into `m_z_adler32`; the description captures the behavior conceptually but not this distinction.",
+    "The implementation includes fast paths for decoding literals and copying matches when enough input/output is available, which are omitted from the description."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement that malformed trees are rejected because the code set is 'not over-subscribed' is slightly incomplete: the implementation's actual check is more specific and also permits certain degenerate incomplete trees.",
+    "The phrase 'other impossible backward reference' in non-wrapping mode is broader than the concrete checks performed, which are specifically zero distance, distance beyond already-produced output, or no prior output."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_miniz__tinfl_decompress.raw.md"
+}

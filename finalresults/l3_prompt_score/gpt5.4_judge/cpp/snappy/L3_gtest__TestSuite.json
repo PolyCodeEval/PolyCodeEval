@@ -1,0 +1,27 @@
+{
+  "task": "cpp/snappy/L3_gtest__TestSuite",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__TestSuite/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__TestSuite/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/include/gtest/gtest.h",
+  "target_symbol": "third_party/googletest/googletest/include/gtest/gtest.h::TestSuite",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description matches the class implementation very well. It correctly captures that `TestSuite` is a GoogleTest suite container with explicit construction parameters, read-only accessors, aggregate count queries, pass/fail semantics including the ad-hoc setup/teardown result, indexed test lookup with null on out-of-range, internal mutation methods, run/skip control, conditional setup/teardown wrappers, classification predicates, shuffle/unshuffle support via an indirection index vector, ownership of `TestInfo` objects, and deleted copy operations. It is also fairly complete for implementation purposes. The only notable weakness is that it sometimes describes intent a bit more broadly than what is directly visible in this header-only declaration, and it omits a few concrete API details such as the static clear helper and friendship/internal visibility distinctions.",
+  "missing_functionality": [
+    "Does not explicitly mention the static helper `ClearTestSuiteResult(TestSuite*)` that forwards to `ClearResult()`.",
+    "Does not mention that many mutation/management operations are private and accessible via friend classes rather than public API.",
+    "Does not explicitly call out both mutable and const `test_info_list()` accessors returning the underlying vector."
+  ],
+  "incorrect_or_misleading_points": [
+    "Says the class 'defines suite pass/fail status from both contained runnable tests and the suite-level ad-hoc result'; this is substantively correct, but the actual implementation computes failure specifically as `failed_test_count() > 0 || ad_hoc_test_result().Failed()`, so it relies on the existing failed-test aggregate rather than independently checking all runnable tests at this point.",
+    "Mentions 'execution state' and broad management behavior, which is reasonable, but some of that is inferred from members and declarations rather than fully shown in the provided implementation body."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest__TestSuite.raw.md"
+}

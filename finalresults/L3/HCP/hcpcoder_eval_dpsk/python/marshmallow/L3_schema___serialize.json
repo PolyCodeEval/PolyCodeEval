@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.65,
+  "stdout": "eyError\n________________ TestContext.test_nested_fields_inherit_context ________________\n\nself = <tests.unit_tests.test_context.TestContext object at 0x7fc9017b88b0>\n\n    def test_nested_fields_inherit_context(self):\n        class InnerSchema(Schema):\n            likes_bikes = fields.Function(lambda obj: \"bikes\" in Context.get()[\"info\"])\n    \n        class CSchema(Schema):\n            inner = fields.Nested(InnerSchema)\n    \n        ser = CSchema()\n        with Context[dict]({\"info\": \"i like bikes\"}):\n            obj: dict[str, dict] = {\"inner\": {}}\n            result = ser.dump(obj)\n>           assert result[\"inner\"][\"likes_bikes\"] is True\nE           KeyError: 'likes_bikes'\n\ntests/unit_tests/test_context.py:106: KeyError\n____________________________ test_serializing_none _____________________________\n\n    def test_serializing_none():\n        class MySchema(Schema):\n            id = fields.Str(dump_default=\"no-id\")\n            num = fields.Int()\n            name = fields.Str()\n    \n        data = UserSchema().dump(None)\n>       assert data == {\"id\": \"no-id\"}\nE       AssertionError: assert {} == {'id': 'no-id'}\nE         \nE         Right contains 1 more item:\nE         {'id': 'no-id'}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:322: AssertionError\n______________________________ test_method_field _______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\n\n    def test_method_field(serialized_user):\n>       assert serialized_user[\"is_old\"] is False\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:529: KeyError\n_____________________________ test_function_field ______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\nuser = <User Monty>\n\n    def test_function_field(serialized_user, user):\n>       assert serialized_user[\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:535: KeyError\n__________________ TestNestedSchema.test_nested_method_field ___________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7fc900b44cd0>\nblog = <tests.base.Blog object at 0x7fc90071a7d0>\n\n    def test_nested_method_field(self, blog):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"is_old\"]\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:1948: KeyError\n_________________ TestNestedSchema.test_nested_function_field __________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7fc900b23d60>\nblog = <tests.base.Blog object at 0x7fc9005ab9a0>, user = <User Monty>\n\n    def test_nested_function_field(self, blog, user):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:1953: KeyError\n_________________ TestDefaults.test_default_and_value_missing __________________\n\nself = <tests.unit_tests.test_schema.TestDefaults object at 0x7fc900b46e90>\nschema = <MySchema(many=False)>\ndata = {'int_no_default': None, 'list_no_default': None, 'nested_no_default': None, 'str_no_default': None}\n\n    def test_default_and_value_missing(self, schema, data):\n        del data[\"int_with_default\"]\n        del data[\"str_with_default\"]\n        result = schema.dump(data)\n>       assert result[\"int_with_default\"] == 42\nE       KeyError: 'int_with_default'\n\ntests/unit_tests/test_schema.py:2445: KeyError\n__ TestFieldSerialization.test_method_field_does_not_swallow_attribute_error ___\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7fc900ba92a0>\n\n    def test_method_field_does_not_swallow_attribute_error(self):\n        class MySchema(Schema):\n            mfield = fields.Method(\"raise_error\")\n    \n            def raise_error(self, obj):\n                raise AttributeError\n    \n>       with pytest.raises(AttributeError):\nE       Failed: DID NOT RAISE <class 'AttributeError'>\n\ntests/unit_tests/test_serialization.py:493: Failed\n__ TestFieldSerialization.test_constant_is_always_included_in_serialized_data __\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7fc900bd0340>\n\n    def test_constant_is_always_included_in_serialized_data(self):\n        class MySchema(Schema):\n            foo = fields.Constant(42)\n    \n        sch = MySchema()\n>       assert sch.dump({\"bar\": 24})[\"foo\"] == 42\nE       KeyError: 'foo'\n\ntests/unit_tests/test_serialization.py:917: KeyError\n______ TestFieldSerialization.test_constant_field_serialize_when_omitted _______\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7fc900bd0af0>\n\n    def test_constant_field_serialize_when_omitted(self):\n        class MiniUserSchema(Schema):\n            name = fields.Constant(\"bill\")\n    \n        s = MiniUserSchema()\n>       assert s.dump({})[\"name\"] == \"bill\"\nE       KeyError: 'name'\n\ntests/unit_tests/test_serialization.py:925: KeyError\n_______ TestSchemaSerialization.test_serialize_with_missing_param_value ________\n\nself = <tests.unit_tests.test_serialization.TestSchemaSerialization object at 0x7fc900bd0370>\n\n    def test_serialize_with_missing_param_value(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(dump_default=dt.datetime(2017, 9, 29))\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().dump(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == \"2017-09-29T00:00:00\"\nE       KeyError: 'birthdate'\n\ntests/unit_tests/test_serialization.py:943: KeyError\n______ TestSchemaSerialization.test_serialize_with_missing_param_callable ______\n\nself = <tests.unit_tests.test_serialization.TestSchemaSerialization object at 0x7fc900bd02b0>\n\n    def test_serialize_with_missing_param_callable(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(dump_default=lambda: dt.datetime(2017, 9, 29))\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().dump(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == \"2017-09-29T00:00:00\"\nE       KeyError: 'birthdate'\n\ntests/unit_tests/test_serialization.py:953: KeyError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_method - K...\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_function\nFAILED tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer\nFAILED tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context\nFAILED tests/unit_tests/test_schema.py::test_serializing_none - AssertionErro...\nFAILED tests/unit_tests/test_schema.py::test_method_field - KeyError: 'is_old'\nFAILED tests/unit_tests/test_schema.py::test_function_field - KeyError: 'lowe...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_default_and_value_missing\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_method_field_does_not_swallow_attribute_error\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_constant_is_always_included_in_serialized_data\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_constant_field_serialize_when_omitted\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_callable\n======================= 15 failed, 1164 passed in 5.81s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___serialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_context_function",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDefaults::test_default_and_value_missing",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_method_field_does_not_swallow_attribute_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_constant_is_always_included_in_serialized_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_constant_field_serialize_when_omitted",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

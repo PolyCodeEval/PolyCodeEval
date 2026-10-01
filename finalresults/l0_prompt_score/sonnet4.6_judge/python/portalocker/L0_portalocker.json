@@ -1,0 +1,29 @@
+{
+  "task": "python/portalocker/L0_portalocker",
+  "project": "python/portalocker",
+  "language": "python",
+  "prompt_path": "datasets/python/portalocker/tasks/L0_portalocker/prompt.md",
+  "project_root": "datasets/python/portalocker",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.0,
+      "reason": "Covers lock/unlock functions, Lock/RLock/TemporaryFileLock/PidFileLock/BoundedSemaphore/NamedBoundedSemaphore classes, exception types (LockException, AlreadyLocked), LockFlags enum with EXCLUSIVE/SHARED/NON_BLOCKING/UNBLOCK, LOCK_EX/LOCK_SH/LOCK_NB/LOCK_UN aliases, coalesce utility, PidFileLock.read_pid(), NamedBoundedSemaphore.get_filenames(), LockException.LOCK_FAILED=1 and fh/strerror parameters. Open_atomic mentioned. Good coverage."
+    },
+    "unambiguity": {
+      "score": 3.5,
+      "reason": "coalesce semantics are clearly described. LockException.LOCK_FAILED=1 and fh kwarg are explicit. open_atomic behavior (raises AssertionError on existing file, accepts pathlib.Path) is not described. Lock re-acquire behavior and w-mode truncation are not described. RLock over-release raising LockException is not mentioned."
+    },
+    "testability": {
+      "score": 3.5,
+      "reason": "Tests verify: coalesce with None/custom test_value, LockFlags.UNBLOCK existence, AlreadyLocked subclass, LOCK_FAILED=1, LockException fh/strerror args, open_atomic with pathlib and AssertionError on existing file, Lock w-mode truncation, Lock re-acquire same fh, RLock over-release exception, TemporaryFileLock lifecycle, PidFileLock read_pid. Several of these behaviors are not described in the prompt."
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "No conflicts. The described behaviors (coalesce, LockFlags members, exception constants, module structure) are consistent with tests. The gaps are omissions rather than contradictions."
+    }
+  },
+  "overall_score": 3.75
+}

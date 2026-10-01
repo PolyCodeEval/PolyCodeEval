@@ -1,0 +1,573 @@
+{
+  "task": "go/xid/L0_xid",
+  "solver": "chatdev_gpt54_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.47,
+  "stdout": "FAIL\tgithub.com/rs/xid [build failed]\nFAIL\n",
+  "stderr": "# github.com/rs/xid_test [github.com/rs/xid.test]\n./test_comprehensive_test.go:267:24: original.MarshalText undefined (type xid.ID has no field or method MarshalText)\n./test_comprehensive_test.go:272:20: decoded.UnmarshalText undefined (type xid.ID has no field or method UnmarshalText)\n./test_comprehensive_test.go:282:12: id.UnmarshalText undefined (type xid.ID has no field or method UnmarshalText)\n./test_comprehensive_test.go:291:12: id.UnmarshalText undefined (type xid.ID has no field or method UnmarshalText)\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.66,
+    "Architecture": 3.33,
+    "Health": 3.5
+  },
+  "overall_score": 2.35,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`id.go` exposes the required public entry points group: `ID`, `New`, `NewWithTime`, `FromString`, `NilID`, plus related methods/helpers."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/rs/xid`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/rs/xid\n\ngo 1.16"
+            },
+            {
+              "path": "test_compare_sort_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestCompare(t *testing.T) {\n\tid1 := xid.NewWithTime(time.Now().Add(-time.Hour))\n\tid2 := xid.NewWithTime(time.Now())\n\n\tif id1.Compare(id2) != -1 {\n\t\tt.Fatal(\"expected earlier ID to compare as -1\")\n\t}\n\tif id2.Compare(id1) != 1 {\n\t\tt.Fatal(\"expected later"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"bytes\"\n\t\"database/sql/driver\"\n\t\"encoding/json\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// ===== Machine ID env override =====\n\nfunc TestMachineIDFromEnv(t *testing.T) {\n\t// XID_MACHINE_ID env var overrides machine ID\n\tos.Setenv(\"XID_MACHINE_ID\", \"12345\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tid := xid.New()\n\tif id.IsNil() {\n\t\tt.Error(\"expecte"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/go.mod] declares `module github.com/rs/xid`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package `xid` exposing `New()`, `NewWithTime(t)`, `FromString(s)`, `NilID()`, and `ID`",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "package xid\nimport (\n\t\"crypto/rand\"\n\t\"database/sql/driver\"\n\t\"encoding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"encoding/json\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// Test that NilID has a valid 20-char string representation of all zeros\nfunc TestNilIDString(t *testing.T) {\n\tid := xid.NilID()\n\tstr := id.String()\n\tif len(str) != 20 {\n\t\tt.Fatalf(\"expected"
+            },
+            {
+              "path": "test_fromstring_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFromStringRoundtrip(t *testing.T) {\n\toriginal := xid.New()\n\tstr := original.String()\n\tparsed, err := xid.FromString(str)\n\tif err != nil {\n\t\tt.Fatalf(\"FromString() returned error: %v\", err)\n\t}\n\tif parsed != or"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] defines package `xid`, type `ID`, and functions `New()`, `NewWithTime(t time.Time)`, `FromString(s string)`, and `NilID()`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "key instance methods on `ID` include `String()`, `Time()`, and `Machine()`",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "D, error) {\n\tvar id ID\n\tif len(b) != rawLen {\n\t\treturn id, errInvalidLength\n\t}\n\tcopy(id[:], b)\n\treturn id, nil\n}\n// FromString decodes a base32hex encoded ID.\nfunc FromString(s string) (ID, error) {\n\tvar id ID\n\tif len(s) != encodedLen {\n\t\treturn id, errInvalidEncodedText\n\t}\n\tif err := decodeBase32Hex(&id, s); err != nil {\n\t\treturn ID{}, err\n\t}\n\treturn id, nil\n}\n// String returns the base32hex repr"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "ing.T) {\n\tid := xid.NilID()\n\tb, err := json.Marshal(id)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif string(b) != \"null\" {\n\t\tt.Errorf(\"expected 'null', got '%s'\", string(b))\n\t}\n}\n\nfunc TestMarshalJSONNonNilID(t *testing.T) {\n\tid := xid.New()\n\tb, err := json.Marshal(id)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(b) == 0 || b[0] != '\"' {\n\t\tt.Errorf(\"expect"
+            },
+            {
+              "path": "test_fromstring_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFromStringRoundtrip(t *testing.T) {\n\toriginal := xid.New()\n\tstr := original.String()\n\tparsed, err := xid.FromString(str)\n\tif err != nil {\n\t\tt.Fatalf(\"FromString() returned error: %v\", err)\n\t}\n\tif parsed != original {\n\t\tt.Fatalf(\"roundtrip failed: original=%v, parsed=%v\", original, pa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements `func (id ID) String() string`, `Time() time.Time`, and `Machine() []byte`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "additional `ID` instance methods include `Pid()`, `Counter()`, `Bytes()`, `Encode(dst []byte) []byte`, `Compare(other ID) int`, `Value()`, `Scan(...)`, `IsNil()`, and `IsZero()`",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "ngth\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID       [3]byte\n\tobjectIDCounter uint32\n\tpid             uint16\n\tdecoding        [256]byte\n)\n// ID is a globally unique, sortable identifier.\ntype ID [rawLen]byte\nfunc init() {\n\tinitDecoding()\n\tinitMachineID()\n\tpid = uint16(os.Getpid())\n\tinitCounter()\n}\nfunc initDecoding() {\n\tfor i := range decoding {\n\t\tdecoding[i] = 0x"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": ".FromBytes([]byte{1, 2, 3})\n\tif err == nil {\n\t\tt.Error(\"expected error for wrong byte length\")\n\t}\n}\n\n// ===== Machine / Pid / Counter =====\n\nfunc TestMachineReturns3Bytes(t *testing.T) {\n\tid := xid.New()\n\tm := id.Machine()\n\tif len(m) != 3 {\n\t\tt.Errorf(\"expected 3 machine bytes, got %d\", len(m))\n\t}\n}\n\nfunc TestPidIsNonZero(t *testing.T) {\n\tid := xid.New()\n\t// PID should be the current process ID\n\ti"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "original.ID)\n\t}\n\tif decoded.Name != original.Name {\n\t\tt.Fatalf(\"Name mismatch after JSON roundtrip\")\n\t}\n}\n\n// Test that Counter value from NilID is zero\nfunc TestNilIDCounterIsZero(t *testing.T) {\n\tid := xid.NilID()\n\tif id.Counter() != 0 {\n\t\tt.Fatalf(\"expected NilID counter to be 0, got %d\", id.Counter())\n\t}\n}\n\n// Test that NewWithTime with negative Unix timestamp works (epoch before 1970)\nfunc Te"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements `Pid`, `Counter`, `Bytes`, `Encode`, `Compare`, `Value`, `Scan`, `IsNil`, and `IsZero`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "package-level helpers should include `Sort(ids []ID)` and `FromBytes(b []byte) (ID, error)`",
+          "evidence": [
+            {
+              "path": "test_frombytes_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFromBytesValid(t *testing.T) {\n\toriginal := xid.New()\n\tbytes := original.Bytes()\n\tparsed, err := xid.FromBytes(bytes)\n\tif err != nil {\n\t\tt.Fatalf(\"FromBytes() returned error: %v\", err)\n\t}\n\tif parsed != original {\n\t\tt.Fatalf(\"FromBytes roundtrip failed: original=%v, parsed=%v\", or"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "package xid\nimport (\n\t\"crypto/rand\"\n\t\"database/sql/driver\"\n\t\"encoding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "d.Bytes()\n\tfor _, v := range b {\n\t\tif v != 0 {\n\t\t\tt.Error(\"NilID bytes should all be zero\")\n\t\t\tbreak\n\t\t}\n\t}\n}\n\n// ===== sort.Interface =====\n\nfunc TestSortInterface(t *testing.T) {\n\tids := []xid.ID{xid.New(), xid.New(), xid.New()}\n\txid.Sort(ids) // test Sort directly\n}\n\n// ===== driver.Valuer interface =====\n\nfunc TestValueImplementsDriverValuer(t *testing.T) {\n\tid := xid.New()\n\tvar v driver.Value"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements package-level `Sort(ids []ID)` and `FromBytes(b []byte) (ID, error)`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "if the environment variable `XID_MACHINE_ID` is set, it overrides the machine-ID bytes; `New()` must panic if the value is not a valid integer or exceeds the range `[0, 16777215]`",
+          "evidence": [
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// ===== Machine ID env override =====\n\nfunc TestMachineIDFromEnv(t *testing.T) {\n\t// XID_MACHINE_ID env var overrides machine ID\n\tos.Setenv(\"XID_MACHINE_ID\", \"12345\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tid := xid.New()\n\tif id.IsNil() {\n\t\tt.Error(\"expected non-nil ID with env machine ID\")\n\t}\n\t// Machine bytes should reflect the env value (12345 = 0x003039)\n\tm :"
+            },
+            {
+              "path": "test_frombytes_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFromBytesValid(t *testing.T) {\n\toriginal := xid.New()\n\tbytes := original.Bytes()\n\tparsed, err := xid.FromBytes(bytes)\n\tif err != nil {\n\t\tt.Fatalf(\"FromBytes() returned error: %v\", err)\n\t}\n\tif parsed != original {\n\t\tt.Fatalf(\"FromBytes roundtrip failed: original=%v, parsed=%v\", origin"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "bjectIDCounter = uint32(seed[0])<<16 | uint32(seed[1])<<8 | uint32(seed[2])\n}\nfunc initMachineID() {\n\tenv := os.Getenv(\"XID_MACHINE_ID\")\n\tif env != \"\" {\n\t\tn, err := strconv.ParseUint(env, 10, 24)\n\t\tif err != nil || n > 0xFFFFFF {\n\t\t\tpanic(fmt.Sprintf(\"xid: invalid XID_MACHINE_ID %q\", env))\n\t\t}\n\t\tmachineID[0] = byte(n >> 16)\n\t\tmachineID[1] = byte(n >> 8)\n\t\tmachineID[2] = byte(n)\n\t\treturn\n\t}\n\thost,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] reads `XID_MACHINE_ID` in `initMachineID()`, converts it into 3 machine-ID bytes, and panics on parse/range errors."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "ID Generation",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements ID generation through `New()` and `NewWithTime()` using timestamp, machine ID, pid, and counter components."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "String Encoding",
+          "evidence": [
+            {
+              "path": "test_fromstring_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFromStringRoundtrip(t *testing.T) {\n\toriginal := xid.New()\n\tstr := original.String()\n\tparsed, err := xid.FromString(str)\n\tif err != nil {\n\t\tt.Fatalf(\"FromString() returned error: %v\", err)\n\t}\n\tif parsed != original {\n\t\tt.Fatalf(\"roundtrip failed: original=%v, parsed=%v\", original, pa"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "D, error) {\n\tvar id ID\n\tif len(b) != rawLen {\n\t\treturn id, errInvalidLength\n\t}\n\tcopy(id[:], b)\n\treturn id, nil\n}\n// FromString decodes a base32hex encoded ID.\nfunc FromString(s string) (ID, error) {\n\tvar id ID\n\tif len(s) != encodedLen {\n\t\treturn id, errInvalidEncodedText\n\t}\n\tif err := decodeBase32Hex(&id, s); err != nil {\n\t\treturn ID{}, err\n\t}\n\treturn id, nil\n}\n// String returns the base32hex repr"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "ing.T) {\n\tid := xid.NilID()\n\tb, err := json.Marshal(id)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif string(b) != \"null\" {\n\t\tt.Errorf(\"expected 'null', got '%s'\", string(b))\n\t}\n}\n\nfunc TestMarshalJSONNonNilID(t *testing.T) {\n\tid := xid.New()\n\tb, err := json.Marshal(id)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(b) == 0 || b[0] != '\"' {\n\t\tt.Errorf(\"expect"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements base32hex string encoding/decoding via `String()`, `FromString()`, `encodeBase32Hex`, and `decodeBase32Hex`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Binary Encoding",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "package xid\nimport (\n\t\"crypto/rand\"\n\t\"database/sql/driver\"\n\t\"encoding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors."
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"bytes\"\n\t\"database/sql/driver\"\n\t\"encoding/json\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// ===== Machine ID env override =====\n\nfunc TestMachineIDFromEnv(t *testing.T) {\n\t// XID_MACHINE_ID env var overrides machine ID\n\tos.Setenv(\"XID_MACHINE_ID\", \"12345\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tid := xi"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"encoding/json\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// Test that NilID has a valid 20-char string representation of all zeros\nfunc TestNilIDString(t *testing.T) {\n\tid := xid.NilID()\n\tstr := id.String()\n\tif len(str) != 20 {\n\t\tt.Fatalf(\"expected 20-char string for NilID, got"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] supports binary encoding through raw 12-byte `ID`, `Bytes()`, and `FromBytes()`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Timestamp and Component Extraction",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "he current time.\nfunc New() ID {\n\treturn NewWithTime(time.Now())\n}\n// NewWithTime generates a new ID using the supplied timestamp.\nfunc NewWithTime(t time.Time) ID {\n\tvar id ID\n\tsecs := uint32(t.Unix())\n\tbinary.BigEndian.PutUint32(id[0:4], secs)\n\tcopy(id[4:7], machineID[:])\n\tbinary.BigEndian.PutUint16(id[7:9], pid)\n\ti := atomic.AddUint32(&objectIDCounter, 1) & 0xFFFFFF\n\tid[9] = byte(i >> 16)\n\tid[1"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "(nilID) != 0 {\n\t\tt.Fatal(\"NilID compared to itself should be 0\")\n\t}\n}\n\n// Test that NewWithTime embeds the correct Unix timestamp\nfunc TestNewWithTimeSpecificTimestamp(t *testing.T) {\n\t// Use a specific known timestamp\n\tts := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)\n\tid := xid.NewWithTime(ts)\n\textracted := id.Time()\n\tif extracted.Unix() != ts.Unix() {\n\t\tt.Fatalf(\"expected Unix timestamp %d, got"
+            },
+            {
+              "path": "test_fields_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestFieldExtraction(t *testing.T) {\n\tnow := time.Now().Truncate(time.Second)\n\tid := xid.NewWithTime(now)\n\n\textractedTime := id.Time().Truncate(time.Second)\n\tif !extractedTime.Equal(now) {\n\t\tt.Fatalf(\"Time() mismatch: expected %v, got %v\", now, extractedTime)\n\t}\n\n\tmachine := id.Machine()"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] embeds/extracts timestamp and exposes component accessors `Time()`, `Machine()`, `Pid()`, and `Counter()`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Comparison and Sorting",
+          "evidence": [
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "ment(t *testing.T) {\n\tids := []xid.ID{xid.New()}\n\toriginal := ids[0]\n\txid.Sort(ids)\n\tif ids[0] != original {\n\t\tt.Fatal(\"sorting single-element slice should not change it\")\n\t}\n}\n\n// Test Compare with NilID\nfunc TestCompareWithNilID(t *testing.T) {\n\tid := xid.New()\n\tnilID := xid.NilID()\n\tif nilID.Compare(id) != -1 {\n\t\tt.Fatal(\"NilID should compare less than any generated ID\")\n\t}\n\tif id.Compare(nilID"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] implements `Compare(other ID) int` and `Sort(ids []ID)` for ordering IDs."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Database Integration",
+          "evidence": [
+            {
+              "path": "id.go",
+              "excerpt": "package xid\nimport (\n\t\"crypto/rand\"\n\t\"database/sql/driver\"\n\t\"encoding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"bytes\"\n\t\"database/sql/driver\"\n\t\"encoding/json\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// ===== Machine ID env override =====\n\nfunc TestMachineIDFromEnv(t *testing.T) {\n\t// XID_MACHINE_ID env var overrides machine ID\n\tos.Setenv(\"XID_MACHINE_ID\", \"12345\")\n\tdefer os.Unsetenv(\"XID_"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] provides database integration with `Value()` and `Scan(...)`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "\\\\xid\\\\L0_xid\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_go生成\\\\go\\\\xid\\\\L0_xid\",\n  \"files_collected\": 2,\n  \"duration_seconds\": 336.3\n}"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "1] = byte(h >> 8)\n\tmachineID[2] = byte(h)\n}\n// NilID returns the zero-value ID.\nfunc NilID() ID {\n\treturn ID{}\n}\n// New generates a new ID using the current time.\nfunc New() ID {\n\treturn NewWithTime(time.Now())\n}\n// NewWithTime generates a new ID using the supplied timestamp.\nfunc NewWithTime(t time.Time) ID {\n\tvar id ID\n\tsecs := uint32(t.Unix())\n\tbinary.BigEndian.PutUint32(id[0:4], secs)\n\tcopy(id"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "T) {\n\tid := xid.New()\n\tnilID := xid.NilID()\n\tif nilID.Compare(id) != -1 {\n\t\tt.Fatal(\"NilID should compare less than any generated ID\")\n\t}\n\tif id.Compare(nilID) != 1 {\n\t\tt.Fatal(\"generated ID should compare greater than NilID\")\n\t}\n\tif nilID.Compare(nilID) != 0 {\n\t\tt.Fatal(\"NilID compared to itself should be 0\")\n\t}\n}\n\n// Test that NewWithTime embeds the correct Unix timestamp\nfunc TestNewWithTimeSpe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository places generated source files directly at the project root (`go.mod`, `id.go`), matching the required root-relative layout."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/rs/xid\n\ngo 1.16"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "CE\\\\PolyCodeEval\\\\datasets\\\\go\\\\xid\\\\tasks\\\\L0_xid\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"GPT_5_4\",\n  \"token_usage\": {\n    \"prompt_tokens\": 44664,\n    \"completion_tokens\": 9073,\n    \"total_tokens\": 53737\n  },\n  \"status\": \"ok\",\n  \"workspace_root\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\workspaces\\\\chatdev\\\\go\\\\xid\\\\L0_xid\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\Po"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "ing.T) {\n\tid := xid.New()\n\tnilID := xid.NilID()\n\tif nilID.Compare(id) != -1 {\n\t\tt.Fatal(\"NilID should compare less than any generated ID\")\n\t}\n\tif id.Compare(nilID) != 1 {\n\t\tt.Fatal(\"generated ID should compare greater than NilID\")\n\t}\n\tif nilID.Compare(nilID) != 0 {\n\t\tt.Fatal(\"NilID compared to itself should be 0\")\n\t}\n}\n\n// Test that NewWithTime embeds the correct Unix timestamp\nfunc TestNewWithTim"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo has a standard Go module root with `go.mod` and the package source file at the root package."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "characters\nfunc TestScanInvalidContent(t *testing.T) {\n\tvar id xid.ID\n\terr := id.Scan(\"wwwwwwwwwwwwwwwwwwww\") // 'w' is not in base32hex charset [0-9a-v]\n\tif err == nil {\n\t\tt.Fatal(\"expected error scanning string with invalid base32 chars\")\n\t}\n}\n\n// Test FromBytes with empty (non-nil) slice\nfunc TestFromBytesEmpty(t *testing.T) {\n\t_, err := xid.FromBytes([]byte{})\n\tif err == nil {\n\t\tt.Fatal(\"expec"
+            },
+            {
+              "path": "test_compare_sort_test.go",
+              "excerpt": "* time.Hour))\n\t}\n\n\txid.Sort(ids)\n\n\tfor i := 1; i < len(ids); i++ {\n\t\tif ids[i].Compare(ids[i-1]) < 0 {\n\t\t\tt.Fatalf(\"IDs not sorted correctly at index %d\", i)\n\t\t}\n\t}\n}"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "machine bytes, got %d\", len(m))\n\t}\n}\n\nfunc TestMachineIDEnvInvalidPanics(t *testing.T) {\n\tos.Setenv(\"XID_MACHINE_ID\", \"not-a-number\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Error(\"expected panic for invalid XID_MACHINE_ID\")\n\t\t}\n\t}()\n\txid.New()\n}\n\nfunc TestMachineIDEnvOutOfRangePanics(t *testing.T) {\n\tos.Setenv(\"XID_MACHINE_ID\", \"16777216\") // 0x"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes multiple generated `*_test.go` files, which violates the requirement to not generate test files."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Ensure the module path is `github.com/rs/xid` and the root package is importable as `xid`.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/rs/xid\n\ngo 1.16"
+            },
+            {
+              "path": "test_compare_sort_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\nfunc TestCompare(t *testing.T) {\n\tid1 := xid.NewWithTime(time.Now().Add(-time.Hour))\n\tid2 := xid.NewWithTime(time.Now())\n\n\tif id1.Compare(id2) != -1 {\n\t\tt.Fatal(\"expected earlier ID to compare as -1\")\n\t}\n\tif id2.Compare(id1) != 1 {\n\t\tt.Fatal(\"expected later"
+            },
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"bytes\"\n\t\"database/sql/driver\"\n\t\"encoding/json\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// ===== Machine ID env override =====\n\nfunc TestMachineIDFromEnv(t *testing.T) {\n\t// XID_MACHINE_ID env var overrides machine ID\n\tos.Setenv(\"XID_MACHINE_ID\", \"12345\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tid := xid.New()\n\tif id.IsNil() {\n\t\tt.Error(\"expecte"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/go.mod] uses module path `github.com/rs/xid`, and [repo/id.go] defines root package `xid`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`ID.Encode(dst)` must write the same bytes as `ID.String()` returns",
+          "evidence": [
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "o this is only a soft check\n\t\tt.Logf(\"counter did not increase: %d -> %d\", id1.Counter(), id2.Counter())\n\t}\n}\n\n// ===== Encode =====\n\nfunc TestEncodeWritesToDst(t *testing.T) {\n\tid := xid.New()\n\tdst := make([]byte, 20)\n\tresult := id.Encode(dst)\n\tif !bytes.Equal(result, dst) {\n\t\tt.Error(\"Encode should return the same slice\")\n\t}\n\tif len(result) != 20 {\n\t\tt.Errorf(\"expected 20 bytes, got %d\", len(res"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "coding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID       [3]byte\n\tobjectIDCounter uint32\n\tpid             uint16\n\tdecoding"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "000000000000000\"\n\tif str != expected {\n\t\tt.Fatalf(\"expected NilID string %q, got %q\", expected, str)\n\t}\n}\n\n// Test that Encode produces the same output as String\nfunc TestEncodeMatchesString(t *testing.T) {\n\tid := xid.New()\n\tdst := make([]byte, 20)\n\tid.Encode(dst)\n\tstr := id.String()\n\tif string(dst) != str {\n\t\tt.Fatalf(\"Encode() produced %q but String() produced %q\", string(dst), str)\n\t}\n}\n\n// Tes"
+            }
+          ],
+          "status": "partial",
+          "reason": "[repo/id.go] `Encode(dst []byte)` appends 20 bytes to `dst` instead of writing into the provided slice, so calling it with a 20-byte buffer does not make `dst` equal to `String()` output."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`ID.Value()` for a non-nil ID returns a string that can be passed to `ID.Scan()` to recover the same ID",
+          "evidence": [
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "New()\n\tif id.IsNil() {\n\t\tt.Error(\"expected non-nil ID with env machine ID\")\n\t}\n\t// Machine bytes should reflect the env value (12345 = 0x003039)\n\tm := id.Machine()\n\tif len(m) != 3 {\n\t\tt.Errorf(\"expected 3 machine bytes, got %d\", len(m))\n\t}\n}\n\nfunc TestMachineIDEnvInvalidPanics(t *testing.T) {\n\tos.Setenv(\"XID_MACHINE_ID\", \"not-a-number\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tdefer func() {\n\t\tif r"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "()\n\tif string(dst) != str {\n\t\tt.Fatalf(\"Encode() produced %q but String() produced %q\", string(dst), str)\n\t}\n}\n\n// Test Value/Scan roundtrip as an integrated flow\nfunc TestValueScanRoundtrip(t *testing.T) {\n\toriginal := xid.New()\n\tval, err := original.Value()\n\tif err != nil {\n\t\tt.Fatalf(\"Value() error: %v\", err)\n\t}\n\tvar restored xid.ID\n\terr = restored.Scan(val)\n\tif err != nil {\n\t\tt.Fatalf(\"Scan()"
+            },
+            {
+              "path": "id.go",
+              "excerpt": ".Sum32()\n\tmachineID[0] = byte(h >> 16)\n\tmachineID[1] = byte(h >> 8)\n\tmachineID[2] = byte(h)\n}\n// NilID returns the zero-value ID.\nfunc NilID() ID {\n\treturn ID{}\n}\n// New generates a new ID using the current time.\nfunc New() ID {\n\treturn NewWithTime(time.Now())\n}\n// NewWithTime generates a new ID using the supplied timestamp.\nfunc NewWithTime(t time.Time) ID {\n\tvar id ID\n\tsecs := uint32(t.Unix())"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] `Value()` returns `id.String()` for non-nil IDs, and `Scan(string)` reconstructs the same ID via `FromString`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`Scan/FromBytes/FromString` require valid 12-byte / base32hex-encoded input; invalid input returns an error",
+          "evidence": [
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "m := id.Machine()\n\tif len(m) != 3 {\n\t\tt.Errorf(\"expected 3 machine bytes, got %d\", len(m))\n\t}\n}\n\nfunc TestMachineIDEnvInvalidPanics(t *testing.T) {\n\tos.Setenv(\"XID_MACHINE_ID\", \"not-a-number\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Error(\"expected panic for invalid XID_MACHINE_ID\")\n\t\t}\n\t}()\n\txid.New()\n}\n\nfunc TestMachineIDEnvOutOfRangePanics(t *t"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package xid_test\n\nimport (\n\t\"encoding/json\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/rs/xid\"\n)\n\n// Test that NilID has a valid 20-char string representation of all zeros\nfunc TestNilIDString(t *testing.T) {\n\tid := xid.NilID()\n\tstr := id.String()\n\tif len(str) != 20 {\n\t\tt.Fatalf(\"expected 20-char string for NilID, got %d: %s\", len(str), str)\n\t}\n\t// All zero bytes should produce \"00000000000000000000\""
+            },
+            {
+              "path": "id.go",
+              "excerpt": "\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID       [3]byte\n\tobjectIDCounter uint32\n\tpid             uint16\n\tdecoding        [256]byte\n)\n// ID is a globally unique, sortable identifier.\ntype ID [rawL"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] `FromBytes` checks for exact 12-byte length, `FromString` validates base32hex length/content, and `Scan` returns errors for invalid encodings or unsupported types."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`Sort([]ID{})` and `Sort` on a single-element slice are safe to call",
+          "evidence": [
+            {
+              "path": "test_compare_sort_test.go",
+              "excerpt": "later ID to compare as 1\")\n\t}\n\tif id1.Compare(id1) != 0 {\n\t\tt.Fatal(\"expected same ID to compare as 0\")\n\t}\n}\n\nfunc TestSort(t *testing.T) {\n\tids := make([]xid.ID, 5)\n\tfor i := range ids {\n\t\tids[i] = xid.NewWithTime(time.Now().Add(time.Duration(4-i) * time.Hour))\n\t}\n\n\txid.Sort(ids)\n\n\tfor i := 1; i < len(ids); i++ {\n\t\tif ids[i].Compare(ids[i-1]) < 0 {\n\t\t\tt.Fatalf(\"IDs not sorted correctly at index"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "package xid\nimport (\n\t\"crypto/rand\"\n\t\"database/sql/driver\"\n\t\"encoding/binary\"\n\t\"errors\"\n\t\"fmt\"\n\t\"hash/fnv\"\n\t\"os\"\n\t\"sort\"\n\t\"strconv\"\n\t\"sync/atomic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "T) {\n\t_, err := xid.FromBytes([]byte{})\n\tif err == nil {\n\t\tt.Fatal(\"expected error for empty byte slice\")\n\t}\n}\n\n// Test Sort with empty slice does not panic\nfunc TestSortEmpty(t *testing.T) {\n\tids := []xid.ID{}\n\txid.Sort(ids) // should not panic\n}\n\n// Test Sort with single element\nfunc TestSortSingleElement(t *testing.T) {\n\tids := []xid.ID{xid.New()}\n\toriginal := ids[0]\n\txid.Sort(ids)\n\tif ids[0] !"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] `Sort(ids []ID)` delegates to `sort.Slice`, which is safe for empty and single-element slices."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "An invalid or out-of-range `XID_MACHINE_ID` environment variable causes a panic on startup",
+          "evidence": [
+            {
+              "path": "test_comprehensive_test.go",
+              "excerpt": "m := id.Machine()\n\tif len(m) != 3 {\n\t\tt.Errorf(\"expected 3 machine bytes, got %d\", len(m))\n\t}\n}\n\nfunc TestMachineIDEnvInvalidPanics(t *testing.T) {\n\tos.Setenv(\"XID_MACHINE_ID\", \"not-a-number\")\n\tdefer os.Unsetenv(\"XID_MACHINE_ID\")\n\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Error(\"expected panic for invalid XID_MACHINE_ID\")\n\t\t}\n\t}()\n\txid.New()\n}\n\nfunc TestMachineIDEnvOutOfRangePanics(t"
+            },
+            {
+              "path": "id.go",
+              "excerpt": "ic\"\n\t\"time\"\n)\nconst (\n\trawLen     = 12\n\tencodedLen = 20\n)\nconst encoding = \"0123456789abcdefghijklmnopqrstuv\"\nvar (\n\terrInvalidLength      = errors.New(\"xid: invalid length\")\n\terrInvalidEncodedText = errors.New(\"xid: invalid encoded id\")\n\tmachineID       [3]byte\n\tobjectIDCounter uint32\n\tpid             uint16\n\tdecoding        [256]byte\n)\n// ID is a globally unique, sortable identifier.\ntype ID [ra"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "alue/Scan roundtrip failed: %v != %v\", original, restored)\n\t}\n}\n\n// Test Scan with a string that has correct length but invalid base32 characters\nfunc TestScanInvalidContent(t *testing.T) {\n\tvar id xid.ID\n\terr := id.Scan(\"wwwwwwwwwwwwwwwwwwww\") // 'w' is not in base32hex charset [0-9a-v]\n\tif err == nil {\n\t\tt.Fatal(\"expected error scanning string with invalid base32 chars\")\n\t}\n}\n\n// Test FromBytes"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/id.go] validates `XID_MACHINE_ID` during package initialization and panics on invalid or out-of-range values, satisfying the startup panic requirement."
+        }
+      ],
+      "feature_count": 22,
+      "constraint_count": 0,
+      "implemented_count": 20,
+      "partial_count": 1,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.9318,
+      "constraint_coverage": 0.9318,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 196582,
+        "completion_tokens": 4381,
+        "total_tokens": 200963
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.8,
+        "stack_alignment": 3.2,
+        "reference_alignment": 3.0
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 98086,
+        "completion_tokens": 6802,
+        "total_tokens": 104888
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 1,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "0",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository implements the requested Go module `github.com/rs/xid` with root package `xid`, the required `ID` type, constructors/parsers, component extractors, binary/string encoding, comparison/sorting, and database `Value`/`Scan` integration. Machine-ID override and startup validation for `XID_MACHINE_ID` are also present in the package initialization logic.\n\n### Missing List\n\n- Requirement F016 is not satisfied because the repository contains generated test files.\n- Requirement F018 is only partially satisfied because `ID.Encode(dst)` has incorrect write semantics.\n\n### Critical Constraint Misses\n\n- Generated `*_test.go` files are present despite the prompt explicitly forbidding test generation.\n- `ID.Encode(dst)` does not write into the provided destination slice as required; it appends instead.",
+    "architecture_review": "### Stack Inference\n\nThis is a Go module (`github.com/rs/xid`) for a library-style package with no frontend or persistence layer. The stack is standard Go modules plus the standard library, and the architecture is intentionally minimal: one root package file for the implementation and generated tests around it.\n\n### Scoring Mode\n\nI evaluated the actual `repo/` contents rather than the summary. The layout is a small Go library with a single root package and standard `go.mod`, so the main question is whether the exported API, initialization behavior, and file organization line up with the prompt and normal Go library practice.\n\n### Strengths\n\n- Single-root-package layout is coherent for a compact utility library; `go.mod` plus `id.go` keeps the public surface easy to locate.\n- The core ID logic is centralized and mostly self-contained, with clear helpers for encoding, decoding, comparison, and sorting.\n- The module path matches `github.com/rs/xid`, and the exported API is close to the requested `xid` surface.\n\n### Issues\n\n- The repository includes many `*_test.go` files even though the task explicitly said not to generate test files; that makes the deliverable noisier than requested and weakens the source-only shape.\n- `Encode(dst []byte)` appends 20 bytes instead of writing into the provided buffer in place, so `make([]byte, 20); id.Encode(dst)` will not match `String()` as required.\n- Machine-ID initialization happens once in `init()`, so later environment changes are ignored; that is brittle and does not align well with the repo's own runtime-env tests.\n- The code is concentrated in one file without any separation between generation, encoding, and database-adapter concerns, which is acceptable for a tiny library but not especially strong architecture.\n\n### Stack Mismatches\n\n- The prompt asked for a source-only project, but the repository contains generated tests and a `manifest.json` artifact.\n- `Value` and `Scan` are present, but the repo's tests imply additional JSON behavior and runtime env handling that are not clearly supported by the production code.\n- The initialization story for `XID_MACHINE_ID` is not coordinated with the test expectations in the repo, so the package behavior is less consistent than the prompt implies.\n\n### Reference Gaps\n\n- The visible production code does not show `MarshalJSON`/`UnmarshalJSON`, yet several included tests expect JSON round-tripping.\n- There is no dedicated abstraction around `XID_MACHINE_ID`; the behavior is fixed at package init, which limits testability and makes repeated environment-driven scenarios awkward.\n- I could not verify compilation because `go` is unavailable in the evaluation environment (`go: command not found`), so build correctness is inferred rather than proven."
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 294668,
+    "completion_tokens": 11183,
+    "total_tokens": 305851,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 196582,
+        "completion_tokens": 4381,
+        "total_tokens": 200963
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 98086,
+        "completion_tokens": 6802,
+        "total_tokens": 104888
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "xid",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.66,
+  "architecture_score": 3.33,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

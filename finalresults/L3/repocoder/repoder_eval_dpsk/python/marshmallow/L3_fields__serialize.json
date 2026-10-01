@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.03,
+  "stdout": " 'MONTYBAR'\nE            +  where <marshmallow.missing> = serialize('key', <User Monty>)\nE            +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_context.py:176: AssertionError\n______________________________ test_method_field _______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\n\n    def test_method_field(serialized_user):\n>       assert serialized_user[\"is_old\"] is False\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:529: KeyError\n_____________________________ test_function_field ______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\nuser = <User Monty>\n\n    def test_function_field(serialized_user, user):\n>       assert serialized_user[\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:535: KeyError\n__________________ TestNestedSchema.test_nested_method_field ___________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f76e9abedd0>\nblog = <tests.base.Blog object at 0x7f76e96b47f0>\n\n    def test_nested_method_field(self, blog):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"is_old\"]\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:1948: KeyError\n_________________ TestNestedSchema.test_nested_function_field __________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f76e9abecb0>\nblog = <tests.base.Blog object at 0x7f76e9a9a9b0>, user = <User Monty>\n\n    def test_nested_function_field(self, blog, user):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:1953: KeyError\n____________ TestFieldSerialization.test_function_field_passed_func ____________\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f76e9b01b10>\nuser = <User Foo>\n\n    def test_function_field_passed_func(self, user):\n        field = fields.Function(lambda obj: obj.name.upper())\n>       assert field.serialize(\"key\", user) == \"FOO\"\nE       AssertionError: assert <marshmallow.missing> == 'FOO'\nE        +  where <marshmallow.missing> = serialize('key', <User Foo>)\nE        +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_serialization.py:46: AssertionError\n_________ TestFieldSerialization.test_function_field_passed_serialize __________\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f76e9b02380>\nuser = <User Foo>\n\n    def test_function_field_passed_serialize(self, user):\n        field = fields.Function(serialize=lambda obj: obj.name.upper())\n>       assert field.serialize(\"key\", user) == \"FOO\"\nE       AssertionError: assert <marshmallow.missing> == 'FOO'\nE        +  where <marshmallow.missing> = serialize('key', <User Foo>)\nE        +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_serialization.py:60: AssertionError\n_ TestFieldSerialization.test_function_field_does_not_swallow_attribute_error __\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f76e9b01fc0>\nuser = <User Foo>\n\n    def test_function_field_does_not_swallow_attribute_error(self, user):\n        def raise_error(obj):\n            raise AttributeError\n    \n        field = fields.Function(serialize=raise_error)\n>       with pytest.raises(AttributeError):\nE       Failed: DID NOT RAISE <class 'AttributeError'>\n\ntests/unit_tests/test_serialization.py:68: Failed\n__ TestFieldSerialization.test_method_field_does_not_swallow_attribute_error ___\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f76e9b032b0>\n\n    def test_method_field_does_not_swallow_attribute_error(self):\n        class MySchema(Schema):\n            mfield = fields.Method(\"raise_error\")\n    \n            def raise_error(self, obj):\n                raise AttributeError\n    \n>       with pytest.raises(AttributeError):\nE       Failed: DID NOT RAISE <class 'AttributeError'>\n\ntests/unit_tests/test_serialization.py:493: Failed\n_______ TestSchemaSerialization.test_serialize_with_missing_param_value ________\n\nself = <tests.unit_tests.test_serialization.TestSchemaSerialization object at 0x7f76e9b6a0b0>\n\n    def test_serialize_with_missing_param_value(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(dump_default=dt.datetime(2017, 9, 29))\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().dump(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == \"2017-09-29T00:00:00\"\nE       AssertionError: assert datetime.datetime(2017, 9, 29, 0, 0) == '2017-09-29T00:00:00'\n\ntests/unit_tests/test_serialization.py:943: AssertionError\n______ TestSchemaSerialization.test_serialize_with_missing_param_callable ______\n\nself = <tests.unit_tests.test_serialization.TestSchemaSerialization object at 0x7f76e9b6a380>\n\n    def test_serialize_with_missing_param_callable(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(dump_default=lambda: dt.datetime(2017, 9, 29))\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().dump(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == \"2017-09-29T00:00:00\"\nE       AssertionError: assert datetime.datetime(2017, 9, 29, 0, 0) == '2017-09-29T00:00:00'\n\ntests/unit_tests/test_serialization.py:953: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_method - K...\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_function\nFAILED tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer\nFAILED tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context\nFAILED tests/unit_tests/test_context.py::TestContext::test_function_field_passed_serialize_with_context\nFAILED tests/unit_tests/test_schema.py::test_method_field - KeyError: 'is_old'\nFAILED tests/unit_tests/test_schema.py::test_function_field - KeyError: 'lowe...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_func\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_serialize\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_does_not_swallow_attribute_error\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_method_field_does_not_swallow_attribute_error\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_callable\n======================= 15 failed, 1164 passed in 2.87s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__serialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_context_function",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_function_field_passed_serialize_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_func",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_serialize",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_does_not_swallow_attribute_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_method_field_does_not_swallow_attribute_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

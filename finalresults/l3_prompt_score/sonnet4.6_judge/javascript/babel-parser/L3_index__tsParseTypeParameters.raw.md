@@ -1,0 +1,12 @@
+{
+  "score": 4.5,
+  "reason": "The description accurately captures all major behaviors: token validation for opening delimiters, delegating to tsParseBracketedList with the supplied modifier parser, raising EmptyTypeParameters on empty lists, recording trailing comma position as extra metadata, and returning a TSTypeParameterDeclaration node. The description is complete enough to implement the function faithfully. Minor imprecision: it says 'JSX-style opening type-parameter delimiter' for token 138, which is a reasonable interpretation but not explicitly confirmed by the code. The description also doesn't mention that the list context name is 'TypeParametersOrArguments' or that the bracketed list is called with `false, true` flags (not generic=false, possiblyEmpty=true), but these are secondary implementation details rather than functional behavior.",
+  "missing_functionality": [
+    "The specific list context string 'TypeParametersOrArguments' passed to tsParseBracketedList is not mentioned.",
+    "The two boolean flags (false, true) passed to tsParseBracketedList — controlling generic and possiblyEmpty behavior — are not described."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing token 138 as a 'JSX-style opening type-parameter delimiter' is an inference; the code only checks match(43) or match(138) without labeling them."
+  ],
+  "complete_enough": true
+}

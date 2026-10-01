@@ -1,0 +1,11 @@
+{
+  "score": 4.5,
+  "reason": "The description captures the core parsing logic well: handling of line terminators (\\n, \\r, \\r\\n), BOM skipping, line accumulation with max length and overflow flag, and final line emission. Minor details like the call to HandleRobotsStart/HandleRobotsEnd and 0-based vs 1-based line numbering nuance are missing but not critical.",
+  "missing_functionality": [
+    "Does not mention calling HandleRobotsStart at the beginning and HandleRobotsEnd at the end to notify the handler.",
+    "Does not mention that line numbers passed to ParseAndEmitLine are incremented before being passed, making them effectively 1-based, but the description says '1-based line numbers' which matches the effect; the implementation detail is that line_num starts at 0 and is pre-incremented, but the description already says 1-based, so this is fine.",
+    "Does not explicitly mention dynamic buffer allocation with new[] and delete[], which is an implementation detail but not part of the functional contract."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

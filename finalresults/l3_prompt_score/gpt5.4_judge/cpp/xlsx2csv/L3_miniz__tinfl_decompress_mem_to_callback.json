@@ -1,0 +1,24 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__tinfl_decompress_mem_to_callback",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tinfl_decompress_mem_to_callback/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tinfl_decompress_mem_to_callback/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::tinfl_decompress_mem_to_callback",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely: it correctly explains the callback-based streaming decompression loop, internal dictionary allocation, decompressor initialization, input-consumption tracking, flag masking, callback failure handling, wraparound dictionary offset update, and success/failure return behavior. The main mismatch is the final bullet about allocation failure: the implementation returns `TINFL_STATUS_FAILED` immediately, but because no input was consumed yet this is also effectively a failure return distinct from the usual boolean-style result. This is a minor issue, and overall the description is detailed enough to reproduce the function accurately.",
+  "missing_functionality": [
+    "The implementation zero-initializes the allocated dictionary buffer with `memset(pDict, 0, TINFL_LZ_DICT_SIZE)` before starting decompression."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the function returns `TINFL_STATUS_FAILED` immediately on allocation failure; while that is what the code returns, the rest of the function otherwise uses 0/1-style success/failure semantics, so this special-case return value may be slightly misleading if presented as normal behavior."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_miniz__tinfl_decompress_mem_to_callback.raw.md"
+}

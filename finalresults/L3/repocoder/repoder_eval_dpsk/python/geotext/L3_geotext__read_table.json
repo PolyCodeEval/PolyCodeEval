@@ -1,0 +1,31 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.6,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 11 items\n\ntests/unit_tests/test_geotext.py FFF..F                                  [ 54%]\ntests/acceptance_tests/test_acceptance.py .FF..                          [100%]\n\n=================================== FAILURES ===================================\n___________________________ TestGeotext.test_cities ____________________________\n\nself = <test_geotext.TestGeotext testMethod=test_cities>\n\n    def test_cities(self):\n    \n        text = \"\"\"São Paulo é a capital do estado de São Paulo. As cidades de Barueri\n                  e Carapicuíba fazem parte da Grade São Paulo. O Rio de Janeiro\n                  continua lindo. No carnaval eu vou para Salvador. No reveillon eu\n                  quero ir para Santos.\"\"\"\n        result = GeoText(text).cities\n        expected = [\n            'São Paulo', 'São Paulo', 'Barueri', 'Carapicuíba', 'Rio de Janeiro', 'Salvador', 'Santos'\n        ]\n>       self.assertEqual(result, expected)\nE       AssertionError: Lists differ: [] != ['São Paulo', 'São Paulo', 'Barueri', 'Car[45 chars]tos']\nE       \nE       Second list contains 7 additional elements.\nE       First extra element 0:\nE       'São Paulo'\nE       \nE       - []\nE       + ['São Paulo',\nE       +  'São Paulo',\nE       +  'Barueri',\nE       +  'Carapicuíba',\nE       +  'Rio de Janeiro',\nE       +  'Salvador',\nE       +  'Santos']\n\ntests/unit_tests/test_geotext.py:30: AssertionError\n__________________________ TestGeotext.test_countries __________________________\n\nself = <test_geotext.TestGeotext testMethod=test_countries>\n\n    def test_countries(self):\n    \n        text = \"\"\"That was fertile ground for the emergence of various forms of\n                  totalitarian governments such as Japan, Italy,\n                  and Germany, as well as other countries\"\"\"\n        result = GeoText(text).countries\n        expected = ['Japan', 'Italy', 'Germany']\n>       self.assertEqual(result, expected)\nE       AssertionError: Lists differ: [] != ['Japan', 'Italy', 'Germany']\nE       \nE       Second list contains 3 additional elements.\nE       First extra element 0:\nE       'Japan'\nE       \nE       - []\nE       + ['Japan', 'Italy', 'Germany']\n\ntests/unit_tests/test_geotext.py:115: AssertionError\n______________________ TestGeotext.test_country_mentions _______________________\n\nself = <test_geotext.TestGeotext testMethod=test_country_mentions>\n\n    def test_country_mentions(self):\n    \n        text = 'I would like to visit Lima, Dublin and Moscow (Russia).'\n        result = GeoText(text).country_mentions\n        expected = {'PE': 1, 'IE': 1, 'RU': 2}\n>       self.assertEqual(result, expected)\nE       AssertionError: OrderedDict() != {'PE': 1, 'IE': 1, 'RU': 2}\n\ntests/unit_tests/test_geotext.py:122: AssertionError\n_______________________ test_read_table_and_build_index ________________________\n\n    def test_read_table_and_build_index():\n        table = read_table(get_data_path('nationalities.txt'), sep=':')\n        assert table['japanese'] == 'JP'\n    \n        index = build_index()\n        assert 'japanese' in index.nationalities\n>       assert 'japan' in index.countries\nE       AssertionError: assert 'japan' in {'Afghanistan': 'AF', 'Aland Islands': 'AX', 'Albania': 'AL', 'Algeria': 'DZ', ...}\nE        +  where {'Afghanistan': 'AF', 'Aland Islands': 'AX', 'Albania': 'AL', 'Algeria': 'DZ', ...} = Index(nationalities={'afghan': 'AF', 'albanian': 'AL', 'algerian': 'DZ', 'american': 'US', 'andorran': 'AD', 'angolan'..., 'South Africa': 'ZA', 'Zambia': 'ZM', 'Zimbabwe': 'ZW', 'Serbia and Montenegro': 'CS', 'Netherlands Antilles': 'AN'}).countries\n\ntests/unit_tests/test_geotext.py:138: AssertionError\n__________________ TestGeoTextAcceptance.test_country_filter ___________________\n\nself = <test_acceptance.TestGeoTextAcceptance testMethod=test_country_filter>\n\n    def test_country_filter(self):\n        text = 'I loved Rio de Janeiro and Havana'\n        places = GeoText(text, 'BR')\n>       self.assertIn('Rio de Janeiro', places.cities)\nE       AssertionError: 'Rio de Janeiro' not found in []\n\ntests/acceptance_tests/test_acceptance.py:28: AssertionError\n______________ TestGeoTextAcceptance.test_country_mentions_count _______________\n\nself = <test_acceptance.TestGeoTextAcceptance testMethod=test_country_mentions_count>\n\n    def test_country_mentions_count(self):\n        text = 'New York, Texas, and also China'\n        places = GeoText(text)\n        expected = OrderedDict([(u'US', 2), (u'CN', 1)])\n>       self.assertEqual(places.country_mentions, expected)\nE       AssertionError: OrderedDict([('US', 2)]) != OrderedDict([('US', 2), ('CN', 1)])\n\ntests/acceptance_tests/test_acceptance.py:23: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_geotext.py::TestGeotext::test_cities - Assertion...\nFAILED tests/unit_tests/test_geotext.py::TestGeotext::test_countries - Assert...\nFAILED tests/unit_tests/test_geotext.py::TestGeotext::test_country_mentions\nFAILED tests/unit_tests/test_geotext.py::test_read_table_and_build_index - As...\nFAILED tests/acceptance_tests/test_acceptance.py::TestGeoTextAcceptance::test_country_filter\nFAILED tests/acceptance_tests/test_acceptance.py::TestGeoTextAcceptance::test_country_mentions_count\n========================= 6 failed, 5 passed in 0.23s ==========================\n",
+  "stderr": "",
+  "task": "python/geotext/L3_geotext__read_table",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_geotext.py::TestGeotext::test_country_mentions",
+        "passed": false
+      },
+      {
+        "name": "tests/acceptance_tests/test_acceptance.py::TestGeoTextAcceptance::test_country_filter",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 2,
+    "total": 2
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

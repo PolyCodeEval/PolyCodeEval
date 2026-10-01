@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.11,
+  "stdout": "         NameError: name 'many' is not defined\n\nsrc/marshmallow/decorators.py:135: NameError\n______________ test_load_processors_receive_unknown[include-init] ______________\n\nusage_location = 'init', unknown_val = 'include'\n\n    @pytest.mark.parametrize(\"usage_location\", [\"meta\", \"init\", \"load\"])\n    @pytest.mark.parametrize(\"unknown_val\", (EXCLUDE, INCLUDE))\n    def test_load_processors_receive_unknown(usage_location, unknown_val):\n>       class ExampleSchema(Schema):\n\ntests/unit_tests/test_decorators.py:937: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_decorators.py:941: in ExampleSchema\n    def check_unknown_validates(self, data, unknown, **kwargs):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nfn = <function test_load_processors_receive_unknown.<locals>.ExampleSchema.check_unknown_validates at 0x7f88a0c672e0>\n\n    def validates_schema(\n        fn: typing.Callable[..., typing.Any] | None = None,\n        *,\n        pass_collection: bool = False,\n        pass_original: bool = False,\n        skip_on_field_errors: bool = True,\n    ) -> typing.Callable[..., typing.Any]:\n        \"\"\"Register a schema-level validator.\n    \n        By default it receives a single object at a time, transparently handling the ``many``\n        argument passed to the `Schema <marshmallow.Schema>`'s :func:`~marshmallow.Schema.validate` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before unmarshalling) will be passed as\n        an additional argument to the method.\n    \n        If ``skip_on_field_errors=True``, this validation method will be skipped whenever\n        validation errors have been detected when validating fields.\n    \n        .. versionchanged:: 3.0.0b1 ``skip_on_field_errors`` defaults to `True`.\n        .. versionchanged:: 3.0.0 ``partial`` and ``many`` are always passed as keyword arguments to\n            the decorated method.\n        .. versionchanged:: 4.0.0 ``unknown`` is passed as a keyword argument to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection``, ``pass_original``, and ``skip_on_field_errors``\n            are keyword-only arguments.\n        \"\"\"\n        if pass_collection:\n            if original_data is not None and processor_kwargs.get(\"pass_original\"):\n                data = processor(\n                    data,\n                    many=many,\n                    original_data=original_data,\n                    **kwargs,\n                )\n            else:\n                data = processor(data, many=many, **kwargs)\n        else:\n>           if many:\nE           NameError: name 'many' is not defined\n\nsrc/marshmallow/decorators.py:135: NameError\n______________ test_load_processors_receive_unknown[include-load] ______________\n\nusage_location = 'load', unknown_val = 'include'\n\n    @pytest.mark.parametrize(\"usage_location\", [\"meta\", \"init\", \"load\"])\n    @pytest.mark.parametrize(\"unknown_val\", (EXCLUDE, INCLUDE))\n    def test_load_processors_receive_unknown(usage_location, unknown_val):\n>       class ExampleSchema(Schema):\n\ntests/unit_tests/test_decorators.py:937: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_decorators.py:941: in ExampleSchema\n    def check_unknown_validates(self, data, unknown, **kwargs):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nfn = <function test_load_processors_receive_unknown.<locals>.ExampleSchema.check_unknown_validates at 0x7f88a0c9cdc0>\n\n    def validates_schema(\n        fn: typing.Callable[..., typing.Any] | None = None,\n        *,\n        pass_collection: bool = False,\n        pass_original: bool = False,\n        skip_on_field_errors: bool = True,\n    ) -> typing.Callable[..., typing.Any]:\n        \"\"\"Register a schema-level validator.\n    \n        By default it receives a single object at a time, transparently handling the ``many``\n        argument passed to the `Schema <marshmallow.Schema>`'s :func:`~marshmallow.Schema.validate` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before unmarshalling) will be passed as\n        an additional argument to the method.\n    \n        If ``skip_on_field_errors=True``, this validation method will be skipped whenever\n        validation errors have been detected when validating fields.\n    \n        .. versionchanged:: 3.0.0b1 ``skip_on_field_errors`` defaults to `True`.\n        .. versionchanged:: 3.0.0 ``partial`` and ``many`` are always passed as keyword arguments to\n            the decorated method.\n        .. versionchanged:: 4.0.0 ``unknown`` is passed as a keyword argument to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection``, ``pass_original``, and ``skip_on_field_errors``\n            are keyword-only arguments.\n        \"\"\"\n        if pass_collection:\n            if original_data is not None and processor_kwargs.get(\"pass_original\"):\n                data = processor(\n                    data,\n                    many=many,\n                    original_data=original_data,\n                    **kwargs,\n                )\n            else:\n                data = processor(data, many=many, **kwargs)\n        else:\n>           if many:\nE           NameError: name 'many' is not defined\n\nsrc/marshmallow/decorators.py:135: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-load]\n======================= 19 failed, 1160 passed in 2.36s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_decorators__validates_schema",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 18,
+    "total": 18
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,1999 @@
+{
+  "judge_model": "dpskv4pro",
+  "review_type": "l0_prompt_review",
+  "scoring_method": "weighted",
+  "weights": {
+    "completeness": 0.3,
+    "unambiguity": 0.2,
+    "consistency": 0.1,
+    "testability": 0.4
+  },
+  "total_tasks": 58,
+  "completed": 58,
+  "failed": 0,
+  "overall_avg_scores": {
+    "completeness": 4.33,
+    "unambiguity": 4.24,
+    "testability": 4.56,
+    "consistency": 4.11,
+    "overall": 4.38
+  },
+  "by_language": {
+    "go": {
+      "count": 12,
+      "avg_scores": {
+        "completeness": 4.46,
+        "unambiguity": 4.44,
+        "testability": 4.62,
+        "consistency": 4.48,
+        "overall": 4.52
+      },
+      "projects": [
+        {
+          "project": "go/alice",
+          "overall_score": 4.86,
+          "scores": {
+            "completeness": 4.8,
+            "unambiguity": 4.8,
+            "consistency": 5.0,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了 alice 的全部核心能力：Chain 创建（New）、应用（Then/ThenFunc）、扩展（Append/Extend）、不可变语义、nil 处理（DefaultServeMux 回退）。API 合约精确到每个方法签名和边界行为。prompt 本身较短但覆盖度极高。",
+            "unambiguity": "Constructor 类型定义、Chain 方法签名、import 路径、nil handler 行为规则均极其明确。Append/Extend 不可变性通过具体用例说明。无歧义。",
+            "consistency": "所有 API 描述与真实 alice 源码完全一致：Constructor 类型、方法签名、不可变语义、DefaultServeMux 回退、package 路径。无任何偏差。",
+            "testability": "黑盒测试需求（immutable 验证、Then(nil) 不返回 nil、ThenFunc 行为、Empty chain passthrough、中间件执行顺序等）均清晰列出，可直接一一对应测试。"
+          }
+        },
+        {
+          "project": "go/xid",
+          "overall_score": 4.69,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.6,
+            "consistency": 4.7,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 ID 生成（New/NewWithTime）、字符串编解码（String/FromString）、二进制编解码（Bytes/FromBytes/MarshalBinary）、JSON/Text 序列化、组件提取（Time/Machine/Pid/Counter）、比较排序、数据库驱动集成、XID_MACHINE_ID 环境变量。覆盖度极高。",
+            "unambiguity": "ID 结构（12 字节布局）精确描述，String 为 20 字符 base32 小写，FromString/FromBytes 的严格长度校验，XID_MACHINE_ID 范围（0-16777215）。API 合约方法签名完整。",
+            "consistency": "API 描述与真实 xid 库高度一致。12 字节结构布局、base32 编码字母表、JSON 序列化行为、Value/Scan 接口均匹配。",
+            "testability": "测试需求极其详细：String 长度和字符集、FromString 错误输入（空串/短串/大写/超长）、FromBytes 长度校验、JSON 序列化（非 nil/nil）、Compare 排序、XID_MACHINE_ID 超范围 panic。黑盒测试完全覆盖。"
+          }
+        },
+        {
+          "project": "go/go-cache",
+          "overall_score": 4.67,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.7,
+            "consistency": 4.6,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Set/Get/Add/Replace、过期（NoExpiration/DefaultExpiration）、Delete/Flush/DeleteExpired、Increment/Decrement、OnEvicted、Save/Load、ItemCount/Items。API 覆盖度极高。",
+            "unambiguity": "每个方法的语义精确说明：Set 直接覆盖、Add 仅新键、Replace 仅已有键、Increment 类型匹配要求、GetWithExpiration 返回值含义。NoExpiration/DefaultExpiration 常量定义清晰。",
+            "consistency": "API 描述与真实 go-cache 库高度一致。Item 结构体的 Object/Expiration 字段、gob 序列化、janitor goroutine 行为均匹配。轻微：实际库有 IncrementFloat 等多类型方法但 prompt 测试 API 部分仅列出部分。",
+            "testability": "极其详细的 API 行为规范：过期键返回 nil/false、NoExpiration 永久保留、janitor 行为、类型不匹配错误、Delete 无操作等，与黑盒测试一一对应。"
+          }
+        },
+        {
+          "project": "go/go-nanoid",
+          "overall_score": 4.61,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.5,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 New/Generate/GenerateString/Must/MustGenerate、自定义字母表、ID 长度配置。覆盖核心 nanoid 生成能力。",
+            "unambiguity": "New 的参数（alphabet、size）、Generate 行为、Must 的 panic 语义、默认字母表描述清楚。charset 安全性说明（均匀分布）充分。",
+            "consistency": "API 描述与真实 nanoid 库一致。自定义字母表和长度参数、Must 的 panic 语义均匹配。",
+            "testability": "测试需求明确：ID 长度、字符集、默认字母表、Must 的 panic 行为、并发安全。黑盒测试直接匹配。"
+          }
+        },
+        {
+          "project": "go/cobra",
+          "overall_score": 4.6,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.4,
+            "consistency": 4.2,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了命令行创建（Command 结构体）、标志（Flags）、参数校验（Args）、子命令、钩子（PreRun/PostRun）、Execute 入口。覆盖了 cobra 的核心使用模式。",
+            "unambiguity": "Command 结构体字段（Use/Short/Long/Run/RunE）、Args 校验函数、PersistentFlags vs Flags 区别、Execute 调用方式均描述清楚。但部分高级特性如 help 模板自定义未展开。",
+            "consistency": "API 描述与真实 cobra 库一致。但实际 cobra 功能远比 prompt 描述丰富（如 completion、help 自定义、TraverseRunHooks），prompt 聚焦于测试可覆盖子集。",
+            "testability": "测试需求非常具体：子命令执行、Args 校验器行为、PreRun/PostRun 钩子调用顺序、标志默认值等，与黑盒测试高度对齐。"
+          }
+        },
+        {
+          "project": "go/gobreaker",
+          "overall_score": 4.57,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 CircuitBreaker 状态机（Closed/Open/HalfOpen）、Settings 配置、Execute 方法、v2 泛型版本。覆盖核心熔断器能力。",
+            "unambiguity": "Settings 字段（MaxRequests/Interval/Timeout/ReadyToTrip/OnStateChange）语义清晰。状态转换规则（失败计数触发 trip、Timeout 后进入 HalfOpen、MaxRequests 成功后回 Closed）精确描述。",
+            "consistency": "状态机语义、Settings 字段、Execute 签名与真实 gobreaker 库一致。轻微：实际 v2 版本功能更丰富但 prompt 聚焦测试子集。",
+            "testability": "测试需求精确描述了状态转换行为：trip 触发条件、HalfOpen 自动恢复、v2 泛型 Execute、isSuccessful 回调等。黑盒测试可直接映射。"
+          }
+        },
+        {
+          "project": "go/go-env",
+          "overall_score": 4.56,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.3,
+            "consistency": 4.6,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Parse/ParseWithOptions、struct tag 语法（env/envDefault/required/envPrefix/envSeparator）、Options 配置、支持字段类型列表。覆盖核心解析能力。但实际库还支持 file/expand/notEmpty/unset 标签及 FuncMap 等高级特性，prompt 仅覆盖测试所需。",
+            "unambiguity": "Struct tag 语义（required/envDefault）和 Options 结构体清晰。但 required 字段无默认值时的错误类型未说明，嵌套结构体的 envPrefix 前缀规则需推断。",
+            "consistency": "核心 API（Parse/Options/struct tags）与真实 go-env 库一致。支持字段类型列表匹配。轻微：实际库 v11 有许多高级特性 prompt 未要求覆盖。",
+            "testability": "测试需求覆盖了基本解析、默认值、required 错误、嵌套前缀、分隔符、duration 解析。黑盒测试覆盖与 prompt 描述匹配度高。"
+          }
+        },
+        {
+          "project": "go/sqlx",
+          "overall_score": 4.47,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.3,
+            "consistency": 4.5,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 sqlx 对 database/sql 的扩展：命名参数（Named/NamedExec）、结构体扫描（StructScan/Get/Select）、IN 子句扩展（In/Rebind）、BindType。覆盖核心增强能力。",
+            "unambiguity": "Named 查询语法（:param 占位符）、StructScan 的 db tag 映射、In 子句生成逻辑、Rebind 占位符替换规则描述清楚。但事务支持（Beginx/BindNamed）未详述。",
+            "consistency": "DB/Stmt/NamedStmt 及命名查询语法与真实 sqlx 库一致。BindType（QUESTION/DOLLAR/AT）及其对应的 Rebind 行为匹配。",
+            "testability": "测试需求覆盖 IN 子句、Rebind（不同 BindType 占位符）、Named 查询、StructScan。与黑盒测试匹配度高。"
+          }
+        },
+        {
+          "project": "go/is",
+          "overall_score": 4.42,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.3,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 New/NewRelaxed、True/Equal/NoErr/Fail 断言、失败输出格式、strict/relaxed 模式。覆盖核心测试辅助能力。",
+            "unambiguity": "断言方法签名和语义（reflect.DeepEqual 比较、不同类型不相等、NoErr 处理 wrapped error）清楚。但 Helper() 的作用和 TB 接口实现细节未详述。",
+            "consistency": "核心 API 与真实 is 库一致。但实际 is 库还包含 New 可以接受带 log/slog 参数的变体、Lax 方法等，prompt 未覆盖这些次要特性。",
+            "testability": "测试需求覆盖了所有断言方法、strict/relaxed 行为差异、nil 比较、类型不匹配、wrapped error。与黑盒测试一致。"
+          }
+        },
+        {
+          "project": "go/script",
+          "overall_score": 4.32,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.1,
+            "consistency": 4.2,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了 Pipe 管道的 Sources（File/Stdin/Exec/Echo/Get 等）、Filters（Match/Grep/Sort/Uniq/JQ/Column 等）、Sinks（String/Slice/CountLines/Stdout 等）。覆盖核心 shell-script 替代能力。",
+            "unambiguity": "API 方法签名（如 File → *Pipe、Match 返回 *Pipe、String 返回 (string, error)）清楚。但 Filter/FilterLine/FilterScan 的自定义函数参数和错误累积（accumulate at sink）语义需结合代码推断。",
+            "consistency": "API 表面与真实 script 库一致。但实际库的 Pipe 方法更丰富（有 ExecForEach、JQ 依赖 gojq 等），prompt 仅覆盖测试子集。",
+            "testability": "测试需求覆盖列提取、Slice 源、Match 过滤、链式调用。pipe 错误累积、空输出处理等行为有说明。"
+          }
+        },
+        {
+          "project": "go/chi",
+          "overall_score": 4.28,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.4,
+            "consistency": 4.6,
+            "testability": 4.2
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖核心路由（NewRouter/Get/Post 等）、中间件（Use/With）、路由组（Group/Route/Mount）、URL 参数提取。但实际 chi 库还包含 middleware 包（Logger/Recoverer/RealIP 等）、子路由器内部方法、context 类型等，prompt 仅覆盖了 API testing 需要的子集。",
+            "unambiguity": "URL 模式语法（{param}、{param:regex}、*）、方法注册、Use/With 语义、Group vs Route vs Mount 区别、404/405 行为描述清楚。但 chi 内部 context 类型和 RouteContext 关系表述较简略。",
+            "consistency": "API 表面（NewRouter、Router 接口方法、URLParam）与真实 chi 库一致。Mount 前缀剥离、Group 中间件隔离等语义匹配。轻微：实际库中 middleware 包方法更多但 prompt 未要求覆盖全部，属于合理取舍。",
+            "testability": "测试需求列出了基础路由、参数提取、Mount 前缀剥离、NotFound/MethodNotAllowed、中间件作用域隔离等。但实际黑盒测试还涉及 BasicAuth middleware 等功能，prompt 仅在 middleware 行为部分列出，与测试匹配度尚可。"
+          }
+        },
+        {
+          "project": "go/gjson",
+          "overall_score": 4.19,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.3,
+            "consistency": 4.4,
+            "testability": 4.0
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Get/GetBytes/Parse（JSON 查询和解析）、路径语法、修饰符（Modifier）、Valid 验证。覆盖核心查询能力。但实际 gjson 还有 ForEach、修饰符更多种类、Result 类型更多方法等未覆盖。",
+            "unambiguity": "Get 路径语法（点号/通配符/数组索引）、修饰符语法、Parse 返回类型、Valid 行为描述清楚。但部分高级语法（如 # 修饰符）说明不够详细。",
+            "consistency": "Get/Parse/Valid API 及路径语法与真实 gjson 库一致。修饰符行为匹配。轻微：实际库 Result 类型有更多方法未在 prompt 列出。",
+            "testability": "测试需求覆盖基本 Get、数组访问、Parse/Valid。但 blackbox 测试还涉及 pretty 修饰符等，prompt 在 API 说明中未显式列出所有修饰符。"
+          }
+        }
+      ]
+    },
+    "python": {
+      "count": 13,
+      "avg_scores": {
+        "completeness": 4.27,
+        "unambiguity": 4.02,
+        "testability": 4.49,
+        "consistency": 3.63,
+        "overall": 4.25
+      },
+      "projects": [
+        {
+          "project": "python/geotext",
+          "overall_score": 4.51,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.1,
+            "consistency": 4.2,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 geotext 的地理实体识别：GeoText 类构造、城市/国家提取（cities/countries/nationalities）、多种语言支持、国家别名。API 合约详列了方法签名和返回格式。",
+            "unambiguity": "cities/countries 返回格式（元组或列表）、countryflags 查询、国家简称/全称映射描述清楚。但多语言支持的边界情况（如混合语言文本）未详述。",
+            "consistency": "GeoText 类 API 和返回格式与真实 geotext 库一致。地理数据来源（geonames）的依赖方式和库版本细节略简。",
+            "testability": "测试需求覆盖具体地名识别（大/小写混合、特殊拼写变体）、返回值类型、多语言支持。黑盒测试高度对应。"
+          }
+        },
+        {
+          "project": "python/stocktrends",
+          "overall_score": 4.42,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 3.9,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 stocktrends 的股票趋势分析：数据获取（yahoo/pandas-datareader）、K 线渲染、技术指标计算（MA/布林带等）。覆盖核心股票分析流程。",
+            "unambiguity": "K 线图表格式、技术指标参数、数据显示顺序描述清楚。但数据源依赖（yahoo finance）的 API 变化不确定性未被强调。",
+            "consistency": "核心分析逻辑与真实 stocktrends 库一致。数据获取依赖外部 API 使 prompt 的静态描述与动态数据源存在天然偏差。",
+            "testability": "测试需求精确覆盖图表输出（像素级匹配）、数据列顺序、日期格式。黑盒测试要求高但 prompt 描述充分。"
+          }
+        },
+        {
+          "project": "python/hone",
+          "overall_score": 4.41,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.4,
+            "consistency": 3.9,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 hone 的多种数据格式转换：嵌套对象→CSV/JSON/表格、扁平化、嵌套化。API 合约列出了核心转换函数。",
+            "unambiguity": "转换函数（nest_to_csv/hone_json 等）的输入输出格式、嵌套路径语法、扁平化规则描述精确。",
+            "consistency": "核心转换逻辑与真实 hone 库一致。但实际 hone 的函数名和参数签名可能因版本迭代有轻微变化。",
+            "testability": "测试需求覆盖各种转换场景：空输入、深层嵌套、路径冲突、格式保留。黑盒测试覆盖充分。"
+          }
+        },
+        {
+          "project": "python/Hybrid_Images",
+          "overall_score": 4.38,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.2,
+            "consistency": 3.0,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Hybrid Images 核心算法：高斯滤波、拉普拉斯算子、图像金字塔分离、混合图像合成。概述了核心图像处理流程和参数。",
+            "unambiguity": "图像处理流程（低通/高通滤波、金字塔层次、sigma 参数）描述清晰。但具体的图像尺寸假设和裁剪规则需从测试推断。",
+            "consistency": "核心算法描述与真实实现一致。但 prompt 可能包含一些理想化描述与真实图像处理库（如 PIL/OpenCV）的 API 调用方式有差异。",
+            "testability": "测试需求对图像输出匹配有精确要求，黑盒测试覆盖正确滤波和合成结果。"
+          }
+        },
+        {
+          "project": "python/portalocker",
+          "overall_score": 4.35,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 portalocker 的文件锁核心：Lock 类、上下文管理器、超时、重试、Unix/Windows 平台支持。覆盖核心文件锁定能力。",
+            "unambiguity": "Lock 构造参数（filename/mode/timeout/retries）、上下文管理器语义、平台差异（Windows LockFileEx vs Unix fcntl）描述清楚。",
+            "consistency": "核心 Lock API 与真实 portalocker 一致。实际 portalocker 有一些便捷函数（lock/unlock）prompt 未着重描述但属次要。",
+            "testability": "测试需求覆盖加锁/解锁、超时、上下文管理器、平台行为。黑盒测试映射度较好。"
+          }
+        },
+        {
+          "project": "python/imapclient",
+          "overall_score": 4.34,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.1,
+            "consistency": 3.6,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 IMAPClient 的核心邮件操作：连接/登录、文件夹操作（list_folders/select_folder）、邮件搜索/获取、标志操作。API 合约详列了 IMAPClient 类方法。",
+            "unambiguity": "IMAPClient 的连接参数、folder 操作语义、search 的参数格式、fetch 返回的邮件数据结构描述清楚。但 SSL/TLS 配置和认证方式细节较概括。",
+            "consistency": "核心 API 与真实 IMAPClient 一致。但 prompt 中描述的某些方法签名可能与真实库的 IMAP 协议层抽象有细微偏差，属合理。",
+            "testability": "测试需求覆盖连接/登录、文件夹列表/创建、邮件搜索/获取、标志操作。黑盒测试（需要 IMAP 服务器）映射度尚可。"
+          }
+        },
+        {
+          "project": "python/tinydb",
+          "overall_score": 4.33,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 3.8,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 TinyDB 的文档数据库核心：TinyDB/Table 类、insert/upsert/update/remove/search、Query 查询 DSL、JSON 持久化。覆盖核心嵌入式数据库能力。",
+            "unambiguity": "TinyDB 构造器（JSON 文件路径）、插入/查询/更新/删除方法、Query 对象的 DSL（where/==/<=/>/matches）描述清楚。但高级查询（如嵌套字段、逻辑组合）未详述。",
+            "consistency": "核心 API 与真实 TinyDB 一致。但真实 TinyDB 有 storage/middleware 层（如 TinyDB(storage=JSONStorage)）prompt 未强调。",
+            "testability": "测试需求覆盖 CRUD 操作、Query 查询、JSON 持久化、table 分离。黑盒测试可直接验证。"
+          }
+        },
+        {
+          "project": "python/lice",
+          "overall_score": 4.25,
+          "scores": {
+            "completeness": 3.9,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 lice 的开源许可证生成：许可证模板管理、CLI 交互生成、输出文件。覆盖核心许可证生成能力。但真实 lice 的许可证种类（MIT/GPL/Apache 等约 20 种）在 prompt 中未完全枚举。",
+            "unambiguity": "CLI 命令（--template/--year/--name）和交互式流程描述清楚。模板变量填充规则明确。",
+            "consistency": "CLI 接口和模板变量与真实 lice 库一致。实际 lice 的许可证模板集可能比 prompt 中描述的更多。",
+            "testability": "测试需求覆盖许可证生成（变量替换）、CLI 参数、输出文件。黑盒测试可直接验证。"
+          }
+        },
+        {
+          "project": "python/particle-swarm-optimization",
+          "overall_score": 4.23,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 PSO 算法核心：粒子类、群体、速度/位置更新、适应度评估、惯性权重。覆盖优化算法核心流程。",
+            "unambiguity": "PSO 参数（粒子数/迭代次数/惯性权重/认知和社会系数）、适应度函数接口、收敛条件描述清楚。",
+            "consistency": "PSO 算法描述与经典实现一致。真实代码可能有额外的初始化策略或边界处理未在 prompt 中展开。",
+            "testability": "测试需求覆盖优化结果精度、参数校验、收敛行为。黑盒测试可验证基本优化能力。"
+          }
+        },
+        {
+          "project": "python/marshmallow",
+          "overall_score": 4.19,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.0,
+            "consistency": 3.4,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 marshmallow 序列化库的核心：Schema 定义、fields（String/Integer/Float/Boolean/DateTime/List/Nested）、load/dump 序列化/反序列化、验证（required/validate/validators）。覆盖核心 schema-driven 序列化。",
+            "unambiguity": "Schema 类定义、fields 参数、load/dump 返回类型、验证错误（ValidationError）格式描述清楚。但某些高级特性（如 post_load/method/pre_dump）仅提及未展开。",
+            "consistency": "核心 Schema/fields API 与真实 marshmallow 一致。但真实 marshmallow 经历了 v2→v3 的重大 API 变化，prompt 描述若无 v3 特定细节可能与最新版本有细微偏差。",
+            "testability": "测试需求覆盖基本序列化、嵌套 Schema、验证错误、required 字段、自定义 validators。黑盒测试匹配度高。"
+          }
+        },
+        {
+          "project": "python/ArXiv_digest",
+          "overall_score": 4.06,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.3,
+            "consistency": 3.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 ArXiv API 查询构建（construct_query_url）、日期过滤（check_date）、CSV 导出（save_to_csv）、CLI 参数解析（get_args）、结果处理（process_entries/print_results）。API 合约详列了函数签名和核心行为。覆盖完整论文检索流程。",
+            "unambiguity": "函数签名和行为描述较清晰（如 check_date 的时间比较逻辑、save_to_csv 的列顺序）。但 prompt 中的重构要求部分（Requirements 节笼统提及模块拆分）与 API 合约之间存在风格不一致，一些非关键实现细节（如 API 响应解析）描述较模糊。",
+            "consistency": "核心 API（construct_query_url/check_date/save_to_csv/process_entries）的签名和行为与源码一致。但 prompt 中包含较多自由文本描述（Introduction/Goals/Requirements 节）和实际 API 合约不完全对齐，部分模块拆分建议与实际代码组织有差异。",
+            "testability": "测试需求详列了 check_date 边界（Daylight saving、同一天、未来日期）、print_results 输出格式、save_to_csv 列顺序、process_entries 过滤逻辑。黑盒测试覆盖度高。"
+          }
+        },
+        {
+          "project": "python/chakin",
+          "overall_score": 3.87,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 3.7,
+            "consistency": 3.5,
+            "testability": 3.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 chakin 词向量下载器的核心功能：数据集搜索、下载、语言过滤、格式支持。列出了支持的预训练词向量数据集。",
+            "unambiguity": "CLI 命令格式和搜索/下载语义清楚。但实际数据集名称和 URL 映射的更新机制未说明，一些下载失败路径未细化。",
+            "consistency": "核心 API（search/download）与真实 chakin 库基本一致。但 chakin 的数据集列表和 URL 可能随上游变化，prompt 中的静态描述可能与最新源码有偏差。",
+            "testability": "测试需求覆盖搜索和下载基本流程，但下载涉及网络依赖使纯黑盒测试受限。prompt 描述的黑盒测试行为相对有限。"
+          }
+        },
+        {
+          "project": "python/zxcvbn",
+          "overall_score": 3.85,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 3.8,
+            "consistency": 2.9,
+            "testability": 3.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 zxcvbn 密码强度评估的核心：zxcvbn() 返回结构（score/guesses/crack_times/sequence）、反馈消息（suggestions/warning）、匹配器（dictionary/spatial/repeat/sequence 等）。覆盖密码分析核心。",
+            "unambiguity": "zxcvbn() 返回结构（score 0-4、序列分析、时间估算）描述较清晰。但匹配器的优先级和具体评分算法细节未展开，可能影响精确复现。",
+            "consistency": "返回结构（score/guesses/sequence/feedback）与真实 zxcvbn 库一致。但真实的 zxcvbn 依赖庞大的频率字典和邻接表（约 20MB JSON 数据），prompt 中未充分描述这些数据依赖，可能导致实现偏差。",
+            "testability": "测试需求覆盖基本密码评分、反馈消息生成。但因评分依赖复杂字典和频率数据，纯黑盒测试可能无法精确验证所有内部评分细节。"
+          }
+        }
+      ]
+    },
+    "java": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.29,
+        "unambiguity": 4.21,
+        "testability": 4.45,
+        "consistency": 4.2,
+        "overall": 4.33
+      },
+      "projects": [
+        {
+          "project": "java/redis-cache",
+          "overall_score": 4.58,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.5,
+            "consistency": 4.5,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 RedisCache/Serializer/JDKSerializer/KryoSerializer/RedisConfig/RedisConfigurationBuilder/RedisCallback/DummyReadWriteLock。API 合约详列了 DummyLock 的每个方法行为、序列化器的 serialize/unserialize 签名。",
+            "unambiguity": "DummyReadWriteLock 的 readLock==writeLock（assertSame）、tryLock 始终 true、JDKSerializer 的 null→null 和 round-trip 语义、KryoSerializer 的 Large Long 处理，描述极其精确。",
+            "consistency": "类名和包路径（org.mybatis.caches.redis）、序列化器接口、DummyReadWriteLock 的 no-op 行为均与真实源码一致。",
+            "testability": "测试需求覆盖 DummyLock 所有方法（lock/unlock/tryLock/lockInterruptibly/newCondition）、JDK/Kryo 序列化往返（String/Integer/Long/List/Boolean）、null 输入等，与黑盒测试高度对应。"
+          }
+        },
+        {
+          "project": "java/MyUploader-Backend",
+          "overall_score": 4.54,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.4,
+            "consistency": 4.3,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖上传 API（普通/大文件分块/秒传）、FileDao/FileService/File 模型、FileUtils（generateFileName/write/writeWithBlok）、UploadUtils（分块上传状态管理）。API 合约详细列出所有类方法。架构清晰。",
+            "unambiguity": "FileUtils 方法签名（含 InputStream 参数和 IOException 抛出）、UploadUtils 状态管理语义（getFileName 幂等、isUploaded 全块判断、removeKey 去注册）、writeWithBlok 的偏移计算（chunkIndex*chunkSize）均精确描述。",
+            "consistency": "API 类名和方法签名与源码一致。Spring Boot 架构（controller/service/dao/model）匹配。generateFileName 长度 >=32 UUID 风格与实现吻合。",
+            "testability": "测试需求覆盖文件名生成、文件写入（含空流）、分块写入（含乱序）、状态管理（注册/完成判断/清理）。与黑盒测试匹配度极高。"
+          }
+        },
+        {
+          "project": "java/springboot-jwt-starter",
+          "overall_score": 4.5,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 JWT 认证/授权、User 模型（含 UserDetails 实现）、Authority 角色枚举、UserTokenState、TokenHelper、Spring Security 配置。API 合约详细列出 User/Authority/UserTokenState 所有方法和行为。",
+            "unambiguity": "User.setPassword 的副作用（同时更新 lastPasswordResetDate）、UserDetails 方法始终返回 true、UserTokenState 的 boxed Long 类型、expires_in=0L 正确处理等行为描述极其精确。",
+            "consistency": "类名（User/Authority/UserTokenState）、包路径（com.bfwg.model）、Spring Security 集成模式与真实源码一致。",
+            "testability": "测试需求覆盖 User 构造、setPassword 副作用、UserDetails 方法、UserTokenState 默认值/null 行为、Authority 角色。与黑盒测试高度对应。"
+          }
+        },
+        {
+          "project": "java/idcenter",
+          "overall_score": 4.44,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.3,
+            "consistency": 4.2,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 IdWorker（雪花算法）、SidWorker（短 ID）、Base62 编码、CLI 入口（idworker/sidworker 子命令）。API 合约列出 IdWorker/SidWorker/Base62 的关键方法。",
+            "unambiguity": "IdWorker 参数范围校验（workerId 0-31、datacenterId 0-31）、Base62.encode 的 Long.MIN_VALUE→IllegalArgumentException 行为、CLI 子命令格式和错误提示精确。但 SidWorker 的编码格式细节（30 字符固定长度）仅概述。",
+            "consistency": "雪花算法结构、Base62 编码字母表、CLI 子命令格式与真实 idcenter 项目一致。SidWorker 的 30 字符输出匹配源码。",
+            "testability": "测试需求覆盖 ID 生成唯一性、时间戳提取、workerId/datacenterId 范围校验、Base62 编码、CLI 参数校验。黑盒测试覆盖充分。"
+          }
+        },
+        {
+          "project": "java/Actor_relationship_game",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了 Actor/Movie 领域模型、ActorGraph 图结构（addActor/addMovie/addActorToMovie）、GraphCreation/ActorGraphUtil/GameplayInterface 三个文件驱动的 batch 阶段、TMDBApi 外部数据集成。API 合约详细列出了关键类的所有方法。遗漏了串行化到 .ser 的具体格式说明但核心能力完整。",
+            "unambiguity": "Actor/Movie 类接口、ActorGraph 方法（findConnectionWithPath 返回 BFS 最短路径）、idempotent addActor 行为、getMovieIds 返回 live mutable set 均描述清晰。但 GraphCreation/ActorGraphUtil/GameplayInterface 的具体 CLI 契约（参数格式、错误处理）仅概括描述。",
+            "consistency": "领域模型拆分（Actor/Movie/ActorGraph）、文件驱动 stage（GraphCreation/ActorGraphUtil/GameplayInterface）、TMDBApi 隔离均与源码架构一致。getMovieIds 返回 live set 等细节匹配。",
+            "testability": "API 测试需求覆盖 Actor/Movie 构造器、集合行为、ActorGraph 的 findConnectionWithPath BFS 逻辑、null 参数处理。黑盒测试可覆盖核心图操作和查询。"
+          }
+        },
+        {
+          "project": "java/java_heap",
+          "overall_score": 4.3,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.1,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 FibonacciHeap 和 LeftistHeap 两种堆实现、HeapPerformanceTest 性能比较。API 合约详细列出了 insert/deleteMin/findMin/meld/merge/extract_min 等关键操作。",
+            "unambiguity": "FibonacciHeap 的 insert（返回 HeapNode）、findMin（null 安全）、meld（合并大小）、potential/countersRep 语义清楚。LeftistHeap 的 extract_min 返回 -1 哨兵而非抛异常、merge 后 other 为空、in_order 返回 ArrayList 等描述精确。",
+            "consistency": "堆操作的语义描述与经典实现一致。LeftistHeap 的 -1 哨兵返回值与源码匹配。HeapPerformanceTest 仅概述但核心堆逻辑一致。",
+            "testability": "测试需求覆盖空堆操作、插入/删除/合并、排序提取、负数处理、meld 边界条件。黑盒测试可直接覆盖。"
+          }
+        },
+        {
+          "project": "java/spring-boot-realworld-example-app",
+          "overall_score": 4.29,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.1,
+            "consistency": 4.2,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 RealWorld 后端完整功能（用户/文章/评论/标签/Tag）、REST + GraphQL 双接口、JWT 认证。API 合约列出了 Article/DateTimeCursor/Page/Util 等核心类。",
+            "unambiguity": "Article 构造器（slug 生成、tag 去重、ID 唯一）、DateTimeCursor 的 parse/toString、Page 的 offset/limit 默认值、Util.isEmpty 行为清晰。但 GraphQL schema 的具体类型和 Query/Mutation 接口细节较少。",
+            "consistency": "Spring Boot 分层架构（api/application/core）、Joda-Time 使用、toSlug 行为与真实项目一致。实际项目的 GraphQL schema 比 prompt 描述更丰富。",
+            "testability": "测试需求覆盖 Article 构造/更新、slug 生成、DateTimeCursor 解析、Page 分页。与黑盒测试匹配。GraphQL 测试未详细展开。"
+          }
+        },
+        {
+          "project": "java/lin-cms-spring-boot",
+          "overall_score": 4.2,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.1,
+            "consistency": 4.0,
+            "testability": 4.3
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Spring Boot CMS 架构（controller/service/mapper/model）、用户/权限管理、内容管理、JWT 认证。覆盖核心 CMS 功能。",
+            "unambiguity": "分层架构清晰，但具体的 API 端点列表和方法合约不如其他项目详细。JWT 认证流程和权限模型描述较概括。",
+            "consistency": "Spring Boot CMS 架构描述与真实项目一致。但实际 lin-cms-spring-boot 的功能更丰富（如日志、异常处理等），prompt 聚焦核心子集。",
+            "testability": "测试需求若列出关键 API 行为（登录/CRUD/权限校验）则足以驱动测试，但 prompt 的 API 合约部分可以更具体。"
+          }
+        },
+        {
+          "project": "java/spring-rest-ecommerce",
+          "overall_score": 4.18,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.0,
+            "consistency": 4.0,
+            "testability": 4.3
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 Spring REST 电商 API（商品/订单/购物车）、分层架构（controller/service/repository/model）。覆盖核心电商 REST 接口。",
+            "unambiguity": "REST 端点组织和分层结构清晰，但具体 API 路径、请求/响应格式、状态码等未细化。较其他 Java 项目合约略显概括。",
+            "consistency": "Spring Boot REST 架构与真实项目一致。实际项目的数据模型和 API 端点细节可能比 prompt 更丰富。",
+            "testability": "测试需求若覆盖 CRUD 和业务规则则可驱动测试。需更多 API 行为细节完善测试覆盖度。"
+          }
+        },
+        {
+          "project": "java/image-similarity",
+          "overall_score": 4.15,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.0,
+            "consistency": 4.0,
+            "testability": 4.3
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 ImagePHash（感知哈希）和 ImageHistogram（直方图）两种比较策略、CLI 入口。覆盖核心相似度比较能力。但 prompt 较短，未展开更多高级算法细节。",
+            "unambiguity": "ImagePHash.distance 返回非负 Hamming 距离、ImageHistogram.match 返回 [0,1] 范围分数、自比较 → 0 或 ≥0.99、对称性、自定义大小构造函数等描述清晰。",
+            "consistency": "API 配置与真实项目基本一致。但实际的 image-similarity 项目可能存在更多图像处理依赖（如 BufferedImage 读取）未在 prompt 中展开。",
+            "testability": "测试需求包含自比较、相似/不相似图像、对称性验证、distance≥0 等边界条件。黑盒测试可直接映射。"
+          }
+        },
+        {
+          "project": "java/ddd-example-ecommerce",
+          "overall_score": 4.09,
+          "scores": {
+            "completeness": 4.0,
+            "unambiguity": 4.0,
+            "consistency": 4.1,
+            "testability": 4.2
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了 DDD 分层架构（domain/application/infrastructure/interfaces）、商品/订单领域模型、应用服务和仓库接口。覆盖核心电商能力。但实际的 DDD example 包含更多聚合和值对象细节未展开（如 Address/Money 等值对象）。",
+            "unambiguity": "DDD 层次结构（interfaces→application→domain→infrastructure）和核心实体关系描述清楚。但具体的 API 合约方法签名（如 Product/Order 类）不如其他 Java 项目详细，Command/Query 模型未细化。",
+            "consistency": "DDD 分层架构描述与真实项目一致。但实际 ddd-example-ecommerce 项目的具体类名和方法可能与 prompt 概括描述略有差异，属于 DDD 模板项目的常见特征。",
+            "testability": "黑盒测试需求若有商品/订单 CRUD 行为说明则足以驱动测试实现，但 prompt 的 API 合约部分相比其他项目略显概括。"
+          }
+        }
+      ]
+    },
+    "cpp": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.38,
+        "unambiguity": 4.38,
+        "testability": 4.71,
+        "consistency": 4.19,
+        "overall": 4.49
+      },
+      "projects": [
+        {
+          "project": "cpp/xlsx2csv",
+          "overall_score": 4.77,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.8,
+            "consistency": 4.7,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 workbook 加载、ZIP 解析、shared string 解析、CSV 导出、CLI 接口、辅助函数（string_to_idx/strip/string_to_row_column）。模块拆分（archive/workbook/worksheet/utils）清晰。",
+            "unambiguity": "CLI 错误消息精确到字符串级别，函数签名完整（含参数类型和返回值语义），string_to_idx 的 Excel 列字母映射详尽（A→1、AA→27、AAA→703），strip 行为明确。",
+            "consistency": "CLI 错误消息与源码完全一致。workbook 类接口、utils 函数签名、include 路径均匹配真实源码。CSV 输出规则（sheet 名即文件名、每行以 \\n 结尾）与实现一致。",
+            "testability": "测试向量非常详细：string_to_idx 的有效/无效输入全覆盖（空串/数字/超长）、workbook 构造异常、get_shared_string 边界、write_to_csv 文件名规则、CSV 行尾 \\n。黑盒测试可直接一一对应。"
+          }
+        },
+        {
+          "project": "cpp/base64pp",
+          "overall_score": 4.66,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.6,
+            "consistency": 4.3,
+            "testability": 4.9
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了编码/解码 API、命名空间、include 路径、Base64 标准字母表、填充规则、非法输入处理、往返测试。全面覆盖了核心功能。轻微遗漏：未详述 base64pp_export.h 导出宏、CMake 构建细节、span 需要 C++20。",
+            "unambiguity": "API 签名精确（std::span<const uint8_t>、std::optional<std::vector<uint8_t>>），测试向量附带具体字节序列与期望输出，填充规则明确。encode_str 与 encode 关系清晰。",
+            "consistency": "API 签名、命名空间 base64pp、头文件路径均与源码一致。encode 使用 std::span 需 C++20，与 prompt 中'modern C++'定位匹配。decode 返回 optional 的一致行为描述准确。",
+            "testability": "极其详细的测试向量：具体字节→Base64 映射、空输入、非法字符（空格/!）、中间填充、256 字节往返等，与黑盒测试断言高度一致，可直接驱动实现和验证。"
+          }
+        },
+        {
+          "project": "cpp/tinyxml2",
+          "overall_score": 4.64,
+          "scores": {
+            "completeness": 4.6,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 非常全面：XML 解析、DOM 导航（Parent/Child/Sibling）、DOM 变更、属性访问（含类型安全 getter）、序列化（紧凑/美化）、Visitor 模式、错误处理、MemPool 分配器。几乎覆盖所有核心模块。",
+            "unambiguity": "完整的类接口定义：XMLDocument/XMLElement/XMLAttribute/XMLPrinter 的所有关键方法、include 路径、using namespace tinyxml2、XMLError 枚举。行为描述精确（如 Parse(\"\")→error、DeleteAttribute 无操作）。",
+            "consistency": "TinyXML-2 的 DOM 模型、Visitor 模式、属性访问风格与真实库高度一致。XMLError 枚举和 ErrorIDToName 行为匹配。轻微：部分内部辅助类型（StrPair、MemPoolT）仅简述。",
+            "testability": "详细的 API 行为规范：解析成功/失败、属性查询（含 QueryIntAttribute 返回 XML_NO_ATTRIBUTE）、Print 往返、NoChildren/ChildElementCount、GetLineNum 等。黑盒测试可直接验证。"
+          }
+        },
+        {
+          "project": "cpp/jsoncpp",
+          "overall_score": 4.59,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.6,
+            "consistency": 4.4,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 非常详尽：完整的 Json::Value 类接口（构造、类型检测、类型转换、数组/对象操作）、Reader/CharReaderBuilder/FastWriter/StreamWriterBuilder、所有 JSON 类型常量。覆盖核心 DOM 操作和序列化。轻微遗漏：部分高级特性如注释支持、缩进配置未展开。",
+            "unambiguity": "API 接口从 Value 构造到数组/对象操作到序列化均给出了完整的方法签名和类型常量，include 路径明确。语义清晰无歧义。",
+            "consistency": "JsonCpp DOM 模型描述与真实库高度一致：Value 类型、Reader/Writer 体系、include/json/ 路径、命名空间 Json。CharReaderBuilder/StreamWriterBuilder 等新 API 与旧 Reader/FastWriter 均有覆盖，与实际库的 API 演进一致。",
+            "testability": "详尽 API 说明使测试易于构造：类型检测、值转换、嵌套结构、序列化往返、解析失败处理等均有覆盖。黑盒测试可直接对号入座。"
+          }
+        },
+        {
+          "project": "cpp/logistic_system",
+          "overall_score": 4.55,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.5,
+            "consistency": 4.1,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖订单管理、库存管理、发货处理、报告生成、CLI 入口。API 合约详细列出了类接口和关键方法。模块拆分清晰。",
+            "unambiguity": "类接口、CLI 行为、错误处理路径描述清楚。方法签名和返回类型明确。",
+            "consistency": "模块架构（order/inventory/shipping/reporting）与源码一致。CLI 入口行为匹配。轻微差异：部分内部实现细节（如数据结构选型）prompt 未做约束，属于合理设计自由度。",
+            "testability": "详细测试向量：具体订单数据、期望输出、错误路径。黑盒测试可直接映射到 prompt 中的行为描述。"
+          }
+        },
+        {
+          "project": "cpp/snappy",
+          "overall_score": 4.55,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.5,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 C++/C API、Source/Sink 流式接口、CompressionOptions、长度/校验工具函数、内部组件。详见 MaxCompressedLength 公式和边界行为。遗漏：部分实际公开接口（RawCompress/RawUncompress、RawUncompressToIOVec、Source 版本的 GetUncompressedLength 和 IsValidCompressed）。",
+            "unambiguity": "核心接口签名、命名空间、头文件路径、状态码、关键行为和精确断言（如 MaxCompressedLength(0)==32）写得清楚。高级功能（流式解压、iovec）边界语义未细化但不影响核心实现。",
+            "consistency": "整体描述与真实仓库一致：Snappy 定位、64KB block、C/C++ API、Source/Sink 抽象、CompressionOptions 1/2 两级、C API 默认级别、MaxCompressedLength 公式及非法输入行为均与代码和黑盒测试相符。",
+            "testability": "明确列出黑盒测试所需 include path、必须实现的 C/C++ API、精确返回值、公式、非法输入样例、空输入、大数据和高压缩数据等行为，与黑盒测试高度一致。"
+          }
+        },
+        {
+          "project": "cpp/tinyexpr-plusplus",
+          "overall_score": 4.47,
+          "scores": {
+            "completeness": 4.2,
+            "unambiguity": 4.3,
+            "consistency": 4.3,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 te_parser 类、变量绑定、自定义函数注册、内置函数列表、运算符优先级、分隔符配置。覆盖核心表达式引擎能力。",
+            "unambiguity": "te_parser 接口（evaluate/compile/success/get_result）、te_variable 结构、内置函数列表、运算符优先级均明确。set_variables_and_functions 参数类型使用 initializer_list 或 vector 的注释存在微小歧义。",
+            "consistency": "te_parser API 接口、变量绑定（live pointer）、内置函数（sqrt/abs/sin/cos 等）与源码一致。分隔符配置和 get_expression 注释剥离行为匹配。",
+            "testability": "具体测试表达式和期望值：2^10→1024、max(3,5)→5.0、1/0→inf/NaN、空字符串/未知变量→NaN+success=false，与黑盒测试完全对齐。"
+          }
+        },
+        {
+          "project": "cpp/robotstxt",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.4,
+            "consistency": 4.0,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 robots.txt 解析、匹配规则、CLI 工具、报告功能。GetKeyType（含拼写错误检测）、RobotsMatcher（最长匹配/通配符/锚点）、RobotsParsingReporter 均有描述。",
+            "unambiguity": "GetKeyType 的大小写不敏感和 typo 变体（useragent/disalow 等）描述精确。RobotsMatcher 的匹配优先级（最长匹配→Allow 优先）、通配符 * 和锚点 $ 语义清晰。IsValidUserAgentToObey 规则明确。",
+            "consistency": "命名空间 googlebot、类名 GetKeyType/RobotsMatcher/RobotsParsingReporter 均与源码匹配。匹配语义描述与实现一致。轻微：部分内部实现（如 RobotsParsedLine 结构）prompt 简化。",
+            "testability": "详细测试用例：空 body、全禁止 Disallow: /、通配符匹配、typo 识别、valid_directives/unused_directives 计数等，与黑盒测试覆盖一致。"
+          }
+        },
+        {
+          "project": "cpp/people_management",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.5,
+            "unambiguity": 4.2,
+            "consistency": 4.2,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖人员/部门 CRUD、关系管理、查询功能。API 合约列出了完整的类方法集合。模块拆分（person/department/relationship）清晰。",
+            "unambiguity": "大部分接口清晰。部分方法（如关系查询）的返回类型和错误处理未完全细化，但不影响核心实现方向。",
+            "consistency": "模块架构与源码对应，API 表面与实现基本一致。个别方法命名或参数类型可能有细微差异，但不影响整体一致性。",
+            "testability": "Include 路径给出，CRUD 行为、边界条件描述足以构造测试用例。黑盒测试覆盖核心操作。"
+          }
+        },
+        {
+          "project": "cpp/area_calculation",
+          "overall_score": 4.18,
+          "scores": {
+            "completeness": 4.0,
+            "unambiguity": 4.0,
+            "consistency": 3.8,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了完整 shape 层级（Shape/Circle/Rectangle/Square）、构造/析构消息输出、面积计算逻辑、文件式 CLI 程序流、以及精度容差和边界用例。遗漏了 Square 实际仅继承 Rectangle（非同时继承两者）、Circle 无独立 .cpp（头文件实现）、main.cpp 使用 freopen 而非标准文件流等工程细节，但不影响核心功能复现。",
+            "unambiguity": "API 合约清晰给出了 include 路径、类签名、精度容差和构造/析构消息格式。但 Square 的继承关系描述为'同时继承 Rectangle 和 Shape'与实际代码不符，Shape::calcArea 描述为纯虚函数但实际为非纯虚默认返回 0，可能造成实现困惑。",
+            "consistency": "整体与源码一致：类拆分、构造/析构消息、面积公式、文件 I/O 程序流均匹配。偏差：Square 继承描述为双继承（实际仅 Rectangle），Shape::calcArea 描述为 =0（实际有默认实现返回 0），Circle 计算用 3.14159265 而非 prompt 中提到的 M_PI，Circle 无独立 .cpp 实现文件。",
+            "testability": "Include 路径、gtest 框架、各精度级别的容差、输入输出文件格式、构造析构消息文本均明确给出，足以驱动黑盒测试。黑盒测试涵盖了 Circle/Rectangle/Square 的面积计算和默认构造函数。"
+          }
+        },
+        {
+          "project": "cpp/graph-cpp",
+          "overall_score": 4.12,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 3.8,
+            "consistency": 3.5,
+            "testability": 4.3
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖了 Queue/Stack 自定义容器、AdjacencyListGraph/AdjacencyMatrixGraph 两种图表示、DFS/BFS 遍历、CLI 程序。详见异常语义、模板类型支持。遗漏：邻接矩阵内部 1-based 索引细节、setVexes/setArcs 接收 initializer_list 还是 vector 的差异未说明。",
+            "unambiguity": "API 合约包含 include 路径和主要签名，异常消息精确。但 setVexes/setArcs 在 prompt 中为 initializer_list 参数而实际实现为 vector，AdjacencyMatrixGraph 的顶点索引从 1 开始的说明易混淆。",
+            "consistency": "整体架构（queue/stack/al_graph/am_graph 分离）与源码一致。偏差：setVexes/setArcs 参数类型在 prompt 中是 initializer_list 但实际是 vector；AdjacencyMatrixGraph 的 locateVex 返回 1-based 在 prompt 提及但与 0-based 遍历混合可能造成实现歧义；CLI 输出标题与源码基本匹配。",
+            "testability": "Include 路径、队列/栈异常行为、图遍历输出、CLI 格式和输出标题均有给出。黑盒测试覆盖 queue/stack/graph 操作及 CLI。"
+          }
+        }
+      ]
+    },
+    "javascript": {
+      "count": 11,
+      "avg_scores": {
+        "completeness": 4.24,
+        "unambiguity": 4.16,
+        "testability": 4.55,
+        "consistency": 4.1,
+        "overall": 4.34
+      },
+      "projects": [
+        {
+          "project": "javascript/nanoid",
+          "overall_score": 4.59,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.6,
+            "consistency": 4.3,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 nanoid 全部核心导出：nanoid()、customAlphabet()、customRandom()、random()、urlAlphabet、non-secure 变体。ID 长度、字符集、安全性说明充分。",
+            "unambiguity": "每个函数的签名和参数默认值（nanoid 默认 21 字符）、urlAlphabet 精确字符串值、non-secure 使用 Math.random、customAlphabet 返回生成器函数均极清晰。",
+            "consistency": "API 表面与真实 nanoid 高度一致。urlAlphabet 精确的 64 字符字符串匹配。non-secure 作为独立入口点的设计与真实包一致。",
+            "testability": "测试需求覆盖 nanoid 长度/字符集、customAlphabet 自定义、urlAlphabet 常量值、non-secure 模式、random(0) 空数组。黑盒测试完全对应。"
+          }
+        },
+        {
+          "project": "javascript/mitt",
+          "overall_score": 4.57,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.6,
+            "consistency": 4.4,
+            "testability": 4.8
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 mitt 全部核心功能：mitt() 创建、on/off/emit、通配符 *、EventHandlerMap、TypeScript 泛型支持。非常简洁但覆盖完整。",
+            "unambiguity": "on/off/emit 签名和语义极其明确：通配符回调参数 (type, event)、emit 时注册不触发、off 未注册为 no-op、EventHandlerMap 通过 Map 实现。",
+            "consistency": "mitt API 非常简洁，prompt 描述与真实源码几乎无偏差。通配符行为、EventHandlerMap、TypeScript 泛型匹配。",
+            "testability": "测试需求覆盖 on/off/emit 基本流程、通配符、多次注册、移除未注册处理程序、emit('*') 行为、emit 期间注册不触发。黑盒测试高度对应。"
+          }
+        },
+        {
+          "project": "javascript/login-registration",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖登录注册全流程：用户模型（User）、路由（/register//login）、密码哈希（bcrypt）、JWT token 生成、中间件认证。覆盖 Web 应用认证核心。",
+            "unambiguity": "路由路径、请求/响应格式、bcrypt 哈希轮次、JWT payload 结构描述清楚。但错误处理细节（如重复用户名返回什么）可更明确。",
+            "consistency": "Express 路由结构、bcrypt 哈希、JWT 签名/验证模式与真实实现一致。prompt 的 API 描述匹配核心认证流程。",
+            "testability": "测试需求覆盖注册成功/失败、登录成功/失败（含错误密码）、JWT 验证、受保护路由。黑盒测试覆盖充分。"
+          }
+        },
+        {
+          "project": "javascript/dayjs",
+          "overall_score": 4.45,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.2,
+            "consistency": 4.1,
+            "testability": 4.7
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 dayjs 核心：构造器、format/parse/操作（add/subtract/startOf/endOf）、比较（isBefore/isAfter/isSame）、查询（day/month/year/hour/minute/second）、locale 和 plugin 系统。覆盖日常日期操作的大部分方法。",
+            "unambiguity": "dayjs 链式 API 风格、format 格式化字符串、add/subtract 单位语法、isBefore/isAfter 比较语义描述清楚。但 plugin 注册机制细节未详述。",
+            "consistency": "dayjs 的函数式 API 风格、format token、immutable 特性与真实库一致。实际 dayjs 有更多 plugin 和高级 API 未在 prompt 列出。",
+            "testability": "测试需求覆盖构造、format、操作、比较、locale 设置。API 合约列出了关键方法签名和返回值类型。黑盒测试匹配度高。"
+          }
+        },
+        {
+          "project": "javascript/babel-parser",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.0,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 parse/parseExpression 入口、sourceType（script/module/unambiguous）、plugins 插件系统（typescript/jsx/flow 等）、AST 节点结构（type/start/end/loc）、tokTypes 导出。覆盖核心解析能力。实际 babel 有更丰富的 plugin 列表和选项但 prompt 聚焦测试子集。",
+            "unambiguity": "parse/parseExpression 签名、返回的 File/Expression 节点结构、loc 格式（1-based line/0-based column）、插件不兼容抛错语义清楚。但 AST 节点完整类型层次（Program/Statement/Expression 等）未详尽枚举。",
+            "consistency": "核心 API 表面与真实 babel parser 一致。实际包的插件选项、tokTypes 暴露方式和更多细节比 prompt 丰富。整体可接受。",
+            "testability": "测试需求覆盖基本 parse、空输入、语法错误、插件组合、sourceType 行为。与黑盒测试匹配。"
+          }
+        },
+        {
+          "project": "javascript/pug",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 pug 模板编译管线：render/compile/compileClient/compileClientWithDependenciesTracked、标签语法（p/p=/p!=/if/each/include）、options（pretty/filename/name）。覆盖核心模板引擎能力。",
+            "unambiguity": "编译方法签名和返回值类型明确（render→string、compile→function、compileClient→string、compileClientWithDependenciesTracked→{body,dependencies}）。模板语法与 HTML 映射清楚。",
+            "consistency": "编译管线 API（render/compile/compileClient）和标签语法与真实 pug 一致。模板语法映射准确。",
+            "testability": "测试需求覆盖基本标签渲染、变量插值、安全/不转义输出、条件、迭代、include、空模板。黑盒测试覆盖充分。"
+          }
+        },
+        {
+          "project": "javascript/jest-core",
+          "overall_score": 4.37,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 4.3,
+            "consistency": 4.4,
+            "testability": 4.6
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 @jest/core 的测试发现（SearchSource）、调度（TestScheduler）、报告协调、FailedTestsCache、交互模式。覆盖核心编排能力。但 jest-core 实际功能非常庞大，prompt 仅覆盖测试所需子集。",
+            "unambiguity": "FailedTestsCache 的 setTestResults/filterTests 方法签名和语义（存储失败测试、过滤仅返回之前失败的）描述精确。但其他模块（SearchSource/TestScheduler）仅概述。",
+            "consistency": "FailedTestsCache 的 setTestResults→filterTests 流程和 Jest 的 testResult 结构匹配真实 jest-core 包。",
+            "testability": "测试需求精确覆盖 FailedTestsCache 的行为（空缓存/设置结果/过滤/空输入），与黑盒测试完全对应。"
+          }
+        },
+        {
+          "project": "javascript/minimist",
+          "overall_score": 4.34,
+          "scores": {
+            "completeness": 4.4,
+            "unambiguity": 4.1,
+            "consistency": 4.0,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 minimist 的全部核心参数解析功能：位置参数（_）、--flag、-flag、alias、default、boolean/string/number 类型、-- 停止解析、stopEarly、unknown 处理。",
+            "unambiguity": "parse 函数签名、opts 字段（boolean/string/default/alias/stopEarly/unknown）、-- 行为、数字自动转换规则描述清楚。但组合标志（-abc）等边缘情况未展开。",
+            "consistency": "API 表面与真实 minimist 一致。minimist 有更多边缘行为（如 - 作为参数名）未在 prompt 覆盖但属于次要细节。",
+            "testability": "测试需求覆盖基本解析、别名、默认值、-- 分隔、boolean 标志、unknown 处理。黑盒测试覆盖充分。"
+          }
+        },
+        {
+          "project": "javascript/got",
+          "overall_score": 4.24,
+          "scores": {
+            "completeness": 4.3,
+            "unambiguity": 4.0,
+            "consistency": 3.9,
+            "testability": 4.4
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 got 核心 HTTP 客户端：请求 API（got/got.get/got.post）、extend/mergeOptions 实例定制、错误类层次（RequestError/HTTPError/TimeoutError/CancelError 等）、promise/stream 双模式。覆盖主要请求和错误处理能力。",
+            "unambiguity": "错误类层次结构、extend 的继承行为、mergeOptions 合并策略描述清楚。但实际 API 方法签名和 option 类型繁多，prompt 中的 API 合约仅覆盖核心。",
+            "consistency": "错误类层次与真实 got 一致。但真实 got 是 ESM-first 的，而 prompt 使用 require('../dist/source/index.js') 的导入方式与实际包结构可能有细微偏差。",
+            "testability": "测试需求覆盖错误类构造（error.response/error.timings）、extend/mergeOptions 行为。黑盒测试映射清楚。"
+          }
+        },
+        {
+          "project": "javascript/ejs",
+          "overall_score": 4.19,
+          "scores": {
+            "completeness": 3.7,
+            "unambiguity": 4.2,
+            "consistency": 4.4,
+            "testability": 4.5
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 EJS 核心模板编译/渲染（render/compile/renderFile）、标签语法（<% %>/<%= %>/<%- %>）、include、选项（delimiter/openDelimiter）。但实际 EJS 有更多特性如缓存、自定义文件加载器、strict mode 等未覆盖。API 合约相对概括。",
+            "unambiguity": "EJS 标签语法（scriptlet/output/unescaped output）和 render/compile 方法签名清楚。renderFile 的文件路径和 options.data 约定明确。",
+            "consistency": "标签语法 <% %>/<%= %>/<%- %>、render 方法、include 功能与真实 EJS 一致。prompt 的描述基本匹配真实核心 API。",
+            "testability": "测试需求覆盖基本渲染、变量插值、include、自定义分隔符、转义等。黑盒测试可充分验证核心模板能力。"
+          }
+        },
+        {
+          "project": "javascript/node-cron",
+          "overall_score": 3.75,
+          "scores": {
+            "completeness": 4.1,
+            "unambiguity": 3.2,
+            "consistency": 2.8,
+            "testability": 4.0
+          },
+          "reasons": {
+            "completeness": "Prompt 覆盖 node-cron 的任务调度：CronJob/CronTime/CronScheduler、cron 表达式（秒/分/时/日/月/周）、validate/start/stop/destroy、timezone。覆盖核心调度能力。但实际 node-cron 的任务队列和错误处理细节较简略。",
+            "unambiguity": "CronJob 构造器和 CronTime 的表达式解析描述不够精确。cron 表达式 6 字段格式与真实 node-cron 可能不同（应为 6 或 7 字段），start/stop/destroy 的语义说明较模糊。",
+            "consistency": "API 的基本概念（CronJob/CronTime）与真实 node-cron 一致，但 cron 表达式格式的差异（prompt 描述与真实库的 6/7 字段格式有出入）可能导致实现偏差。",
+            "testability": "测试需求覆盖 validate、CronJob 创建/start/stop、CronTime 解析。但表达式语义的模糊性可能影响测试设计的精确性。"
+          }
+        }
+      ]
+    }
+  },
+  "all_projects": [
+    {
+      "project": "go/alice",
+      "language": "go",
+      "overall_score": 4.86,
+      "scores": {
+        "completeness": 4.8,
+        "unambiguity": 4.8,
+        "consistency": 5.0,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了 alice 的全部核心能力：Chain 创建（New）、应用（Then/ThenFunc）、扩展（Append/Extend）、不可变语义、nil 处理（DefaultServeMux 回退）。API 合约精确到每个方法签名和边界行为。prompt 本身较短但覆盖度极高。",
+        "unambiguity": "Constructor 类型定义、Chain 方法签名、import 路径、nil handler 行为规则均极其明确。Append/Extend 不可变性通过具体用例说明。无歧义。",
+        "consistency": "所有 API 描述与真实 alice 源码完全一致：Constructor 类型、方法签名、不可变语义、DefaultServeMux 回退、package 路径。无任何偏差。",
+        "testability": "黑盒测试需求（immutable 验证、Then(nil) 不返回 nil、ThenFunc 行为、Empty chain passthrough、中间件执行顺序等）均清晰列出，可直接一一对应测试。"
+      }
+    },
+    {
+      "project": "cpp/xlsx2csv",
+      "language": "cpp",
+      "overall_score": 4.77,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.8,
+        "consistency": 4.7,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 workbook 加载、ZIP 解析、shared string 解析、CSV 导出、CLI 接口、辅助函数（string_to_idx/strip/string_to_row_column）。模块拆分（archive/workbook/worksheet/utils）清晰。",
+        "unambiguity": "CLI 错误消息精确到字符串级别，函数签名完整（含参数类型和返回值语义），string_to_idx 的 Excel 列字母映射详尽（A→1、AA→27、AAA→703），strip 行为明确。",
+        "consistency": "CLI 错误消息与源码完全一致。workbook 类接口、utils 函数签名、include 路径均匹配真实源码。CSV 输出规则（sheet 名即文件名、每行以 \\n 结尾）与实现一致。",
+        "testability": "测试向量非常详细：string_to_idx 的有效/无效输入全覆盖（空串/数字/超长）、workbook 构造异常、get_shared_string 边界、write_to_csv 文件名规则、CSV 行尾 \\n。黑盒测试可直接一一对应。"
+      }
+    },
+    {
+      "project": "go/xid",
+      "language": "go",
+      "overall_score": 4.69,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.6,
+        "consistency": 4.7,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 ID 生成（New/NewWithTime）、字符串编解码（String/FromString）、二进制编解码（Bytes/FromBytes/MarshalBinary）、JSON/Text 序列化、组件提取（Time/Machine/Pid/Counter）、比较排序、数据库驱动集成、XID_MACHINE_ID 环境变量。覆盖度极高。",
+        "unambiguity": "ID 结构（12 字节布局）精确描述，String 为 20 字符 base32 小写，FromString/FromBytes 的严格长度校验，XID_MACHINE_ID 范围（0-16777215）。API 合约方法签名完整。",
+        "consistency": "API 描述与真实 xid 库高度一致。12 字节结构布局、base32 编码字母表、JSON 序列化行为、Value/Scan 接口均匹配。",
+        "testability": "测试需求极其详细：String 长度和字符集、FromString 错误输入（空串/短串/大写/超长）、FromBytes 长度校验、JSON 序列化（非 nil/nil）、Compare 排序、XID_MACHINE_ID 超范围 panic。黑盒测试完全覆盖。"
+      }
+    },
+    {
+      "project": "go/go-cache",
+      "language": "go",
+      "overall_score": 4.67,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.7,
+        "consistency": 4.6,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Set/Get/Add/Replace、过期（NoExpiration/DefaultExpiration）、Delete/Flush/DeleteExpired、Increment/Decrement、OnEvicted、Save/Load、ItemCount/Items。API 覆盖度极高。",
+        "unambiguity": "每个方法的语义精确说明：Set 直接覆盖、Add 仅新键、Replace 仅已有键、Increment 类型匹配要求、GetWithExpiration 返回值含义。NoExpiration/DefaultExpiration 常量定义清晰。",
+        "consistency": "API 描述与真实 go-cache 库高度一致。Item 结构体的 Object/Expiration 字段、gob 序列化、janitor goroutine 行为均匹配。轻微：实际库有 IncrementFloat 等多类型方法但 prompt 测试 API 部分仅列出部分。",
+        "testability": "极其详细的 API 行为规范：过期键返回 nil/false、NoExpiration 永久保留、janitor 行为、类型不匹配错误、Delete 无操作等，与黑盒测试一一对应。"
+      }
+    },
+    {
+      "project": "cpp/base64pp",
+      "language": "cpp",
+      "overall_score": 4.66,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.6,
+        "consistency": 4.3,
+        "testability": 4.9
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了编码/解码 API、命名空间、include 路径、Base64 标准字母表、填充规则、非法输入处理、往返测试。全面覆盖了核心功能。轻微遗漏：未详述 base64pp_export.h 导出宏、CMake 构建细节、span 需要 C++20。",
+        "unambiguity": "API 签名精确（std::span<const uint8_t>、std::optional<std::vector<uint8_t>>），测试向量附带具体字节序列与期望输出，填充规则明确。encode_str 与 encode 关系清晰。",
+        "consistency": "API 签名、命名空间 base64pp、头文件路径均与源码一致。encode 使用 std::span 需 C++20，与 prompt 中'modern C++'定位匹配。decode 返回 optional 的一致行为描述准确。",
+        "testability": "极其详细的测试向量：具体字节→Base64 映射、空输入、非法字符（空格/!）、中间填充、256 字节往返等，与黑盒测试断言高度一致，可直接驱动实现和验证。"
+      }
+    },
+    {
+      "project": "cpp/tinyxml2",
+      "language": "cpp",
+      "overall_score": 4.64,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 非常全面：XML 解析、DOM 导航（Parent/Child/Sibling）、DOM 变更、属性访问（含类型安全 getter）、序列化（紧凑/美化）、Visitor 模式、错误处理、MemPool 分配器。几乎覆盖所有核心模块。",
+        "unambiguity": "完整的类接口定义：XMLDocument/XMLElement/XMLAttribute/XMLPrinter 的所有关键方法、include 路径、using namespace tinyxml2、XMLError 枚举。行为描述精确（如 Parse(\"\")→error、DeleteAttribute 无操作）。",
+        "consistency": "TinyXML-2 的 DOM 模型、Visitor 模式、属性访问风格与真实库高度一致。XMLError 枚举和 ErrorIDToName 行为匹配。轻微：部分内部辅助类型（StrPair、MemPoolT）仅简述。",
+        "testability": "详细的 API 行为规范：解析成功/失败、属性查询（含 QueryIntAttribute 返回 XML_NO_ATTRIBUTE）、Print 往返、NoChildren/ChildElementCount、GetLineNum 等。黑盒测试可直接验证。"
+      }
+    },
+    {
+      "project": "go/go-nanoid",
+      "language": "go",
+      "overall_score": 4.61,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.5,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 New/Generate/GenerateString/Must/MustGenerate、自定义字母表、ID 长度配置。覆盖核心 nanoid 生成能力。",
+        "unambiguity": "New 的参数（alphabet、size）、Generate 行为、Must 的 panic 语义、默认字母表描述清楚。charset 安全性说明（均匀分布）充分。",
+        "consistency": "API 描述与真实 nanoid 库一致。自定义字母表和长度参数、Must 的 panic 语义均匹配。",
+        "testability": "测试需求明确：ID 长度、字符集、默认字母表、Must 的 panic 行为、并发安全。黑盒测试直接匹配。"
+      }
+    },
+    {
+      "project": "go/cobra",
+      "language": "go",
+      "overall_score": 4.6,
+      "scores": {
+        "completeness": 4.6,
+        "unambiguity": 4.4,
+        "consistency": 4.2,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了命令行创建（Command 结构体）、标志（Flags）、参数校验（Args）、子命令、钩子（PreRun/PostRun）、Execute 入口。覆盖了 cobra 的核心使用模式。",
+        "unambiguity": "Command 结构体字段（Use/Short/Long/Run/RunE）、Args 校验函数、PersistentFlags vs Flags 区别、Execute 调用方式均描述清楚。但部分高级特性如 help 模板自定义未展开。",
+        "consistency": "API 描述与真实 cobra 库一致。但实际 cobra 功能远比 prompt 描述丰富（如 completion、help 自定义、TraverseRunHooks），prompt 聚焦于测试可覆盖子集。",
+        "testability": "测试需求非常具体：子命令执行、Args 校验器行为、PreRun/PostRun 钩子调用顺序、标志默认值等，与黑盒测试高度对齐。"
+      }
+    },
+    {
+      "project": "cpp/jsoncpp",
+      "language": "cpp",
+      "overall_score": 4.59,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.6,
+        "consistency": 4.4,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 非常详尽：完整的 Json::Value 类接口（构造、类型检测、类型转换、数组/对象操作）、Reader/CharReaderBuilder/FastWriter/StreamWriterBuilder、所有 JSON 类型常量。覆盖核心 DOM 操作和序列化。轻微遗漏：部分高级特性如注释支持、缩进配置未展开。",
+        "unambiguity": "API 接口从 Value 构造到数组/对象操作到序列化均给出了完整的方法签名和类型常量，include 路径明确。语义清晰无歧义。",
+        "consistency": "JsonCpp DOM 模型描述与真实库高度一致：Value 类型、Reader/Writer 体系、include/json/ 路径、命名空间 Json。CharReaderBuilder/StreamWriterBuilder 等新 API 与旧 Reader/FastWriter 均有覆盖，与实际库的 API 演进一致。",
+        "testability": "详尽 API 说明使测试易于构造：类型检测、值转换、嵌套结构、序列化往返、解析失败处理等均有覆盖。黑盒测试可直接对号入座。"
+      }
+    },
+    {
+      "project": "javascript/nanoid",
+      "language": "javascript",
+      "overall_score": 4.59,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.6,
+        "consistency": 4.3,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 nanoid 全部核心导出：nanoid()、customAlphabet()、customRandom()、random()、urlAlphabet、non-secure 变体。ID 长度、字符集、安全性说明充分。",
+        "unambiguity": "每个函数的签名和参数默认值（nanoid 默认 21 字符）、urlAlphabet 精确字符串值、non-secure 使用 Math.random、customAlphabet 返回生成器函数均极清晰。",
+        "consistency": "API 表面与真实 nanoid 高度一致。urlAlphabet 精确的 64 字符字符串匹配。non-secure 作为独立入口点的设计与真实包一致。",
+        "testability": "测试需求覆盖 nanoid 长度/字符集、customAlphabet 自定义、urlAlphabet 常量值、non-secure 模式、random(0) 空数组。黑盒测试完全对应。"
+      }
+    },
+    {
+      "project": "java/redis-cache",
+      "language": "java",
+      "overall_score": 4.58,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.5,
+        "consistency": 4.5,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 RedisCache/Serializer/JDKSerializer/KryoSerializer/RedisConfig/RedisConfigurationBuilder/RedisCallback/DummyReadWriteLock。API 合约详列了 DummyLock 的每个方法行为、序列化器的 serialize/unserialize 签名。",
+        "unambiguity": "DummyReadWriteLock 的 readLock==writeLock（assertSame）、tryLock 始终 true、JDKSerializer 的 null→null 和 round-trip 语义、KryoSerializer 的 Large Long 处理，描述极其精确。",
+        "consistency": "类名和包路径（org.mybatis.caches.redis）、序列化器接口、DummyReadWriteLock 的 no-op 行为均与真实源码一致。",
+        "testability": "测试需求覆盖 DummyLock 所有方法（lock/unlock/tryLock/lockInterruptibly/newCondition）、JDK/Kryo 序列化往返（String/Integer/Long/List/Boolean）、null 输入等，与黑盒测试高度对应。"
+      }
+    },
+    {
+      "project": "go/gobreaker",
+      "language": "go",
+      "overall_score": 4.57,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 CircuitBreaker 状态机（Closed/Open/HalfOpen）、Settings 配置、Execute 方法、v2 泛型版本。覆盖核心熔断器能力。",
+        "unambiguity": "Settings 字段（MaxRequests/Interval/Timeout/ReadyToTrip/OnStateChange）语义清晰。状态转换规则（失败计数触发 trip、Timeout 后进入 HalfOpen、MaxRequests 成功后回 Closed）精确描述。",
+        "consistency": "状态机语义、Settings 字段、Execute 签名与真实 gobreaker 库一致。轻微：实际 v2 版本功能更丰富但 prompt 聚焦测试子集。",
+        "testability": "测试需求精确描述了状态转换行为：trip 触发条件、HalfOpen 自动恢复、v2 泛型 Execute、isSuccessful 回调等。黑盒测试可直接映射。"
+      }
+    },
+    {
+      "project": "javascript/mitt",
+      "language": "javascript",
+      "overall_score": 4.57,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.6,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 mitt 全部核心功能：mitt() 创建、on/off/emit、通配符 *、EventHandlerMap、TypeScript 泛型支持。非常简洁但覆盖完整。",
+        "unambiguity": "on/off/emit 签名和语义极其明确：通配符回调参数 (type, event)、emit 时注册不触发、off 未注册为 no-op、EventHandlerMap 通过 Map 实现。",
+        "consistency": "mitt API 非常简洁，prompt 描述与真实源码几乎无偏差。通配符行为、EventHandlerMap、TypeScript 泛型匹配。",
+        "testability": "测试需求覆盖 on/off/emit 基本流程、通配符、多次注册、移除未注册处理程序、emit('*') 行为、emit 期间注册不触发。黑盒测试高度对应。"
+      }
+    },
+    {
+      "project": "go/go-env",
+      "language": "go",
+      "overall_score": 4.56,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.3,
+        "consistency": 4.6,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Parse/ParseWithOptions、struct tag 语法（env/envDefault/required/envPrefix/envSeparator）、Options 配置、支持字段类型列表。覆盖核心解析能力。但实际库还支持 file/expand/notEmpty/unset 标签及 FuncMap 等高级特性，prompt 仅覆盖测试所需。",
+        "unambiguity": "Struct tag 语义（required/envDefault）和 Options 结构体清晰。但 required 字段无默认值时的错误类型未说明，嵌套结构体的 envPrefix 前缀规则需推断。",
+        "consistency": "核心 API（Parse/Options/struct tags）与真实 go-env 库一致。支持字段类型列表匹配。轻微：实际库 v11 有许多高级特性 prompt 未要求覆盖。",
+        "testability": "测试需求覆盖了基本解析、默认值、required 错误、嵌套前缀、分隔符、duration 解析。黑盒测试覆盖与 prompt 描述匹配度高。"
+      }
+    },
+    {
+      "project": "cpp/logistic_system",
+      "language": "cpp",
+      "overall_score": 4.55,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.5,
+        "consistency": 4.1,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖订单管理、库存管理、发货处理、报告生成、CLI 入口。API 合约详细列出了类接口和关键方法。模块拆分清晰。",
+        "unambiguity": "类接口、CLI 行为、错误处理路径描述清楚。方法签名和返回类型明确。",
+        "consistency": "模块架构（order/inventory/shipping/reporting）与源码一致。CLI 入口行为匹配。轻微差异：部分内部实现细节（如数据结构选型）prompt 未做约束，属于合理设计自由度。",
+        "testability": "详细测试向量：具体订单数据、期望输出、错误路径。黑盒测试可直接映射到 prompt 中的行为描述。"
+      }
+    },
+    {
+      "project": "cpp/snappy",
+      "language": "cpp",
+      "overall_score": 4.55,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 C++/C API、Source/Sink 流式接口、CompressionOptions、长度/校验工具函数、内部组件。详见 MaxCompressedLength 公式和边界行为。遗漏：部分实际公开接口（RawCompress/RawUncompress、RawUncompressToIOVec、Source 版本的 GetUncompressedLength 和 IsValidCompressed）。",
+        "unambiguity": "核心接口签名、命名空间、头文件路径、状态码、关键行为和精确断言（如 MaxCompressedLength(0)==32）写得清楚。高级功能（流式解压、iovec）边界语义未细化但不影响核心实现。",
+        "consistency": "整体描述与真实仓库一致：Snappy 定位、64KB block、C/C++ API、Source/Sink 抽象、CompressionOptions 1/2 两级、C API 默认级别、MaxCompressedLength 公式及非法输入行为均与代码和黑盒测试相符。",
+        "testability": "明确列出黑盒测试所需 include path、必须实现的 C/C++ API、精确返回值、公式、非法输入样例、空输入、大数据和高压缩数据等行为，与黑盒测试高度一致。"
+      }
+    },
+    {
+      "project": "java/MyUploader-Backend",
+      "language": "java",
+      "overall_score": 4.54,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.4,
+        "consistency": 4.3,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖上传 API（普通/大文件分块/秒传）、FileDao/FileService/File 模型、FileUtils（generateFileName/write/writeWithBlok）、UploadUtils（分块上传状态管理）。API 合约详细列出所有类方法。架构清晰。",
+        "unambiguity": "FileUtils 方法签名（含 InputStream 参数和 IOException 抛出）、UploadUtils 状态管理语义（getFileName 幂等、isUploaded 全块判断、removeKey 去注册）、writeWithBlok 的偏移计算（chunkIndex*chunkSize）均精确描述。",
+        "consistency": "API 类名和方法签名与源码一致。Spring Boot 架构（controller/service/dao/model）匹配。generateFileName 长度 >=32 UUID 风格与实现吻合。",
+        "testability": "测试需求覆盖文件名生成、文件写入（含空流）、分块写入（含乱序）、状态管理（注册/完成判断/清理）。与黑盒测试匹配度极高。"
+      }
+    },
+    {
+      "project": "python/geotext",
+      "language": "python",
+      "overall_score": 4.51,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.1,
+        "consistency": 4.2,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 geotext 的地理实体识别：GeoText 类构造、城市/国家提取（cities/countries/nationalities）、多种语言支持、国家别名。API 合约详列了方法签名和返回格式。",
+        "unambiguity": "cities/countries 返回格式（元组或列表）、countryflags 查询、国家简称/全称映射描述清楚。但多语言支持的边界情况（如混合语言文本）未详述。",
+        "consistency": "GeoText 类 API 和返回格式与真实 geotext 库一致。地理数据来源（geonames）的依赖方式和库版本细节略简。",
+        "testability": "测试需求覆盖具体地名识别（大/小写混合、特殊拼写变体）、返回值类型、多语言支持。黑盒测试高度对应。"
+      }
+    },
+    {
+      "project": "java/springboot-jwt-starter",
+      "language": "java",
+      "overall_score": 4.5,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.5,
+        "consistency": 4.4,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 JWT 认证/授权、User 模型（含 UserDetails 实现）、Authority 角色枚举、UserTokenState、TokenHelper、Spring Security 配置。API 合约详细列出 User/Authority/UserTokenState 所有方法和行为。",
+        "unambiguity": "User.setPassword 的副作用（同时更新 lastPasswordResetDate）、UserDetails 方法始终返回 true、UserTokenState 的 boxed Long 类型、expires_in=0L 正确处理等行为描述极其精确。",
+        "consistency": "类名（User/Authority/UserTokenState）、包路径（com.bfwg.model）、Spring Security 集成模式与真实源码一致。",
+        "testability": "测试需求覆盖 User 构造、setPassword 副作用、UserDetails 方法、UserTokenState 默认值/null 行为、Authority 角色。与黑盒测试高度对应。"
+      }
+    },
+    {
+      "project": "go/sqlx",
+      "language": "go",
+      "overall_score": 4.47,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.3,
+        "consistency": 4.5,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 sqlx 对 database/sql 的扩展：命名参数（Named/NamedExec）、结构体扫描（StructScan/Get/Select）、IN 子句扩展（In/Rebind）、BindType。覆盖核心增强能力。",
+        "unambiguity": "Named 查询语法（:param 占位符）、StructScan 的 db tag 映射、In 子句生成逻辑、Rebind 占位符替换规则描述清楚。但事务支持（Beginx/BindNamed）未详述。",
+        "consistency": "DB/Stmt/NamedStmt 及命名查询语法与真实 sqlx 库一致。BindType（QUESTION/DOLLAR/AT）及其对应的 Rebind 行为匹配。",
+        "testability": "测试需求覆盖 IN 子句、Rebind（不同 BindType 占位符）、Named 查询、StructScan。与黑盒测试匹配度高。"
+      }
+    },
+    {
+      "project": "cpp/tinyexpr-plusplus",
+      "language": "cpp",
+      "overall_score": 4.47,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.3,
+        "consistency": 4.3,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 te_parser 类、变量绑定、自定义函数注册、内置函数列表、运算符优先级、分隔符配置。覆盖核心表达式引擎能力。",
+        "unambiguity": "te_parser 接口（evaluate/compile/success/get_result）、te_variable 结构、内置函数列表、运算符优先级均明确。set_variables_and_functions 参数类型使用 initializer_list 或 vector 的注释存在微小歧义。",
+        "consistency": "te_parser API 接口、变量绑定（live pointer）、内置函数（sqrt/abs/sin/cos 等）与源码一致。分隔符配置和 get_expression 注释剥离行为匹配。",
+        "testability": "具体测试表达式和期望值：2^10→1024、max(3,5)→5.0、1/0→inf/NaN、空字符串/未知变量→NaN+success=false，与黑盒测试完全对齐。"
+      }
+    },
+    {
+      "project": "cpp/robotstxt",
+      "language": "cpp",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.4,
+        "consistency": 4.0,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 robots.txt 解析、匹配规则、CLI 工具、报告功能。GetKeyType（含拼写错误检测）、RobotsMatcher（最长匹配/通配符/锚点）、RobotsParsingReporter 均有描述。",
+        "unambiguity": "GetKeyType 的大小写不敏感和 typo 变体（useragent/disalow 等）描述精确。RobotsMatcher 的匹配优先级（最长匹配→Allow 优先）、通配符 * 和锚点 $ 语义清晰。IsValidUserAgentToObey 规则明确。",
+        "consistency": "命名空间 googlebot、类名 GetKeyType/RobotsMatcher/RobotsParsingReporter 均与源码匹配。匹配语义描述与实现一致。轻微：部分内部实现（如 RobotsParsedLine 结构）prompt 简化。",
+        "testability": "详细测试用例：空 body、全禁止 Disallow: /、通配符匹配、typo 识别、valid_directives/unused_directives 计数等，与黑盒测试覆盖一致。"
+      }
+    },
+    {
+      "project": "cpp/people_management",
+      "language": "cpp",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.5,
+        "unambiguity": 4.2,
+        "consistency": 4.2,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖人员/部门 CRUD、关系管理、查询功能。API 合约列出了完整的类方法集合。模块拆分（person/department/relationship）清晰。",
+        "unambiguity": "大部分接口清晰。部分方法（如关系查询）的返回类型和错误处理未完全细化，但不影响核心实现方向。",
+        "consistency": "模块架构与源码对应，API 表面与实现基本一致。个别方法命名或参数类型可能有细微差异，但不影响整体一致性。",
+        "testability": "Include 路径给出，CRUD 行为、边界条件描述足以构造测试用例。黑盒测试覆盖核心操作。"
+      }
+    },
+    {
+      "project": "javascript/login-registration",
+      "language": "javascript",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖登录注册全流程：用户模型（User）、路由（/register//login）、密码哈希（bcrypt）、JWT token 生成、中间件认证。覆盖 Web 应用认证核心。",
+        "unambiguity": "路由路径、请求/响应格式、bcrypt 哈希轮次、JWT payload 结构描述清楚。但错误处理细节（如重复用户名返回什么）可更明确。",
+        "consistency": "Express 路由结构、bcrypt 哈希、JWT 签名/验证模式与真实实现一致。prompt 的 API 描述匹配核心认证流程。",
+        "testability": "测试需求覆盖注册成功/失败、登录成功/失败（含错误密码）、JWT 验证、受保护路由。黑盒测试覆盖充分。"
+      }
+    },
+    {
+      "project": "javascript/dayjs",
+      "language": "javascript",
+      "overall_score": 4.45,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.2,
+        "consistency": 4.1,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 dayjs 核心：构造器、format/parse/操作（add/subtract/startOf/endOf）、比较（isBefore/isAfter/isSame）、查询（day/month/year/hour/minute/second）、locale 和 plugin 系统。覆盖日常日期操作的大部分方法。",
+        "unambiguity": "dayjs 链式 API 风格、format 格式化字符串、add/subtract 单位语法、isBefore/isAfter 比较语义描述清楚。但 plugin 注册机制细节未详述。",
+        "consistency": "dayjs 的函数式 API 风格、format token、immutable 特性与真实库一致。实际 dayjs 有更多 plugin 和高级 API 未在 prompt 列出。",
+        "testability": "测试需求覆盖构造、format、操作、比较、locale 设置。API 合约列出了关键方法签名和返回值类型。黑盒测试匹配度高。"
+      }
+    },
+    {
+      "project": "java/idcenter",
+      "language": "java",
+      "overall_score": 4.44,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.3,
+        "consistency": 4.2,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 IdWorker（雪花算法）、SidWorker（短 ID）、Base62 编码、CLI 入口（idworker/sidworker 子命令）。API 合约列出 IdWorker/SidWorker/Base62 的关键方法。",
+        "unambiguity": "IdWorker 参数范围校验（workerId 0-31、datacenterId 0-31）、Base62.encode 的 Long.MIN_VALUE→IllegalArgumentException 行为、CLI 子命令格式和错误提示精确。但 SidWorker 的编码格式细节（30 字符固定长度）仅概述。",
+        "consistency": "雪花算法结构、Base62 编码字母表、CLI 子命令格式与真实 idcenter 项目一致。SidWorker 的 30 字符输出匹配源码。",
+        "testability": "测试需求覆盖 ID 生成唯一性、时间戳提取、workerId/datacenterId 范围校验、Base62 编码、CLI 参数校验。黑盒测试覆盖充分。"
+      }
+    },
+    {
+      "project": "go/is",
+      "language": "go",
+      "overall_score": 4.42,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.3,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 New/NewRelaxed、True/Equal/NoErr/Fail 断言、失败输出格式、strict/relaxed 模式。覆盖核心测试辅助能力。",
+        "unambiguity": "断言方法签名和语义（reflect.DeepEqual 比较、不同类型不相等、NoErr 处理 wrapped error）清楚。但 Helper() 的作用和 TB 接口实现细节未详述。",
+        "consistency": "核心 API 与真实 is 库一致。但实际 is 库还包含 New 可以接受带 log/slog 参数的变体、Lax 方法等，prompt 未覆盖这些次要特性。",
+        "testability": "测试需求覆盖了所有断言方法、strict/relaxed 行为差异、nil 比较、类型不匹配、wrapped error。与黑盒测试一致。"
+      }
+    },
+    {
+      "project": "python/stocktrends",
+      "language": "python",
+      "overall_score": 4.42,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 3.9,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 stocktrends 的股票趋势分析：数据获取（yahoo/pandas-datareader）、K 线渲染、技术指标计算（MA/布林带等）。覆盖核心股票分析流程。",
+        "unambiguity": "K 线图表格式、技术指标参数、数据显示顺序描述清楚。但数据源依赖（yahoo finance）的 API 变化不确定性未被强调。",
+        "consistency": "核心分析逻辑与真实 stocktrends 库一致。数据获取依赖外部 API 使 prompt 的静态描述与动态数据源存在天然偏差。",
+        "testability": "测试需求精确覆盖图表输出（像素级匹配）、数据列顺序、日期格式。黑盒测试要求高但 prompt 描述充分。"
+      }
+    },
+    {
+      "project": "python/hone",
+      "language": "python",
+      "overall_score": 4.41,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.4,
+        "consistency": 3.9,
+        "testability": 4.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 hone 的多种数据格式转换：嵌套对象→CSV/JSON/表格、扁平化、嵌套化。API 合约列出了核心转换函数。",
+        "unambiguity": "转换函数（nest_to_csv/hone_json 等）的输入输出格式、嵌套路径语法、扁平化规则描述精确。",
+        "consistency": "核心转换逻辑与真实 hone 库一致。但实际 hone 的函数名和参数签名可能因版本迭代有轻微变化。",
+        "testability": "测试需求覆盖各种转换场景：空输入、深层嵌套、路径冲突、格式保留。黑盒测试覆盖充分。"
+      }
+    },
+    {
+      "project": "python/Hybrid_Images",
+      "language": "python",
+      "overall_score": 4.38,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.2,
+        "consistency": 3.0,
+        "testability": 4.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Hybrid Images 核心算法：高斯滤波、拉普拉斯算子、图像金字塔分离、混合图像合成。概述了核心图像处理流程和参数。",
+        "unambiguity": "图像处理流程（低通/高通滤波、金字塔层次、sigma 参数）描述清晰。但具体的图像尺寸假设和裁剪规则需从测试推断。",
+        "consistency": "核心算法描述与真实实现一致。但 prompt 可能包含一些理想化描述与真实图像处理库（如 PIL/OpenCV）的 API 调用方式有差异。",
+        "testability": "测试需求对图像输出匹配有精确要求，黑盒测试覆盖正确滤波和合成结果。"
+      }
+    },
+    {
+      "project": "java/Actor_relationship_game",
+      "language": "java",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了 Actor/Movie 领域模型、ActorGraph 图结构（addActor/addMovie/addActorToMovie）、GraphCreation/ActorGraphUtil/GameplayInterface 三个文件驱动的 batch 阶段、TMDBApi 外部数据集成。API 合约详细列出了关键类的所有方法。遗漏了串行化到 .ser 的具体格式说明但核心能力完整。",
+        "unambiguity": "Actor/Movie 类接口、ActorGraph 方法（findConnectionWithPath 返回 BFS 最短路径）、idempotent addActor 行为、getMovieIds 返回 live mutable set 均描述清晰。但 GraphCreation/ActorGraphUtil/GameplayInterface 的具体 CLI 契约（参数格式、错误处理）仅概括描述。",
+        "consistency": "领域模型拆分（Actor/Movie/ActorGraph）、文件驱动 stage（GraphCreation/ActorGraphUtil/GameplayInterface）、TMDBApi 隔离均与源码架构一致。getMovieIds 返回 live set 等细节匹配。",
+        "testability": "API 测试需求覆盖 Actor/Movie 构造器、集合行为、ActorGraph 的 findConnectionWithPath BFS 逻辑、null 参数处理。黑盒测试可覆盖核心图操作和查询。"
+      }
+    },
+    {
+      "project": "javascript/babel-parser",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 parse/parseExpression 入口、sourceType（script/module/unambiguous）、plugins 插件系统（typescript/jsx/flow 等）、AST 节点结构（type/start/end/loc）、tokTypes 导出。覆盖核心解析能力。实际 babel 有更丰富的 plugin 列表和选项但 prompt 聚焦测试子集。",
+        "unambiguity": "parse/parseExpression 签名、返回的 File/Expression 节点结构、loc 格式（1-based line/0-based column）、插件不兼容抛错语义清楚。但 AST 节点完整类型层次（Program/Statement/Expression 等）未详尽枚举。",
+        "consistency": "核心 API 表面与真实 babel parser 一致。实际包的插件选项、tokTypes 暴露方式和更多细节比 prompt 丰富。整体可接受。",
+        "testability": "测试需求覆盖基本 parse、空输入、语法错误、插件组合、sourceType 行为。与黑盒测试匹配。"
+      }
+    },
+    {
+      "project": "javascript/pug",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 pug 模板编译管线：render/compile/compileClient/compileClientWithDependenciesTracked、标签语法（p/p=/p!=/if/each/include）、options（pretty/filename/name）。覆盖核心模板引擎能力。",
+        "unambiguity": "编译方法签名和返回值类型明确（render→string、compile→function、compileClient→string、compileClientWithDependenciesTracked→{body,dependencies}）。模板语法与 HTML 映射清楚。",
+        "consistency": "编译管线 API（render/compile/compileClient）和标签语法与真实 pug 一致。模板语法映射准确。",
+        "testability": "测试需求覆盖基本标签渲染、变量插值、安全/不转义输出、条件、迭代、include、空模板。黑盒测试覆盖充分。"
+      }
+    },
+    {
+      "project": "javascript/jest-core",
+      "language": "javascript",
+      "overall_score": 4.37,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.3,
+        "consistency": 4.4,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 @jest/core 的测试发现（SearchSource）、调度（TestScheduler）、报告协调、FailedTestsCache、交互模式。覆盖核心编排能力。但 jest-core 实际功能非常庞大，prompt 仅覆盖测试所需子集。",
+        "unambiguity": "FailedTestsCache 的 setTestResults/filterTests 方法签名和语义（存储失败测试、过滤仅返回之前失败的）描述精确。但其他模块（SearchSource/TestScheduler）仅概述。",
+        "consistency": "FailedTestsCache 的 setTestResults→filterTests 流程和 Jest 的 testResult 结构匹配真实 jest-core 包。",
+        "testability": "测试需求精确覆盖 FailedTestsCache 的行为（空缓存/设置结果/过滤/空输入），与黑盒测试完全对应。"
+      }
+    },
+    {
+      "project": "python/portalocker",
+      "language": "python",
+      "overall_score": 4.35,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 portalocker 的文件锁核心：Lock 类、上下文管理器、超时、重试、Unix/Windows 平台支持。覆盖核心文件锁定能力。",
+        "unambiguity": "Lock 构造参数（filename/mode/timeout/retries）、上下文管理器语义、平台差异（Windows LockFileEx vs Unix fcntl）描述清楚。",
+        "consistency": "核心 Lock API 与真实 portalocker 一致。实际 portalocker 有一些便捷函数（lock/unlock）prompt 未着重描述但属次要。",
+        "testability": "测试需求覆盖加锁/解锁、超时、上下文管理器、平台行为。黑盒测试映射度较好。"
+      }
+    },
+    {
+      "project": "python/imapclient",
+      "language": "python",
+      "overall_score": 4.34,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.1,
+        "consistency": 3.6,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 IMAPClient 的核心邮件操作：连接/登录、文件夹操作（list_folders/select_folder）、邮件搜索/获取、标志操作。API 合约详列了 IMAPClient 类方法。",
+        "unambiguity": "IMAPClient 的连接参数、folder 操作语义、search 的参数格式、fetch 返回的邮件数据结构描述清楚。但 SSL/TLS 配置和认证方式细节较概括。",
+        "consistency": "核心 API 与真实 IMAPClient 一致。但 prompt 中描述的某些方法签名可能与真实库的 IMAP 协议层抽象有细微偏差，属合理。",
+        "testability": "测试需求覆盖连接/登录、文件夹列表/创建、邮件搜索/获取、标志操作。黑盒测试（需要 IMAP 服务器）映射度尚可。"
+      }
+    },
+    {
+      "project": "javascript/minimist",
+      "language": "javascript",
+      "overall_score": 4.34,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.1,
+        "consistency": 4.0,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 minimist 的全部核心参数解析功能：位置参数（_）、--flag、-flag、alias、default、boolean/string/number 类型、-- 停止解析、stopEarly、unknown 处理。",
+        "unambiguity": "parse 函数签名、opts 字段（boolean/string/default/alias/stopEarly/unknown）、-- 行为、数字自动转换规则描述清楚。但组合标志（-abc）等边缘情况未展开。",
+        "consistency": "API 表面与真实 minimist 一致。minimist 有更多边缘行为（如 - 作为参数名）未在 prompt 覆盖但属于次要细节。",
+        "testability": "测试需求覆盖基本解析、别名、默认值、-- 分隔、boolean 标志、unknown 处理。黑盒测试覆盖充分。"
+      }
+    },
+    {
+      "project": "python/tinydb",
+      "language": "python",
+      "overall_score": 4.33,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 3.8,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 TinyDB 的文档数据库核心：TinyDB/Table 类、insert/upsert/update/remove/search、Query 查询 DSL、JSON 持久化。覆盖核心嵌入式数据库能力。",
+        "unambiguity": "TinyDB 构造器（JSON 文件路径）、插入/查询/更新/删除方法、Query 对象的 DSL（where/==/<=/>/matches）描述清楚。但高级查询（如嵌套字段、逻辑组合）未详述。",
+        "consistency": "核心 API 与真实 TinyDB 一致。但真实 TinyDB 有 storage/middleware 层（如 TinyDB(storage=JSONStorage)）prompt 未强调。",
+        "testability": "测试需求覆盖 CRUD 操作、Query 查询、JSON 持久化、table 分离。黑盒测试可直接验证。"
+      }
+    },
+    {
+      "project": "go/script",
+      "language": "go",
+      "overall_score": 4.32,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 4.1,
+        "consistency": 4.2,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了 Pipe 管道的 Sources（File/Stdin/Exec/Echo/Get 等）、Filters（Match/Grep/Sort/Uniq/JQ/Column 等）、Sinks（String/Slice/CountLines/Stdout 等）。覆盖核心 shell-script 替代能力。",
+        "unambiguity": "API 方法签名（如 File → *Pipe、Match 返回 *Pipe、String 返回 (string, error)）清楚。但 Filter/FilterLine/FilterScan 的自定义函数参数和错误累积（accumulate at sink）语义需结合代码推断。",
+        "consistency": "API 表面与真实 script 库一致。但实际库的 Pipe 方法更丰富（有 ExecForEach、JQ 依赖 gojq 等），prompt 仅覆盖测试子集。",
+        "testability": "测试需求覆盖列提取、Slice 源、Match 过滤、链式调用。pipe 错误累积、空输出处理等行为有说明。"
+      }
+    },
+    {
+      "project": "java/java_heap",
+      "language": "java",
+      "overall_score": 4.3,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.2,
+        "consistency": 4.1,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 FibonacciHeap 和 LeftistHeap 两种堆实现、HeapPerformanceTest 性能比较。API 合约详细列出了 insert/deleteMin/findMin/meld/merge/extract_min 等关键操作。",
+        "unambiguity": "FibonacciHeap 的 insert（返回 HeapNode）、findMin（null 安全）、meld（合并大小）、potential/countersRep 语义清楚。LeftistHeap 的 extract_min 返回 -1 哨兵而非抛异常、merge 后 other 为空、in_order 返回 ArrayList 等描述精确。",
+        "consistency": "堆操作的语义描述与经典实现一致。LeftistHeap 的 -1 哨兵返回值与源码匹配。HeapPerformanceTest 仅概述但核心堆逻辑一致。",
+        "testability": "测试需求覆盖空堆操作、插入/删除/合并、排序提取、负数处理、meld 边界条件。黑盒测试可直接覆盖。"
+      }
+    },
+    {
+      "project": "java/spring-boot-realworld-example-app",
+      "language": "java",
+      "overall_score": 4.29,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.1,
+        "consistency": 4.2,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 RealWorld 后端完整功能（用户/文章/评论/标签/Tag）、REST + GraphQL 双接口、JWT 认证。API 合约列出了 Article/DateTimeCursor/Page/Util 等核心类。",
+        "unambiguity": "Article 构造器（slug 生成、tag 去重、ID 唯一）、DateTimeCursor 的 parse/toString、Page 的 offset/limit 默认值、Util.isEmpty 行为清晰。但 GraphQL schema 的具体类型和 Query/Mutation 接口细节较少。",
+        "consistency": "Spring Boot 分层架构（api/application/core）、Joda-Time 使用、toSlug 行为与真实项目一致。实际项目的 GraphQL schema 比 prompt 描述更丰富。",
+        "testability": "测试需求覆盖 Article 构造/更新、slug 生成、DateTimeCursor 解析、Page 分页。与黑盒测试匹配。GraphQL 测试未详细展开。"
+      }
+    },
+    {
+      "project": "go/chi",
+      "language": "go",
+      "overall_score": 4.28,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.4,
+        "consistency": 4.6,
+        "testability": 4.2
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖核心路由（NewRouter/Get/Post 等）、中间件（Use/With）、路由组（Group/Route/Mount）、URL 参数提取。但实际 chi 库还包含 middleware 包（Logger/Recoverer/RealIP 等）、子路由器内部方法、context 类型等，prompt 仅覆盖了 API testing 需要的子集。",
+        "unambiguity": "URL 模式语法（{param}、{param:regex}、*）、方法注册、Use/With 语义、Group vs Route vs Mount 区别、404/405 行为描述清楚。但 chi 内部 context 类型和 RouteContext 关系表述较简略。",
+        "consistency": "API 表面（NewRouter、Router 接口方法、URLParam）与真实 chi 库一致。Mount 前缀剥离、Group 中间件隔离等语义匹配。轻微：实际库中 middleware 包方法更多但 prompt 未要求覆盖全部，属于合理取舍。",
+        "testability": "测试需求列出了基础路由、参数提取、Mount 前缀剥离、NotFound/MethodNotAllowed、中间件作用域隔离等。但实际黑盒测试还涉及 BasicAuth middleware 等功能，prompt 仅在 middleware 行为部分列出，与测试匹配度尚可。"
+      }
+    },
+    {
+      "project": "python/lice",
+      "language": "python",
+      "overall_score": 4.25,
+      "scores": {
+        "completeness": 3.9,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 lice 的开源许可证生成：许可证模板管理、CLI 交互生成、输出文件。覆盖核心许可证生成能力。但真实 lice 的许可证种类（MIT/GPL/Apache 等约 20 种）在 prompt 中未完全枚举。",
+        "unambiguity": "CLI 命令（--template/--year/--name）和交互式流程描述清楚。模板变量填充规则明确。",
+        "consistency": "CLI 接口和模板变量与真实 lice 库一致。实际 lice 的许可证模板集可能比 prompt 中描述的更多。",
+        "testability": "测试需求覆盖许可证生成（变量替换）、CLI 参数、输出文件。黑盒测试可直接验证。"
+      }
+    },
+    {
+      "project": "javascript/got",
+      "language": "javascript",
+      "overall_score": 4.24,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.0,
+        "consistency": 3.9,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 got 核心 HTTP 客户端：请求 API（got/got.get/got.post）、extend/mergeOptions 实例定制、错误类层次（RequestError/HTTPError/TimeoutError/CancelError 等）、promise/stream 双模式。覆盖主要请求和错误处理能力。",
+        "unambiguity": "错误类层次结构、extend 的继承行为、mergeOptions 合并策略描述清楚。但实际 API 方法签名和 option 类型繁多，prompt 中的 API 合约仅覆盖核心。",
+        "consistency": "错误类层次与真实 got 一致。但真实 got 是 ESM-first 的，而 prompt 使用 require('../dist/source/index.js') 的导入方式与实际包结构可能有细微偏差。",
+        "testability": "测试需求覆盖错误类构造（error.response/error.timings）、extend/mergeOptions 行为。黑盒测试映射清楚。"
+      }
+    },
+    {
+      "project": "python/particle-swarm-optimization",
+      "language": "python",
+      "overall_score": 4.23,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.2,
+        "consistency": 4.0,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 PSO 算法核心：粒子类、群体、速度/位置更新、适应度评估、惯性权重。覆盖优化算法核心流程。",
+        "unambiguity": "PSO 参数（粒子数/迭代次数/惯性权重/认知和社会系数）、适应度函数接口、收敛条件描述清楚。",
+        "consistency": "PSO 算法描述与经典实现一致。真实代码可能有额外的初始化策略或边界处理未在 prompt 中展开。",
+        "testability": "测试需求覆盖优化结果精度、参数校验、收敛行为。黑盒测试可验证基本优化能力。"
+      }
+    },
+    {
+      "project": "java/lin-cms-spring-boot",
+      "language": "java",
+      "overall_score": 4.2,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.1,
+        "consistency": 4.0,
+        "testability": 4.3
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Spring Boot CMS 架构（controller/service/mapper/model）、用户/权限管理、内容管理、JWT 认证。覆盖核心 CMS 功能。",
+        "unambiguity": "分层架构清晰，但具体的 API 端点列表和方法合约不如其他项目详细。JWT 认证流程和权限模型描述较概括。",
+        "consistency": "Spring Boot CMS 架构描述与真实项目一致。但实际 lin-cms-spring-boot 的功能更丰富（如日志、异常处理等），prompt 聚焦核心子集。",
+        "testability": "测试需求若列出关键 API 行为（登录/CRUD/权限校验）则足以驱动测试，但 prompt 的 API 合约部分可以更具体。"
+      }
+    },
+    {
+      "project": "go/gjson",
+      "language": "go",
+      "overall_score": 4.19,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.3,
+        "consistency": 4.4,
+        "testability": 4.0
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Get/GetBytes/Parse（JSON 查询和解析）、路径语法、修饰符（Modifier）、Valid 验证。覆盖核心查询能力。但实际 gjson 还有 ForEach、修饰符更多种类、Result 类型更多方法等未覆盖。",
+        "unambiguity": "Get 路径语法（点号/通配符/数组索引）、修饰符语法、Parse 返回类型、Valid 行为描述清楚。但部分高级语法（如 # 修饰符）说明不够详细。",
+        "consistency": "Get/Parse/Valid API 及路径语法与真实 gjson 库一致。修饰符行为匹配。轻微：实际库 Result 类型有更多方法未在 prompt 列出。",
+        "testability": "测试需求覆盖基本 Get、数组访问、Parse/Valid。但 blackbox 测试还涉及 pretty 修饰符等，prompt 在 API 说明中未显式列出所有修饰符。"
+      }
+    },
+    {
+      "project": "python/marshmallow",
+      "language": "python",
+      "overall_score": 4.19,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 4.0,
+        "consistency": 3.4,
+        "testability": 4.4
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 marshmallow 序列化库的核心：Schema 定义、fields（String/Integer/Float/Boolean/DateTime/List/Nested）、load/dump 序列化/反序列化、验证（required/validate/validators）。覆盖核心 schema-driven 序列化。",
+        "unambiguity": "Schema 类定义、fields 参数、load/dump 返回类型、验证错误（ValidationError）格式描述清楚。但某些高级特性（如 post_load/method/pre_dump）仅提及未展开。",
+        "consistency": "核心 Schema/fields API 与真实 marshmallow 一致。但真实 marshmallow 经历了 v2→v3 的重大 API 变化，prompt 描述若无 v3 特定细节可能与最新版本有细微偏差。",
+        "testability": "测试需求覆盖基本序列化、嵌套 Schema、验证错误、required 字段、自定义 validators。黑盒测试匹配度高。"
+      }
+    },
+    {
+      "project": "javascript/ejs",
+      "language": "javascript",
+      "overall_score": 4.19,
+      "scores": {
+        "completeness": 3.7,
+        "unambiguity": 4.2,
+        "consistency": 4.4,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 EJS 核心模板编译/渲染（render/compile/renderFile）、标签语法（<% %>/<%= %>/<%- %>）、include、选项（delimiter/openDelimiter）。但实际 EJS 有更多特性如缓存、自定义文件加载器、strict mode 等未覆盖。API 合约相对概括。",
+        "unambiguity": "EJS 标签语法（scriptlet/output/unescaped output）和 render/compile 方法签名清楚。renderFile 的文件路径和 options.data 约定明确。",
+        "consistency": "标签语法 <% %>/<%= %>/<%- %>、render 方法、include 功能与真实 EJS 一致。prompt 的描述基本匹配真实核心 API。",
+        "testability": "测试需求覆盖基本渲染、变量插值、include、自定义分隔符、转义等。黑盒测试可充分验证核心模板能力。"
+      }
+    },
+    {
+      "project": "java/spring-rest-ecommerce",
+      "language": "java",
+      "overall_score": 4.18,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 4.0,
+        "consistency": 4.0,
+        "testability": 4.3
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 Spring REST 电商 API（商品/订单/购物车）、分层架构（controller/service/repository/model）。覆盖核心电商 REST 接口。",
+        "unambiguity": "REST 端点组织和分层结构清晰，但具体 API 路径、请求/响应格式、状态码等未细化。较其他 Java 项目合约略显概括。",
+        "consistency": "Spring Boot REST 架构与真实项目一致。实际项目的数据模型和 API 端点细节可能比 prompt 更丰富。",
+        "testability": "测试需求若覆盖 CRUD 和业务规则则可驱动测试。需更多 API 行为细节完善测试覆盖度。"
+      }
+    },
+    {
+      "project": "cpp/area_calculation",
+      "language": "cpp",
+      "overall_score": 4.18,
+      "scores": {
+        "completeness": 4.0,
+        "unambiguity": 4.0,
+        "consistency": 3.8,
+        "testability": 4.5
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了完整 shape 层级（Shape/Circle/Rectangle/Square）、构造/析构消息输出、面积计算逻辑、文件式 CLI 程序流、以及精度容差和边界用例。遗漏了 Square 实际仅继承 Rectangle（非同时继承两者）、Circle 无独立 .cpp（头文件实现）、main.cpp 使用 freopen 而非标准文件流等工程细节，但不影响核心功能复现。",
+        "unambiguity": "API 合约清晰给出了 include 路径、类签名、精度容差和构造/析构消息格式。但 Square 的继承关系描述为'同时继承 Rectangle 和 Shape'与实际代码不符，Shape::calcArea 描述为纯虚函数但实际为非纯虚默认返回 0，可能造成实现困惑。",
+        "consistency": "整体与源码一致：类拆分、构造/析构消息、面积公式、文件 I/O 程序流均匹配。偏差：Square 继承描述为双继承（实际仅 Rectangle），Shape::calcArea 描述为 =0（实际有默认实现返回 0），Circle 计算用 3.14159265 而非 prompt 中提到的 M_PI，Circle 无独立 .cpp 实现文件。",
+        "testability": "Include 路径、gtest 框架、各精度级别的容差、输入输出文件格式、构造析构消息文本均明确给出，足以驱动黑盒测试。黑盒测试涵盖了 Circle/Rectangle/Square 的面积计算和默认构造函数。"
+      }
+    },
+    {
+      "project": "java/image-similarity",
+      "language": "java",
+      "overall_score": 4.15,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 4.0,
+        "consistency": 4.0,
+        "testability": 4.3
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 ImagePHash（感知哈希）和 ImageHistogram（直方图）两种比较策略、CLI 入口。覆盖核心相似度比较能力。但 prompt 较短，未展开更多高级算法细节。",
+        "unambiguity": "ImagePHash.distance 返回非负 Hamming 距离、ImageHistogram.match 返回 [0,1] 范围分数、自比较 → 0 或 ≥0.99、对称性、自定义大小构造函数等描述清晰。",
+        "consistency": "API 配置与真实项目基本一致。但实际的 image-similarity 项目可能存在更多图像处理依赖（如 BufferedImage 读取）未在 prompt 中展开。",
+        "testability": "测试需求包含自比较、相似/不相似图像、对称性验证、distance≥0 等边界条件。黑盒测试可直接映射。"
+      }
+    },
+    {
+      "project": "cpp/graph-cpp",
+      "language": "cpp",
+      "overall_score": 4.12,
+      "scores": {
+        "completeness": 4.3,
+        "unambiguity": 3.8,
+        "consistency": 3.5,
+        "testability": 4.3
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了 Queue/Stack 自定义容器、AdjacencyListGraph/AdjacencyMatrixGraph 两种图表示、DFS/BFS 遍历、CLI 程序。详见异常语义、模板类型支持。遗漏：邻接矩阵内部 1-based 索引细节、setVexes/setArcs 接收 initializer_list 还是 vector 的差异未说明。",
+        "unambiguity": "API 合约包含 include 路径和主要签名，异常消息精确。但 setVexes/setArcs 在 prompt 中为 initializer_list 参数而实际实现为 vector，AdjacencyMatrixGraph 的顶点索引从 1 开始的说明易混淆。",
+        "consistency": "整体架构（queue/stack/al_graph/am_graph 分离）与源码一致。偏差：setVexes/setArcs 参数类型在 prompt 中是 initializer_list 但实际是 vector；AdjacencyMatrixGraph 的 locateVex 返回 1-based 在 prompt 提及但与 0-based 遍历混合可能造成实现歧义；CLI 输出标题与源码基本匹配。",
+        "testability": "Include 路径、队列/栈异常行为、图遍历输出、CLI 格式和输出标题均有给出。黑盒测试覆盖 queue/stack/graph 操作及 CLI。"
+      }
+    },
+    {
+      "project": "java/ddd-example-ecommerce",
+      "language": "java",
+      "overall_score": 4.09,
+      "scores": {
+        "completeness": 4.0,
+        "unambiguity": 4.0,
+        "consistency": 4.1,
+        "testability": 4.2
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖了 DDD 分层架构（domain/application/infrastructure/interfaces）、商品/订单领域模型、应用服务和仓库接口。覆盖核心电商能力。但实际的 DDD example 包含更多聚合和值对象细节未展开（如 Address/Money 等值对象）。",
+        "unambiguity": "DDD 层次结构（interfaces→application→domain→infrastructure）和核心实体关系描述清楚。但具体的 API 合约方法签名（如 Product/Order 类）不如其他 Java 项目详细，Command/Query 模型未细化。",
+        "consistency": "DDD 分层架构描述与真实项目一致。但实际 ddd-example-ecommerce 项目的具体类名和方法可能与 prompt 概括描述略有差异，属于 DDD 模板项目的常见特征。",
+        "testability": "黑盒测试需求若有商品/订单 CRUD 行为说明则足以驱动测试实现，但 prompt 的 API 合约部分相比其他项目略显概括。"
+      }
+    },
+    {
+      "project": "python/ArXiv_digest",
+      "language": "python",
+      "overall_score": 4.06,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.3,
+        "consistency": 3.0,
+        "testability": 4.6
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 ArXiv API 查询构建（construct_query_url）、日期过滤（check_date）、CSV 导出（save_to_csv）、CLI 参数解析（get_args）、结果处理（process_entries/print_results）。API 合约详列了函数签名和核心行为。覆盖完整论文检索流程。",
+        "unambiguity": "函数签名和行为描述较清晰（如 check_date 的时间比较逻辑、save_to_csv 的列顺序）。但 prompt 中的重构要求部分（Requirements 节笼统提及模块拆分）与 API 合约之间存在风格不一致，一些非关键实现细节（如 API 响应解析）描述较模糊。",
+        "consistency": "核心 API（construct_query_url/check_date/save_to_csv/process_entries）的签名和行为与源码一致。但 prompt 中包含较多自由文本描述（Introduction/Goals/Requirements 节）和实际 API 合约不完全对齐，部分模块拆分建议与实际代码组织有差异。",
+        "testability": "测试需求详列了 check_date 边界（Daylight saving、同一天、未来日期）、print_results 输出格式、save_to_csv 列顺序、process_entries 过滤逻辑。黑盒测试覆盖度高。"
+      }
+    },
+    {
+      "project": "python/chakin",
+      "language": "python",
+      "overall_score": 3.87,
+      "scores": {
+        "completeness": 4.2,
+        "unambiguity": 3.7,
+        "consistency": 3.5,
+        "testability": 3.8
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 chakin 词向量下载器的核心功能：数据集搜索、下载、语言过滤、格式支持。列出了支持的预训练词向量数据集。",
+        "unambiguity": "CLI 命令格式和搜索/下载语义清楚。但实际数据集名称和 URL 映射的更新机制未说明，一些下载失败路径未细化。",
+        "consistency": "核心 API（search/download）与真实 chakin 库基本一致。但 chakin 的数据集列表和 URL 可能随上游变化，prompt 中的静态描述可能与最新源码有偏差。",
+        "testability": "测试需求覆盖搜索和下载基本流程，但下载涉及网络依赖使纯黑盒测试受限。prompt 描述的黑盒测试行为相对有限。"
+      }
+    },
+    {
+      "project": "python/zxcvbn",
+      "language": "python",
+      "overall_score": 3.85,
+      "scores": {
+        "completeness": 4.4,
+        "unambiguity": 3.8,
+        "consistency": 2.9,
+        "testability": 3.7
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 zxcvbn 密码强度评估的核心：zxcvbn() 返回结构（score/guesses/crack_times/sequence）、反馈消息（suggestions/warning）、匹配器（dictionary/spatial/repeat/sequence 等）。覆盖密码分析核心。",
+        "unambiguity": "zxcvbn() 返回结构（score 0-4、序列分析、时间估算）描述较清晰。但匹配器的优先级和具体评分算法细节未展开，可能影响精确复现。",
+        "consistency": "返回结构（score/guesses/sequence/feedback）与真实 zxcvbn 库一致。但真实的 zxcvbn 依赖庞大的频率字典和邻接表（约 20MB JSON 数据），prompt 中未充分描述这些数据依赖，可能导致实现偏差。",
+        "testability": "测试需求覆盖基本密码评分、反馈消息生成。但因评分依赖复杂字典和频率数据，纯黑盒测试可能无法精确验证所有内部评分细节。"
+      }
+    },
+    {
+      "project": "javascript/node-cron",
+      "language": "javascript",
+      "overall_score": 3.75,
+      "scores": {
+        "completeness": 4.1,
+        "unambiguity": 3.2,
+        "consistency": 2.8,
+        "testability": 4.0
+      },
+      "reasons": {
+        "completeness": "Prompt 覆盖 node-cron 的任务调度：CronJob/CronTime/CronScheduler、cron 表达式（秒/分/时/日/月/周）、validate/start/stop/destroy、timezone。覆盖核心调度能力。但实际 node-cron 的任务队列和错误处理细节较简略。",
+        "unambiguity": "CronJob 构造器和 CronTime 的表达式解析描述不够精确。cron 表达式 6 字段格式与真实 node-cron 可能不同（应为 6 或 7 字段），start/stop/destroy 的语义说明较模糊。",
+        "consistency": "API 的基本概念（CronJob/CronTime）与真实 node-cron 一致，但 cron 表达式格式的差异（prompt 描述与真实库的 6/7 字段格式有出入）可能导致实现偏差。",
+        "testability": "测试需求覆盖 validate、CronJob 创建/start/stop、CronTime 解析。但表达式语义的模糊性可能影响测试设计的精确性。"
+      }
+    }
+  ]
+}

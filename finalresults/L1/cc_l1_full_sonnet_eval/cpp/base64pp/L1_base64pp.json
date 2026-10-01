@@ -1,0 +1,487 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 105.14,
+  "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nlibgtest-dev is already the newest version (1.11.0-3).\n0 upgraded, 0 newly installed, 0 to remove and 16 not upgraded.\n",
+  "stderr": "In file included from /workspace/blackbox_tests/base64pp_blackbox_test.cpp:3:\n/workspace/src/base64pp/include/base64pp/base64pp.h:7:10: fatal error: base64pp_export.h: No such file or directory\n    7 | #include \"base64pp_export.h\"\n      |          ^~~~~~~~~~~~~~~~~~~\ncompilation terminated.\nIn file included from /workspace/blackbox_tests/base64pp_blackbox_test2.cpp:3:\n/workspace/src/base64pp/include/base64pp/base64pp.h:7:10: fatal error: base64pp_export.h: No such file or directory\n    7 | #include \"base64pp_export.h\"\n      |          ^~~~~~~~~~~~~~~~~~~\ncompilation terminated.\nIn file included from /workspace/src/base64pp/base64pp.cpp:2:\n/workspace/src/base64pp/include/base64pp/base64pp.h:7:10: fatal error: base64pp_export.h: No such file or directory\n    7 | #include \"base64pp_export.h\"\n      |          ^~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n",
+  "inferred_commands": {
+    "install": "apt-get update -qq && apt-get install -y --no-install-recommends libgtest-dev",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "apt-get update -qq && apt-get install -y --no-install-recommends libgtest-dev",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "compile_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.52,
+    "Architecture": 4.2,
+    "Health": 5.0
+  },
+  "overall_score": 2.68,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.16)\nproject(Base64pp LANGUAGES CXX VERSION 0.1.0)\n\nset(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_CXX_EXTENSIONS OFF)\nset(CMAKE_CXX_VISIBILITY_PRESET hidden)\nset(CMAKE_VISIBILITY_INLINES_HIDDEN On)\n\noption(BUILD_SHARED_LIBS \"Build shar"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>\n    PRIVATE\n        ${CMAKE_CURRENT_SOURCE_DIR}/include/base64pp)"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! @file base64pp.h\n//! @brief This file defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo includes the public header, implementation, encode/decode APIs, and CMake wiring, but the required `base64pp/include/base64pp/base64pp_export.h` file is not actually present in the repository."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "an encode operation that accepts binary data and returns Base64 text,",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ude <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input - a span pointing to a binary blob to encode.\n    //! @return a base64 string containing the encoded data.\n    std::string BASE64PP_EXPORT encode(std::span<std::uint8_t const> input);\n\n    //! @brief Overloa"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "clude <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',\n        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',\n        'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',\n        'q', 'r', 's', 't', 'u',"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "4pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>\n    PRIVATE\n        ${CMAKE_CURRENT_SOURCE_DIR}/include/base64pp)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`base64pp/include/base64pp/base64pp.h` declares `encode(std::span<const uint8_t>)` and `base64pp/base64pp.cpp` implements it."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "a decode operation that accepts Base64 text and returns decoded bytes or an explicit failure,",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ring containing the encoded string.\n    std::string BASE64PP_EXPORT encode_str(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, r"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "'z', '0', '1', '2', '3',\n        '4', '5', '6', '7', '8', '9', '+', '/'};\n\n    std::array<std::uint8_t, 256> constexpr decode_table{\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64,"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`base64pp/include/base64pp/base64pp.h` declares `decode(std::string_view)` returning `std::optional<std::vector<std::uint8_t>>`, and `base64pp/base64pp.cpp` implements it with `std::nullopt` failure handling."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "namespace-qualified interfaces under `base64pp`.",
+          "evidence": [
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "#include <array>\n#include <base64pp/base64pp.h>\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! @file base64pp.h\n//! @brief This file defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! bas"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The public functions are declared inside `namespace base64pp` and defined as `base64pp::encode`, `base64pp::encode_str`, and `base64pp::decode`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`base64pp/include/base64pp/base64pp.h` declares the public API.",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! @file base64pp.h\n//! @brief This file defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>\n    PRIVATE\n        ${CMAKE_CURRENT_SOURCE_DIR}/include/base64pp)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/base64pp/include/base64pp/base64pp.h` is present and declares the library API."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`base64pp/base64pp.cpp` implements the Base64 algorithm.",
+          "evidence": [
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "#include <array>\n#include <base64pp/base64pp.h>\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! @file base64pp.h\n//! @brief This file defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! bas"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>\n    PRIVATE\n        ${CMAKE_CURRENT_SOURCE_DIR}/include/base64pp)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/base64pp/base64pp.cpp` contains the encode/decode tables and the encode/decode function implementations."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`base64pp/include/base64pp/base64pp_export.h` contains any export macros required by the build.",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.16)\nproject(Base64pp LANGUAGES CXX VERSION 0.1.0)\n\nset(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_CXX_EXTENSIONS OFF)\nset(CMAKE_CXX_VISIBILITY_PRESET hidden)\nset(CMAKE_VISIBILITY_INLINES_HIDDEN On)\n\noption(BUILD_SHARED_LIBS \"Build shar"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_B"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ile defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository does not contain `base64pp/include/base64pp/base64pp_export.h`; CMake is configured to generate it at build time, but the required file is not present in the checked-in repo."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Encoding",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Encoding capability is implemented through `encode` and `encode_str` in the public header and source file."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Decoding",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "tr(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, returns std::nullopt\n    //! @note this function accepts unpadded strings, if"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Decoding capability is implemented through `decode` in the public header and source file."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Library Integration",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "set(CMAKE_CXX_VISIBILITY_PRESET hidden)\nset(CMAKE_VISIBILITY_INLINES_HIDDEN On)\n\noption(BUILD_SHARED_LIBS \"Build shared library\" Off)\n\nadd_subdirectory(base64pp)"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/incl"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! @file base64pp.h\n//! @brief This file defines the public functions\n//! for the base64pp library\n#ifndef BASE64PP_H\n#define BASE64PP_H\n\n#include \"base64pp_export.h\"\n#include <cstdint>\n#include <optional>\n#include <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo provides CMake build files that define a `base64pp` library target and expose include directories for integration."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`encode` and `encode_str` must produce standard Base64 output per RFC 4648 §4 using the alphabet `A-Z a-z 0-9 + /` and `=` padding; conforms to RFC 4648 Base64 encoding and decoding.",
+          "evidence": [
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "clude <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',\n        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',\n        'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',\n        'q', 'r', 's', 't', 'u',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ude <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input - a span pointing to a binary blob to encode.\n    //! @return a base64 string containing the encoded data.\n    std::string BASE64PP_EXPORT encode(std::span<std::uint8_t const> input);\n\n    //! @brief Overloa"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`base64pp/base64pp.cpp` uses the standard RFC 4648 alphabet `A-Z a-z 0-9 + /`, and the encode logic adds `=` padding for 1-byte and 2-byte remainders."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`decode` accepts unpadded strings (2- or 3-char remainders) as well as fully padded strings.",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ring containing the encoded string.\n    std::string BASE64PP_EXPORT encode_str(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, r"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "'z', '0', '1', '2', '3',\n        '4', '5', '6', '7', '8', '9', '+', '/'};\n\n    std::array<std::uint8_t, 256> constexpr decode_table{\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`decode` pads logically via `padded_len = (len + 3) & ~std::size_t{3}` and decodes 2- or 3-character unpadded remainders as well as padded input."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`decode` rejects any string whose length mod 4 equals 1.",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ring containing the encoded string.\n    std::string BASE64PP_EXPORT encode_str(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, r"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "'z', '0', '1', '2', '3',\n        '4', '5', '6', '7', '8', '9', '+', '/'};\n\n    std::array<std::uint8_t, 256> constexpr decode_table{\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`is_valid_base64_str` explicitly rejects inputs where `len % 4 == 1`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`decode` rejects strings containing characters outside the Base64 alphabet (including whitespace and `=` in non-terminal positions).",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ring containing the encoded string.\n    std::string BASE64PP_EXPORT encode_str(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, r"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "'z', '0', '1', '2', '3',\n        '4', '5', '6', '7', '8', '9', '+', '/'};\n\n    std::array<std::uint8_t, 256> constexpr decode_table{\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64,"
+            },
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`is_valid_base64_str` rejects any non-alphabet character via `decode_table`, rejects whitespace implicitly, and rejects `=` before the terminal padding region."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`decode` returns `std::nullopt` on any invalid input and `std::optional<std::vector<uint8_t>>` on success.",
+          "evidence": [
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ring containing the encoded string.\n    std::string BASE64PP_EXPORT encode_str(std::string_view input);\n\n    //! @brief Decodes a base64 encoded string, returning an optional\n    //! blob. If the decoding fails, it returns std::nullopt\n    //! @param encoded_str - the base64 encoded string\n    //! @return an optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, r"
+            },
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "'z', '0', '1', '2', '3',\n        '4', '5', '6', '7', '8', '9', '+', '/'};\n\n    std::array<std::uint8_t, 256> constexpr decode_table{\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64,\n        0x64, 0x64, 0x64,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The API return type is `std::optional<std::vector<std::uint8_t>>`, and the implementation returns `std::nullopt` when validation fails."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`encode` output length is always a multiple of 4.",
+          "evidence": [
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "clude <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',\n        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',\n        'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',\n        'q', 'r', 's', 't', 'u',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ude <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input - a span pointing to a binary blob to encode.\n    //! @return a base64 string containing the encoded data.\n    std::string BASE64PP_EXPORT encode(std::span<std::uint8_t const> input);\n\n    //! @brief Overloa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`encode` reserves `((input.size() + 2) / 3) * 4` bytes and emits output in 4-character groups, including padded tail cases."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`encode` of a single byte produces a 4-character string ending in `==`.",
+          "evidence": [
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "clude <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',\n        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',\n        'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',\n        'q', 'r', 's', 't', 'u',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ude <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input - a span pointing to a binary blob to encode.\n    //! @return a base64 string containing the encoded data.\n    std::string BASE64PP_EXPORT encode(std::span<std::uint8_t const> input);\n\n    //! @brief Overloa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "For a 1-byte remainder, `encode` appends `{q[0], q[1], '=', '='}`, which yields a 4-character result ending in `==`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`encode` of two bytes produces a 4-character string ending in `=`.",
+          "evidence": [
+            {
+              "path": "base64pp/base64pp.cpp",
+              "excerpt": "clude <span>\n#include <string>\n#include <string_view>\n#include <vector>\n\nnamespace\n{\n    std::array<char, 64> constexpr encode_table{\n        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',\n        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',\n        'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',\n        'q', 'r', 's', 't', 'u',"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "ude <string_view>\n#include <vector>\n\n//! base64pp API namespace\nnamespace base64pp\n{\n\n    //! @brief This function will encode a blob of data into a base64\n    //! string.\n    //! @param input - a span pointing to a binary blob to encode.\n    //! @return a base64 string containing the encoded data.\n    std::string BASE64PP_EXPORT encode(std::span<std::uint8_t const> input);\n\n    //! @brief Overloa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "For a 2-byte remainder, `encode` appends `{q[0], q[1], q[2], '='}`, which yields a 4-character result ending in `=`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_C"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "//! decoding was successful. Otherwise, returns std::nullopt\n    //! @note this function accepts unpadded strings, if they are valid\n    //! otherwise. It rejects odd-sized unpadded strings.\n    std::optional<std::vector<std::uint8_t>> BASE64PP_EXPORT decode(std::string_view encoded_str);\n} // namespace base64pp\n\n#endif // BASE64PP_H"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository layout is relative to the project root with `CMakeLists.txt` at the root and `base64pp/...` beneath it, matching the requested shape."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Provide the required source files, header files, and any minimal build configuration needed to compile the project.",
+          "evidence": [
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "e/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>\n    PRIVATE\n        ${CMAKE_CURRENT_SOURCE_DIR}/include/base64pp)"
+            },
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.16)\nproject(Base64pp LANGUAGES CXX VERSION 0.1.0)\n\nset(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_CXX_EXTENSIONS OFF)\nset(CMAKE_CXX_VISIBILITY_PRESET hidden)\nset(CMAKE_VISIBILITY_INLINES_HIDDEN On)\n\noption(BUILD_SHARED_LIBS \"Build shar"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo includes source files, a public header, and CMake build files, but one required header (`base64pp_export.h`) is not actually provided in the repository and is only generated at build time."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "base64pp/CMakeLists.txt",
+              "excerpt": "add_library(base64pp base64pp.cpp)\n\ninclude(GenerateExportHeader)\ngenerate_export_header(base64pp\n    BASE_NAME base64pp\n    EXPORT_FILE_NAME include/base64pp/base64pp_export.h)\n\ntarget_include_directories(base64pp\n    PUBLIC\n        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n        $<BUILD_INTERFACE:${CMAKE_C"
+            },
+            {
+              "path": "base64pp/include/base64pp/base64pp.h",
+              "excerpt": "optional containing a valid blob of data, if\n    //! decoding was successful. Otherwise, returns std::nullopt\n    //! @note this function accepts unpadded strings, if they are valid\n    //! otherwise. It rejects odd-sized unpadded strings.\n    std::optional<std::vector<std::uint8_t>> BASE64PP_EXPORT decode(std::string_view encoded_str);\n} // namespace base64pp\n\n#endif // BASE64PP_H"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No test files, `blackbox_tests/`, or extra outer wrapper directory are present in the repository tree."
+        }
+      ],
+      "feature_count": 21,
+      "constraint_count": 0,
+      "implemented_count": 18,
+      "partial_count": 2,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.9048,
+      "constraint_coverage": 0.9048,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "cpp",
+        "framework": "cpp",
+        "app_style": "library",
+        "build_system": "cmake",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.4,
+        "stack_alignment": 4.0,
+        "reference_alignment": 4.2
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository substantially implements the requested Base64 library: it provides the public API in `base64pp/include/base64pp/base64pp.h`, the algorithm in `base64pp/base64pp.cpp`, namespace-qualified entry points, RFC 4648 alphabet/padding behavior, invalid-input rejection, and minimal CMake integration for a library target.\n\n### Missing List\n\n- `base64pp/include/base64pp/base64pp_export.h` is not present as an actual repository file.\n- The overall deliverable is only partially complete as a self-contained source drop because the public header depends on a generated file that is not checked in.\n\n### Critical Constraint Misses\n\n- Required file `base64pp/include/base64pp/base64pp_export.h` is missing from the repository; it is only configured to be generated during CMake builds.\n- The checked-in source tree is not self-contained at the header level because `base64pp/base64pp.h` includes `base64pp_export.h`, which is absent from the repo.",
+    "architecture_review": "### Stack Inference\n\n这是一个现代 C++20 的纯库项目，使用 CMake 作为唯一构建系统，没有应用入口、持久化或前端层。实际结构是顶层聚合 `CMakeLists.txt` 加一个 `base64pp/` 子模块目录，属于典型的小型 C++ library 布局，但更接近“能编译的源码包”，还没有发展成较完整的可分发 CMake 包。\n\n### Scoring Mode\n\n本次按“架构质量”而不是算法正确性打分，重点看真实仓库中的目录组织、构建脚本、公开入口、分层边界，以及这些设计是否符合一个现代 C++/CMake 小型库的常见工程习惯。评分不会因为文件少而自动偏低，也不会因为有子目录和 CMake 就自动偏高，而是看这些结构是否真正协同。\n\n### Strengths\n\n- 目录职责基本清晰：顶层负责工程入口，`base64pp/` 负责库本体，公开头和实现文件分离明确。\n- 公开 API 入口集中在 `base64pp/include/base64pp/base64pp.h`，与需求指定路径一致，消费者的包含路径心智负担较低。\n- CMake 配置开启了 `CMAKE_CXX_STANDARD 20`、关闭编译器扩展并设置符号可见性，说明构建基础面向现代 C++ 库场景，而不是临时脚本式工程。\n- `GenerateExportHeader` 的使用使共享库/静态库切换时有统一导出宏来源，这对跨平台库工程是合理的架构选择。\n\n### Issues\n\n- `repo/base64pp/CMakeLists.txt` 只定义了一个裸 `add_library` 和构建期 include 路径，没有 `target_compile_features`、`install()`、导出 target 或 package 配置；作为可嵌入库能编译，但工程集成层偏薄，构建层与“library integration”目标衔接不完整。\n- 仓库把公共头放在 `base64pp/include/base64pp/`、实现放在 `base64pp/`，总体分层清楚，但导出头 `base64pp_export.h` 仅靠 CMake 生成，源码树中没有对应模板或已生成文件，导致代码结构本身对外可见性依赖构建副产物，降低了仓库自描述性。\n- 顶层 `CMakeLists.txt` 到子目录 `base64pp/CMakeLists.txt` 的两层结构对这样一个极小型单库项目略显偏重，但子目录内又没有形成更完整的包管理/安装边界，结果是层次存在但职责没有完全拉开。\n- 公共 API 头与实现文件命名、位置符合需求，但缺少 README、示例或更明确的消费入口说明；对小型库来说这不是功能缺陷，却削弱了工程结构的可发现性。\n\n### Stack Mismatches\n\n- 对 `cmake + cpp library` 这一栈，常见习惯是把公开头、目标属性、安装导出和命名空间 target 一并整理好；当前仓库只完成了最基础的头/源/CMake 连接，和成熟库项目习惯还有距离。\n- 使用 `GenerateExportHeader` 说明作者考虑了共享库导出，这是符合栈习惯的；但没有配套安装和导出规则，使这部分设计没有完全落地。\n\n### Reference Gaps\n\n- 需求明确要求 `base64pp/include/base64pp/base64pp_export.h` 作为项目形态的一部分存在；仓库中该文件并不在源码树里，而是依赖 `generate_export_header` 构建时生成，和参考要求存在轻微偏差。\n- 需求强调“small, safe, embeddable”与“library integration”，但仓库没有安装/导出配置，无法很好支撑作为独立库被其他工程标准化消费。"
+  },
+  "task": "cpp/base64pp/L1_base64pp",
+  "solver": "generated_outputs"
+}

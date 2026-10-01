@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.34,
+  "stdout": "FAIL\tgithub.com/go-chi/chi/v5 [build failed]\nFAIL\tgithub.com/go-chi/chi/v5/middleware [build failed]\nFAIL\n",
+  "stderr": "# github.com/go-chi/chi/v5\n./tree.go:140:13: syntax error: unexpected name at at end of statement\n./tree.go:142:8: syntax error: unexpected name Handles at end of statement\n./tree.go:143:8: syntax error: unexpected name Sets at end of statement\n./tree.go:145:9: syntax error: unexpected literal 's the function body: at end of statement\n./tree.go:145:30: newline in rune literal\n./tree.go:147:7: syntax error: unexpected literal `go\n    parent := n\n    search := pattern\n\n    for {\n        // Handle key exhaustion\n        if len(search) == 0 {\n            n.setEndpoint(method, handler, pattern)\n            return n\n        }\n\n        // Look for edge to the next child\n        label := search[0]\n        segTyp, _, segRexpat, segTail, segStartIdx, _ := patNextSegment(search)\n\n        var prefix string\n        if segTyp == ntRegexp {\n            prefix = segRexpat\n        }\n\n        // Get the next child node\n        nxt := n.getEdge(segTyp, label, segTail, prefix)\n\n        // No edge, create a new one\n        if nxt == nil {\n            child := &node{\n                typ:    ntStatic,\n                label:  label,\n                tail:   segTail,\n                prefix: search,\n            }\n            hn := n.addChild(child, search)\n            hn.setEndpoint(method, handler, pattern)\n            return hn\n        }\n\n        // Determine the common prefix length between the search and the next node\n        if nxt.typ > ntStatic {\n            // For param/regexp/catchall nodes, skip past the param segment\n            switch segTyp {\n            case ntCatchAll:\n                search = search[segStartIdx:]\n            default:\n                search = search[segStartIdx:]\n            }\n            n = nxt\n            continue\n        }\n\n        // Static node: find longest common prefix\n        commonPrefix := longestPrefix(search, nxt.prefix)\n        if commonPrefix == len(nxt.prefix) {\n            // Common prefix is the full existing node prefix\n            search = search[commonPrefix:]\n            n = nxt\n            continue\n        }\n\n        // Split the node: commonPrefix < len(nxt.prefix)\n        // Create a new child with the remaining suffix of the existing node\n        child := &node{\n            typ:    ntStatic,\n            label:  nxt.prefix[commonPrefix],\n            prefix: nxt.prefix[commonPrefix:],\n        }\n        child.children = nxt.children\n        child.endpoints = nxt.endpoints\n        child.subroutes = nxt.subroutes\n\n        // Update the existing node to only hold the common prefix\n        nxt.label = nxt.prefix[0]\n        nxt.prefix = nxt.prefix[:commonPrefix]\n        nxt.children = [ntCatchAll + 1]nodes{}\n        nxt.endpoints = nil\n        nxt.subroutes = nil\n\n        // Attach the split-off child to the updated node\n        nxt.children[child.typ] = append(nxt.children[child.typ], child)\n        nxt.children[child.typ].Sort()\n\n        // Replace the edge in the parent\n        parent.replaceChild(nxt.label, nxt.tail, nxt)\n\n        // Advance search past the common prefix\n        search = search[commonPrefix:]\n\n        if len(search) == 0 {\n            nxt.setEndpoint(method, handler, pattern)\n            return nxt\n        }\n\n        // Insert remaining search as a new child of the split node\n        insChild := &node{\n            typ:    ntStatic,\n            label:  search[0],\n            prefix: search,\n        }\n        hn := nxt.addChild(insChild, search)\n        hn.setEndpoint(method, handler, pattern)\n        return hn\n    }\n    ` at end of statement\n",
+  "task": "go/chi/L3_tree__InsertRoute",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

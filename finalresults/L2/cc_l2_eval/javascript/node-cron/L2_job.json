@@ -1,0 +1,951 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.86,
+  "stdout": "--------------|---------|----------|---------|---------|-------------------------------------\nFile          | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   \n--------------|---------|----------|---------|---------|-------------------------------------\nAll files     |   92.34 |    85.29 |     100 |    93.4 |                                     \n constants.ts |     100 |      100 |     100 |     100 |                                     \n errors.ts    |     100 |      100 |     100 |     100 |                                     \n index.ts     |    61.9 |      100 |     100 |   52.94 | 8-15                                \n job.ts       |   88.48 |    75.32 |     100 |    91.5 | 152,189-195,239,297,303,309,338,357 \n time.ts      |   98.37 |    95.39 |     100 |   98.35 | 142,241,389                         \n--------------|---------|----------|---------|---------|-------------------------------------\n",
+  "stderr": "PASS __blackbox__/cronjob.test.js\nPASS __blackbox__/advanced.test.js\nPASS __blackbox__/crontime.test.js\nFAIL tests/threshold.test.ts\n  ● threshold behavior › should execute job immediately on start if negative timeout is within threshold\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 100ms\"\n    Received string:    \"Cron (job: test-job) - execution time for \\\"test-cron\\\" was missed. Executing now.\"\n\n      94 | \t\texpect(callback).toHaveBeenCalledTimes(1);\n      95 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 96 | \t\texpect(message).toContain('Missed execution deadline by 100ms');\n         | \t\t                ^\n      97 | \t\texpect(message).toContain('Executing immediately');\n      98 |\n      99 | \t\tjob.stop();\n\n      at Object.toContain (tests/threshold.test.ts:96:19)\n\n  ● threshold behavior › should execute job immediately if negative timeout is within threshold\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 50ms\"\n    Received string:    \"Cron (job: test-job) - execution time for \\\"test-cron\\\" was missed. Executing now.\"\n\n      124 | \t\texpect(callback).toHaveBeenCalledTimes(2);\n      125 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 126 | \t\texpect(message).toContain('Missed execution deadline by 50ms');\n          | \t\t                ^\n      127 | \t\texpect(message).toContain('Executing immediately');\n      128 |\n      129 | \t\tjob.stop();\n\n      at Object.toContain (tests/threshold.test.ts:126:19)\n\n  ● threshold behavior › should skip immediate execution if negative timeout exceeds threshold\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 200ms\"\n    Received string:    \"Cron (job: test-job) - execution time for \\\"test-cron\\\" was missed. Skipping execution.\"\n\n      154 | \t\texpect(callback).toHaveBeenCalledTimes(1);\n      155 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 156 | \t\texpect(message).toContain('Missed execution deadline by 200ms');\n          | \t\t                ^\n      157 | \t\texpect(message).toContain('Skipping execution as it exceeds threshold');\n      158 |\n      159 | \t\tjob.stop();\n\n      at Object.toContain (tests/threshold.test.ts:156:19)\n\n  ● threshold behavior › should use 250ms as default threshold\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 250ms\"\n    Received string:    \"Cron (job: test-job) - execution time for \\\"test-cron-expression\\\" was missed. Executing now.\"\n\n      182 | \t\texpect(callback).toHaveBeenCalledTimes(2);\n      183 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 184 | \t\texpect(message).toContain('Missed execution deadline by 250ms');\n          | \t\t                ^\n      185 | \t\texpect(message).toContain('Executing immediately');\n      186 |\n      187 | \t\tjob.stop();\n\n      at Object.toContain (tests/threshold.test.ts:184:19)\n\n  ● threshold behavior › should properly identify named jobs in logs\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 500ms\"\n    Received string:    \"Cron (job: test-named-job) - execution time for \\\"test-cron-expression\\\" was missed. Skipping execution.\"\n\n      212 | \t\texpect(callback).toHaveBeenCalledTimes(1);\n      213 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 214 | \t\texpect(message).toContain('Missed execution deadline by 500ms');\n          | \t\t                ^\n      215 | \t\texpect(message).toContain(`job \"${jobName}\" with cron expression`);\n      216 | \t\texpect(message).toContain('test-cron-expression');\n      217 |\n\n      at Object.toContain (tests/threshold.test.ts:214:19)\n\n  ● threshold behavior › should properly identify unnamed jobs in logs\n\n    expect(received).toContain(expected) // indexOf\n\n    Expected substring: \"Missed execution deadline by 500ms\"\n    Received string:    \"Cron - execution time for \\\"test-cron-expression\\\" was missed. Skipping execution.\"\n\n      241 | \t\texpect(callback).toHaveBeenCalledTimes(1);\n      242 | \t\tconst message = warnSpy.mock.calls[0][0];\n    > 243 | \t\texpect(message).toContain('Missed execution deadline by 500ms');\n          | \t\t                ^\n      244 | \t\texpect(message).toContain('for job with cron expression');\n      245 | \t\texpect(message).toContain('test-cron-expression');\n      246 |\n\n      at Object.toContain (tests/threshold.test.ts:243:19)\n\nPASS tests/cron.test.ts\nPASS tests/crontime.test.ts\n\nTest Suites: 1 failed, 5 passed, 6 total\nTests:       6 failed, 226 passed, 232 total\nSnapshots:   0 total\nTime:        2.175 s\nRan all test suites.\n",
+  "task": "javascript/node-cron/L2_job",
+  "solver": "generated_outputs",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "test_32",
+        "passed": true
+      },
+      {
+        "name": "test_33",
+        "passed": true
+      },
+      {
+        "name": "test_34",
+        "passed": true
+      },
+      {
+        "name": "test_35",
+        "passed": true
+      },
+      {
+        "name": "test_36",
+        "passed": true
+      },
+      {
+        "name": "test_37",
+        "passed": true
+      },
+      {
+        "name": "test_38",
+        "passed": true
+      },
+      {
+        "name": "test_39",
+        "passed": true
+      },
+      {
+        "name": "test_40",
+        "passed": true
+      },
+      {
+        "name": "test_41",
+        "passed": true
+      },
+      {
+        "name": "test_42",
+        "passed": true
+      },
+      {
+        "name": "test_43",
+        "passed": true
+      },
+      {
+        "name": "test_44",
+        "passed": true
+      },
+      {
+        "name": "test_45",
+        "passed": true
+      },
+      {
+        "name": "test_46",
+        "passed": true
+      },
+      {
+        "name": "test_47",
+        "passed": true
+      },
+      {
+        "name": "test_48",
+        "passed": true
+      },
+      {
+        "name": "test_49",
+        "passed": true
+      },
+      {
+        "name": "test_50",
+        "passed": true
+      },
+      {
+        "name": "test_51",
+        "passed": true
+      },
+      {
+        "name": "test_52",
+        "passed": true
+      },
+      {
+        "name": "test_53",
+        "passed": true
+      },
+      {
+        "name": "test_54",
+        "passed": true
+      },
+      {
+        "name": "test_55",
+        "passed": true
+      },
+      {
+        "name": "test_56",
+        "passed": true
+      },
+      {
+        "name": "test_57",
+        "passed": true
+      },
+      {
+        "name": "test_58",
+        "passed": true
+      },
+      {
+        "name": "test_59",
+        "passed": true
+      },
+      {
+        "name": "test_60",
+        "passed": true
+      },
+      {
+        "name": "test_61",
+        "passed": true
+      },
+      {
+        "name": "test_62",
+        "passed": true
+      },
+      {
+        "name": "test_63",
+        "passed": true
+      },
+      {
+        "name": "test_64",
+        "passed": true
+      },
+      {
+        "name": "test_65",
+        "passed": true
+      },
+      {
+        "name": "test_66",
+        "passed": true
+      },
+      {
+        "name": "test_67",
+        "passed": true
+      },
+      {
+        "name": "test_68",
+        "passed": true
+      },
+      {
+        "name": "test_69",
+        "passed": true
+      },
+      {
+        "name": "test_70",
+        "passed": true
+      },
+      {
+        "name": "test_71",
+        "passed": true
+      },
+      {
+        "name": "test_72",
+        "passed": true
+      },
+      {
+        "name": "test_73",
+        "passed": true
+      },
+      {
+        "name": "test_74",
+        "passed": true
+      },
+      {
+        "name": "test_75",
+        "passed": true
+      },
+      {
+        "name": "test_76",
+        "passed": true
+      },
+      {
+        "name": "test_77",
+        "passed": true
+      },
+      {
+        "name": "test_78",
+        "passed": true
+      },
+      {
+        "name": "test_79",
+        "passed": true
+      },
+      {
+        "name": "test_80",
+        "passed": true
+      },
+      {
+        "name": "test_81",
+        "passed": true
+      },
+      {
+        "name": "test_82",
+        "passed": true
+      },
+      {
+        "name": "test_83",
+        "passed": true
+      },
+      {
+        "name": "test_84",
+        "passed": true
+      },
+      {
+        "name": "test_85",
+        "passed": true
+      },
+      {
+        "name": "test_86",
+        "passed": true
+      },
+      {
+        "name": "test_87",
+        "passed": true
+      },
+      {
+        "name": "test_88",
+        "passed": true
+      },
+      {
+        "name": "test_89",
+        "passed": true
+      },
+      {
+        "name": "test_90",
+        "passed": true
+      },
+      {
+        "name": "test_91",
+        "passed": true
+      },
+      {
+        "name": "test_92",
+        "passed": true
+      },
+      {
+        "name": "test_93",
+        "passed": true
+      },
+      {
+        "name": "test_94",
+        "passed": true
+      },
+      {
+        "name": "test_95",
+        "passed": true
+      },
+      {
+        "name": "test_96",
+        "passed": true
+      },
+      {
+        "name": "test_97",
+        "passed": true
+      },
+      {
+        "name": "test_98",
+        "passed": true
+      },
+      {
+        "name": "test_99",
+        "passed": true
+      },
+      {
+        "name": "test_100",
+        "passed": true
+      },
+      {
+        "name": "test_101",
+        "passed": true
+      },
+      {
+        "name": "test_102",
+        "passed": true
+      },
+      {
+        "name": "test_103",
+        "passed": true
+      },
+      {
+        "name": "test_104",
+        "passed": true
+      },
+      {
+        "name": "test_105",
+        "passed": true
+      },
+      {
+        "name": "test_106",
+        "passed": true
+      },
+      {
+        "name": "test_107",
+        "passed": true
+      },
+      {
+        "name": "test_108",
+        "passed": true
+      },
+      {
+        "name": "test_109",
+        "passed": true
+      },
+      {
+        "name": "test_110",
+        "passed": true
+      },
+      {
+        "name": "test_111",
+        "passed": true
+      },
+      {
+        "name": "test_112",
+        "passed": true
+      },
+      {
+        "name": "test_113",
+        "passed": true
+      },
+      {
+        "name": "test_114",
+        "passed": true
+      },
+      {
+        "name": "test_115",
+        "passed": true
+      },
+      {
+        "name": "test_116",
+        "passed": true
+      },
+      {
+        "name": "test_117",
+        "passed": true
+      },
+      {
+        "name": "test_118",
+        "passed": true
+      },
+      {
+        "name": "test_119",
+        "passed": true
+      },
+      {
+        "name": "test_120",
+        "passed": true
+      },
+      {
+        "name": "test_121",
+        "passed": true
+      },
+      {
+        "name": "test_122",
+        "passed": true
+      },
+      {
+        "name": "test_123",
+        "passed": true
+      },
+      {
+        "name": "test_124",
+        "passed": true
+      },
+      {
+        "name": "test_125",
+        "passed": true
+      },
+      {
+        "name": "test_126",
+        "passed": true
+      },
+      {
+        "name": "test_127",
+        "passed": true
+      },
+      {
+        "name": "test_128",
+        "passed": true
+      },
+      {
+        "name": "test_129",
+        "passed": true
+      },
+      {
+        "name": "test_130",
+        "passed": true
+      },
+      {
+        "name": "test_131",
+        "passed": true
+      },
+      {
+        "name": "test_132",
+        "passed": true
+      },
+      {
+        "name": "test_133",
+        "passed": true
+      },
+      {
+        "name": "test_134",
+        "passed": true
+      },
+      {
+        "name": "test_135",
+        "passed": true
+      },
+      {
+        "name": "test_136",
+        "passed": true
+      },
+      {
+        "name": "test_137",
+        "passed": true
+      },
+      {
+        "name": "test_138",
+        "passed": true
+      },
+      {
+        "name": "test_139",
+        "passed": true
+      },
+      {
+        "name": "test_140",
+        "passed": true
+      },
+      {
+        "name": "test_141",
+        "passed": true
+      },
+      {
+        "name": "test_142",
+        "passed": true
+      },
+      {
+        "name": "test_143",
+        "passed": true
+      },
+      {
+        "name": "test_144",
+        "passed": true
+      },
+      {
+        "name": "test_145",
+        "passed": true
+      },
+      {
+        "name": "test_146",
+        "passed": true
+      },
+      {
+        "name": "test_147",
+        "passed": true
+      },
+      {
+        "name": "test_148",
+        "passed": true
+      },
+      {
+        "name": "test_149",
+        "passed": true
+      },
+      {
+        "name": "test_150",
+        "passed": true
+      },
+      {
+        "name": "test_151",
+        "passed": true
+      },
+      {
+        "name": "test_152",
+        "passed": true
+      },
+      {
+        "name": "test_153",
+        "passed": true
+      },
+      {
+        "name": "test_154",
+        "passed": true
+      },
+      {
+        "name": "test_155",
+        "passed": true
+      },
+      {
+        "name": "test_156",
+        "passed": true
+      },
+      {
+        "name": "test_157",
+        "passed": true
+      },
+      {
+        "name": "test_158",
+        "passed": true
+      },
+      {
+        "name": "test_159",
+        "passed": true
+      },
+      {
+        "name": "test_160",
+        "passed": true
+      },
+      {
+        "name": "test_161",
+        "passed": true
+      },
+      {
+        "name": "test_162",
+        "passed": true
+      },
+      {
+        "name": "test_163",
+        "passed": true
+      },
+      {
+        "name": "test_164",
+        "passed": true
+      },
+      {
+        "name": "test_165",
+        "passed": true
+      },
+      {
+        "name": "test_166",
+        "passed": true
+      },
+      {
+        "name": "test_167",
+        "passed": true
+      },
+      {
+        "name": "test_168",
+        "passed": true
+      },
+      {
+        "name": "test_169",
+        "passed": true
+      },
+      {
+        "name": "test_170",
+        "passed": true
+      },
+      {
+        "name": "test_171",
+        "passed": true
+      },
+      {
+        "name": "test_172",
+        "passed": true
+      },
+      {
+        "name": "test_173",
+        "passed": true
+      },
+      {
+        "name": "test_174",
+        "passed": true
+      },
+      {
+        "name": "test_175",
+        "passed": true
+      },
+      {
+        "name": "test_176",
+        "passed": true
+      },
+      {
+        "name": "test_177",
+        "passed": true
+      },
+      {
+        "name": "test_178",
+        "passed": true
+      },
+      {
+        "name": "test_179",
+        "passed": true
+      },
+      {
+        "name": "test_180",
+        "passed": true
+      },
+      {
+        "name": "test_181",
+        "passed": true
+      },
+      {
+        "name": "test_182",
+        "passed": true
+      },
+      {
+        "name": "test_183",
+        "passed": true
+      },
+      {
+        "name": "test_184",
+        "passed": true
+      },
+      {
+        "name": "test_185",
+        "passed": true
+      },
+      {
+        "name": "test_186",
+        "passed": true
+      },
+      {
+        "name": "test_187",
+        "passed": true
+      },
+      {
+        "name": "test_188",
+        "passed": true
+      },
+      {
+        "name": "test_189",
+        "passed": true
+      },
+      {
+        "name": "test_190",
+        "passed": true
+      },
+      {
+        "name": "test_191",
+        "passed": true
+      },
+      {
+        "name": "test_192",
+        "passed": true
+      },
+      {
+        "name": "test_193",
+        "passed": true
+      },
+      {
+        "name": "test_194",
+        "passed": true
+      },
+      {
+        "name": "test_195",
+        "passed": true
+      },
+      {
+        "name": "test_196",
+        "passed": true
+      },
+      {
+        "name": "test_197",
+        "passed": true
+      },
+      {
+        "name": "test_198",
+        "passed": true
+      },
+      {
+        "name": "test_199",
+        "passed": true
+      },
+      {
+        "name": "test_200",
+        "passed": true
+      },
+      {
+        "name": "test_201",
+        "passed": true
+      },
+      {
+        "name": "test_202",
+        "passed": true
+      },
+      {
+        "name": "test_203",
+        "passed": true
+      },
+      {
+        "name": "test_204",
+        "passed": true
+      },
+      {
+        "name": "test_205",
+        "passed": true
+      },
+      {
+        "name": "test_206",
+        "passed": true
+      },
+      {
+        "name": "test_207",
+        "passed": true
+      },
+      {
+        "name": "test_208",
+        "passed": true
+      },
+      {
+        "name": "test_209",
+        "passed": true
+      },
+      {
+        "name": "test_210",
+        "passed": true
+      },
+      {
+        "name": "test_211",
+        "passed": true
+      },
+      {
+        "name": "test_212",
+        "passed": true
+      },
+      {
+        "name": "test_213",
+        "passed": true
+      },
+      {
+        "name": "test_214",
+        "passed": true
+      },
+      {
+        "name": "test_215",
+        "passed": true
+      },
+      {
+        "name": "test_216",
+        "passed": true
+      },
+      {
+        "name": "test_217",
+        "passed": true
+      },
+      {
+        "name": "test_218",
+        "passed": true
+      },
+      {
+        "name": "test_219",
+        "passed": true
+      },
+      {
+        "name": "test_220",
+        "passed": true
+      },
+      {
+        "name": "test_221",
+        "passed": true
+      },
+      {
+        "name": "test_222",
+        "passed": true
+      },
+      {
+        "name": "test_223",
+        "passed": true
+      },
+      {
+        "name": "test_224",
+        "passed": true
+      },
+      {
+        "name": "test_225",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      }
+    ],
+    "passed": 226,
+    "failed": 6,
+    "total": 232
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9741,
+  "compile_score": 0.5,
+  "test_score": 0.4871,
+  "score": 0.9871
+}

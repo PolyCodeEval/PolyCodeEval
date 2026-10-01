@@ -1,0 +1,21 @@
+{
+  "project": "hone",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "Prompt 覆盖 hone 的多种数据格式转换：嵌套对象→CSV/JSON/表格、扁平化、嵌套化。API 合约列出了核心转换函数。"
+    },
+    "unambiguity": {
+      "score": 4.4,
+      "reason": "转换函数（nest_to_csv/hone_json 等）的输入输出格式、嵌套路径语法、扁平化规则描述精确。"
+    },
+    "testability": {
+      "score": 4.7,
+      "reason": "测试需求覆盖各种转换场景：空输入、深层嵌套、路径冲突、格式保留。黑盒测试覆盖充分。"
+    },
+    "consistency": {
+      "score": 3.9,
+      "reason": "核心转换逻辑与真实 hone 库一致。但实际 hone 的函数名和参数签名可能因版本迭代有轻微变化。"
+    }
+  }
+}

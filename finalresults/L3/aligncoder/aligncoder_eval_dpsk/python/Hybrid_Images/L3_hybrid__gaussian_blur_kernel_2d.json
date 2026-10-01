@@ -1,0 +1,103 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.84,
+  "stdout": " default tolerances are unlikely to be useful\n        if (dtype := getattr(y, \"dtype\", None)) is not None and dtype.kind != \"m\":\n            dt = multiarray.result_type(y, 1.)\n            y = asanyarray(y, dtype=dt)\n        elif isinstance(y, int):\n            y = float(y)\n    \n        with errstate(invalid='ignore'):\n>           result = (less_equal(abs(x-y), atol + rtol * abs(y))\n                      & isfinite(y)\n                      | (x == y))\nE           ValueError: operands could not be broadcast together with shapes (5,3) (3,5)\n\n/usr/local/lib/python3.10/dist-packages/numpy/_core/numeric.py:2447: ValueError\n_______________________ TestGaussianKernel2D.test_1_7_3 ________________________\n\nself = <unit_test.TestGaussianKernel2D testMethod=test_1_7_3>\n\n    def test_1_7_3(self):\n        a = np.array([[ 0.00121496,  0.00200313,  0.00121496],\n            [ 0.01480124,  0.02440311,  0.01480124],\n            [ 0.06633454,  0.10936716,  0.06633454],\n            [ 0.10936716,  0.18031596,  0.10936716],\n            [ 0.06633454,  0.10936716,  0.06633454],\n            [ 0.01480124,  0.02440311,  0.01480124],\n            [ 0.00121496,  0.00200313,  0.00121496]])\n>       self.assertTrue(np.allclose(hybrid.gaussian_blur_kernel_2d(1, 7, 3), a,\n            atol=1e-08))\n\ntests/unit_tests/unit_test.py:185: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/usr/local/lib/python3.10/dist-packages/numpy/_core/numeric.py:2329: in allclose\n    res = all(isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\na = array([[0.00121496, 0.01480124, 0.06633454, 0.10936716, 0.06633454,\n        0.01480124, 0.00121496],\n       [0.0020031...311, 0.00200313],\n       [0.00121496, 0.01480124, 0.06633454, 0.10936716, 0.06633454,\n        0.01480124, 0.00121496]])\nb = array([[0.00121496, 0.00200313, 0.00121496],\n       [0.01480124, 0.02440311, 0.01480124],\n       [0.06633454, 0.109367...54, 0.10936716, 0.06633454],\n       [0.01480124, 0.02440311, 0.01480124],\n       [0.00121496, 0.00200313, 0.00121496]])\nrtol = 1e-05, atol = 1e-08, equal_nan = False\n\n    @array_function_dispatch(_isclose_dispatcher)\n    def isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):\n        \"\"\"\n        Returns a boolean array where two arrays are element-wise equal within a\n        tolerance.\n    \n        The tolerance values are positive, typically very small numbers.  The\n        relative difference (`rtol` * abs(`b`)) and the absolute difference\n        `atol` are added together to compare against the absolute difference\n        between `a` and `b`.\n    \n        .. warning:: The default `atol` is not appropriate for comparing numbers\n                     with magnitudes much smaller than one (see Notes).\n    \n        Parameters\n        ----------\n        a, b : array_like\n            Input arrays to compare.\n        rtol : array_like\n            The relative tolerance parameter (see Notes).\n        atol : array_like\n            The absolute tolerance parameter (see Notes).\n        equal_nan : bool\n            Whether to compare NaN's as equal.  If True, NaN's in `a` will be\n            considered equal to NaN's in `b` in the output array.\n    \n        Returns\n        -------\n        y : array_like\n            Returns a boolean array of where `a` and `b` are equal within the\n            given tolerance. If both `a` and `b` are scalars, returns a single\n            boolean value.\n    \n        See Also\n        --------\n        allclose\n        math.isclose\n    \n        Notes\n        -----\n        For finite values, isclose uses the following equation to test whether\n        two floating point values are equivalent.::\n    \n         absolute(a - b) <= (atol + rtol * absolute(b))\n    \n        Unlike the built-in `math.isclose`, the above equation is not symmetric\n        in `a` and `b` -- it assumes `b` is the reference value -- so that\n        `isclose(a, b)` might be different from `isclose(b, a)`.\n    \n        The default value of `atol` is not appropriate when the reference value\n        `b` has magnitude smaller than one. For example, it is unlikely that\n        ``a = 1e-9`` and ``b = 2e-9`` should be considered \"close\", yet\n        ``isclose(1e-9, 2e-9)`` is ``True`` with default settings. Be sure\n        to select `atol` for the use case at hand, especially for defining the\n        threshold below which a non-zero value in `a` will be considered \"close\"\n        to a very small or zero value in `b`.\n    \n        `isclose` is not defined for non-numeric data types.\n        :class:`bool` is considered a numeric data-type for this purpose.\n    \n        Examples\n        --------\n        >>> import numpy as np\n        >>> np.isclose([1e10,1e-7], [1.00001e10,1e-8])\n        array([ True, False])\n    \n        >>> np.isclose([1e10,1e-8], [1.00001e10,1e-9])\n        array([ True, True])\n    \n        >>> np.isclose([1e10,1e-8], [1.0001e10,1e-9])\n        array([False,  True])\n    \n        >>> np.isclose([1.0, np.nan], [1.0, np.nan])\n        array([ True, False])\n    \n        >>> np.isclose([1.0, np.nan], [1.0, np.nan], equal_nan=True)\n        array([ True, True])\n    \n        >>> np.isclose([1e-8, 1e-7], [0.0, 0.0])\n        array([ True, False])\n    \n        >>> np.isclose([1e-100, 1e-7], [0.0, 0.0], atol=0.0)\n        array([False, False])\n    \n        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.0])\n        array([ True,  True])\n    \n        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.999999e-10], atol=0.0)\n        array([False,  True])\n    \n        \"\"\"\n        # Turn all but python scalars into arrays.\n        x, y, atol, rtol = (\n            a if isinstance(a, (int, float, complex)) else asanyarray(a)\n            for a in (a, b, atol, rtol))\n    \n        # Make sure y is an inexact type to avoid bad behavior on abs(MIN_INT).\n        # This will cause casting of x later. Also, make sure to allow subclasses\n        # (e.g., for numpy.ma).\n        # NOTE: We explicitly allow timedelta, which used to work. This could\n        #       possibly be deprecated. See also gh-18286.\n        #       timedelta works if `atol` is an integer or also a timedelta.\n        #       Although, the default tolerances are unlikely to be useful\n        if (dtype := getattr(y, \"dtype\", None)) is not None and dtype.kind != \"m\":\n            dt = multiarray.result_type(y, 1.)\n            y = asanyarray(y, dtype=dt)\n        elif isinstance(y, int):\n            y = float(y)\n    \n        with errstate(invalid='ignore'):\n>           result = (less_equal(abs(x-y), atol + rtol * abs(y))\n                      & isfinite(y)\n                      | (x == y))\nE           ValueError: operands could not be broadcast together with shapes (3,7) (7,3)\n\n/usr/local/lib/python3.10/dist-packages/numpy/_core/numeric.py:2447: ValueError\n_____________________________ TestHybridImage.test _____________________________\n\nself = <acceptance_test.TestHybridImage testMethod=test>\n\n    def test(self):\n        resources_dir = Path(__file__).resolve().parents[1] / 'resources'\n        left_img = cv2.imread(str(resources_dir / 'dog.jpg'))\n        right_img = cv2.imread(str(resources_dir / 'cat.jpg'))\n        hybrid_image_ref = cv2.imread(str(resources_dir / 'hybrid.png'))\n        hybrid_image_test = create_hybrid_image(left_img, right_img, 7.0, 13, 'low', 4.1, 8, 'high', 0.65)\n>       self.assertTrue(np.allclose(hybrid_image_ref, hybrid_image_test, atol=1.0))\nE       AssertionError: False is not true\n\ntests/acceptance_tests/acceptance_test.py:16: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/unit_test.py::TestGaussianKernel2D::test_1079_3_5 - V...\nFAILED tests/unit_tests/unit_test.py::TestGaussianKernel2D::test_1_7_3 - Valu...\nFAILED tests/acceptance_tests/acceptance_test.py::TestHybridImage::test - Ass...\n========================= 3 failed, 17 passed in 2.48s =========================\n",
+  "stderr": "",
+  "task": "python/Hybrid_Images/L3_hybrid__gaussian_blur_kernel_2d",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      }
+    ],
+    "passed": 17,
+    "failed": 3,
+    "total": 20
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.85,
+  "compile_score": 0.5,
+  "test_score": 0.425,
+  "score": 0.925
+}

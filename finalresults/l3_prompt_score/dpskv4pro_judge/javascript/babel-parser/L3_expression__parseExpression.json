@@ -1,0 +1,28 @@
+{
+  "task": "javascript/babel-parser/L3_expression__parseExpression",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_expression__parseExpression/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_expression__parseExpression/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/parser/expression.ts",
+  "target_symbol": "parser/expression.ts::parseExpression",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "deepseek-v4-pro",
+  "description_present": true,
+  "score": 1.5,
+  "reason": "The description overwhelmingly attributes functionality to parseExpression that belongs to other helper functions (parseExpressionBase, parseMaybeAssign, etc.). The actual parseExpression is a thin wrapper that only toggles the 'in' context and delegates; none of the detailed parsing, error tracking, assignment handling, or yield logic resides in this function. Consequently, an implementation based on this description would be far more complex than the actual code.",
+  "missing_functionality": [
+    "The description does not convey that parseExpression is a simple wrapper that does no parsing directly; it only calls either allowInAnd or disallowInAnd around parseExpressionBase.",
+    "It omits that the function relies entirely on parseExpressionBase for all expression parsing."
+  ],
+  "incorrect_or_misleading_points": [
+    "Bullet 2 (sequence expression handling) actually belongs to parseExpressionBase, not parseExpression.",
+    "Bullet 3 (assignment wrappers) refers to parseMaybeAssignDisallowIn and parseMaybeAssignAllowIn, not parseExpression.",
+    "Bullet 4 (optional parameter error recording) is setOptionalParametersError.",
+    "Bullets 5-10 (assignment expression parsing, yield handling, error tracker creation, plain `=` error handling, right-hand side parsing, and deferred error validation) are all responsibilities of parseMaybeAssign, not parseExpression."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_expression__parseExpression.raw.md"
+}

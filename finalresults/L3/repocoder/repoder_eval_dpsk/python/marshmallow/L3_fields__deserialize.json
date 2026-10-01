@@ -1,0 +1,183 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 10.39,
+  "stdout": "_messages()\n                result: list | dict | None = None\n        else:\n            processed_data = data\n        if not errors:\n            # Deserialize data\n            result = self._deserialize(\n                processed_data,\n                error_store=error_store,\n                many=many,\n                partial=partial,\n                unknown=unknown,\n            )\n            # Run field-level validation\n            self._invoke_field_validators(\n                error_store=error_store, data=result, many=many\n            )\n            # Run schema-level validation\n            if self._hooks[VALIDATES_SCHEMA]:\n                field_errors = bool(error_store.errors)\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=True,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=False,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n            errors = error_store.errors\n            # Run post processors\n            if not errors and postprocess and self._hooks[POST_LOAD]:\n                try:\n                    result = self._invoke_load_processors(\n                        POST_LOAD,\n                        result,\n                        many=many,\n                        original_data=data,\n                        partial=partial,\n                        unknown=unknown,\n                    )\n                except ValidationError as err:\n                    errors = err.normalized_messages()\n        if errors:\n            exc = ValidationError(errors, data=data, valid_data=result)\n            self.handle_error(exc, data, many=many, partial=partial)\n>           raise exc\nE           marshmallow.exceptions.ValidationError: {'int_no_default': ['Not a valid integer.'], 'str_no_default': ['Not a valid string.'], 'list_no_default': ['Not a valid list.'], 'nested_no_default': ['Invalid type.'], 'int_with_default': ['Not a valid integer.'], 'str_with_default': ['Not a valid string.']}\n\nsrc/marshmallow/schema.py:943: ValidationError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[String]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Integer]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Boolean]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Float]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[DateTime]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Time]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Date]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[TimeDelta]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Dict]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Url]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Email]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[UUID]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Decimal]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IP]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv4]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv6]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPInterface]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv4Interface]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv6Interface]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass19]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass20]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass21]\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_list_field_deserialize_none_to_none\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_tuple_field_deserialize_none_to_none\nFAILED tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_list_of_nested_allow_none_deserialize_none_to_none\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_values\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_none_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_none\nFAILED tests/unit_tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load\nFAILED tests/unit_tests/test_schema.py::test_load_many_stores_error_indices\nFAILED tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema\nFAILED tests/unit_tests/test_schema.py::test_load_returns_an_object - marshma...\nFAILED tests/unit_tests/test_schema.py::test_load_many - marshmallow.exceptio...\nFAILED tests/unit_tests/test_schema.py::test_loads_returns_a_user - marshmall...\nFAILED tests/unit_tests/test_schema.py::test_loads_many - marshmallow.excepti...\nFAILED tests/unit_tests/test_schema.py::test_loads_deserializes_from_json - m...\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate_raises_with_errors_dict\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_relative_url_field - marshmallow...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_errors\nFAILED tests/unit_tests/test_schema.py::TestRequiredFields::test_allow_none_param\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_none_is_serialized_to_none\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_loading_none - mar...\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_missing_inputs_are_excluded_from_load_output\n======================= 49 failed, 1130 passed in 9.73s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[String]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Integer]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Boolean]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Float]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[DateTime]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Time]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Date]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[TimeDelta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Dict]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Url]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Email]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[UUID]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[Decimal]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IP]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv4]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv6]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPInterface]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv4Interface]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[IPv6Interface]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass19]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass20]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass21]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_list_field_deserialize_none_to_none",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_tuple_field_deserialize_none_to_none",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestDeserializingNone::test_list_of_nested_allow_none_deserialize_none_to_none",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_values",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_none_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_none",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_stores_error_indices",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestValidate::test_validate_raises_with_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestRequiredFields::test_allow_none_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDefaults::test_none_is_serialized_to_none",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 40,
+    "total": 40
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

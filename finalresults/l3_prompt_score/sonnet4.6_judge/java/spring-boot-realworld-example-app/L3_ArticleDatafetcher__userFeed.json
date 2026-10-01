@@ -1,0 +1,24 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L3_ArticleDatafetcher__userFeed",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userFeed/prompt.md",
+  "task_json_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userFeed/task.json",
+  "source_file_path": "datasets/java/spring-boot-realworld-example-app/src/main/java/io/spring/graphql/ArticleDatafetcher.java",
+  "target_symbol": "io/spring/graphql/ArticleDatafetcher.java::userFeed",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description accurately captures all major behaviors of the implementation: the `PROFILE.Feed` resolver, the `IllegalArgumentException` when both `first` and `last` are absent, the `Profile` source lookup and `ResourceNotFoundException` on missing user, the cursor-paginated feed fetch via `articleQueryService.findUserFeedWithCursor` with `NEXT`/`PREV` directions, the `ArticlesConnection` construction with `pageInfo` and edges (each with cursor string and article node), and the `DataFetcherResult` with a local context map keyed by article slug. The description does not mention that the validation only checks for both being null (not the case where both are present simultaneously), but this is a minor edge case omission. All core logic paths are correctly described.",
+  "missing_functionality": [
+    "The description does not address the case where both `first` and `last` are provided simultaneously — the implementation only guards against both being null, so if both are non-null, `first` takes precedence silently (the `if (first != null)` branch runs). The description implies mutual exclusivity enforcement that isn't fully implemented."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'requires exactly one pagination direction input' implying both-present is also rejected, but the implementation only throws when both are absent — if both are provided, it silently uses `first`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_ArticleDatafetcher__userFeed.raw.md"
+}

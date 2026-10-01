@@ -1,0 +1,34 @@
+{
+  "task": "python/zxcvbn/L2_scoring",
+  "project": "python/zxcvbn",
+  "language": "python",
+  "prompt_path": "datasets/python/zxcvbn/tasks/L2_scoring/prompt.md",
+  "task_json_path": "datasets/python/zxcvbn/tasks/L2_scoring/task.json",
+  "source_file_path": "datasets/python/zxcvbn/src/zxcvbn/scoring.py",
+  "target_file": "scoring.py",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 1.6,
+  "reason": "The described pieces for `nCk` and `most_guessable_match_sequence` are highly accurate, detailed, and match the implementation closely. However, the target file contains many more scoring functions and module-level behaviors beyond those two functions, including `estimate_guesses` and the per-pattern estimators for bruteforce, dictionary, repeat, sequence, regex, date, spatial, uppercase, and l33t variations, plus keyboard/keypad constants derived from adjacency graphs. Since the prompt only specifies 2 of the 12 hollowed functions, it is far from complete enough for reconstructing the full file despite being correct for the functions it does describe.",
+  "missing_functionality": [
+    "No responsibility description for `estimate_guesses`, which is central to annotating matches with `guesses` and `guesses_log10`, enforcing submatch minimums, dispatching by pattern, and caching results on the match object.",
+    "No description for `bruteforce_guesses`, including its cardinality-based exponent and the special minimums that intentionally exceed allowed submatch minimums by 1.",
+    "No description for `dictionary_guesses`, including `base_guesses`, uppercase and l33t variation counts, reversed-word multiplier, and mutation of the match dict for display metadata.",
+    "No description for `repeat_guesses`, which multiplies `base_guesses` by `repeat_count` and returns a Decimal-compatible value path.",
+    "No description for `sequence_guesses`, including special low starting-point cases, digit vs alpha bases, ascending/descending multiplier, and scaling by token length.",
+    "No description for `regex_guesses`, including character-class bases and the special `recent_year` handling using `REFERENCE_YEAR` and `MIN_YEAR_SPACE`.",
+    "No description for `date_guesses`, including year-space logic, multiplication by 365, and separator multiplier.",
+    "No description for `spatial_guesses`, including keyboard/keypad graph selection, combinatorial turn counting, and shifted-key variation handling.",
+    "No description for `uppercase_variations`, including the regex shortcuts for common capitalization patterns and the combinatorial mixed-case count.",
+    "No description for `l33t_variations`, including handling of fully substituted/unsubstituted cases and multiplicative accumulation across substitutions.",
+    "No description of `calc_average_degree` and the derived keyboard/keypad constants used by spatial scoring."
+  ],
+  "incorrect_or_misleading_points": [
+    "The prompt implies a file-level description broad enough to support the full scoring module, but it only gives function-level detail for `nCk` and `most_guessable_match_sequence`, which is misleading relative to the stated hollowed function count of 12.",
+    "The file description mentions shared scoring constants and helper math generally, but omits several implementation-critical constants and derived values actually used by the estimators."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L2_scoring.raw.md"
+}

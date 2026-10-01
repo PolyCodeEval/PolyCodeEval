@@ -1,0 +1,10 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely and covers the main control flow, validation, initialization, archive-header parsing, memory-vs-stream setup, conditional buffer allocation, decompressor setup, and cleanup behavior. It is also detailed enough to support implementing the function with only minor ambiguity. The only small gaps are that it does not explicitly mention the local-header read uses the archive read callback even for memory-backed archives, and it slightly generalizes some initialization details without naming every field exactly.",
+  "missing_functionality": [
+    "Does not explicitly note that reading the local file header is always performed through `pZip->m_pRead`, even when the archive is memory-backed.",
+    "Does not mention that `read_buf_avail` is set to 0 for non-memory-backed archives and to the full compressed size for memory-backed archives, though this is implied by the broader setup description."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

@@ -1,0 +1,25 @@
+{
+  "task": "python/imapclient/L3_imapclient__list_folders",
+  "project": "python/imapclient",
+  "language": "python",
+  "prompt_path": "datasets/python/imapclient/tasks/L3_imapclient__list_folders/prompt.md",
+  "task_json_path": "datasets/python/imapclient/tasks/L3_imapclient__list_folders/task.json",
+  "source_file_path": "datasets/python/imapclient/src/imapclient/imapclient.py",
+  "target_symbol": "imapclient.py::list_folders",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: returning `(flags, delimiter, name)` tuples, accepting `directory` and `pattern` arguments, defaulting to full recursive listing, and delegating to an internal helper via the `LIST` command. It correctly identifies the delegation pattern (`_do_list`). However, it omits two notable details from the docstring: the wildcard semantics (`*` vs `%` and their differing behaviors with folder delimiters), and the folder name encoding behavior (names returned as unicode strings decoded from modified UTF-7, conditional on `folder_decode`). These are secondary but meaningful details for a complete implementation spec.",
+  "missing_functionality": [
+    "Wildcard behavior details: `*` matches zero or more of any character, while `%` matches zero or more characters except the folder delimiter",
+    "Folder names are returned as unicode strings decoded from modified UTF-7, unless `folder_decode` is not set"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'callers can restrict results to a subtree' which is accurate, but omits that child directories of the given directory are also included — a subtle but documented behavior"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_imapclient__list_folders.raw.md"
+}

@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 10.3,
+  "stdout": "file,\n                    timeout=0.1,\n                    mode='wb',\n                    fail_when_locked=True,\n                ):\n\ntests/unit_tests/test_timeout_behaviour.py:15: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:326: in __enter__\n    return self.acquire()\nsrc/portalocker/utils.py:290: in acquire\n    for _ in self._timeout_generator(timeout, check_interval):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f9b801a3790>, timeout = None\ncheck_interval = None\n\n    def _timeout_generator(\n        self,\n        timeout: float | None,\n        check_interval: float | None,\n    ) -> typing.Iterator[int]:\n        f_timeout = coalesce(timeout, self.timeout, 0.0)\n        f_check_interval = coalesce(check_interval, self.check_interval, 0.0)\n    \n        yield 0\n        i = 0\n    \n        start_time = time.perf_counter()\n>       while start_time + f_timeout > time.perf_counter():\nE       TypeError: unsupported operand type(s) for +: 'float' and 'NoneType'\n\nsrc/portalocker/utils.py:159: TypeError\n_____________________________ test_without_timeout _____________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-19/test_without_timeout0')\n\n    def test_without_timeout(tmpdir):\n        \"\"\"\n        Test that LockException is raised when a file is locked without a\n        timeout.\"\"\"\n        tmpfile = tmpdir.join('test_without_timeout.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n            with portalocker.Lock(tmpfile, timeout=None) as fh:\n                print('writing some stuff to my cache...', file=fh)\n>               with portalocker.Lock(tmpfile, timeout=None, mode='w'):\n\ntests/unit_tests/test_timeout_behaviour.py:34: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:326: in __enter__\n    return self.acquire()\nsrc/portalocker/utils.py:290: in acquire\n    for _ in self._timeout_generator(timeout, check_interval):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f9b800f46d0>, timeout = None\ncheck_interval = None\n\n    def _timeout_generator(\n        self,\n        timeout: float | None,\n        check_interval: float | None,\n    ) -> typing.Iterator[int]:\n        f_timeout = coalesce(timeout, self.timeout, 0.0)\n        f_check_interval = coalesce(check_interval, self.check_interval, 0.0)\n    \n        yield 0\n        i = 0\n    \n        start_time = time.perf_counter()\n>       while start_time + f_timeout > time.perf_counter():\nE       TypeError: unsupported operand type(s) for +: 'float' and 'NoneType'\n\nsrc/portalocker/utils.py:159: TypeError\n______________________________ test_without_fail _______________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-19/test_without_fail0')\n\n    def test_without_fail(tmpdir):\n        \"\"\"Test that LockException is raised when fail_when_locked is False.\"\"\"\n        tmpfile = tmpdir.join('test_without_fail.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n            with portalocker.Lock(tmpfile, timeout=0.1) as fh:\n                print('writing some stuff to my cache...', file=fh)\n                lock = portalocker.Lock(tmpfile, timeout=0.1)\n>               lock.acquire(check_interval=0.05, fail_when_locked=False)\n\ntests/unit_tests/test_timeout_behaviour.py:47: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:290: in acquire\n    for _ in self._timeout_generator(timeout, check_interval):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f9b802f0280>, timeout = None\ncheck_interval = 0.05\n\n    def _timeout_generator(\n        self,\n        timeout: float | None,\n        check_interval: float | None,\n    ) -> typing.Iterator[int]:\n        f_timeout = coalesce(timeout, self.timeout, 0.0)\n        f_check_interval = coalesce(check_interval, self.check_interval, 0.0)\n    \n        yield 0\n        i = 0\n    \n        start_time = time.perf_counter()\n>       while start_time + f_timeout > time.perf_counter():\nE       TypeError: unsupported operand type(s) for +: 'float' and 'NoneType'\n\nsrc/portalocker/utils.py:159: TypeError\n_______________ test_timeout_generator_yields_multiple_attempts ________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9b8008b460>\n\n    def test_timeout_generator_yields_multiple_attempts(monkeypatch):\n        lock = DummyLockBase(timeout=0.01, check_interval=0.005, fail_when_locked=False)\n        perf_values = iter([0.0, 0.0, 0.002, 0.006, 0.012, 0.015])\n        monkeypatch.setattr(utils.time, 'perf_counter', lambda: next(perf_values))\n        monkeypatch.setattr(utils.time, 'sleep', lambda _seconds: None)\n    \n>       attempts = list(lock._timeout_generator(timeout=0.01, check_interval=0.005))\n\ntests/unit_tests/test_utils_timeout.py:18: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <unit_tests.test_utils_timeout.DummyLockBase object at 0x7f9b8008ad70>\ntimeout = 0.01, check_interval = 0.005\n\n    def _timeout_generator(\n        self,\n        timeout: float | None,\n        check_interval: float | None,\n    ) -> typing.Iterator[int]:\n        f_timeout = coalesce(timeout, self.timeout, 0.0)\n        f_check_interval = coalesce(check_interval, self.check_interval, 0.0)\n    \n        yield 0\n        i = 0\n    \n        start_time = time.perf_counter()\n>       while start_time + f_timeout > time.perf_counter():\nE       TypeError: unsupported operand type(s) for +: 'float' and 'NoneType'\n\nsrc/portalocker/utils.py:159: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_core_locking.py::test_class - TypeError: unsuppo...\nFAILED tests/unit_tests/test_core_locking.py::test_acquire_release - TypeErro...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[flock] - Ty...\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-False]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-False]\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked\nFAILED tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries\nFAILED tests/unit_tests/test_pidfilelock.py::test_custom_parameters - assert ...\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0] - T...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-None] - T...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0] - Type...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0.001] - ...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_with_timeout - TypeEr...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_timeout - Typ...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_fail - TypeEr...\nFAILED tests/unit_tests/test_utils_timeout.py::test_timeout_generator_yields_multiple_attempts\n================= 24 failed, 69 passed, 1 deselected in 9.37s ==================\n",
+  "stderr": "",
+  "task": "python/portalocker/L3_utils__coalesce",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 12,
+    "total": 12
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

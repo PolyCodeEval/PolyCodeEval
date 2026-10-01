@@ -1,0 +1,29 @@
+{
+  "task": "javascript/pug/L0_pug",
+  "project": "javascript/pug",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/pug/tasks/L0_pug/prompt.md",
+  "project_root": "datasets/javascript/pug",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Covers all 7 named export functions, compile returning function with .dependencies array, compileClient options (name, module), compileClientWithDependenciesTracked return shape, pug named properties (name/runtime/filters/cache), callback API semantics, caching behavior (cache+filename requirement), mixin support, register.js hook, and pipeline stages. Notable gap: whitespace-sensitive template syntax (if/else/each/while loops, inline code with -, attribute syntax, tag nesting) is identified as a capability but not described in the prompt. This matters because control flow rendering is tested in blackbox tests."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "API function signatures are clear. Callback (null, html) success path documented. dependencies array on compile output. pug.name='Pug' is exact. Cache object {} and filters object {} specified. compileClientWithDependenciesTracked return shape {body, dependencies} and options.module behavior documented. However, template syntax (how if/each/while render, how interpolation works, whitespace sensitivity) is not described at all, leaving a major implementation gap."
+    },
+    "testability": {
+      "score": 3.9,
+      "reason": "The prompt covers the API surface (compile, render, compileFile, renderFile, compileClient, cache, callbacks, named exports) which allows blackbox testing of structural properties. But control flow rendering (if/else, each with index, while, inline code) is heavily tested and not described in the prompt. An implementer would need prior pug knowledge to implement the template syntax correctly, reducing prompt-driven testability."
+    },
+    "consistency": {
+      "score": 4.4,
+      "reason": "No conflicts between stated behaviors and test expectations. pug.name='Pug' matches test. pug.runtime is non-null object matches test. pug.cache is {} matches test. compileClientWithDependenciesTracked returns {body, dependencies} matches test. dependencies is Array on compile function matches test. Callback (null, html) consistent with test. No incorrect claims found."
+    }
+  },
+  "overall_score": 4.15
+}

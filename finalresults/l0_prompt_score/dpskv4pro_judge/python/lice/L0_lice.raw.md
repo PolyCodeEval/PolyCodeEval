@@ -1,0 +1,21 @@
+{
+  "project": "lice",
+  "scores": {
+    "completeness": {
+      "score": 3.9,
+      "reason": "Prompt 覆盖 lice 的开源许可证生成：许可证模板管理、CLI 交互生成、输出文件。覆盖核心许可证生成能力。但真实 lice 的许可证种类（MIT/GPL/Apache 等约 20 种）在 prompt 中未完全枚举。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "CLI 命令（--template/--year/--name）和交互式流程描述清楚。模板变量填充规则明确。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "测试需求覆盖许可证生成（变量替换）、CLI 参数、输出文件。黑盒测试可直接验证。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "CLI 接口和模板变量与真实 lice 库一致。实际 lice 的许可证模板集可能比 prompt 中描述的更多。"
+    }
+  }
+}

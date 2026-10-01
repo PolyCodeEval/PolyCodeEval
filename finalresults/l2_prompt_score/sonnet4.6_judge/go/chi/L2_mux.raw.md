@@ -1,0 +1,14 @@
+{
+  "score": 4.7,
+  "reason": "The file-level and function-level descriptions are highly accurate and closely match the actual implementation. Every hollowed function is covered with correct behavioral detail: ServeHTTP's pool reuse and parent-context detection, NotFound/MethodNotAllowed's inline-mux delegation and recursive propagation, With's middleware inheritance and inline flag setup, Mount's nil/collision panics, stub route registration, subroutes field assignment, Find's subroute recursion and pattern trimming, handle's inline wrapping and lazy handler build, and routeHTTP's path resolution, SetPathValue loop, and methodNotAllowed branching. Minor gaps include: Find does not explicitly mention that the node lookup returns three values (node, _, _) and that the pattern variable is initialized from rctx.routePattern before the nil check; routeHTTP's description says 'copy every captured URL param' but doesn't mention the index-based loop over URLParams.Keys/Values; and the file-level description omits mention of the nextRoutePath helper and updateSubRoutes/updateRouteHandler helpers that support the hollowed functions. These are small omissions that would not prevent reconstruction.",
+  "missing_functionality": [
+    "Find: does not mention that rctx.routePattern is captured into a local 'pattern' variable before the node nil check, and that this same variable is returned when node is nil",
+    "routeHTTP: does not explicitly describe the index-based loop (for i, key := range rctx.URLParams.Keys) used to call r.SetPathValue",
+    "File-level description omits the nextRoutePath, updateSubRoutes, and updateRouteHandler helper methods that the hollowed functions depend on"
+  ],
+  "incorrect_or_misleading_points": [
+    "Find description says 'begin with the pattern recorded in rctx.routePattern from that match attempt' which slightly implies routePattern is set before FindRoute is called, but it is actually set as a side-effect of FindRoute and then read afterward",
+    "Mount description says 'clears the trailing * URL param value in URLParams when present' but the implementation uses rctx.URLParams (public field) not rctx.routeParams (private field) — the description uses 'URLParams' correctly but the nextRoutePath helper uses routeParams; the mount handler itself uses URLParams, so this is accurate but could cause confusion"
+  ],
+  "complete_enough": true
+}

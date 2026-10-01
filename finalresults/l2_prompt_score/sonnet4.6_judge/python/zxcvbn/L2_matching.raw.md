@@ -1,0 +1,22 @@
+{
+  "score": 3.2,
+  "reason": "The file-level description and most function-level descriptions are broadly accurate and match the implementation. The core logic for `add_frequency_lists`, `dictionary_match`, `reverse_dictionary_match`, `relevant_l33t_subtable`, `enumerate_l33t_subs`, and `map_ints_to_dmy` is described well enough to reconstruct them. However, the descriptions omit several entire functions that are present in the implementation: `l33t_match`, `translate`, `spatial_match`, `spatial_match_helper`, `repeat_match`, `sequence_match`, `regex_match`, and `date_match` have no function-level descriptions at all, even though they are hollowed in the skeleton or are critical supporting functions. The `omnimatch` description mentions these matchers by name but gives no guidance on how they work. The `enumerate_l33t_subs` description is detailed but slightly misleading about the dedup label format (it says `canonical_letter, l33t_char` pairs but the implementation sorts and labels as `k + ',' + str(v)` where k is the canonical letter and v is the l33t char, which is consistent, but the description says the assoc list is built as `[l33t_char, canonical_letter]` pairs which matches). The `map_ints_to_dmy` description says 'stop rather than falling back' for a valid 4-digit year with no valid day/month, which matches the implementation's early return. Overall, the 8 undescribed functions represent a significant gap that would prevent full reconstruction.",
+  "missing_functionality": [
+    "No function-level description for `l33t_match` — the core l33t substitution matching function that calls `enumerate_l33t_subs`, `relevant_l33t_subtable`, `translate`, and `dictionary_match`, and emits matches with `sub` and `sub_display` fields.",
+    "No function-level description for `translate` — a helper that applies a character substitution map to a string.",
+    "No function-level description for `spatial_match` — iterates over all keyboard graphs and aggregates spatial walk matches.",
+    "No function-level description for `spatial_match_helper` — the core keyboard-walk detection logic tracking turns, shifted_count, and direction changes.",
+    "No function-level description for `repeat_match` — uses greedy/lazy regex to find repeated substrings and recursively scores the base token.",
+    "No function-level description for `sequence_match` — detects arithmetic sequences in unicode codepoints with delta tracking.",
+    "No function-level description for `regex_match` — applies REGEXEN patterns and emits regex-pattern matches.",
+    "No function-level description for `date_match` — the full date detection logic including separator/no-separator paths, DATE_SPLITS usage, candidate scoring by proximity to REFERENCE_YEAR, and submatch filtering.",
+    "The `omnimatch` description says 'Pass the ranked dictionaries keyword argument through to each matcher call, even though some matchers ignore it' but does not clarify that matchers like `spatial_match` and `sequence_match` accept `_ranked_dictionaries` only for signature compatibility.",
+    "No mention of the `SHIFTED_RX` constant or `MAX_DELTA` constant used by spatial and sequence matchers."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `omnimatch` description says matchers are invoked in 'this exact set/order' but uses the word 'set' which implies unordered; should say 'sequence' or 'list'.",
+    "The `enumerate_l33t_subs` description says 'keep the existing association and also create a version where that l33t character is remapped' — the implementation actually appends both `sub` (unchanged) and `sub_alternative` (with the remapped entry), which matches, but the description omits that the original sub is kept as-is in `next_subs` alongside the alternative.",
+    "The file-level description says the module 'exposes matchers' for all pattern types, but 8 of those matchers have no corresponding function-level description, making the file-level claim incomplete as a guide for reconstruction."
+  ],
+  "complete_enough": false
+}

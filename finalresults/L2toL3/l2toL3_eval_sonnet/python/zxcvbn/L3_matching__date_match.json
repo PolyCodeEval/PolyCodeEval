@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.09,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py ..........FF                           [ 41%]\ntests/unit_tests/scoring_test.py .............                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py ......                                   [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_date_matching ______________________________\n\n    def test_date_matching():\n        for sep in ['', ' ', '-', '/', '\\\\', '_', '.']:\n            password = \"13%s2%s1921\" % (sep, sep)\n>           matches = matching.date_match(password)\n\ntests/unit_tests/matching_test.py:468: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = '13 2 1921'\n_ranked_dictionaries = {'passwords': {'123456': 1, 'password': 2, '12345678': 3, 'qwerty': 4, ...}, 'english_wikipedia': {'the': 1, 'of': 2, ...ricia': 2, 'linda': 3, 'barbara': 4, ...}, 'surnames': {'smith': 1, 'johnson': 2, 'williams': 3, 'jones': 4, ...}, ...}\n\n    def date_match(password, _ranked_dictionaries=RANKED_DICTIONARIES):\n        # a \"date\" is recognized as:\n        #   any 3-tuple that starts or ends with a 2- or 4-digit year,\n        #   with 2 or 0 separator chars (1.1.91 or 1191),\n        #   maybe zero-padded (01-01-91 vs 1-1-91),\n        #   a month between 1 and 12,\n        #   a day between 1 and 31.\n        #\n        # note: this isn't true date parsing in that \"feb 31st\" is allowed,\n        # this doesn't check for leap years, etc.\n        #\n        # recipe:\n        # start with regex to find maybe-dates, then attempt to map the integers\n        # onto month-day-year to filter the maybe-dates into dates.\n        # finally, remove matches that are substrings of other matches to reduce noise.\n        #\n        # note: instead of using a lazy or greedy regex to find many dates over the full string,\n        # this uses a ^...$ regex against every substring of the password -- less performant but leads\n        # to every possible date match.\n        maybe_date_no_separator = re.compile(r'^\\d{4,8}$')\n        maybe_date_with_separator = re.compile(\n            r'^(\\d{1,4})([\\s/\\_\\-\\.])(\\d{1,2})\\2(\\d{1,4})$'\n        )\n        matches = []\n        for i in range(len(password) - 3):\n            for j in range(i + 3, i + 8):\n                if j >= len(password):\n                    break\n                token = password[i:j + 1]\n                if not maybe_date_no_separator.match(token) and \\\n                        not maybe_date_with_separator.match(token):\n                    continue\n                candidates = []\n                date_splits = DATE_SPLITS.get(len(token), [])\n                for date_split in date_splits:\n                    k, l = date_split\n                    ints = [\n                        int(token[:k]),\n                        int(token[k:l]),\n>                       int(token[l:]),\n                    ]\nE                   ValueError: invalid literal for int() with base 10: ' 2 1'\n\nsrc/zxcvbn/matching.py:499: ValueError\n________________________________ test_omnimatch ________________________________\n\n    def test_omnimatch():\n        assert matching.omnimatch('') == [], \"doesn't match ''\"\n        password = 'r0sebudmaelstrom11/20/91aaaa'\n>       matches = matching.omnimatch(password)\n\ntests/unit_tests/matching_test.py:578: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'r0sebudmaelstrom11/20/91aaaa'\n_ranked_dictionaries = {'passwords': {'123456': 1, 'password': 2, '12345678': 3, 'qwerty': 4, ...}, 'english_wikipedia': {'the': 1, 'of': 2, ...ricia': 2, 'linda': 3, 'barbara': 4, ...}, 'surnames': {'smith': 1, 'johnson': 2, 'williams': 3, 'jones': 4, ...}, ...}\n\n    def date_match(password, _ranked_dictionaries=RANKED_DICTIONARIES):\n        # a \"date\" is recognized as:\n        #   any 3-tuple that starts or ends with a 2- or 4-digit year,\n        #   with 2 or 0 separator chars (1.1.91 or 1191),\n        #   maybe zero-padded (01-01-91 vs 1-1-91),\n        #   a month between 1 and 12,\n        #   a day between 1 and 31.\n        #\n        # note: this isn't true date parsing in that \"feb 31st\" is allowed,\n        # this doesn't check for leap years, etc.\n        #\n        # recipe:\n        # start with regex to find maybe-dates, then attempt to map the integers\n        # onto month-day-year to filter the maybe-dates into dates.\n        # finally, remove matches that are substrings of other matches to reduce noise.\n        #\n        # note: instead of using a lazy or greedy regex to find many dates over the full string,\n        # this uses a ^...$ regex against every substring of the password -- less performant but leads\n        # to every possible date match.\n        maybe_date_no_separator = re.compile(r'^\\d{4,8}$')\n        maybe_date_with_separator = re.compile(\n            r'^(\\d{1,4})([\\s/\\_\\-\\.])(\\d{1,2})\\2(\\d{1,4})$'\n        )\n        matches = []\n        for i in range(len(password) - 3):\n            for j in range(i + 3, i + 8):\n                if j >= len(password):\n                    break\n                token = password[i:j + 1]\n                if not maybe_date_no_separator.match(token) and \\\n                        not maybe_date_with_separator.match(token):\n                    continue\n                candidates = []\n                date_splits = DATE_SPLITS.get(len(token), [])\n                for date_split in date_splits:\n                    k, l = date_split\n                    ints = [\n                        int(token[:k]),\n>                       int(token[k:l]),\n                        int(token[l:]),\n                    ]\nE                   ValueError: invalid literal for int() with base 10: '1/'\n\nsrc/zxcvbn/matching.py:498: ValueError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_date_matching - ValueError: in...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - ValueError: invali...\n========================= 2 failed, 32 passed in 1.12s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__date_match",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      }
+    ],
+    "passed": 32,
+    "failed": 2,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9412,
+  "compile_score": 0.5,
+  "test_score": 0.4706,
+  "score": 0.9706
+}

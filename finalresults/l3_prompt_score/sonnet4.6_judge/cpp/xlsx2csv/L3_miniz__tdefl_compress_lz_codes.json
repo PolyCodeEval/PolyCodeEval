@@ -1,0 +1,25 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__tdefl_compress_lz_codes",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tdefl_compress_lz_codes/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__tdefl_compress_lz_codes/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::tdefl_compress_lz_codes",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description is highly accurate and covers all major behavioral aspects of the implementation: the flag-byte-driven token dispatch, literal vs. match encoding paths, the bit accumulator mechanics, the periodic flush via memcpy of the 64-bit buffer, the early-exit on output buffer overflow, the post-loop state cleanup (zeroing m_bits_in and m_bit_buffer), draining residual bits through the normal TDEFL_PUT_BITS path, and the final end-of-block symbol 256. The three-consecutive-literal optimization is correctly identified and its semantics accurately characterized. The return condition is correctly stated. One minor inaccuracy: the description says the overflow check causes the function to 'stop immediately' but in the implementation the check occurs at the end of each loop iteration (after processing the token), not mid-token. Also, the description does not mention the specific 64-bit memcpy flush mechanism (writing 8 bytes at once and advancing by bits_in>>3), which is a notable implementation detail of this fast path, though it is implied by 'periodically flushes full bytes'. Overall the description is complete enough to guide a faithful reimplementation.",
+  "missing_functionality": [
+    "The periodic flush uses a memcpy of the full 64-bit bit_buffer followed by advancing pOutput_buf by (bits_in >> 3) and masking bits_in to the residual — this specific bulk-byte-flush mechanism is not described explicitly.",
+    "The description does not mention that the overflow check happens after each full token is processed (end of loop body), not mid-token."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying the function 'stops immediately' on overflow is slightly misleading — it stops at the end of the current iteration, after the token has already been packed into the local bit buffer."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_miniz__tdefl_compress_lz_codes.raw.md"
+}

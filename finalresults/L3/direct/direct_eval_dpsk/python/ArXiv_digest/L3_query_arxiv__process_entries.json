@@ -1,0 +1,27 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 11.45,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 45 items\n\ntests/unit_tests/test_check_date.py ...                                  [  6%]\ntests/unit_tests/test_construct_query_url.py ......................      [ 55%]\ntests/unit_tests/test_fetch_data.py .                                    [ 57%]\ntests/unit_tests/test_get_args.py ....                                   [ 66%]\ntests/unit_tests/test_main.py ..                                         [ 71%]\ntests/unit_tests/test_print_results.py ..                                [ 75%]\ntests/unit_tests/test_process_entries.py FF..                            [ 84%]\ntests/unit_tests/test_save_to_csv.py ....                                [ 93%]\ntests/acceptance_tests/test_query_arxiv.py ...                           [100%]\n\n=================================== FAILURES ===================================\n_______________________ test_process_entries_one_author ________________________\n\n    def test_process_entries_one_author():\n        # Sample XML entry\n        xml_sample = \"\"\"<?xml version=\"1.0\"?>\n    <feed xmlns=\"http://www.w3.org/2005/Atom\">\n      <entry>\n        <title>Understanding Natural Language Processing</title>\n        <published>2023-10-15T00:00:00Z</published>\n        <author><name>John Doe</name></author>\n        <summary>Summary of the paper</summary>\n        <id>link of the paper</id>\n      </entry>\n    </feed>\"\"\"\n        root = ET.fromstring(xml_sample)\n        entries = root.findall('default:entry', {'default': 'http://www.w3.org/2005/Atom'})\n    \n        papers = process_entries(entries, {'default': 'http://www.w3.org/2005/Atom'}, datetime(2023, 10, 16), 1)\n    \n        assert papers[0]['title'] == \"Understanding Natural Language Processing\"\n        assert papers[0]['authors'] == \"John Doe\"\n        assert papers[0]['abstract'] == \"Summary of the paper\"\n        assert papers[0]['published'] == \"2023-10-15T00:00:00Z\"\n>       assert papers[0]['link'] == \"link of the paper\"\nE       AssertionError: assert '' == 'link of the paper'\nE         \nE         - link of the paper\n\ntests/unit_tests/test_process_entries.py:26: AssertionError\n____________________ test_process_entries_multiple_authors _____________________\n\n    def test_process_entries_multiple_authors():\n        # Sample XML entry\n        xml_sample = \"\"\"<?xml version=\"1.0\"?>\n    <feed xmlns=\"http://www.w3.org/2005/Atom\">\n      <entry>\n        <title>Understanding Natural Language Processing</title>\n        <published>2023-10-15T00:00:00Z</published>\n        <author>\n          <name>First Author</name>\n        </author>\n        <author>\n          <name>Second Author</name>\n        </author>\n        <author>\n          <name>Third Author</name>\n        </author>\n        <summary>Summary of the paper</summary>\n        <id>link of the paper</id>\n      </entry>\n    </feed>\"\"\"\n        root = ET.fromstring(xml_sample)\n        entries = root.findall('default:entry', {'default': 'http://www.w3.org/2005/Atom'})\n    \n        papers = process_entries(entries, {'default': 'http://www.w3.org/2005/Atom'}, datetime(2023, 10, 16), 2)\n    \n        assert papers[0]['title'] == \"Understanding Natural Language Processing\"\n        assert papers[0]['authors'] == \"First Author, Second Author, Third Author\"\n        assert papers[0]['abstract'] == \"Summary of the paper\"\n        assert papers[0]['published'] == \"2023-10-15T00:00:00Z\"\n>       assert papers[0]['link'] == \"link of the paper\"\nE       AssertionError: assert '' == 'link of the paper'\nE         \nE         - link of the paper\n\ntests/unit_tests/test_process_entries.py:57: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_process_entries.py::test_process_entries_one_author\nFAILED tests/unit_tests/test_process_entries.py::test_process_entries_multiple_authors\n======================== 2 failed, 43 passed in 11.09s =========================\n",
+  "stderr": "",
+  "task": "python/ArXiv_digest/L3_query_arxiv__process_entries",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_process_entries.py::test_process_entries_one_author",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 1,
+    "total": 1
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

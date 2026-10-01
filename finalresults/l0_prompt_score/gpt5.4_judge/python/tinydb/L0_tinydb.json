@@ -1,0 +1,30 @@
+{
+  "task": "python/tinydb/L0_tinydb",
+  "project": "python/tinydb",
+  "language": "python",
+  "prompt_path": "datasets/python/tinydb/tasks/L0_tinydb/prompt.md",
+  "project_root": "datasets/python/tinydb",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt覆盖了TinyDB的核心能力，包括文档存储、多表、查询系统、存储层与中间件，也列出了主要黑盒接口；但对真实项目中的部分重要能力仍有遗漏，如Query.search、noop、update_multiple、可配置table_class/document_class、query cache，以及文档/工具链相关模块。"
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "核心API、主要查询操作、默认表名和关键行为基本写清，足以指导复现主体功能；但仍存在一些不够明确之处，例如默认构造实际使用JSONStorage而示例API写成MemoryStorage默认、tables真实返回set而非List，以及文档对象的doc_id属性与示例输出风格之间表述不够统一。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "Prompt显式给出了黑盒测试所依赖的大多数导入方式、构造方式、查询运算、表管理、持久化与上下文管理行为，基本可以直接对照实现并验证；少量未写入的真实接口如regex search子串匹配、doc_ids版get等不会明显妨碍核心黑盒能力落地。"
+    },
+    "consistency": {
+      "score": 3.8,
+      "reason": "整体方向与真实实现一致，但有几处与源码不完全贴合：构造签名把MemoryStorage写成默认值而源码默认是JSONStorage，tables标成List而源码返回set，示例返回普通dict而真实实现返回带doc_id属性的Document对象；这些不至于破坏主体实现，但确实构成可见偏差。"
+    }
+  },
+  "overall_score": 4.33,
+  "raw_response_file": "L0_tinydb.raw.md"
+}

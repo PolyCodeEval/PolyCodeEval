@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly states the boolean rejection, float/numeric-like conversion intent, negative-value rejection, UTC-based timestamp interpretation, naive datetime return, and the two specific exception remappings for OverflowError and OSError. The only notable omission is that the implementation performs an unconditional `float(value)` conversion outside the `try`, so non-numeric or otherwise non-convertible inputs raise the underlying conversion exception rather than one of the documented `ValueError`s.",
+  "missing_functionality": [
+    "The description does not mention that `float(value)` is performed directly, so inputs that cannot be converted to float will raise their native conversion error instead of a wrapped `ValueError`."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

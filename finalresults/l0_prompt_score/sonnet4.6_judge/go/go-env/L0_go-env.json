@@ -1,0 +1,29 @@
+{
+  "task": "go/go-env/L0_go-env",
+  "project": "go/go-env",
+  "language": "go",
+  "prompt_path": "datasets/go/go-env/tasks/L0_go-env/prompt.md",
+  "project_root": "datasets/go/go-env",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "All primary API functions are listed: Parse, ParseWithOptions, ParseAs, Must, GetFieldParams. The key struct tag options are described (env, envDefault, notEmpty, expand, env:\"-\", envSeparator, envKeyValSeparator). Options struct fields (Environment, UseFieldNameByDefault) are covered. Utility functions ToMap and GetFieldParams with their FieldParams struct fields are included. Minor gap: custom parser registration (how to register a parser for a custom type via Options) is mentioned but not specified."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "The behavioral constraints are precise for the tested cases: notEmpty on empty value returns error, expand uses ${VAR} syntax from Options.Environment, env:\"-\" skips field, UseFieldNameByDefault converts ServerHost to SERVER_HOST. ToMap exclusion rule for entries without '=' is stated. Must panics on error. The custom parser registration API is vague."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests cover all primitive types, ParseAs generic, Must panic/success, non-pointer error, non-struct-ptr error, notEmpty, nested structs, prefix, required, separators. The prompt's detail level supports implementing all these. The UseFieldNameByDefault conversion rule is specific enough to test."
+    },
+    "consistency": {
+      "score": 5.0,
+      "reason": "All described behaviors match go-env source. Module path (github.com/caarlos0/env/v11), the FieldParams struct, and all semantic constraints are accurate. No contradictions found."
+    }
+  },
+  "overall_score": 4.50
+}

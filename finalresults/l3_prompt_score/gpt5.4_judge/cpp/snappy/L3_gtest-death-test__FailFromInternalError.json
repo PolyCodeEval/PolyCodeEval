@@ -1,0 +1,31 @@
+{
+  "task": "cpp/snappy/L3_gtest-death-test__FailFromInternalError",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-death-test__FailFromInternalError/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-death-test__FailFromInternalError/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-death-test.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest-death-test.cc::FailFromInternalError",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description matches the high-level purpose well: this function is invoked by the death test parent, reads a child failure message from the communication channel, and ultimately logs with FATAL severity. However, it omits several implementation-important details: the function takes an `int fd`, repeatedly reads in chunks into a fixed buffer, accumulates the message, retries the overall read sequence when interrupted by `EINTR`, and distinguishes EOF (`num_read == 0`, log the collected child message) from read error (`num_read < 0`, log a specific internal read error including errno text and code). These are significant enough that the description is not fully sufficient to reimplement the function accurately.",
+  "missing_functionality": [
+    "The function signature is `static void FailFromInternalError(int fd)`.",
+    "It reads in a loop using `posix::Read(fd, buffer, 255)` and appends chunks to an accumulator message.",
+    "It null-terminates each chunk with `buffer[num_read] = '\\0'` before appending.",
+    "It retries when `posix::Read` fails with `errno == EINTR`.",
+    "It treats EOF (`num_read == 0`) as the successful end of the child message and logs the accumulated message.",
+    "If reading fails for reasons other than EINTR, it logs a different fatal message containing `GetLastErrnoDescription()` and the numeric errno value."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the exact parameter list is not visible, but the implementation clearly takes an `int fd`.",
+    "The Windows vs. non-Windows distinction is only mentioned in comments here; the implementation itself just reads from an `int fd`, so emphasizing platform-specific handle behavior over the actual interface is somewhat misleading.",
+    "It implies the primary effect is always logging the read failure message, but on actual read error it instead logs an internal read-error message rather than the collected child message."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest-death-test__FailFromInternalError.raw.md"
+}

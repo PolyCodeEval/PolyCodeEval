@@ -1,0 +1,75 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.34,
+  "stdout": "     `marshmallow.fields.Field.get_value` in this case.\n        \"\"\"\n        try:\n            return obj[key]\n        except Exception:\n            if default is not missing:\n                try:\n                    return getattr(obj, key)\n                except Exception:\n                    return default\n            else:\n>               return getattr(obj, key)\nE               AttributeError: 'dict' object has no attribute 'birthdate'\n\nsrc/marshmallow/utils.py:117: AttributeError\n______ TestSchemaSerialization.test_serialize_with_missing_param_callable ______\n\nobj = {'name': 'Mick'}, key = 'birthdate', default = <marshmallow.missing>\n\n    def get_value(obj, key: int | str, default=missing):\n        \"\"\"Helper for pulling a keyed value off various types of objects. Fields use\n        this method by default to access attributes of the source object. For object `x`\n        and attribute `i`, this method first tries to access `x[i]`, and then falls back to\n        `x.i` if an exception is raised.\n    \n        .. warning::\n            If an object `x` does not raise an exception when `x[i]` does not exist,\n            `get_value` will never check the value `x.i`. Consider overriding\n            `marshmallow.fields.Field.get_value` in this case.\n        \"\"\"\n        try:\n>           return obj[key]\nE           KeyError: 'birthdate'\n\nsrc/marshmallow/utils.py:109: KeyError\n\nDuring handling of the above exception, another exception occurred:\n\nself = <tests.unit_tests.test_serialization.TestSchemaSerialization object at 0x7f9c83428280>\n\n    def test_serialize_with_missing_param_callable(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(dump_default=lambda: dt.datetime(2017, 9, 29))\n    \n        data = {\"name\": \"Mick\"}\n>       result = AliasingUserSerializer().dump(data)\n\ntests/unit_tests/test_serialization.py:951: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:332: in serialize\n    value = self.get_value(obj, attr, accessor=accessor)\nsrc/marshmallow/fields.py:276: in get_value\n    return accessor_func(obj, check_key, default)\nsrc/marshmallow/schema.py:506: in get_attribute\n    return get_value(obj, attr, default)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nobj = {'name': 'Mick'}, key = 'birthdate', default = <marshmallow.missing>\n\n    def get_value(obj, key: int | str, default=missing):\n        \"\"\"Helper for pulling a keyed value off various types of objects. Fields use\n        this method by default to access attributes of the source object. For object `x`\n        and attribute `i`, this method first tries to access `x[i]`, and then falls back to\n        `x.i` if an exception is raised.\n    \n        .. warning::\n            If an object `x` does not raise an exception when `x[i]` does not exist,\n            `get_value` will never check the value `x.i`. Consider overriding\n            `marshmallow.fields.Field.get_value` in this case.\n        \"\"\"\n        try:\n            return obj[key]\n        except Exception:\n            if default is not missing:\n                try:\n                    return getattr(obj, key)\n                except Exception:\n                    return default\n            else:\n>               return getattr(obj, key)\nE               AttributeError: 'dict' object has no attribute 'birthdate'\n\nsrc/marshmallow/utils.py:117: AttributeError\n_______________________ test_get_value_for_nested_object _______________________\n\nobj = <tests.unit_tests.test_utils.Triangle object at 0x7f9c835570a0>\nkey = 'p1.x', default = <marshmallow.missing>\n\n    def get_value(obj, key: int | str, default=missing):\n        \"\"\"Helper for pulling a keyed value off various types of objects. Fields use\n        this method by default to access attributes of the source object. For object `x`\n        and attribute `i`, this method first tries to access `x[i]`, and then falls back to\n        `x.i` if an exception is raised.\n    \n        .. warning::\n            If an object `x` does not raise an exception when `x[i]` does not exist,\n            `get_value` will never check the value `x.i`. Consider overriding\n            `marshmallow.fields.Field.get_value` in this case.\n        \"\"\"\n        try:\n>           return obj[key]\nE           TypeError: 'Triangle' object is not subscriptable\n\nsrc/marshmallow/utils.py:109: TypeError\n\nDuring handling of the above exception, another exception occurred:\n\n    def test_get_value_for_nested_object():\n        tri = Triangle(p1=PointClass(1, 2), p2=PointNT(3, 4), p3={\"x\": 5, \"y\": 6})\n>       assert utils.get_value(tri, \"p1.x\") == 1\n\ntests/unit_tests/test_utils.py:60: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nobj = <tests.unit_tests.test_utils.Triangle object at 0x7f9c835570a0>\nkey = 'p1.x', default = <marshmallow.missing>\n\n    def get_value(obj, key: int | str, default=missing):\n        \"\"\"Helper for pulling a keyed value off various types of objects. Fields use\n        this method by default to access attributes of the source object. For object `x`\n        and attribute `i`, this method first tries to access `x[i]`, and then falls back to\n        `x.i` if an exception is raised.\n    \n        .. warning::\n            If an object `x` does not raise an exception when `x[i]` does not exist,\n            `get_value` will never check the value `x.i`. Consider overriding\n            `marshmallow.fields.Field.get_value` in this case.\n        \"\"\"\n        try:\n            return obj[key]\n        except Exception:\n            if default is not missing:\n                try:\n                    return getattr(obj, key)\n                except Exception:\n                    return default\n            else:\n>               return getattr(obj, key)\nE               AttributeError: 'Triangle' object has no attribute 'p1.x'\n\nsrc/marshmallow/utils.py:117: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry\nFAILED tests/unit_tests/test_schema.py::test_serializing_none - AttributeErro...\nFAILED tests/unit_tests/test_schema.py::test_inheriting_schema - AttributeErr...\nFAILED tests/unit_tests/test_schema.py::test_serializing_dict - AttributeErro...\nFAILED tests/unit_tests/test_schema.py::test_nested_custom_set_not_implementing_getitem\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_many_with_missing_attribute\nFAILED tests/unit_tests/test_schema.py::test_serializer_can_specify_nested_object_as_attribute\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_missing_inputs_are_excluded_from_dump_output\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_default_and_value_missing\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_integer_field_default\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_string_field_default_to_empty_string\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value\nFAILED tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_callable\nFAILED tests/unit_tests/test_utils.py::test_get_value_for_nested_object - Att...\n======================= 17 failed, 1162 passed in 4.80s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_utils__get_value",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_custom_set_not_implementing_getitem",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_many_with_missing_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_serializer_can_specify_nested_object_as_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDefaults::test_missing_inputs_are_excluded_from_dump_output",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDefaults::test_default_and_value_missing",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_integer_field_default",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_string_field_default_to_empty_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_callable",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 13,
+    "total": 13
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

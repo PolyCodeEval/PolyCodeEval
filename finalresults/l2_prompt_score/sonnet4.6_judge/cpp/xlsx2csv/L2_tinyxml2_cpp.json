@@ -1,0 +1,29 @@
+{
+  "task": "cpp/xlsx2csv/L2_tinyxml2_cpp",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L2_tinyxml2_cpp/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L2_tinyxml2_cpp/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/tinyxml2.cpp",
+  "target_file": "tinyxml2.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and function-level responsibilities are highly accurate and closely match the actual implementation. Nearly every hollowed function has a detailed, correct description covering the key algorithmic steps, flag semantics, error codes, and edge cases. The descriptions cover TIXML_VSCPRINTF's doubling loop, StrPair lazy normalization with CR/CRLF/entity handling, XMLUtil BOM/UTF-32/entity-ref parsing, XMLDocument pool management and error reporting, XMLNode tree manipulation with InsertChildPreamble/MarkInUse, XMLElement attribute parsing with duplicate detection, XMLPrinter entity flag tables and compact/non-compact formatting, and visitor traversal patterns. Minor gaps include: GetText's comment-skipping loop (described as 'skip leading comment children' but the implementation loops through all leading comments, not just one), SetError's fixed 1000-byte buffer detail is not mentioned, and the XMLDocument::Parse() internal method's detail about setting both _parseCurLineNum and _parseLineNum to 1 is only partially described. The description for XMLDocument::Clear() mentions debug-build pool assertion but omits the #if 0 trace block. Overall the descriptions are complete and accurate enough to reconstruct all 64 functions with high fidelity.",
+  "missing_functionality": [
+    "GetText's comment-skipping is described as 'skip over leading comment children only' but the implementation loops through all consecutive leading comment siblings, not just one",
+    "SetError uses a fixed 1000-byte stack/heap buffer (BUFFER_SIZE=1000) — this sizing detail is not mentioned",
+    "XMLDocument::Parse() (internal) sets both _parseCurLineNum and _parseLineNum to 1; only _parseCurLineNum is mentioned in the description",
+    "XMLDocument::Clear() contains a commented-out #if 0 pool trace block that is not mentioned (minor)",
+    "XMLDocument::LoadFile(FILE*) description does not mention the intermediate unsigned long long cast used to safely compare filelength against maxSizeT"
+  ],
+  "incorrect_or_misleading_points": [
+    "TIXML_VSCPRINTF description says 'initial 512-derived growth loop' — the actual code starts len=512 then immediately doubles to 1024 on first iteration, so the initial allocation is 1024, not 512; the description is slightly misleading",
+    "StrPair::TransferTo description says 'assert that destination exists and is empty/uninitialized' but the implementation asserts _flags==0, _start==0, and _end==0 separately after calling other->Reset() — the order differs slightly from the description",
+    "XMLDocument::Parse (public, const char*) description says 'eagerly delete children and clear all node/attribute/comment/text pools' but does not mention that _charBuffer itself is NOT freed in this path (only in Clear), which is a subtle but reconstructable detail"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_tinyxml2_cpp.raw.md"
+}

@@ -1,0 +1,21 @@
+{
+  "project": "babel-parser",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 覆盖 parse/parseExpression 入口、sourceType（script/module/unambiguous）、plugins 插件系统（typescript/jsx/flow 等）、AST 节点结构（type/start/end/loc）、tokTypes 导出。覆盖核心解析能力。实际 babel 有更丰富的 plugin 列表和选项但 prompt 聚焦测试子集。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "parse/parseExpression 签名、返回的 File/Expression 节点结构、loc 格式（1-based line/0-based column）、插件不兼容抛错语义清楚。但 AST 节点完整类型层次（Program/Statement/Expression 等）未详尽枚举。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "测试需求覆盖基本 parse、空输入、语法错误、插件组合、sourceType 行为。与黑盒测试匹配。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "核心 API 表面与真实 babel parser 一致。实际包的插件选项、tokTypes 暴露方式和更多细节比 prompt 丰富。整体可接受。"
+    }
+  }
+}

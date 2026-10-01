@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 8.98,
+  "stdout": "ry:\n            self.locker(fd, flags)\n        except OSError as exc_value:\n            if exc_value.errno in (errno.EACCES, errno.EAGAIN):\n>               raise exceptions.AlreadyLocked(\n                    exc_value,\n                    strerror=str(exc_value),\n                    fh=file_obj,  # Pass original file_obj\n                ) from exc_value\nE               portalocker.exceptions.AlreadyLocked: [Errno 11] Resource temporarily unavailable\n\nsrc/portalocker/portalocker.py:401: AlreadyLocked\n\nDuring handling of the above exception, another exception occurred:\n\ntmpdir = local('/tmp/pytest-of-root/pytest-15/test_without_timeout0')\n\n    def test_without_timeout(tmpdir):\n        \"\"\"\n        Test that LockException is raised when a file is locked without a\n        timeout.\"\"\"\n        tmpfile = tmpdir.join('test_without_timeout.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n>           with portalocker.Lock(tmpfile, timeout=None) as fh:\n\ntests/unit_tests/test_timeout_behaviour.py:32: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:175: in __exit__\n    self.release()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f242c0a3010>\n\n    def release(self) -> None:\n        \"\"\"Releases the currently locked file handle\"\"\"\n>       if self._file_handle is not None:\nE       AttributeError: 'Lock' object has no attribute '_file_handle'\n\nsrc/portalocker/utils.py:326: AttributeError\n______________________________ test_without_fail _______________________________\n\nself = <portalocker.portalocker.PosixLocker object at 0x7f242ce53fa0>\nfile_obj = <_io.TextIOWrapper name='/tmp/pytest-of-root/pytest-15/test_without_fail0/test_without_fail.lock' mode='a' encoding='UTF-8'>\nflags = <LockFlags.NON_BLOCKING|EXCLUSIVE: 6>\n\n    def lock(self, file_obj: PosixFileArgument, flags: LockFlags) -> None:\n        if (flags & LockFlags.NON_BLOCKING) and not flags & (\n            LockFlags.SHARED | LockFlags.EXCLUSIVE\n        ):\n            raise RuntimeError(\n                'When locking in non-blocking mode on POSIX, '\n                'the SHARED or EXCLUSIVE flag must be specified as well.'\n            )\n    \n        fd = self._get_fd(file_obj)\n        try:\n>           self.locker(fd, flags)\nE           BlockingIOError: [Errno 11] Resource temporarily unavailable\n\nsrc/portalocker/portalocker.py:398: BlockingIOError\n\nThe above exception was the direct cause of the following exception:\n\ntmpdir = local('/tmp/pytest-of-root/pytest-15/test_without_fail0')\n\n    def test_without_fail(tmpdir):\n        \"\"\"Test that LockException is raised when fail_when_locked is False.\"\"\"\n        tmpfile = tmpdir.join('test_without_fail.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n            with portalocker.Lock(tmpfile, timeout=0.1) as fh:\n                print('writing some stuff to my cache...', file=fh)\n                lock = portalocker.Lock(tmpfile, timeout=0.1)\n>               lock.acquire(check_interval=0.05, fail_when_locked=False)\n\ntests/unit_tests/test_timeout_behaviour.py:47: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:313: in acquire\n    raise exception\nsrc/portalocker/utils.py:290: in acquire\n    fh = self._get_lock(fh)\nsrc/portalocker/utils.py:354: in _get_lock\n    portalocker.lock(fh, self.flags)\nsrc/portalocker/portalocker.py:441: in lock\n    _posix_locker_instance.lock(file, flags)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.portalocker.PosixLocker object at 0x7f242ce53fa0>\nfile_obj = <_io.TextIOWrapper name='/tmp/pytest-of-root/pytest-15/test_without_fail0/test_without_fail.lock' mode='a' encoding='UTF-8'>\nflags = <LockFlags.NON_BLOCKING|EXCLUSIVE: 6>\n\n    def lock(self, file_obj: PosixFileArgument, flags: LockFlags) -> None:\n        if (flags & LockFlags.NON_BLOCKING) and not flags & (\n            LockFlags.SHARED | LockFlags.EXCLUSIVE\n        ):\n            raise RuntimeError(\n                'When locking in non-blocking mode on POSIX, '\n                'the SHARED or EXCLUSIVE flag must be specified as well.'\n            )\n    \n        fd = self._get_fd(file_obj)\n        try:\n            self.locker(fd, flags)\n        except OSError as exc_value:\n            if exc_value.errno in (errno.EACCES, errno.EAGAIN):\n>               raise exceptions.AlreadyLocked(\n                    exc_value,\n                    strerror=str(exc_value),\n                    fh=file_obj,  # Pass original file_obj\n                ) from exc_value\nE               portalocker.exceptions.AlreadyLocked: [Errno 11] Resource temporarily unavailable\n\nsrc/portalocker/portalocker.py:401: AlreadyLocked\n\nDuring handling of the above exception, another exception occurred:\n\ntmpdir = local('/tmp/pytest-of-root/pytest-15/test_without_fail0')\n\n    def test_without_fail(tmpdir):\n        \"\"\"Test that LockException is raised when fail_when_locked is False.\"\"\"\n        tmpfile = tmpdir.join('test_without_fail.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.LockException):  # noqa: SIM117\n>           with portalocker.Lock(tmpfile, timeout=0.1) as fh:\n\ntests/unit_tests/test_timeout_behaviour.py:44: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:175: in __exit__\n    self.release()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f242c199930>\n\n    def release(self) -> None:\n        \"\"\"Releases the currently locked file handle\"\"\"\n>       if self._file_handle is not None:\nE       AttributeError: 'Lock' object has no attribute '_file_handle'\n\nsrc/portalocker/utils.py:326: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_core_locking.py::test_truncate - AttributeError:...\nFAILED tests/unit_tests/test_core_locking.py::test_class - AttributeError: 'L...\nFAILED tests/unit_tests/test_core_locking.py::test_acquire_release - Attribut...\nFAILED tests/unit_tests/test_lock_flags.py::test_blocking_timeout[flock] - At...\nFAILED tests/unit_tests/test_lock_flags.py::test_blocking_timeout[lockf] - At...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[flock] - At...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[lockf] - At...\nFAILED tests/unit_tests/test_multiprocess.py::test_shared_processes[True] - A...\nFAILED tests/unit_tests/test_multiprocess.py::test_shared_processes[False] - ...\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-False]\nFAILED tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_acquire_writes_pid\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_success\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked\nFAILED tests/unit_tests/test_pidfilelock.py::test_release_without_acquire - A...\nFAILED tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release_count\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release\nFAILED tests/unit_tests/test_temporary_file_lock.py::test_temporary_file_lock\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_with_timeout - Attrib...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_timeout - Att...\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_without_fail - Attrib...\n================= 23 failed, 70 passed, 1 deselected in 8.59s ==================\n",
+  "stderr": "",
+  "task": "python/portalocker/L3_utils__release",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[flock-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_multiprocess.py::test_exclusive_processes[lockf-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_acquire_writes_pid",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_success",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release_count",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_temporary_file_lock.py::test_temporary_file_lock",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

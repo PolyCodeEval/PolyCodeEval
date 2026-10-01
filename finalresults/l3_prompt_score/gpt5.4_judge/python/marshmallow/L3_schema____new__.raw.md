@@ -1,0 +1,17 @@
+{
+  "score": 3.9,
+  "reason": "The description captures the main role of `SchemaMeta.__new__`: it is a metaclass constructor that creates the class, gathers declared fields, sets up `opts`, and assigns `_declared_fields`. It also correctly references helper-driven field validation and MRO-based inherited field collection from nearby code. However, it misses several implementation-critical steps that matter for reproducing this function precisely: declared field attributes are explicitly removed from `attrs` before class creation, `opts` is built from `klass.Meta` via `klass.OPTIONS_CLASS`, fields from `klass.opts.include` are appended to the class field list, and `_declared_fields` is built by calling `get_declared_fields(..., dict_cls=dict)`. So the description is mostly accurate but not complete enough to fully implement the function.",
+  "missing_functionality": [
+    "Removes collected field attributes from `attrs` before calling `super().__new__` to avoid shadowing schema attributes/methods.",
+    "Creates the class first with `super().__new__(mcs, name, bases, attrs)` and then computes inherited fields from the resulting class via `_get_fields_by_mro(klass)`.",
+    "Uses `klass.Meta` after class creation rather than the initially fetched `attrs.get(\"Meta\")` value.",
+    "Initializes `klass.opts` as `klass.OPTIONS_CLASS(meta)`.",
+    "Appends fields from the Meta `include` option via `klass.opts.include.items()` to the declared field list.",
+    "Builds `_declared_fields` specifically through `mcs.get_declared_fields(..., dict_cls=dict)`."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement about invalid field declarations raising `TypeError` is true for related helper logic but is not behavior implemented directly in `__new__` itself.",
+    "Saying the class-creation arguments are only 'implied' understates that `name`, `bases`, and `attrs` are explicit and central to the implementation."
+  ],
+  "complete_enough": false
+}

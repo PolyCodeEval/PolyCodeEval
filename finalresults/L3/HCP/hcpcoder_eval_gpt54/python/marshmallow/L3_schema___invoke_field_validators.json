@@ -1,0 +1,59 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.03,
+  "stdout": "\n        assert \"Must be equal to 1.\" in errors[\"bar\"][0]\n    \n        errors = schema.validate({\"bar\": 1})\n>       assert \"bar\" in errors\nE       AssertionError: assert 'bar' in {'_schema': ['Must be 2']}\n\ntests/unit_tests/test_decorators.py:364: AssertionError\n_____________ TestValidatesDecorator.test_validates_with_data_key ______________\n\nself = <tests.unit_tests.test_decorators.TestValidatesDecorator object at 0x7fde87b63a60>\n\n    def test_validates_with_data_key(self):\n        class BadSchema(Schema):\n            foo = fields.String(data_key=\"foo-name\")\n    \n            @validates(\"foo\")\n            def validate_string(self, data, **kwargs):\n                raise ValidationError(\"nope\")\n    \n        schema = BadSchema()\n        errors = schema.validate({\"foo-name\": \"data\"})\n>       assert \"foo-name\" in errors\nE       AssertionError: assert 'foo-name' in {'_schema': ['nope']}\n\ntests/unit_tests/test_decorators.py:379: AssertionError\n________ TestValidatesDecorator.test_validates_accepts_multiple_fields _________\n\nself = <tests.unit_tests.test_decorators.TestValidatesDecorator object at 0x7fde87b63790>\n\n    def test_validates_accepts_multiple_fields(self):\n        class BadSchema(Schema):\n            foo = fields.String()\n            bar = fields.String(data_key=\"Bar\")\n    \n            @validates(\"foo\", \"bar\")\n            def validate_string(self, data: str, data_key: str):\n                raise ValidationError(f\"'{data}' is invalid for {data_key}.\")\n    \n        schema = BadSchema()\n        with pytest.raises(ValidationError) as excinfo:\n>           schema.load({\"foo\": \"data\", \"Bar\": \"data2\"})\n\ntests/unit_tests/test_decorators.py:399: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:900: in _do_load\n    self._invoke_field_validators(\nsrc/marshmallow/schema.py:1160: in _invoke_field_validators\n    self._run_validator(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <BadSchema(many=False)>\nvalidator_func = functools.partial(<bound method TestValidatesDecorator.test_validates_accepts_multiple_fields.<locals>.BadSchema.validate_string of <BadSchema(many=False)>>, data_key='foo')\noutput = 'data'\n\n    def _run_validator(\n        self,\n        validator_func: types.SchemaValidator,\n        output,\n        *,\n        original_data,\n        error_store: ErrorStore,\n        many: bool,\n        partial: bool | types.StrSequenceOrSet | None,\n        unknown: types.UnknownOption | None,\n        pass_original: bool,\n        index: int | None = None,\n    ):\n        try:\n            if pass_original:  # Pass original, raw data (before unmarshalling)\n                validator_func(\n                    output, original_data, partial=partial, many=many, unknown=unknown\n                )\n            else:\n>               validator_func(output, partial=partial, many=many, unknown=unknown)\nE               TypeError: TestValidatesDecorator.test_validates_accepts_multiple_fields.<locals>.BadSchema.validate_string() got an unexpected keyword argument 'partial'\n\nsrc/marshmallow/schema.py:793: TypeError\n______ TestValidatesSchemaDecorator.test_data_key_is_used_in_errors_dict _______\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7fde87b62bf0>\n\n    def test_data_key_is_used_in_errors_dict(self):\n        class MySchema(Schema):\n            foo = fields.Int(data_key=\"fooKey\")\n    \n            @validates(\"foo\")\n            def validate_foo(self, value, **kwargs):\n                raise ValidationError(\"from validates\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema(self, data, **kwargs):\n                raise ValidationError(\"from validates_schema str\", field_name=\"foo\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema2(self, data, **kwargs):\n                raise ValidationError({\"fooKey\": \"from validates_schema dict\"})\n    \n        with pytest.raises(ValidationError) as excinfo:\n            MySchema().load({\"fooKey\": 42})\n        exc = excinfo.value\n>       assert exc.messages == {\n            \"fooKey\": [\n                \"from validates\",\n                \"from validates_schema str\",\n                \"from validates_schema dict\",\n            ]\n        }\nE       AssertionError: assert {'_schema': [...schema dict']} == {'fooKey': ['...schema dict']}\nE         \nE         Differing items:\nE         {'fooKey': ['from validates_schema str', 'from validates_schema dict']} != {'fooKey': ['from validates', 'from validates_schema str', 'from validates_schema dict']}\nE         Left contains 1 more item:\nE         {'_schema': ['from validates']}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:716: AssertionError\n_______________ TestFieldValidation.test_ignored_if_not_in_only ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7fde86efaf50>\n\n    def test_ignored_if_not_in_only(self):\n        class MySchema(Schema):\n            a = fields.Raw()\n            b = fields.Raw()\n    \n            @validates(\"a\")\n            def validate_a(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_a\"})\n    \n            @validates(\"b\")\n            def validate_b(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_b\"})\n    \n        s = MySchema(only=(\"b\",))\n        errors = s.validate({\"b\": \"data\"})\n>       assert errors == {\"b\": {\"code\": \"invalid_b\"}}\nE       AssertionError: assert {'code': 'invalid_b'} == {'b': {'code': 'invalid_b'}}\nE         \nE         Left contains 1 more item:\nE         {'code': 'invalid_b'}\nE         Right contains 1 more item:\nE         {'b': {'code': 'invalid_b'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1815: AssertionError\n_ TestNestedSchema.test_all_errors_on_many_nested_field_with_validates_decorator _\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7fde86ef8730>\n\n    def test_all_errors_on_many_nested_field_with_validates_decorator(self):\n        class Inner(Schema):\n            req = fields.Raw(required=True)\n    \n        class Outer(Schema):\n            inner = fields.Nested(Inner, many=True)\n    \n            @validates(\"inner\")\n            def validates_inner(self, data, **kwargs):\n                raise ValidationError(\"not a chance\")\n    \n        outer = Outer()\n        with pytest.raises(ValidationError) as excinfo:\n            outer.load({\"inner\": [{}]})\n        errors = excinfo.value.messages\n        assert \"inner\" in errors\n>       assert \"_schema\" in errors[\"inner\"]\nE       AssertionError: assert '_schema' in {0: {'req': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:2008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_all_errors_on_many_nested_field_with_validates_decorator\n======================= 10 failed, 1169 passed in 2.47s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_field_validators",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 9,
+    "total": 9
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

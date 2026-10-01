@@ -1,0 +1,22 @@
+{
+  "task": "go/sqlx/L3_sqlx__mapper",
+  "project": "go/sqlx",
+  "language": "go",
+  "prompt_path": "datasets/go/sqlx/tasks/L3_sqlx__mapper/prompt.md",
+  "task_json_path": "datasets/go/sqlx/tasks/L3_sqlx__mapper/task.json",
+  "source_file_path": "datasets/go/sqlx/src/sqlx.go",
+  "target_symbol": "sqlx.go::mapper",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation well on the main behaviors: it returns a shared `*reflectx.Mapper`, uses the `db` tag and current `NameMapper`, initializes lazily, rebuilds when `NameMapper` changes, and does so under a mutex for concurrency safety. The main omission is a subtle implementation detail: when the mapper is first created, the function does not update `origMapper`, relying instead on the package-level initialization of `origMapper` to track the original mapper function. That detail is minor and not necessary for a functional reimplementation.",
+  "missing_functionality": [
+    "It does not mention that change detection is implemented by comparing `reflect.ValueOf(NameMapper)` against the cached `origMapper` value."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_sqlx__mapper.raw.md"
+}

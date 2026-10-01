@@ -1,0 +1,29 @@
+{
+  "task": "java/springboot-jwt-starter/L0_springboot-jwt-starter",
+  "project": "java/springboot-jwt-starter",
+  "language": "java",
+  "prompt_path": "datasets/java/springboot-jwt-starter/tasks/L0_springboot-jwt-starter/prompt.md",
+  "project_root": "datasets/java/springboot-jwt-starter",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers User (all getters/setters, setPassword side effect of updating lastPasswordResetDate, UserDetails interface methods isAccountNonExpired/NonLocked/CredentialsNonExpired), Authority (getId/setId, getName/setName, getAuthority), UserRoleName enum (ROLE_USER, ROLE_ADMIN), UserTokenState (two constructors, access_token/expires_in getters/setters). All tested classes are fully covered. The setPassword(null) edge case updating lastPasswordResetDate is also covered."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Key contracts are precise: setPassword updates lastPasswordResetDate to current timestamp, Authority.getAuthority() returns the enum name string, User.getAuthorities() returns Collection<? extends GrantedAuthority>. User.setPassword(null) still updates lastPasswordResetDate — the prompt says 'also update lastPasswordResetDate' for setPassword which implies even null calls trigger it, and tests confirm this."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests verify all getter/setter pairs, the setPassword timestamp side effect, UserDetails interface methods, Authority.getAuthority string format, UserRoleName.values() count, and UserTokenState field access. All derivable from the prompt specification."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "No conflicts. The default enabled=false is tested and not contradicted by the prompt. setPassword(null) updating lastPasswordResetDate is consistent with tests. Authority.getAuthority() returning enum name string (ROLE_USER, ROLE_ADMIN) matches specification. UserTokenState constructor with negative expires_in is accepted, consistent with no validation constraints mentioned."
+    }
+  },
+  "overall_score": 4.50
+}

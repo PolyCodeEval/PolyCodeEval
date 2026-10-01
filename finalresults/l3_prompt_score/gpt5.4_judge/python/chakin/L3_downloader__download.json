@@ -1,0 +1,27 @@
+{
+  "task": "python/chakin/L3_downloader__download",
+  "project": "python/chakin",
+  "language": "python",
+  "prompt_path": "datasets/python/chakin/tasks/L3_downloader__download/prompt.md",
+  "task_json_path": "datasets/python/chakin/tasks/L3_downloader__download/task.json",
+  "source_file_path": "datasets/python/chakin/src/chakin/downloader.py",
+  "target_symbol": "downloader.py::download",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description matches the main behavior well: it selects a dataset row by index or exact name, derives the URL, ensures the save directory exists, downloads the file with a progress bar, and returns the downloaded path. It also correctly mentions the printed message when no matching URL is found. However, it omits some important implementation details and edge-case behavior, especially that the function does not safely stop after a missing match and will proceed to use `row`/`url`, which can fail. It also does not mention that `number` takes precedence over `name` when both are provided.",
+  "missing_functionality": [
+    "When both `number > -1` and `name` are provided, the implementation uses `number` and ignores `name`.",
+    "If neither `number` nor `name` selects a row, `row` may be undefined; the function does not handle this robustly.",
+    "After printing the 'not found' message for an empty URL, the function still continues and attempts to download instead of returning early or raising a clear error.",
+    "The progress bar is specifically driven through `urlretrieve(..., reporthook=dlProgress)` with a nested callback that initializes `pbar.max_value` on first update."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies a clean 'if no matching URL is found' handling path, but the implementation only prints a message and does not stop, so failure handling is incomplete and potentially erroneous."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_downloader__download.raw.md"
+}

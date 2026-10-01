@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.22,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 11 items\n\ntests/unit_tests/test_instrument.py .                                    [  9%]\ntests/unit_tests/test_pnf.py .....                                       [ 54%]\ntests/unit_tests/test_renko.py F..                                       [ 81%]\ntests/acceptance_tests/test_indicators.py F.                             [100%]\n\n=================================== FAILURES ===================================\n________________________ test_Renko_box_periodic_close _________________________\n\n    def test_Renko_box_periodic_close():\n        \"\"\"\n        The test function that tests the get_ohlc_data method of the Renko class. It checks if the method returns the correct data shape based on the given parameters.\n        \"\"\"\n        df = pd.read_csv(UNIT_SAMPLES_DIR / 'HDFCLIFE.csv')\n        df.columns = [i.lower() for i in df.columns]\n        renko = indicators.Renko(df)\n        renko.brick_size = 20\n        renko.chart_type = indicators.Renko.PERIOD_CLOSE\n        data = renko.get_ohlc_data()\n>       assert data.shape == (84, 6)\nE       assert (147, 4) == (84, 6)\nE         \nE         At index 0 diff: 147 != 84\nE         Use -v to get more diff\n\ntests/unit_tests/test_renko.py:17: AssertionError\n__________________________________ test_renko __________________________________\n\n    def test_renko():\n        \"\"\"\n        Test the Renko indicator by comparing the close prices of the Renko chart\n        generated from the input data with the expected close prices.\n    \n        The Renko chart is generated using the brick size of 4.\n    \n        Raises:\n            AssertionError: If the absolute difference between the close prices of\n            the generated Renko chart and the expected close prices is greater than\n            1e-12.\n        \"\"\"\n        df = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'HOOLI.csv')\n        rdf = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'hooli_renko_4.csv')\n        renko = Renko(df)\n        renko.brick_size = 4\n        cdf = renko.get_ohlc_data()\n>       assert np.all(np.abs(cdf['close'] - rdf['close']) <= 1e-12)\nE       AssertionError: assert np.False_\nE        +  where np.False_ = <function all at 0x7fc6e4cd1470>(0       4.0\\n1       NaN\\n2      12.0\\n3      12.0\\n3       8.0\\n       ... \\n238     NaN\\n239     NaN\\n239     NaN\\n242     NaN\\n244     NaN\\nName: close, Length: 360, dtype: float64 <= 1e-12)\nE        +    where <function all at 0x7fc6e4cd1470> = np.all\nE        +    and   0       4.0\\n1       NaN\\n2      12.0\\n3      12.0\\n3       8.0\\n       ... \\n238     NaN\\n239     NaN\\n239     NaN\\n242     NaN\\n244     NaN\\nName: close, Length: 360, dtype: float64 = <ufunc 'absolute'>((0      144\\n2      140\\n3      136\\n3      132\\n3      128\\n      ... \\n238    204\\n239    200\\n239    196\\n242    200\\n244    204\\nName: close, Length: 276, dtype: int64 - 0      140.0\\n1      132.0\\n2      128.0\\n3      124.0\\n4      120.0\\n       ...  \\n210    196.0\\n211    200.0\\n212    204.0\\n213    196.0\\n214    204.0\\nName: close, Length: 215, dtype: float64))\nE        +      where <ufunc 'absolute'> = np.abs\n\ntests/acceptance_tests/test_indicators.py:25: AssertionError\n=============================== warnings summary ===============================\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_close\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_hl\n  /workspace/src/stocktrends/indicators.py:364: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`\n    df['trend_change'] = df['uptrend'].ne(df['uptrend'].shift().bfill()).astype(int)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_renko.py::test_Renko_box_periodic_close - assert...\nFAILED tests/acceptance_tests/test_indicators.py::test_renko - AssertionError...\n=================== 2 failed, 9 passed, 2 warnings in 0.84s ====================\n",
+  "stderr": "",
+  "task": "python/stocktrends/L3_indicators__period_close_bricks",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      }
+    ],
+    "passed": 9,
+    "failed": 2,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.8182,
+  "compile_score": 0.5,
+  "test_score": 0.4091,
+  "score": 0.9091
+}

@@ -1,0 +1,26 @@
+{
+  "task": "go/go-cache/L2_sharded",
+  "project": "go/go-cache",
+  "language": "go",
+  "prompt_path": "datasets/go/go-cache/tasks/L2_sharded/prompt.md",
+  "task_json_path": "datasets/go/go-cache/tasks/L2_sharded/task.json",
+  "source_file_path": "datasets/go/go-cache/src/sharded.go",
+  "target_file": "sharded.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.8,
+  "reason": "The file-level and function-level descriptions match the implementation very closely and cover the key reconstructive details: sharded routing, seeded hashing, janitor lifecycle, shard construction, secure-seed fallback, and finalizer installation. The prompt is unusually precise about the odd edge cases in `djb33` and the janitor behavior, which are exactly the kinds of details needed for faithful file reconstruction. Only a few minor implementation specifics are omitted or slightly softened, but nothing important enough to prevent a correct reconstruction.",
+  "missing_functionality": [
+    "The description of `newShardedCache` does not explicitly mention constructing the `math/big.Int` upper bound with `SetUint64(uint64(math.MaxUint32))` before calling `rand.Int`.",
+    "The `newShardedCache` description does not note that each shard cache is initialized only with `defaultExpiration` and `items`, leaving janitor-related fields unset at shard level.",
+    "The `unexportedNewSharded` description does not explicitly mention the temporary local wrapper variable before calling `runtime.SetFinalizer`, though the behavior is still clear."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `djb33` description says the remainder handling covers '0 to 4 bytes'; in the actual code the switch is on `l - i` and only cases 1 through 4 are enumerated, with no explicit case 0.",
+    "The `newShardedCache` description says the random integer is drawn in the range `[0, math.MaxUint32)`; this is technically accurate for `rand.Int` with that bound, but it may subtly obscure that the exact implementation uses a `big.Int` bound derived from `math.MaxUint32` rather than any direct uint32 API."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_sharded.raw.md"
+}

@@ -1,0 +1,15 @@
+{
+  "score": 2.5,
+  "reason": "The file-level description is generally accurate, but the function descriptions for setVexes and setArcs contain significant mismatches with the actual implementation. setVexes does not assign vertices starting from index 0 and has an off-by-one capacity check, leading to behavior that deviates from the described population. setArcs uses exceptions for error handling instead of returning false, which is not mentioned. These discrepancies make the prompt insufficient for accurate reconstruction.",
+  "missing_functionality": [
+    "setVexes assigns vertices starting from index 1, skipping index 0",
+    "setVexes throws on the _vexNum-th vertex instead of when list size exceeds _vexNum",
+    "setArcs throws out_of_range on unknown vertices rather than returning false"
+  ],
+  "incorrect_or_misleading_points": [
+    "setVexes description implies standard zero-indexed population, but implementation is offset",
+    "setVexes out-of-range condition is not correctly described",
+    "setArcs description implies rejection via return value, but implementation throws exception"
+  ],
+  "complete_enough": false
+}

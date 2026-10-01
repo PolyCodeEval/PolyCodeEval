@@ -1,0 +1,29 @@
+{
+  "task": "go/go-cache/L0_go-cache",
+  "project": "go/go-cache",
+  "language": "go",
+  "prompt_path": "datasets/go/go-cache/tasks/L0_go-cache/prompt.md",
+  "project_root": "datasets/go/go-cache",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 5.0,
+      "reason": "Exceptionally thorough. All typed increment/decrement variants are explicitly listed (IncrementInt, IncrementInt8...IncrementFloat64, DecrementInt...DecrementFloat64). Core methods (Set, SetDefault, Add, Replace, Get, GetWithExpiration, Delete, DeleteExpired, ItemCount, OnEvicted, Flush, Items) are all present. Serialization methods (Save, Load, SaveFile, LoadFile) with gob semantics are described. New, NewFrom, NoExpiration, DefaultExpiration constants, and the Item struct fields are all covered. The janitor background goroutine is mentioned."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Get return shape (interface{}, bool), GetWithExpiration return shape (interface{}, time.Time, bool), and all typed increment/decrement signatures are precisely stated. Behavioral constraints for Add, Replace, Increment, and ItemCount semantics (expired but not cleaned items still count) are clear. The Load/LoadFile non-overwrite contract for non-expired keys is specified. Minor gap: the exact gob encoding format isn't described, but this is an implementation detail."
+    },
+    "testability": {
+      "score": 5.0,
+      "reason": "The blackbox tests cover: basic set/get, default expiration, NoExpiration, GetWithExpiration, DeleteExpired, auto-cleanup janitor, IncrementInt/DecrementInt, NewFrom, Add/Replace semantics. All are derivable from the prompt's detailed Behavioral Constraints. The expired-item counting rule for ItemCount is explicitly stated and is tested."
+    },
+    "consistency": {
+      "score": 5.0,
+      "reason": "All described APIs match go-cache's actual source. The Item struct (Object interface{}, Expiration int64), Cache type, all method signatures, and the non-overwrite Load semantics are accurate. Module path and package name are correct."
+    }
+  },
+  "overall_score": 4.88
+}

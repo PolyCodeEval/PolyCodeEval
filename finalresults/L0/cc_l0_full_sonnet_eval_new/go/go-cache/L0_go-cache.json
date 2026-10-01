@@ -1,0 +1,674 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.11,
+  "stdout": "FAIL\t_/workspace/src [build failed]\nFAIL\n",
+  "stderr": "# _/workspace/src [_/workspace/src.test]\n./test_decrement_items_test.go:12:16: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_decrement_items_test.go:24:14: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_decrement_items_test.go:34:14: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_decrement_items_test.go:45:5: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_decrement_items_test.go:48:16: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_increment_test.go:11:14: c.IncrementInt undefined (type *Cache has no field or method IncrementInt)\n./test_increment_test.go:23:14: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_increment_test.go:34:14: c.IncrementInt undefined (type *Cache has no field or method IncrementInt)\n./test_increment_test.go:67:14: c.IncrementInt undefined (type *Cache has no field or method IncrementInt)\n./test_increment_test.go:76:14: c.DecrementInt undefined (type *Cache has no field or method DecrementInt)\n./test_increment_test.go:76:14: too many errors\n",
+  "inferred_commands": {
+    "install": "",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "compile_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.91,
+    "Architecture": 3.6,
+    "Health": 4.0
+  },
+  "overall_score": 2.53,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "The required public API surface is present in the root `cache` package: constructors, constants, `Item`, `Cache`, cache operations, numeric operations, and serialization helpers are all defined across `cache.go`, `numeric.go`, and `serialize.go`."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "`New(defaultExp, cleanupInterval)`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "janitor           *janitor\n}\n\n// Cache is a thread-safe in-memory key-value store.\ntype Cache struct {\n\t*cache\n}\n\nfunc newCache(de time.Duration, m map[string]Item) *cache {\n\tif de == 0 {\n\t\tde = -1\n\t}\n\tc := &cache{\n\t\tdefaultExpiration: de,\n\t\titems:             m,\n\t}\n\treturn c\n}\n\nfunc newCacheWithJanitor(de time.Duration, ci time.Duration, m map[string]Item) *Cache {\n\tc := newCache(de, m)\n\tC := &C"
+            },
+            {
+              "path": "test_expiration_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxExpiration(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"exp\", \"val\", 50*time.Millisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"exp\")\n\tif found {\n\t\tt.Fatal(\"expected expired item to not be found\")\n\t}\n}\n\nfunc TestBlackboxNoExpiration(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)"
+            },
+            {
+              "path": "test_newfrom_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxNewFrom(t *testing.T) {\n\titems := map[string]Item{\n\t\t\"pre1\": {Object: \"val1\", Expiration: 0},\n\t\t\"pre2\": {Object: 42, Expiration: 0},\n\t}\n\tc := NewFrom(5*time.Minute, 0, items)\n\tv, found := c.Get(\"pre1\")\n\tif !found {\n\t\tt.Fatal(\"expected pre1 to be found\")\n\t}\n\tif v.(string) != \"val1"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`New(defaultExpiration, cleanupInterval)` is defined in `repo/cache.go` and returns `*Cache`, wiring optional janitor cleanup through `newCacheWithJanitor`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`NewFrom(defaultExp, cleanupInterval, items)` with `items` shaped like `map[string]Item`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": ") *Cache {\n\titems := make(map[string]Item)\n\treturn newCacheWithJanitor(defaultExpiration, cleanupInterval, items)\n}\n\n// NewFrom creates a new Cache pre-populated with the given items map.\nfunc NewFrom(defaultExpiration, cleanupInterval time.Duration, items map[string]Item) *Cache {\n\treturn newCacheWithJanitor(defaultExpiration, cleanupInterval, items)\n}\n\n// Set adds an item to the cache, replacing"
+            },
+            {
+              "path": "test_newfrom_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxNewFrom(t *testing.T) {\n\titems := map[string]Item{\n\t\t\"pre1\": {Object: \"val1\", Expiration: 0},\n\t\t\"pre2\": {Object: 42, Expiration: 0},\n\t}\n\tc := NewFrom(5*time.Minute, 0, items)\n\tv, found := c.Get(\"pre1\")\n\tif !found {\n\t\tt.Fatal(\"expected pre1 to be found\")\n\t}\n\tif v.(string) != \"val1"
+            },
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": ")\n\nfunc TestDecrementIntDecrementsValue(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"counter\", 10, DefaultExpiration)\n\n\tval, err := c.DecrementInt(\"counter\", 3)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 7 {\n\t\tt.Errorf(\"expected 7, got %d\", val)\n\t}\n}\n\nfunc TestDecrementIntReturnsErrorForMissingKey(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Min"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`NewFrom(defaultExpiration, cleanupInterval, items map[string]Item)` is defined in `repo/cache.go` and directly seeds the cache from a `map[string]Item`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`NoExpiration`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)\n\n// Item holds a cached value and its expiration timestamp.\ntype Item struct {\n\tObject     interface{"
+            },
+            {
+              "path": "test_expiration_test.go",
+              "excerpt": "second)\n\t_, found := c.Get(\"exp\")\n\tif found {\n\t\tt.Fatal(\"expected expired item to not be found\")\n\t}\n}\n\nfunc TestBlackboxNoExpiration(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"perm\")\n\tif !found {\n\t\tt.Fatal(\"expected NoExpiration item to persist\")\n\t}\n}\n\nfunc TestBlackboxDeleteExpiredManual(t *testing."
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "tems(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"temp\", \"val\", 50*time.Millisecond)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(100 * time.Millisecond)\n\t// ItemCount includes expired but not-yet-cleaned items\n\tif c.ItemCount() != 2 {\n\t\tt.Fatalf(\"expected 2 items (including expired), got %d\", c.ItemCount())\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`NoExpiration` is declared as a public `time.Duration` constant in `repo/cache.go`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`DefaultExpiration`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)\n\n// Item holds a cached value and its expiration timestamp.\ntype Item struct {\n\tObject     interface{}\n\tExpiration int64\n}\n\n// Expired returns true if the item has expired.\nfunc (it"
+            },
+            {
+              "path": "test_add_replace_test.go",
+              "excerpt": "\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxAddNewKey(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\terr := c.Add(\"new\", \"val\", DefaultExpiration)\n\tif err != nil {\n\t\tt.Fatalf(\"Add on new key should succeed, got %v\", err)\n\t}\n}\n\nfunc TestBlackboxAddExistingKey(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"exists\", \"val\", DefaultExpiration)\n\terr := c.Add(\"exists\", \"val2\", DefaultExpiration)\n\tif err =="
+            },
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": ")\n\nfunc TestDecrementIntDecrementsValue(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"counter\", 10, DefaultExpiration)\n\n\tval, err := c.DecrementInt(\"counter\", 3)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 7 {\n\t\tt.Errorf(\"expected 7, got %d\", val)\n\t}\n}\n\nfunc TestDecrementIntReturnsErrorForMissingKey(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Min"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`DefaultExpiration` is declared as a public `time.Duration` constant in `repo/cache.go`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`Item` with fields shaped like `Object interface{}` and `Expiration int64`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "age cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)\n\n// Item holds a cached value and its expiration timestamp.\ntype Item struct {\n\tObject     interface{}\n\tExpiration int64\n}"
+            },
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 50 {\n\t\tt.Errorf(\"expected 50, got %d\", val)\n\t}\n}\n\nfunc TestItemsReturnsAllNonExpiredItems(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tc.Set(\"c\", 3, DefaultExpiration)\n\n\titems := c.Items()\n\tif len(items) != 3 {\n\t\tt.Errorf(\"expected 3 items, got %d\", len(item"
+            },
+            {
+              "path": "test_expiration_test.go",
+              "excerpt": "time.Millisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"exp\")\n\tif found {\n\t\tt.Fatal(\"expected expired item to not be found\")\n\t}\n}\n\nfunc TestBlackboxNoExpiration(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"perm\")\n\tif !found {\n\t\tt.Fatal(\"expected NoExpiration item to persist\")\n\t}\n}\n\nfu"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Item` is defined in `repo/cache.go` with the required public fields `Object interface{}` and `Expiration int64`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`Cache`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)\n\n// Item"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/patrickmn/go-cache\n\ngo 1.22"
+            },
+            {
+              "path": "janitor.go",
+              "excerpt": "package cache\n\nimport \"time\"\n\ntype janitor struct {\n\tinterval time.Duration\n\tstop     chan bool\n}\n\nfunc (j *janitor) run(c *cache) {\n\tticker := time.NewTicker(j.interval)\n\tfor {\n\t\tselect {\n\t\tcase <-ticker.C:\n\t\t\tc.DeleteExpired()\n\t\tcase <-j.stop:\n\t\t\tticker.Stop()\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Public type `Cache` is defined in `repo/cache.go` as the exported cache handle."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`Set`, `SetDefault`, `Add`, `Replace`, `Get`, `GetWithExpiration`, `Delete`, `DeleteExpired`, `ItemCount`, and `OnEvicted(func(string, interface{}))` should be methods on `Cache`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": ".Duration, m map[string]Item) *Cache {\n\tc := newCache(de, m)\n\tC := &Cache{c}\n\tif ci > 0 {\n\t\trunJanitor(c, ci)\n\t\truntime.SetFinalizer(C, stopJanitor)\n\t}\n\treturn C\n}\n\n// New creates a new Cache with a given default expiration duration and cleanup interval.\n// If the cleanup interval is greater than zero, a background goroutine will periodically\n// delete expired items. If defaultExpiration is 0 (Def"
+            },
+            {
+              "path": "test_add_replace_test.go",
+              "excerpt": "key should succeed, got %v\", err)\n\t}\n}\n\nfunc TestBlackboxAddExistingKey(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"exists\", \"val\", DefaultExpiration)\n\terr := c.Add(\"exists\", \"val2\", DefaultExpiration)\n\tif err == nil {\n\t\tt.Fatal(\"Add on existing key should fail\")\n\t}\n}\n\nfunc TestBlackboxReplaceExisting(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"k\", \"old\", DefaultExpiration)\n\terr :"
+            },
+            {
+              "path": "test_setget_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxSetGetRoundtrip(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"key1\", \"value1\", DefaultExpiration)\n\tv, found := c.Get(\"key1\")\n\tif !found {\n\t\tt.Fatal(\"expected key1 to be found\")\n\t}\n\tif v.(string) != \"value1\" {\n\t\tt.Fatalf(\"expected 'value1', got %v\", v)\n\t}\n}\n\nfun"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Set`, `SetDefault`, `Add`, `Replace`, `Get`, `GetWithExpiration`, `Delete`, `DeleteExpired`, `ItemCount`, and `OnEvicted` are implemented on the embedded `*cache`, making them callable on `*Cache` through method promotion."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`Get(key string)` should preserve a result shape like `(interface{}, bool)`, and `GetWithExpiration(key string)` should preserve a result shape like `(interface{}, time.Time, bool)`",
+          "evidence": [
+            {
+              "path": "test_setget_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxSetGetRoundtrip(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"key1\", \"value1\", DefaultExpiration)\n\tv, found := c.Get(\"key1\")\n\tif !found {\n\t\tt.Fatal(\"expected key1 to be found\")\n\t}\n\tif v.(string) != \"value1\" {\n\t\tt.Fatalf(\"expected 'value1', got %v\", v)\n\t}\n}\n\nfunc T"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "ist (or has expired).\nfunc (c *cache) Add(k string, x interface{}, d time.Duration) error {\n\tc.mu.Lock()\n\t_, found := c.get(k)\n\tif found {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s already exists\", k)\n\t}\n\tc.set(k, x, d)\n\tc.mu.Unlock()\n\treturn nil\n}\n\n// Replace sets a new value for the cache key only if it already exists (and has not expired).\nfunc (c *cache) Replace(k string, x interface{}, d t"
+            },
+            {
+              "path": "test_delete_test.go",
+              "excerpt": "boxDelete(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"k\", \"v\", DefaultExpiration)\n\tc.Delete(\"k\")\n\t_, found := c.Get(\"k\")\n\tif found {\n\t\tt.Fatal(\"expected deleted key to not be found\")\n\t}\n}\n\nfunc TestBlackboxItemCount(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tif c.ItemCount() != 2 {\n\t\tt.Fatalf(\"expected 2 items, got %d\","
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Get` is defined with signature `(interface{}, bool)` and `GetWithExpiration` with `(interface{}, time.Time, bool)` in `repo/cache.go`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "additional numeric and snapshot methods include `Increment(k string, n int64) error`, `Decrement(k string, n int64) error`, `IncrementFloat(k string, n float64) error`, `DecrementFloat(k string, n float64) error`; also provides typed `Increment*` and `Decrement*` variants for int8/16/32/64, uint8/16/32/64, uintptr, float32/float64, each returning (newValue, error); plus `Items() map[string]Item` and `Flush()`, all as methods on `Cache`",
+          "evidence": [
+            {
+              "path": "numeric.go",
+              "excerpt": "package cache\n\nimport (\n\t\"fmt\"\n)\n\n// Increment increments an item of type int, int8, int16, int32, int64, uintptr,\n// uint, uint8, uint32, or uint64, float32 or float64 by n. Returns an error if the\n// item's value is not an integer, if it was not found, or if it is not an integer type.\n// To retrieve the incremente"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "to be found\")\n\t}\n\tif v.(int64) != 13 {\n\t\tt.Fatalf(\"expected 13, got %v\", v)\n\t}\n}\n\nfunc TestBlackboxIncrementGenericOnNonNumericReturnsError(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"s\", \"hello\", DefaultExpiration)\n\terr := c.Increment(\"s\", 1)\n\tif err == nil {\n\t\tt.Fatal(\"expected error when incrementing non-numeric value\")\n\t}\n}\n\nfunc TestBlackboxDecrementGenericOnNonNumericReturnsError(t *"
+            },
+            {
+              "path": "test_increment_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxIncrementInt(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"counter\", int(10), DefaultExpiration)\n\tn, err := c.IncrementInt(\"counter\", 5)\n\tif err != nil {\n\t\tt.Fatalf(\"IncrementInt failed: %v\", err)\n\t}\n\tif n != 15 {\n\t\tt.Fatalf(\"expected 15, got %d\", n)\n\t}\n}\n\nfunc TestBlackbox"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Increment`, `Decrement`, `IncrementFloat`, `DecrementFloat`, typed int8/16/32/64, uint8/16/32/64, uintptr, float32/64 increment/decrement methods, plus `Items` and `Flush`, are implemented in `repo/numeric.go` and `repo/cache.go`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`Save(io.Writer) error` and `Load(io.Reader) error` methods for gob-based serialization; `Load` does not overwrite keys that already exist and have not expired in the target cache",
+          "evidence": [
+            {
+              "path": "serialize.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\n// Save writes the cache's items to w using gob encoding.\nfunc (c *cache) Save(w io.Writer) (err error) {\n\tenc := gob.NewEncoder(w)\n\tdefer func() {\n\t\tif x := recover(); x != nil {\n\t\t\terr = fmt.Errorf(\"Error registering item types with gob library\")\n\t\t}\n\t}()\n\tc.mu.RLock()\n\tdefer c.mu"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "at(\"i\", 1.0)\n\tif err == nil {\n\t\tt.Fatal(\"expected error when DecrementFloat on non-float value\")\n\t}\n}\n\nfunc TestBlackboxSaveAndLoad(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"key1\", \"value1\", DefaultExpiration)\n\tc.Set(\"key2\", int64(42), DefaultExpiration)\n\n\tvar buf bytes.Buffer\n\terr := c.Save(&buf)\n\tif err != nil {\n\t\tt.Fatalf(\"Save failed: %v\", err)\n\t}\n\n\tc2 := New(5*time.Minute, 0)\n\terr ="
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "item only if it does not already exist (or has expired).\nfunc (c *cache) Add(k string, x interface{}, d time.Duration) error {\n\tc.mu.Lock()\n\t_, found := c.get(k)\n\tif found {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s already exists\", k)\n\t}\n\tc.set(k, x, d)\n\tc.mu.Unlock()\n\treturn nil\n}\n\n// Replace sets a new value for the cache key only if it already exists (and has not expired).\nfunc (c *cache)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Save(io.Writer) error` and `Load(io.Reader) error` are implemented in `repo/serialize.go`, and `Load` preserves existing non-expired keys by only inserting when the destination key is absent or expired."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`SaveFile(fname string) error` writes the cache to the named file using gob encoding; `LoadFile(fname string) error` loads items from the named file, again without overwriting existing non-expired keys",
+          "evidence": [
+            {
+              "path": "serialize.go",
+              "excerpt": "defer c.mu.RUnlock()\n\tfor _, v := range c.items {\n\t\tgob.Register(v.Object)\n\t}\n\terr = enc.Encode(&c.items)\n\treturn\n}\n\n// SaveFile writes the cache to the named file using gob encoding.\nfunc (c *cache) SaveFile(fname string) error {\n\tfp, err := os.Create(fname)\n\tif err != nil {\n\t\treturn err\n\t}\n\terr = c.Save(fp)\n\tif err != nil {\n\t\tfp.Close()\n\t\treturn err\n\t}\n\treturn fp.Close()\n}\n\n// Load adds items fr"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "time.Now().UnixNano() > item.Expiration\n}\n\ntype cache struct {\n\tdefaultExpiration time.Duration\n\titems             map[string]Item\n\tmu                sync.RWMutex\n\tonEvicted         func(string, interface{})\n\tjanitor           *janitor\n}\n\n// Cache is a thread-safe in-memory key-value store.\ntype Cache struct {\n\t*cache\n}\n\nfunc newCache(de time.Duration, m map[string]Item) *cache {\n\tif de == 0 {"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "ucceed, got %v\", err)\n\t}\n\tv, found := c.Get(\"k\")\n\tif !found {\n\t\tt.Fatal(\"expected key to be found after Add\")\n\t}\n\tif v.(string) != \"new\" {\n\t\tt.Fatalf(\"expected 'new', got %v\", v)\n\t}\n}\n\nfunc TestBlackboxReplaceOnExpiredKeyFails(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"k\", \"old\", 50*time.Millisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\terr := c.Replace(\"k\", \"new\", DefaultExpiration"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SaveFile(fname string) error` and `LoadFile(fname string) error` are implemented in `repo/serialize.go`, with `LoadFile` delegating to `Load` and preserving existing non-expired keys."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "root package name `cache`",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)"
+            },
+            {
+              "path": "serialize.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\n// Save writes the cache's items to w using gob encoding.\nfunc (c *cache) Save(w io.Writer) (err error) {\n\tenc := gob.NewEncoder(w)\n\tdefer func() {\n\t\tif x := recover(); x != nil {\n\t\t\terr = fmt.Errorf(\"Error registering"
+            },
+            {
+              "path": "test_setget_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxSetGetRoundtrip(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"key1\", \"value1\", DefaultExpiration)\n\tv, found := c.Get(\"key1\")\n\tif !found {\n\t\tt.Fatal(\"expected key1 to be found\")\n\t}\n\tif v.(string) !="
+            }
+          ],
+          "status": "implemented",
+          "reason": "All source files use `package cache`, matching the required root package name."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Cache Creation",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)\n\n// Item"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/patrickmn/go-cache\n\ngo 1.22"
+            },
+            {
+              "path": "janitor.go",
+              "excerpt": "package cache\n\nimport \"time\"\n\ntype janitor struct {\n\tinterval time.Duration\n\tstop     chan bool\n}\n\nfunc (j *janitor) run(c *cache) {\n\tticker := time.NewTicker(j.interval)\n\tfor {\n\t\tselect {\n\t\tcase <-ticker.C:\n\t\t\tc.DeleteExpired()\n\t\tcase <-j.stop:\n\t\t\tticker.Stop()\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Cache creation is implemented via `New`, `NewFrom`, internal initialization helpers, and optional janitor startup in `repo/cache.go` and `repo/janitor.go`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Setting Items",
+          "evidence": [
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 50 {\n\t\tt.Errorf(\"expected 50, got %d\", val)\n\t}\n}\n\nfunc TestItemsReturnsAllNonExpiredItems(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tc.Set(\"c\", 3, DefaultExpiration)\n\n\titems := c.Items()\n\tif len(items) != 3 {\n\t\tt.Errorf(\"expected 3 items, got %d\", len(item"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "eturn false\n\t}\n\treturn time.Now().UnixNano() > item.Expiration\n}\n\ntype cache struct {\n\tdefaultExpiration time.Duration\n\titems             map[string]Item\n\tmu                sync.RWMutex\n\tonEvicted         func(string, interface{})\n\tjanitor           *janitor\n}\n\n// Cache is a thread-safe in-memory key-value store.\ntype Cache struct {\n\t*cache\n}\n\nfunc newCache(de time.Duration, m map[string]Item) *ca"
+            },
+            {
+              "path": "numeric.go",
+              "excerpt": ", use one of the specialized variants.\nfunc (c *cache) Increment(k string, n int64) error {\n\tc.mu.Lock()\n\tv, found := c.items[k]\n\tif !found || v.Expired() {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s not found\", k)\n\t}\n\tswitch v.Object.(type) {\n\tcase int:\n\t\tv.Object = v.Object.(int) + int(n)\n\tcase int8:\n\t\tv.Object = v.Object.(int8) + int8(n)\n\tcase int16:\n\t\tv.Object = v.Object.(int16) + int16(n)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Setting items is implemented via `Set`, `SetDefault`, `Add`, and `Replace` in `repo/cache.go`, including TTL handling."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Getting Items",
+          "evidence": [
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 50 {\n\t\tt.Errorf(\"expected 50, got %d\", val)\n\t}\n}\n\nfunc TestItemsReturnsAllNonExpiredItems(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tc.Set(\"c\", 3, DefaultExpiration)\n\n\titems := c.Items()\n\tif len(items) != 3 {\n\t\tt.Errorf(\"expected 3 items, got %d\", len(item"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "eturn false\n\t}\n\treturn time.Now().UnixNano() > item.Expiration\n}\n\ntype cache struct {\n\tdefaultExpiration time.Duration\n\titems             map[string]Item\n\tmu                sync.RWMutex\n\tonEvicted         func(string, interface{})\n\tjanitor           *janitor\n}\n\n// Cache is a thread-safe in-memory key-value store.\ntype Cache struct {\n\t*cache\n}\n\nfunc newCache(de time.Duration, m map[string]Item) *ca"
+            },
+            {
+              "path": "numeric.go",
+              "excerpt": ", use one of the specialized variants.\nfunc (c *cache) Increment(k string, n int64) error {\n\tc.mu.Lock()\n\tv, found := c.items[k]\n\tif !found || v.Expired() {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s not found\", k)\n\t}\n\tswitch v.Object.(type) {\n\tcase int:\n\t\tv.Object = v.Object.(int) + int(n)\n\tcase int8:\n\t\tv.Object = v.Object.(int8) + int8(n)\n\tcase int16:\n\t\tv.Object = v.Object.(int16) + int16(n)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Getting items is implemented via `Get`, `GetWithExpiration`, and internal expiration checks in `repo/cache.go`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Deleting Items",
+          "evidence": [
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 50 {\n\t\tt.Errorf(\"expected 50, got %d\", val)\n\t}\n}\n\nfunc TestItemsReturnsAllNonExpiredItems(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tc.Set(\"c\", 3, DefaultExpiration)\n\n\titems := c.Items()\n\tif len(items) != 3 {\n\t\tt.Errorf(\"expected 3 items, got %d\", len(item"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "eturn false\n\t}\n\treturn time.Now().UnixNano() > item.Expiration\n}\n\ntype cache struct {\n\tdefaultExpiration time.Duration\n\titems             map[string]Item\n\tmu                sync.RWMutex\n\tonEvicted         func(string, interface{})\n\tjanitor           *janitor\n}\n\n// Cache is a thread-safe in-memory key-value store.\ntype Cache struct {\n\t*cache\n}\n\nfunc newCache(de time.Duration, m map[string]Item) *ca"
+            },
+            {
+              "path": "numeric.go",
+              "excerpt": ", use one of the specialized variants.\nfunc (c *cache) Increment(k string, n int64) error {\n\tc.mu.Lock()\n\tv, found := c.items[k]\n\tif !found || v.Expired() {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s not found\", k)\n\t}\n\tswitch v.Object.(type) {\n\tcase int:\n\t\tv.Object = v.Object.(int) + int(n)\n\tcase int8:\n\t\tv.Object = v.Object.(int8) + int8(n)\n\tcase int16:\n\t\tv.Object = v.Object.(int16) + int16(n)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Deleting items is implemented via `Delete`, `DeleteExpired`, and `Flush` in `repo/cache.go`, with janitor-driven cleanup in `repo/janitor.go`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Numeric Operations",
+          "evidence": [
+            {
+              "path": "numeric.go",
+              "excerpt": "package cache\n\nimport (\n\t\"fmt\"\n)\n\n// Increment increments an item of type int, int8, int16, int32, int64, uintptr,\n// uint, uint8, uint32, or uint64, float32 or float64 by n. Returns an error if the\n// item's value is not an integer, if it was not found, or if it is not an integer type.\n// To retrieve the incremented value, use one of the specialized variants.\nfunc (c *cache) Increment(k string, n int64) error {\n\tc.mu.Lock()\n\tv, found := c.items[k]\n\tif !found || v.Expired() {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s not found\", k)\n\t}\n\tswitch v.Object.(type) {\n\tcase int:\n\t\tv.Object = v.Obje"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "to be found\")\n\t}\n\tif v.(int64) != 13 {\n\t\tt.Fatalf(\"expected 13, got %v\", v)\n\t}\n}\n\nfunc TestBlackboxIncrementGenericOnNonNumericReturnsError(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"s\", \"hello\", DefaultExpiration)\n\terr := c.Increment(\"s\", 1)\n\tif err == nil {\n\t\tt.Fatal(\"expected error when incrementing non-numeric value\")\n\t}\n}\n\nfunc TestBlackboxDecrementGenericOnNonNumericReturnsError(t *"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Numeric operations are implemented in `repo/numeric.go`, covering the generic and typed increment/decrement methods requested by the prompt."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Eviction Callback",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": ")\n\t\t\t}\n\t\t}\n\t}\n\tc.mu.Unlock()\n\tfor _, v := range evictedItems {\n\t\tc.onEvicted(v.key, v.value)\n\t}\n}\n\n// OnEvicted sets an eviction callback function called whenever an item is deleted.\nfunc (c *cache) OnEvicted(f func(string, interface{})) {\n\tc.mu.Lock()\n\tc.onEvicted = f\n\tc.mu.Unlock()\n}\n\n// Items returns a copy of all unexpired items in the cache.\nfunc (c *cache) Items() map[string]Item {\n\tc.mu.RLo"
+            },
+            {
+              "path": "test_delete_test.go",
+              "excerpt": "c.ItemCount() != 0 {\n\t\tt.Fatalf(\"expected 0 items after flush, got %d\", c.ItemCount())\n\t}\n}\n\nfunc TestBlackboxOnEvictedCallbackOnDelete(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tvar evictedKey string\n\tvar evictedVal interface{}\n\tc.OnEvicted(func(k string, v interface{}) {\n\t\tevictedKey = k\n\t\tevictedVal = v\n\t})\n\tc.Set(\"evict_me\", \"myval\", DefaultExpiration)\n\tc.Delete(\"evict_me\")\n\tif evictedKey !"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Eviction callback support is implemented via `OnEvicted` and callback invocation from `Delete` and `DeleteExpired` in `repo/cache.go`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Serialization via Save/Load",
+          "evidence": [
+            {
+              "path": "test_expiration_test.go",
+              "excerpt": "illisecond)\n\t_, _, found := c.GetWithExpiration(\"expitem\")\n\tif found {\n\t\tt.Fatal(\"expected expired item to not be found via GetWithExpiration\")\n\t}\n}\n\nfunc TestBlackboxAutoCleanupRemovesExpired(t *testing.T) {\n\tc := New(50*time.Millisecond, 80*time.Millisecond) // cleanup every 80ms\n\tc.Set(\"temp\", \"val\", 50*time.Millisecond)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(150 * time.Millisecond)\n\ti"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Serialization via `Save`/`Load` is implemented with gob encoding in `repo/serialize.go`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`Add` succeeds if the key does not exist or the existing item has expired; it returns an error if the key exists and has not expired.",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": ".Increment(\"temp\", 1)\n\tif err == nil {\n\t\tt.Fatal(\"expected error when incrementing expired key\")\n\t}\n}\n\nfunc TestBlackboxAddOnExpiredKeySucceeds(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"k\", \"old\", 50*time.Millisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\terr := c.Add(\"k\", \"new\", DefaultExpiration)\n\tif err != nil {\n\t\tt.Fatalf(\"Add on expired key should succeed, got %v\", err)\n\t}\n\tv,"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "ation, items map[string]Item) *Cache {\n\treturn newCacheWithJanitor(defaultExpiration, cleanupInterval, items)\n}\n\n// Set adds an item to the cache, replacing any existing item.\n// If the duration is 0 (DefaultExpiration), the cache's default expiration time is used.\n// If it is -1 (NoExpiration), the item never expires.\nfunc (c *cache) Set(k string, x interface{}, d time.Duration) {\n\tvar e int64\n\ti"
+            },
+            {
+              "path": "test_add_replace_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxAddNewKey(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\terr := c.Add(\"new\", \"val\", DefaultExpiration)\n\tif err != nil {\n\t\tt.Fatalf(\"Add on new key should succeed, got %v\", err)\n\t}\n}\n\nfunc TestBlackboxAddExistingKey(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"exists\", \"val\","
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Add` uses `c.get(k)` under lock, and `get` treats expired entries as absent, so `Add` succeeds for missing or expired keys and fails for live keys."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`Replace` fails (returns error) if the key does not exist or the existing item has expired.",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "key to be found after Add\")\n\t}\n\tif v.(string) != \"new\" {\n\t\tt.Fatalf(\"expected 'new', got %v\", v)\n\t}\n}\n\nfunc TestBlackboxReplaceOnExpiredKeyFails(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"k\", \"old\", 50*time.Millisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\terr := c.Replace(\"k\", \"new\", DefaultExpiration)\n\tif err == nil {\n\t\tt.Fatal(\"Replace on expired key should fail\")\n\t}\n}\n\nfunc Test"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "{\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s already exists\", k)\n\t}\n\tc.set(k, x, d)\n\tc.mu.Unlock()\n\treturn nil\n}\n\n// Replace sets a new value for the cache key only if it already exists (and has not expired).\nfunc (c *cache) Replace(k string, x interface{}, d time.Duration) error {\n\tc.mu.Lock()\n\t_, found := c.get(k)\n\tif !found {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s doesn't exist\", k)\n\t}"
+            },
+            {
+              "path": "test_add_replace_test.go",
+              "excerpt": "xists\", \"val2\", DefaultExpiration)\n\tif err == nil {\n\t\tt.Fatal(\"Add on existing key should fail\")\n\t}\n}\n\nfunc TestBlackboxReplaceExisting(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"k\", \"old\", DefaultExpiration)\n\terr := c.Replace(\"k\", \"new\", DefaultExpiration)\n\tif err != nil {\n\t\tt.Fatalf(\"Replace on existing key should succeed, got %v\", err)\n\t}\n\tv, _ := c.Get(\"k\")\n\tif v.(string) != \"new\" {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Replace` also uses `c.get(k)`, so it returns an error when the key is missing or expired."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`Increment` and `Decrement` (and their typed variants) return an error if the key is not found or has expired, or if the stored value is not a supported numeric type.",
+          "evidence": [
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestDecrementIntDecrementsValue(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"counter\", 10, DefaultExpiration)\n\n\tval, err := c.DecrementInt(\"counter\", 3)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 7 {\n\t\tt.Errorf(\"expected 7, got %d\", val"
+            },
+            {
+              "path": "test_increment_test.go",
+              "excerpt": "package cache\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBlackboxIncrementInt(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"counter\", int(10), DefaultExpiration)\n\tn, err := c.IncrementInt(\"counter\", 5)\n\tif err != nil {\n\t\tt.Fatalf(\"IncrementInt failed: %v\", err)\n\t}\n\tif n != 15 {\n\t\tt.Fatalf(\"expected 15, got %d\", n)\n\t}\n}\n\nfunc TestBlackbox"
+            },
+            {
+              "path": "numeric.go",
+              "excerpt": "package cache\n\nimport (\n\t\"fmt\"\n)\n\n// Increment increments an item of type int, int8, int16, int32, int64, uintptr,\n// uint, uint8, uint32, or uint64, float32 or float64 by n. Returns an error if the\n// item's value is not an integer, if it was not found, or if it is not an integer type.\n// To retrieve the incremente"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The implemented generic and required typed numeric methods all check for missing or expired items and reject wrong stored types with errors."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`ItemCount` returns the number of items in the internal map, which may include expired but not-yet-cleaned-up items.",
+          "evidence": [
+            {
+              "path": "cache.go",
+              "excerpt": "for k, v := range c.items {\n\t\tif v.Expiration > 0 && now > v.Expiration {\n\t\t\tcontinue\n\t\t}\n\t\tm[k] = v\n\t}\n\treturn m\n}\n\n// ItemCount returns the number of items in the cache (may include expired items not yet evicted).\nfunc (c *cache) ItemCount() int {\n\tc.mu.RLock()\n\tn := len(c.items)\n\tc.mu.RUnlock()\n\treturn n\n}\n\n// Flush removes all items from the cache.\nfunc (c *cache) Flush() {\n\tc.mu.Lock()\n\tc.ite"
+            },
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": ".Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif val != 7 {\n\t\tt.Errorf(\"expected 7, got %d\", val)\n\t}\n}\n\nfunc TestDecrementIntReturnsErrorForMissingKey(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\n\t_, err := c.DecrementInt(\"nonexistent\", 1)\n\tif err == nil {\n\t\tt.Error(\"expected error for missing key\")\n\t}\n}\n\nfunc TestDecrementIntReturnsErrorForWrongType(t *testing.T) {\n\tc := New(5*time.Minute"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": ".GetWithExpiration(\"missing\")\n\tif found {\n\t\tt.Fatal(\"expected non-existent key to not be found\")\n\t}\n}\n\nfunc TestBlackboxItemCountIncludesExpiredItems(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"temp\", \"val\", 50*time.Millisecond)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(100 * time.Millisecond)\n\t// ItemCount includes expired but not-yet-cleaned items\n\tif c.ItemCount() != 2 {\n\t\tt"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ItemCount` returns `len(c.items)` directly in `repo/cache.go`, so expired but not yet removed items are included."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`IncrementFloat` and `DecrementFloat` operate only on float32/float64 values; they return an error for other types.",
+          "evidence": [
+            {
+              "path": "numeric.go",
+              "excerpt": "em of integer or float type by n.\nfunc (c *cache) Decrement(k string, n int64) error {\n\treturn c.Increment(k, -n)\n}\n\n// IncrementFloat increments an item of type float32 or float64 by n.\nfunc (c *cache) IncrementFloat(k string, n float64) error {\n\tc.mu.Lock()\n\tv, found := c.items[k]\n\tif !found || v.Expired() {\n\t\tc.mu.Unlock()\n\t\treturn fmt.Errorf(\"Item %s not found\", k)\n\t}\n\tswitch v.Object.(type) {"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "(\"k\", \"new\", DefaultExpiration)\n\tif err == nil {\n\t\tt.Fatal(\"Replace on expired key should fail\")\n\t}\n}\n\nfunc TestBlackboxIncrementFloatMethod(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"f\", float64(2.5), DefaultExpiration)\n\terr := c.IncrementFloat(\"f\", 1.5)\n\tif err != nil {\n\t\tt.Fatalf(\"IncrementFloat failed: %v\", err)\n\t}\n\tv, found := c.Get(\"f\")\n\tif !found {\n\t\tt.Fatal(\"expected key to be fou"
+            },
+            {
+              "path": "test_increment_test.go",
+              "excerpt": "mentInt(\"missing\", 1)\n\tif err == nil {\n\t\tt.Fatal(\"IncrementInt on non-existent key should fail\")\n\t}\n}\n\nfunc TestBlackboxIncrementFloat64(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"fcount\", float64(1.5), DefaultExpiration)\n\tn, err := c.IncrementFloat64(\"fcount\", 2.5)\n\tif err != nil {\n\t\tt.Fatalf(\"IncrementFloat64 failed: %v\", err)\n\t}\n\tif n != 4.0 {\n\t\tt.Fatalf(\"expected 4.0, got %f\", n)\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`IncrementFloat` switches only on `float32` and `float64`, and `DecrementFloat` delegates to it, returning an error for other types."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "The repository is laid out directly at the project root with `go.mod` and package files, matching the required root-relative project shape."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/patrickmn/go-cache\n\ngo 1.22"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "{\n\treturn newCacheWithJanitor(defaultExpiration, cleanupInterval, items)\n}\n\n// Set adds an item to the cache, replacing any existing item.\n// If the duration is 0 (DefaultExpiration), the cache's default expiration time is used.\n// If it is -1 (NoExpiration), the item never expires.\nfunc (c *cache) Set(k string, x interface{}, d time.Duration) {\n\tvar e int64\n\tif d == DefaultExpiration {\n\t\td = c.de"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "second)\n\t// ItemCount includes expired but not-yet-cleaned items\n\tif c.ItemCount() != 2 {\n\t\tt.Fatalf(\"expected 2 items (including expired), got %d\", c.ItemCount())\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "A standard Go module layout is present, including `repo/go.mod` with the package source files at module root."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_decrement_items_test.go",
+              "excerpt": "func TestDecrementIntReturnsErrorForWrongType(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"str\", \"not an int\", DefaultExpiration)\n\n\t_, err := c.DecrementInt(\"str\", 1)\n\tif err == nil {\n\t\tt.Error(\"expected error for wrong type\")\n\t}\n}\n\nfunc TestDecrementIntMultipleTimes(t *testing.T) {\n\tc := New(5*time.Minute, 10*time.Minute)\n\tc.Set(\"n\", 100, DefaultExpiration)\n\n\tfor i := 0; i <"
+            },
+            {
+              "path": "test_delete_test.go",
+              "excerpt": ".Set(\"k\", \"v\", DefaultExpiration)\n\tc.Delete(\"k\")\n\t_, found := c.Get(\"k\")\n\tif found {\n\t\tt.Fatal(\"expected deleted key to not be found\")\n\t}\n}\n\nfunc TestBlackboxItemCount(t *testing.T) {\n\tc := New(5*time.Minute, 0)\n\tc.Set(\"a\", 1, DefaultExpiration)\n\tc.Set(\"b\", 2, DefaultExpiration)\n\tif c.ItemCount() != 2 {\n\t\tt.Fatalf(\"expected 2 items, got %d\", c.ItemCount())\n\t}\n}\n\nfunc TestBlackboxFlush(t *testing.T"
+            },
+            {
+              "path": "test_expiration_test.go",
+              "excerpt": "lisecond)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"exp\")\n\tif found {\n\t\tt.Fatal(\"expected expired item to not be found\")\n\t}\n}\n\nfunc TestBlackboxNoExpiration(t *testing.T) {\n\tc := New(50*time.Millisecond, 0)\n\tc.Set(\"perm\", \"val\", NoExpiration)\n\ttime.Sleep(100 * time.Millisecond)\n\t_, found := c.Get(\"perm\")\n\tif !found {\n\t\tt.Fatal(\"expected NoExpiration item to persist\")\n\t}\n}\n\nfunc TestB"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repository includes multiple `_test.go` files at the root, so the output does not fully satisfy the instruction to avoid generating test files."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "`go.mod` module path is `github.com/patrickmn/go-cache`; package name is `cache`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/patrickmn/go-cache\n\ngo 1.22"
+            },
+            {
+              "path": "cache.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"runtime\"\n\t\"sync\"\n\t\"time\"\n)\n\nconst (\n\t// NoExpiration means the item never expires.\n\tNoExpiration time.Duration = -1\n\t// DefaultExpiration uses the cache's default expiration time.\n\tDefaultExpiration time.Duration = 0\n)"
+            },
+            {
+              "path": "serialize.go",
+              "excerpt": "package cache\n\nimport (\n\t\"encoding/gob\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\n// Save writes the cache's items to w using gob encoding.\nfunc (c *cache) Save(w io.Writer) (err error) {\n\tenc := gob.NewEncoder(w)\n\tdefer func() {\n\t\tif x := recover(); x != nil {\n\t\t\terr = fmt.Errorf(\"Error registering"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/patrickmn/go-cache`, and the source files use `package cache`."
+        }
+      ],
+      "feature_count": 29,
+      "constraint_count": 0,
+      "implemented_count": 28,
+      "partial_count": 1,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 0.9828,
+      "constraint_coverage": 0.9828,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.8,
+        "stack_alignment": 3.9,
+        "reference_alignment": 3.1
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "0",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe submission implements the requested `cache` package with thread-safe storage, TTL expiration, optional janitor cleanup, eviction callbacks, gob-based persistence, and the required public API surface. Behavioral constraints for add/replace semantics, expiration-aware reads, item counting, and float-only `IncrementFloat`/`DecrementFloat` are reflected in the actual source.\n\n### Missing List\n\n- Prompt constraint `F028` is not fully met because the repository includes test files.\n\n### Critical Constraint Misses\n\n- The repository contains generated test files (`*_test.go`), which conflicts with the prompt instruction not to generate test files.",
+    "architecture_review": "### Stack Inference\n\nThe repository is clearly a Go module implementing a small library package named `cache`, with a flat root-level layout (`go.mod` plus package files) and no application entrypoint. That matches the inferred stack of a Go library using the standard module system and in-memory persistence only.\n\n### Scoring Mode\n\nThis is an architecture review, so the scores focus on repository shape, package layout, file responsibilities, build coherence, and fit with normal Go library conventions. I am not treating repository size as a proxy for quality, and I am weighting buildability and structural alignment more heavily than raw feature coverage.\n\n### Strengths\n\n- The top-level layout is simple and recognizable for a small Go library: one module, one package, and a few files split by concern (`cache`, `numeric`, `serialize`, `janitor`).\n- Public API exposure is coordinated around an exported `Cache` type and root package `cache`, which fits normal Go library consumption patterns.\n- Separating background eviction and gob serialization into dedicated files is a reasonable architectural split for this project size.\n- There is no unnecessary framework or directory indirection; for a lightweight in-memory cache, the overall package footprint stays appropriately small.\n\n### Issues\n\n- `cache.go` carries imports like `encoding/gob`, `io`, and `os` that are only used in [serialize.go]; in Go imports are file-scoped, so this root file would not compile as written. That is a structural/build-coordination problem, not just a style issue.\n- The repository includes multiple `*_test.go` files in the deliverable even though the prompt explicitly said not to generate test files. That weakens alignment to the requested project shape.\n- `numeric.go` is a very large block of near-duplicate typed increment/decrement methods with little internal abstraction. It is functionally plausible, but the organization is brittle and increases maintenance cost for a small library.\n- All code lives in the root package, which is acceptable for a tiny Go library, but `cache.go` still mixes core cache API, constructors, expiration logic, and some implementation wiring; the split is only partially cohesive.\n\n### Stack Mismatches\n\n- For a standard Go library, the compile unit should be clean per file; the unused imports in `cache.go` conflict with normal Go build discipline.\n- Go libraries commonly keep generated evaluation tests outside the main deliverable unless explicitly requested; bundling them here is atypical relative to the task.\n\n### Reference Gaps\n\n- The prompt required source generation without test files, but the repository ships a substantial suite of generated tests.\n- The requested minimal project shape was a clean library module; the extra tests change the deliverable shape even if the core package files are otherwise plausible.\n- I could not fully validate build/test execution because the workspace does not have the `go` tool installed, so runtime verification is unavailable."
+  },
+  "task": "go/go-cache/L0_go-cache",
+  "solver": "generated_outputs"
+}

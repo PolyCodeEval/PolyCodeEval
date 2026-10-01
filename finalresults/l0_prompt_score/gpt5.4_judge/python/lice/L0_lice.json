@@ -1,0 +1,30 @@
+{
+  "task": "python/lice/L0_lice",
+  "project": "python/lice",
+  "language": "python",
+  "prompt_path": "datasets/python/lice/tasks/L0_lice/prompt.md",
+  "project_root": "datasets/python/lice",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 3.9,
+      "reason": "Prompt覆盖了模板发现、变量渲染、注释格式化、CLI入口与核心模块划分，也点到了默认许可证与header场景，足以概括仓库核心能力；但对真实CLI支持的`--vars`、`--licenses`、`--languages`、`--template`、写文件行为、组织名自动推断等重要能力覆盖不足，且未反映更广泛的语言映射与模板集合。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "黑盒相关接口的签名、主要输入输出和关键示例较明确，`extract_vars`、`generate_license`、`valid_year`、`get_suffix`、`load_template`、`format_license`的测试导向约束基本清晰；但`output rendered license text or update files according to the tool’s contract`这类CLI描述仍偏泛，部分真实返回约定如`get_suffix`返回falsy而非严格`None`也留有实现空间。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "Prompt直接列出了黑盒测试所依赖的核心API、签名与行为，并包含`load_template(header=True)`这一已知缺陷约束，基本可支持实现并通过当前黑盒测试；不足在于CLI层面的可验证契约没有像核心API一样细化，因此更偏向支持函数级测试而非完整项目行为测试。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "整体描述与真实实现大体一致：入口在`lice.main()`，核心逻辑集中于`lice.core`，模板目录驱动许可证发现，注释格式化按语言映射处理；但仍有若干不完全贴合之处，例如源码实际默认许可证为`bsd3`、`get_suffix`对未知扩展返回`False`、真实项目还支持从git或用户信息猜测organization及多个CLI列举模式，这些关键实现细节未被准确反映。"
+    }
+  },
+  "overall_score": 4.25,
+  "raw_response_file": "L0_lice.raw.md"
+}

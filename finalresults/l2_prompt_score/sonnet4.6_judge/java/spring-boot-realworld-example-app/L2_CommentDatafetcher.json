@@ -1,0 +1,24 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L2_CommentDatafetcher",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L2_CommentDatafetcher/prompt.md",
+  "task_json_path": "datasets/java/spring-boot-realworld-example-app/tasks/L2_CommentDatafetcher/task.json",
+  "source_file_path": "datasets/java/spring-boot-realworld-example-app/src/main/java/io/spring/graphql/CommentDatafetcher.java",
+  "target_file": "io/spring/graphql/CommentDatafetcher.java",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level and function-level descriptions are highly accurate and closely match the implementation. All three hollowed functions are described with correct behavior: `getComment` reads from local context and returns a mapped Comment with a local context map keyed by comment id; `articleComments` validates pagination inputs, resolves the current user, reads article source and local context, branches on first/last, calls the query service, and builds a CommentsConnection with edges and pageInfo; `buildCommentPageInfo` correctly wraps cursors as DefaultConnectionCursor and uses hasPrevious/hasNext. The description correctly notes the IllegalArgumentException message (though the actual message is in Chinese: '第一个和最后一个必须只存在一个', which the description paraphrases as 'existing message' — acceptable). One minor gap: the description for `getComment` says the local context is read 'from the DGS local context', which is accurate, but doesn't clarify it's a direct `CommentData` object (not a map), which is a subtle but reconstructable detail. The `articleComments` description mentions `SecurityUtil.getCurrentUser()` implicitly via 'current authenticated user' without naming the utility class, which is a small omission. Overall the descriptions are complete enough to reconstruct the file faithfully.",
+  "missing_functionality": [
+    "The description does not name the `SecurityUtil.getCurrentUser()` utility used to resolve the current user in `articleComments`, which a model would need to know to reconstruct the exact call.",
+    "The `getComment` description does not clarify that `dfe.getLocalContext()` returns a `CommentData` directly (not a map), which is a subtle but important implementation detail."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the IllegalArgumentException uses 'the existing message' without quoting or describing it, which is vague — the actual message is a Chinese-language string ('first 和 last 必须只存在一个')."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_CommentDatafetcher.raw.md"
+}

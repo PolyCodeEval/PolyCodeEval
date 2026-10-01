@@ -1,0 +1,850 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.81,
+  "stdout": "\nup to date in 532ms\n\n44 packages are looking for funding\n  run `npm fund` for details\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 10.9.8 -> 11.17.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0\nnpm notice To update run: npm install -g npm@11.17.0\nnpm notice\n● Validation Error:\n\n  Module /workspace/src/node_modules/jest-circus/build/runner.js in the testRunner option was not found.\n         <rootDir> is: /workspace/src\n\n  Configuration Documentation:\n  https://jestjs.io/docs/configuration\n\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && npm install && (node node_modules/typescript/bin/tsc -b tsconfig.build.json 2>/dev/null || npm run build 2>/dev/null || true) && mkdir -p __blackbox__ && cp /workspace/blackbox_tests/*.test.js __blackbox__/ && python3 -c \"import json; open('jest.blackbox.json','w').write(json.dumps({'testEnvironment':'node','transform':{},'moduleNameMapper':{'\\\\.\\\\./(src|index)':'<rootDir>/dist/index'}}))\"",
+    "test": "cd /workspace/src && node node_modules/cross-env/src/bin/cross-env.js TZ='Europe/Paris' node node_modules/jest-cli/bin/jest.js __blackbox__/ --no-coverage --config jest.blackbox.json",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && npm install && (node node_modules/typescript/bin/tsc -b tsconfig.build.json 2>/dev/null || npm run build 2>/dev/null || true) && mkdir -p __blackbox__ && cp /workspace/blackbox_tests/*.test.js __blackbox__/ && python3 -c \"import json; open('jest.blackbox.json','w').write(json.dumps({'testEnvironment':'node','transform':{},'moduleNameMapper':{'\\\\.\\\\./(src|index)':'<rootDir>/dist/index'}}))\"",
+      "test": "cd /workspace/src && node node_modules/cross-env/src/bin/cross-env.js TZ='Europe/Paris' node node_modules/jest-cli/bin/jest.js __blackbox__/ --no-coverage --config jest.blackbox.json",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.46,
+    "Architecture": 2.77,
+    "Health": 5.0
+  },
+  "overall_score": 2.31,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`index.ts` publicly exports `CronJob`, `CronTime`, `CronError`, `sendAt`, `timeout`, and `validateCronExpression`, covering the required public entry points section."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "`CronJob`",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\nd"
+            },
+            {
+              "path": "index.ts",
+              "excerpt": "import { DateTime } from 'luxon';\nimport { CronJob } from './job';\nimport { CronError } from './errors';\nimport { CronTime } from './time';\n\nexport { CronJob, CronTime, CronError };\n\nexport type {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tRanges,\n\tTimeUnit"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` exports `CronJob`, and `job.ts` defines the `CronJob` class."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`CronTime`",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  te"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cronTime: '* * * * *', onTick: () => {} });\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('isActive is false before start', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job.isActive).toBe(false);\n    job.stop();\n  });\n\n  test('isActive is"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` exports `CronTime`, and `time.ts` defines the `CronTime` class."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`sendAt`",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e(Date.now() + 60 * 60 * 1000);\n    const ct = new CronTime(future);\n    expect(ct.realDate).toBe(true);\n  });\n\n  test('sendAt() on future Date returns that DateTime', () => {\n    const future = new Date(Date.now() + 60 * 60 * 1000);\n    const ct = new CronTime(future);\n    const dt = ct.sendAt();\n    expect(dt.toMillis()).toBeGreaterThan(Date.now());\n  });\n});\n\ndescribe('CronTime - timeZone const"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  tes"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "tring returns a string', () => {\n    expect(typeof new CronTime('0 * * * *').toString()).toBe('string');\n  });\n\n  test('sendAt() returns next DateTime', () => {\n    expect(new CronTime('0 * * * *').sendAt()).toBeDefined();\n  });\n\n  test('sendAt(n) returns array of n DateTimes', () => {\n    const dates = new CronTime('0 * * * *').sendAt(3);\n    expect(Array.isArray(dates)).toBe(true);\n    expect(da"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` exports `sendAt`, implemented by constructing `CronTime` and calling `.sendAt()`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`timeout`",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('Cron"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "1', () => {\n    const dates = new CronTime('0 * * * *').sendAt(1);\n    expect(dates.length).toBe(1);\n  });\n\n  test('getTimeout returns positive number', () => {\n    expect(new CronTime('* * * * *').getTimeout()).toBeGreaterThan(0);\n  });\n});\n\ndescribe('CronTime.validateCronExpression', () => {\n  test('valid 5-field expression', () => {\n    expect(CronTime.validateCronExpression('0 * * * *').valid"
+            },
+            {
+              "path": "index.ts",
+              "excerpt": "sendAt = (cronTime: string | Date | DateTime): DateTime =>\n\tnew CronTime(cronTime).sendAt() as DateTime;\n\nexport const timeout = (cronTime: string | Date | DateTime): number =>\n\tnew CronTime(cronTime).getTimeout();\n\nexport const validateCronExpression = CronTime.validateCronExpression;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` exports `timeout`, implemented by constructing `CronTime` and calling `.getTimeout()`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`validateCronExpression`",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "ateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime -"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from 6-field cron string', () => {"
+            },
+            {
+              "path": "index.ts",
+              "excerpt": "ort const timeout = (cronTime: string | Date | DateTime): number =>\n\tnew CronTime(cronTime).getTimeout();\n\nexport const validateCronExpression = CronTime.validateCronExpression;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` re-exports `CronTime.validateCronExpression` as `validateCronExpression`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`CronError`",
+          "evidence": [
+            {
+              "path": "errors.ts",
+              "excerpt": "export class CronError extends Error {\n\tconstructor(message: string) {\n\t\tsuper(message);\n\t\tthis.name = 'CronError';\n\t}\n}\n\nexport class ExclusiveParametersError extends CronError {\n\tconstructor(param1: string, param2: string) {\n\t\tsuper(`Parameters \"${param1}\" and \"${param2}\" are mutually exclu"
+            },
+            {
+              "path": "index.ts",
+              "excerpt": "import { DateTime } from 'luxon';\nimport { CronJob } from './job';\nimport { CronError } from './errors';\nimport { CronTime } from './time';\n\nexport { CronJob, CronTime, CronError };\n\nexport type {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tRanges,\n\tTimeUnit\n} from './types/cron.types';\n\nex"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "import { spawn } from 'child_process';\nimport { DateTime } from 'luxon';\nimport { CronError, ExclusiveParametersError } from './errors';\nimport { CronTime } from './time';\nimport {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst M"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`errors.ts` defines `CronError`, and `index.ts` re-exports it."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`CronJob` should support constructor usage shaped like `new CronJob(cronTime, onTick, onComplete?, start?)`",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\nd"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from 6-field cron string', () => {\n    expect(new CronTime('0 0 * * * *')).toBeDefined();\n  });\n\n  test('toString returns a string', () => {\n    expect(typeof new CronTime('0 * * * *').toString()).toBe('str"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` constructor accepts `(cronTime, onTick, onComplete?, start?, ...)`, so the required 4-argument shape is supported."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`CronTime` should support constructor usage shaped like `new CronTime(expression)`",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  te"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": ", 4, 5, 6] as const;\nconst MAX_YEARS_AHEAD = 8;\ntype AnyTimeUnitField = Partial<Record<number, boolean>>;\n\nexport class CronTime {\n\tsource: string | DateTime;\n\ttimeZone?: string;\n\tutcOffset?: number;\n\trealDate = false;\n\n\tprivate second: TimeUnitField<'second'> = {};\n\tprivate minute: TimeUnitField<'minute'> = {};\n\tprivate hour: TimeUnitField<'hour'> = {};\n\tprivate dayOfMonth: TimeUnitField<'dayOfMo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` constructor accepts a single cron expression string via `new CronTime(expression)`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "static constructor `CronJob.from(...)`",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "st job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cronTime: '* * * * *', onTick: () => {} });\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('isActive is false before start', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job.isActive)."
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "lback\n\t\t\t\t: undefined;\n\t\t}\n\n\t\tif (runOnInit) {\n\t\t\tvoid this.fireOnTick();\n\t\t}\n\n\t\tif (start) {\n\t\t\tthis.start();\n\t\t}\n\t}\n\n\tstatic from<OC extends CronOnCompleteCommand | null = null, C = null>(\n\t\tparams: CronJobParams<OC, C>\n\t) {\n\t\tif ('timeZone' in params) {\n\t\t\treturn new CronJob(\n\t\t\t\tparams.cronTime,\n\t\t\t\tparams.onTick,\n\t\t\t\tparams.onComplete,\n\t\t\t\tparams.start,\n\t\t\t\tparams.timeZone,\n\t\t\t\tparams.context"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "{\n\t\t\tthis.realDate = true;\n\t\t\tthis.source = source;\n\t\t\treturn;\n\t\t}\n\n\t\tthis.source = source;\n\t\tthis._parse(source);\n\t}\n\n\tstatic validateCronExpression(cronExpression: string): {\n\t\tvalid: boolean;\n\t\terror?: CronError;\n\t} {\n\t\ttry {\n\t\t\tnew CronTime(cronExpression);\n\t\t\treturn { valid: true };\n\t\t} catch (error) {\n\t\t\treturn {\n\t\t\t\tvalid: false,\n\t\t\t\terror: error instanceof CronError ? error : new CronError"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` defines static `CronJob.from(params)`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`CronJob` instance methods should include `start()`, `stop()`, `nextDate()`, `nextDates(n)`, `lastDate()`, `fireOnTick()`, `addCallback(fn)`, and `setTime(cronTime)`, plus readable `isActive` and `isCallbackRunning` states",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\nd"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "ametersError } from './errors';\nimport { CronTime } from './time';\nimport {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst MAX_TIMEOUT = 2_147_483_647;\n\nexport class CronJob<OC extends CronOnCompleteCommand | null = null, C = null> {\n\tcronTime: CronTime;\n\tunrefTimeou"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` provides `start`, `stop`, `nextDate`, `nextDates`, `lastDate`, `fireOnTick`, `addCallback`, `setTime`, plus readable getters `isActive` and `isCallbackRunning`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`CronJob` exposes a public `cronTime` property holding the current `CronTime` instance",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "ts';\nimport { CronError, ExclusiveParametersError } from './errors';\nimport { getRecordKeys } from './utils';\nimport {\n\tCronJobParams,\n\tRanges,\n\tTimeUnit,\n\tTimeUnitField\n} from './types/cron.types';\n\ntype CustomZone = Zone & {\n\tzoneName?: string;\n};\n\ntype CronSource = string | Date | DateTime;\n\nconst DAY_OF_WEEK_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;\nconst MAX_YEARS_AHEAD = 8;\ntype AnyTimeUnitFi"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\nd"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` declares public property `cronTime: CronTime` and updates it in the constructor and `setTime()`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`lastDate()` returns `null` before the first tick has occurred, then returns the last execution `Date`",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "dates[1].toMillis());\n    expect(dates[1].toMillis()).toBeLessThan(dates[2].toMillis());\n    job.stop();\n  });\n\n  test('lastDate returns null before first run', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job.lastDate()).toBeNull();\n    job.stop();\n  });\n});\n\ndescribe('CronJob - fireOnTick', () => {\n  test('fireOnTick calls the callback', async () => {\n    let called = f"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "onTime: '0 0 * * *',\n      onTick: () => {},\n      runOnInit: true,\n    });\n    await Promise.resolve();\n    expect(job.lastDate()).toBeInstanceOf(Date);\n    job.stop();\n  });\n});\n\ndescribe('CronJob - isCallbackRunning', () => {\n  test('isCallbackRunning is false when no tick is in progress', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job.isCallbackRunning).toBe(false);"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "ath.max(0, adjustedTimeout));\n\n\t\t\tif (this.unrefTimeout) {\n\t\t\t\tthis._timeout.unref();\n\t\t\t}\n\t\t};\n\n\t\tscheduleNext();\n\t}\n\n\tlastDate() {\n\t\treturn this.lastExecution;\n\t}\n\n\tprivate async _executeOnComplete() {\n\t\tif (!this.onComplete) {\n\t\t\treturn;\n\t\t}\n\n\t\ttry {\n\t\t\tawait this.onComplete();\n\t\t} catch (error) {\n\t\t\tif (this.errorHandler) {\n\t\t\t\tthis.errorHandler(error);\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tthrow error;\n\t\t}\n\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` initializes `lastExecution` to `null`, `lastDate()` returns it, and `fireOnTick()` sets it to `new Date()`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`CronJob` constructor and `CronJob.from` should support `runOnInit` (fire callback immediately on construction), `name` (string label stored on the job), and `errorHandler` (function called with any error thrown by the tick callback or async rejection)",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "e, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\nd"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "ametersError } from './errors';\nimport { CronTime } from './time';\nimport {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst MAX_TIMEOUT = 2_147_483_647;\n\nexport class CronJob<OC extends CronOnCompleteCommand | null = null, C = null> {\n\tcronTime: CronTime;\n\tunrefTimeou"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` constructor and `CronJob.from` both accept and wire through `runOnInit`, `name`, and `errorHandler`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`setTime(time)` accepts a `CronTime` instance; if the job was active it restarts with the new time",
+          "evidence": [
+            {
+              "path": "job.ts",
+              "excerpt": "});\n\t\t\t});\n\t}\n\n\taddCallback(callback: CronCallback<C, WithOnComplete<OC>>) {\n\t\tthis._callbacks.push(callback);\n\t}\n\n\tsetTime(time: CronTime) {\n\t\tconst wasActive = this.isActive;\n\t\tif (wasActive) {\n\t\t\tthis.stop();\n\t\t}\n\n\t\tthis.cronTime = time;\n\t\tthis.runOnce = time.realDate;\n\n\t\tif (wasActive) {\n\t\t\tthis.start();\n\t\t}\n\t}\n\n\tnextDate() {\n\t\treturn this.cronTime.sendAt() as DateTime;\n\t}\n\n\tasync fireOnTi"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * node-cron - advanced coverage: setTime, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n//"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('Cron"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` defines `setTime(time: CronTime)` and restarts the job when it was active."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`CronTime` constructor accepts a cron expression string, a JS `Date`, or a Luxon `DateTime`; passing a `Date`/`DateTime` sets `realDate = true` and schedules a one-shot run",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  te"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": ", 4, 5, 6] as const;\nconst MAX_YEARS_AHEAD = 8;\ntype AnyTimeUnitField = Partial<Record<number, boolean>>;\n\nexport class CronTime {\n\tsource: string | DateTime;\n\ttimeZone?: string;\n\tutcOffset?: number;\n\trealDate = false;\n\n\tprivate second: TimeUnitField<'second'> = {};\n\tprivate minute: TimeUnitField<'minute'> = {};\n\tprivate hour: TimeUnitField<'hour'> = {};\n\tprivate dayOfMonth: TimeUnitField<'dayOfMo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` constructor accepts `string | Date | DateTime`; for `Date`/`DateTime` it sets `realDate = true` and stores the normalized date source."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`CronTime` constructor accepts an optional `timeZone` (IANA string) or `utcOffset` (number, minutes); an invalid timezone string causes an error",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "ld_process';\nimport { DateTime } from 'luxon';\nimport { CronError, ExclusiveParametersError } from './errors';\nimport { CronTime } from './time';\nimport {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst MAX_TIMEOUT = 2_147_483_647;\n\nexport class CronJob<OC extends Cro"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": ", 4, 5, 6] as const;\nconst MAX_YEARS_AHEAD = 8;\ntype AnyTimeUnitField = Partial<Record<number, boolean>>;\n\nexport class CronTime {\n\tsource: string | DateTime;\n\ttimeZone?: string;\n\tutcOffset?: number;\n\trealDate = false;\n\n\tprivate second: TimeUnitField<'second'> = {};\n\tprivate minute: TimeUnitField<'minute'> = {};\n\tprivate hour: TimeUnitField<'hour'> = {};\n\tprivate dayOfMonth: TimeUnitField<'dayOfMo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` constructor accepts optional `timeZone` or `utcOffset`, rejects both together, and throws `CronError` for an invalid IANA timezone."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`CronTime` instance methods should include `toString()`, `toJSON()`, `sendAt(n?)`, `getTimeout()`, and `getNextDateFrom(start, timeZone?)`",
+          "evidence": [
+            {
+              "path": "time.ts",
+              "excerpt": ", 4, 5, 6] as const;\nconst MAX_YEARS_AHEAD = 8;\ntype AnyTimeUnitField = Partial<Record<number, boolean>>;\n\nexport class CronTime {\n\tsource: string | DateTime;\n\ttimeZone?: string;\n\tutcOffset?: number;\n\trealDate = false;\n\n\tprivate second: TimeUnitField<'second'> = {};\n\tprivate minute: TimeUnitField<'minute'> = {};\n\tprivate hour: TimeUnitField<'hour'> = {};\n\tprivate dayOfMonth: TimeUnitField<'dayOfMo"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  te"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` implements `toString()`, `toJSON()`, `sendAt(n?)`, `getTimeout()`, and `getNextDateFrom(start, timeZone?)`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`toJSON()` returns a 6-element string array (second, minute, hour, dayOfMonth, month, dayOfWeek); `toString()` is the space-joined result",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * node-cron - advanced coverage: setTime, toJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "nTime from 6-field cron string', () => {\n    expect(new CronTime('0 0 * * * *')).toBeDefined();\n  });\n\n  test('toString returns a string', () => {\n    expect(typeof new CronTime('0 * * * *').toString()).toBe('string');\n  });\n\n  test('sendAt() returns next DateTime', () => {\n    expect(new CronTime('0 * * * *').sendAt()).toBeDefined();\n  });\n\n  test('sendAt(n) returns array of n DateTimes', () => {"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "et = this.sendAt() as DateTime;\n\t\treturn target.toMillis() - this._getNow().toMillis();\n\t}\n\n\ttoString() {\n\t\treturn this.toJSON().join(' ');\n\t}\n\n\ttoJSON() {\n\t\tif (this.realDate) {\n\t\t\tconst source = this._normalizeDate(this.source as DateTime);\n\t\t\treturn [\n\t\t\t\tString(source.second),\n\t\t\t\tString(source.minute),\n\t\t\t\tString(source.hour),\n\t\t\t\tString(source.day),\n\t\t\t\tString(source.month),\n\t\t\t\tString(this."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` `toJSON()` returns six string elements and `toString()` returns `this.toJSON().join(' ')`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Preset shortcuts include `@yearly`, `@monthly`, `@weekly`, `@daily`, `@hourly`, `@minutely`, `@secondly`, `@weekdays`, and `@weekends`",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "h seconds', () => {\n    expect(CronTime.validateCronExpression('0 0 * * * *').valid).toBe(true);\n  });\n\n  test('@yearly preset', () => {\n    expect(CronTime.validateCronExpression('@yearly').valid).toBe(true);\n  });\n\n  test('@monthly preset', () => {\n    expect(CronTime.validateCronExpression('@monthly').valid).toBe(true);\n  });\n\n  test('@weekly preset', () => {\n    expect(CronTime.validateCronExp"
+            },
+            {
+              "path": "constants.ts",
+              "excerpt": "ute',\n\t'hour',\n\t'dayOfMonth',\n\t'month',\n\t'dayOfWeek'\n];\n\nexport const TIME_UNITS_LEN = TIME_UNITS.length;\n\nexport const PRESETS = Object.freeze({\n\t'@yearly': '0 0 0 1 1 *',\n\t'@monthly': '0 0 0 1 * *',\n\t'@weekly': '0 0 0 * * 0',\n\t'@daily': '0 0 0 * * *',\n\t'@hourly': '0 0 * * * *',\n\t'@minutely': '0 * * * * *',\n\t'@secondly': '* * * * * *',\n\t'@weekdays': '0 0 0 * * 1-5',\n\t'@weekends': '0 0 0 * * 0,6'"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "import { DateTime, FixedOffsetZone, Zone } from 'luxon';\nimport {\n\tALIASES,\n\tCONSTRAINTS,\n\tPARSE_DEFAULTS,\n\tPRESETS,\n\tRE_RANGE,\n\tRE_WILDCARDS,\n\tTIME_UNITS,\n\tTIME_UNITS_LEN\n} from './constants';\nimport { CronError, ExclusiveParametersError } from './errors';\nimport { getRecordKeys } from './utils';\nimport {\n\tCronJobParams,\n\tRanges,\n\tTimeUnit,\n\tTimeUnitField\n} from './types/cron.types';"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`constants.ts` defines all required presets, and `time.ts` resolves presets during parsing."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Month and day-of-week name aliases (`jan`–`dec`, `sun`–`sat`) are supported in cron expressions",
+          "evidence": [
+            {
+              "path": "constants.ts",
+              "excerpt": "export const CONSTRAINTS = Object.freeze({\n\tsecond: [0, 59],\n\tminute: [0, 59],\n\thour: [0, 23],\n\tdayOfMonth: [1, 31],\n\tmonth: [1, 12],\n\tdayOfWeek: [0, 7]\n} as const);\n\nexport const PARSE_DEFAULTS = Object.freeze({\n\tsecond: '0',\n\tminute: '*',\n\thour: '*',\n\tdayOfMonth: '*',\n\tmonth: '*',\n\tdayOfWeek: '*'\n} as const);\n\nexport const ALIASES = Object.freeze({\n\tjan: 1,\n\tfeb: 2,\n\tmar: 3,"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "t('@weekends preset', () => {\n    expect(CronTime.validateCronExpression('@weekends').valid).toBe(true);\n  });\n\n  test('month name alias (jan)', () => {\n    expect(CronTime.validateCronExpression('0 0 1 jan *').valid).toBe(true);\n  });\n\n  test('day-of-week alias (mon-fri)', () => {\n    expect(CronTime.validateCronExpression('0 9 * * mon-fri').valid).toBe(true);\n  });\n\n  test('rejects too many fiel"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "'second'> = {};\n\tprivate minute: TimeUnitField<'minute'> = {};\n\tprivate hour: TimeUnitField<'hour'> = {};\n\tprivate dayOfMonth: TimeUnitField<'dayOfMonth'> = {};\n\tprivate month: TimeUnitField<'month'> = {};\n\tprivate dayOfWeek: TimeUnitField<'dayOfWeek'> = {};\n\n\tconstructor(source: CronSource, timeZone?: CronJobParams['timeZone'], utcOffset?: null);\n\tconstructor(source: CronSource, timeZone?: null,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`constants.ts` defines month/day aliases and `time.ts` replaces 3-letter aliases during parsing."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "validation should remain available both as the exported helper `validateCronExpression(...)` and as `CronTime.validateCronExpression(...)`",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "ateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime -"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Validation is available both as `CronTime.validateCronExpression(...)` and exported helper `validateCronExpression` from `index.ts`."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "validation helpers should return an object with a `valid` field used by callers",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "1000);\n    const ct = new CronTime(future);\n    expect(ct.realDate).toBe(true);\n  });\n\n  test('sendAt() on future Date returns that DateTime', () => {\n    const future = new Date(Date.now() + 60 * 60 * 1000);\n    const ct = new CronTime(future);\n    const dt = ct.sendAt();\n    expect(dt.toMillis()).toBeGreaterThan(Date.now());\n  });\n});\n\ndescribe('CronTime - timeZone constructor', () => {\n  test("
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "cOffset;\n\t\t}\n\n\t\tif (source instanceof Date) {\n\t\t\tthis.realDate = true;\n\t\t\tthis.source = DateTime.fromJSDate(source);\n\t\t\treturn;\n\t\t}\n\n\t\tif (DateTime.isDateTime(source)) {\n\t\t\tthis.realDate = true;\n\t\t\tthis.source = source;\n\t\t\treturn;\n\t\t}\n\n\t\tthis.source = source;\n\t\tthis._parse(source);\n\t}\n\n\tstatic validateCronExpression(cronExpression: string): {\n\t\tvalid: boolean;\n\t\terror?: CronError;\n\t} {\n\t\ttry {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` `validateCronExpression` returns an object with `valid: boolean` and optional `error`."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Source files should be TypeScript (`.ts`) placed in `src/`",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "ds\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime - Date / realDate source', () => {\n  test('accepts a future Date object', () => {\n    const future = new Date(Date.now() + 60 * 60 * 1000);\n    const ct = new CronTime(future);\n    expect(ct.realDate).toBe(true);\n  });\n\n  test('sendAt() on future Date returns that DateTime', () => {\n    const futu"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "el/traverse\": \"^7.29.7\",\n        \"@babel/types\": \"^7.29.7\",\n        \"@jridgewell/remapping\": \"^2.3.5\",\n        \"convert-source-map\": \"^2.0.0\",\n        \"debug\": \"^4.1.0\",\n        \"gensync\": \"^1.0.0-beta.2\",\n        \"json5\": \"^2.2.3\",\n        \"semver\": \"^6.3.1\"\n      },\n      \"engines\": {\n        \"node\": \">=6.9.0\"\n      },\n      \"funding\": {\n        \"type\": \"opencollective\",\n        \"url\": \"https://"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cron"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository has TypeScript source files, but they are at the repo root (`index.ts`, `job.ts`, `time.ts`, etc.), not under a `src/` directory."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "The blackbox tests import directly from `src/index` (the TypeScript source), so the `src/` directory must contain the full implementation",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime - Date / realDate source', () => {\n  tes"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cron"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from 6-field cron string', () => {\n    expect(new CronTime('0 0 * * * *')).to"
+            }
+          ],
+          "status": "missing",
+          "reason": "Blackbox tests import `../src/index`, but the visible repository does not contain a `src/` directory or `src/index.ts`; implementation files are at the root instead."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "provide `npm run build` to compile to a runnable output",
+          "evidence": [
+            {
+              "path": "tsconfig.build.json",
+              "excerpt": "{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"module\": \"commonjs\",\n    \"outDir\": \"dist\"\n  },\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*spec.ts\", \"**/*.test.ts\"]\n}"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "------------------------------------------------\n\ndescribe('CronJob - name option', () => {\n  test('name is stored when provided via constructor', () => {\n    const job = new CronJob('* * * * *', () => {}, null, false, null, null, false, null, false, false, null, 'my-job');\n    expect(job.name).toBe('my-job');\n    job.stop();\n  });\n\n  test('name is stored when provided via CronJob.from', () => {"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "ts\": false,\n    \"esModuleInterop\": true,\n    \"allowSyntheticDefaultImports\": true,\n    \"sourceMap\": false,\n    \"noErrorTruncation\": true,\n    \"resolveJsonModule\": true,\n    \"strict\": true,\n    \"forceConsistentCasingInFileNames\": true,\n    \"noFallthroughCasesInSwitch\": true,\n    \"noImplicitReturns\": true,\n    \"noPropertyAccessFromIndexSignature\": true,\n    \"noImplicitOverride\": true,\n    \"exactOpti"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`package.json` provides `npm run build` as `tsc -b tsconfig.build.json`, which is the required build command."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Must include `tsconfig.build.json` with `\"outDir\": \"dist\"` and `\"module\": \"commonjs\"`; `npm run build` must invoke `tsc -b tsconfig.build.json` and produce `dist/index.js`",
+          "evidence": [
+            {
+              "path": "tsconfig.build.json",
+              "excerpt": "{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"module\": \"commonjs\",\n    \"outDir\": \"dist\"\n  },\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*spec.ts\", \"**/*.test.ts\"]\n}"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "UnusedParameters\": true,\n    \"strictPropertyInitialization\": true,\n    \"lib\": [\"ES2019\"],\n    \"types\": [\"node\"]\n  },\n  \"include\": [\"./**/*.ts\"],\n  \"exclude\": [\"dist\", \"node_modules\"]\n}"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "on scheduler for Node.js\",\n  \"main\": \"dist/index.js\",\n  \"types\": \"dist/index.d.ts\",\n  \"scripts\": {\n    \"build\": \"tsc -b tsconfig.build.json\"\n  },\n  \"dependencies\": {\n    \"luxon\": \"~3.7.0\"\n  },\n  \"devDependencies\": {\n    \"@types/jest\": \"30.0.0\",\n    \"@types/luxon\": \"~3.7.0\",\n    \"@types/node\": \"24.10.4\",\n    \"cross-env\": \"7.0.3\",\n    \"jest\": \"30.3.0\",\n    \"typescript\": \"5.9.3\"\n  }\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`tsconfig.build.json` contains `\"outDir\": \"dist\"` and `\"module\": \"commonjs\"`, and `package.json` runs `tsc -b tsconfig.build.json`; with the current TS entrypoint layout this would emit `dist/index.js`."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "`luxon` must be listed in `dependencies`; do not include `@swc/jest`, `@swc/core`, or `ts-jest` in devDependencies; use `jest@30.3.0` in devDependencies",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "ires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"cron\",\n      \"version\": \"1.0.0\",\n      \"dependencies\": {\n        \"luxon\": \"~3.7.0\"\n      },\n      \"devDependencies\": {\n        \"@types/jest\": \"30.0.0\",\n        \"@types/luxon\": \"~3.7.0\",\n        \"@types/node\": \"24.10.4\",\n        \"cross-env\": \"7.0.3\",\n        \"jest\": \"30.3.0\",\n        \"typescript\": \"5.9.3\"\n      }\n    },\n    \"node_modules/@babel/"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\",\n  \"types\": \"dist/index.d.ts\",\n  \"scripts\": {\n    \"build\": \"tsc -b tsconfig.build.json\"\n  },\n  \"dependencies\": {\n    \"luxon\": \"~3.7.0\"\n  },\n  \"devDependencies\": {\n    \"@types/jest\": \"30.0.0\",\n    \"@types/luxon\": \"~3.7.0\",\n    \"@types/node\": \"24.10.4\",\n    \"cross-env\": \"7.0.3\",\n    \"jest\": \"30.3.0\",\n    \"typescript\": \"5.9.3\"\n  }\n}"
+            },
+            {
+              "path": "time.ts",
+              "excerpt": "import { DateTime, FixedOffsetZone, Zone } from 'luxon';\nimport {\n\tALIASES,\n\tCONSTRAINTS,\n\tPARSE_DEFAULTS,\n\tPRESETS,\n\tRE_RANGE,\n\tRE_WILDCARDS,\n\tTIME_UNITS,\n\tTIME_UNITS_LEN\n} from './constants';\nimport { CronError, ExclusiveParametersError } from './errors';\nimport { getRecordKeys } from './utils';\nimport {\n\tCronJobParams,\n\tRang"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`package.json` lists `luxon` in `dependencies`, uses `jest: 30.3.0`, and does not include `@swc/jest`, `@swc/core`, or `ts-jest` in `devDependencies`."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Cron Expression Parsing (`CronTime`)",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  })"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.s"
+            },
+            {
+              "path": "types/cron.types.ts",
+              "excerpt": "d_process';\nimport { DateTime } from 'luxon';\nimport { CONSTRAINTS, TIME_UNITS_MAP } from '../constants';\nimport type { CronJob } from '../job';\nimport type { CronTime } from '../time';\nimport { IntRange } from './utils';\n\ninterface BaseCronJobParams<\n\tOC extends CronOnCompleteCommand | null = null,\n\tC = null\n> {\n\tcronTime: string | Date | DateTime | CronTime;\n\tonTick: CronCommand<C, WithOnComplet"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` implements cron expression parsing, validation, presets, aliases, and next-date calculation."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "Job Scheduling (`CronJob`)",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  })"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "ersError } from './errors';\nimport { CronTime } from './time';\nimport {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst MAX_TIMEOUT = 2_147_483_647;\n\nexport class CronJob<OC extends CronOnCompleteCommand | null = null, C = null> {\n\tcronTime: CronTime;\n\tunrefTimeout ="
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "oJSON, getNextDateFrom,\n * aliases, additional presets, error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescr"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` implements job scheduling, start/stop lifecycle, next dates, callback execution, and one-shot handling."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "System Command Execution",
+          "evidence": [
+            {
+              "path": "job.ts",
+              "excerpt": "port {\n\tCronCallback,\n\tCronCommand,\n\tCronContext,\n\tCronJobParams,\n\tCronOnCompleteCallback,\n\tCronOnCompleteCommand,\n\tCronSystemCommand,\n\tWithOnComplete\n} from './types/cron.types';\n\nconst MAX_TIMEOUT = 2_147_483_647;\n\nexport class CronJob<OC extends CronOnCompleteCommand | null = null, C = null> {\n\tcronTime: CronTime;\n\tunrefTimeout = false;\n\tlastExecution: Date | null = null;\n\trunOnce = false;\n\tcon"
+            },
+            {
+              "path": "types/cron.types.ts",
+              "excerpt": "k : never\n) => void | Promise<void>;\n\nexport type CronOnCompleteCallback = () => void | Promise<void>;\n\nexport type CronSystemCommand =\n\t| string\n\t| {\n\t\t\tcommand: string;\n\t\t\targs?: readonly string[] | null;\n\t\t\toptions?: SpawnOptions | null;\n\t  };\n\nexport type CronCommand<C, WithOnCompleteBool extends boolean = false> =\n\t| CronCallback<C, WithOnCompleteBool>\n\t| CronSystemCommand;\n\nexport type CronO"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "ask queue\n    await Promise.resolve();\n    expect(called).toBe(true);\n    job.stop();\n  });\n\n  test('runOnInit sets lastExecution to a Date', async () => {\n    const job = CronJob.from({\n      cronTime: '0 0 * * *',\n      onTick: () => {},\n      runOnInit: true,\n    });\n    await Promise.resolve();\n    expect(job.lastDate()).toBeInstanceOf(Date);\n    job.stop();\n  });\n});\n\ndescribe('CronJob - isCa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` supports system command execution via `child_process.spawn` when a tick or completion command is provided as a string/object command."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "Static Factory Method",
+          "evidence": [
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "st job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cronTime: '* * * * *', onTick: () => {} });\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('isActive is false before start', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job.isActive)."
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime - Date / realDate source', () => {\n  test('accepts a future Date object', () => {\n    const future = new Date(Date.now() + 60 * 60 * 1000);\n    const ct = new CronTime(futur"
+            },
+            {
+              "path": "job.ts",
+              "excerpt": "lback\n\t\t\t\t: undefined;\n\t\t}\n\n\t\tif (runOnInit) {\n\t\t\tvoid this.fireOnTick();\n\t\t}\n\n\t\tif (start) {\n\t\t\tthis.start();\n\t\t}\n\t}\n\n\tstatic from<OC extends CronOnCompleteCommand | null = null, C = null>(\n\t\tparams: CronJobParams<OC, C>\n\t) {\n\t\tif ('timeZone' in params) {\n\t\t\treturn new CronJob(\n\t\t\t\tparams.cronTime,\n\t\t\t\tparams.onTick,\n\t\t\t\tparams.onComplete,\n\t\t\t\tparams.start,\n\t\t\t\tparams.timeZone,\n\t\t\t\tparams.context"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`job.ts` includes the static factory method `CronJob.from(...)`."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "Validation",
+          "evidence": [
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`time.ts` implements validation via `CronTime.validateCronExpression`, and `index.ts` re-exports it."
+        },
+        {
+          "id": "F034",
+          "type": "feature",
+          "text": "Exported Utilities",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`index.ts` exports utility helpers `sendAt`, `timeout`, and `validateCronExpression`."
+        },
+        {
+          "id": "F035",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": ", error paths, name, runOnInit, isCallbackRunning\n */\nconst { CronJob, CronTime, validateCronExpression } = require('../src/index');\n\n// ---------------------------------------------------------------------------\n// CronTime - additional construction & methods\n// ---------------------------------------------------------------------------\n\ndescribe('CronTime - Date / realDate source', () => {\n  tes"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "/**\n * node-cron - CronJob and sendAt/timeout helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cron"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "/**\n * node-cron - CronTime construction and validation\n */\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from 6-field cron string', () => {\n    expect(new CronTime('0 0 * * * *')).to"
+            }
+          ],
+          "status": "missing",
+          "reason": "The prompt/evaluation setup expects code under `src/`, but the actual repository keeps implementation files at the root, so it is not aligned with that placement requirement."
+        },
+        {
+          "id": "F036",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "},\n      \"devDependencies\": {\n        \"@types/jest\": \"30.0.0\",\n        \"@types/luxon\": \"~3.7.0\",\n        \"@types/node\": \"24.10.4\",\n        \"cross-env\": \"7.0.3\",\n        \"jest\": \"30.3.0\",\n        \"typescript\": \"5.9.3\"\n      }\n    },\n    \"node_modules/@babel/code-frame\": {\n      \"version\": \"7.29.7\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@babel/helper-vali"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"cron\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Timezone-aware cron scheduler for Node.js\",\n  \"main\": \"dist/index.js\",\n  \"types\": \"dist/index.d.ts\",\n  \"scripts\": {\n    \"build\": \"tsc -b tsconfig.build.json\"\n  },\n  \"dependencies\": {\n    \"luxon\": \"~3.7.0\"\n  },\n  \"devDependencies\": {\n    \"@types/jest\": \"30.0.0\",\n    \"@types/luxon\": \"~3.7.0\",\n    \"@types/node\": \"24"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "------------------------------------------------\n\ndescribe('CronJob - name option', () => {\n  test('name is stored when provided via constructor', () => {\n    const job = new CronJob('* * * * *', () => {}, null, false, null, null, false, null, false, false, null, 'my-job');\n    expect(job.name).toBe('my-job');\n    job.stop();\n  });\n\n  test('name is stored when provided via CronJob.from', () => {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes a minimal Node.js package structure with `package.json`, `package-lock.json`, `tsconfig.json`, and `tsconfig.build.json`."
+        },
+        {
+          "id": "F037",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "etTime(newTime);\n    expect(job.cronTime).toBe(newTime);\n    job.stop();\n  });\n\n  test('setTime throws when argument is not a CronTime', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(() => job.setTime('0 0 * * *')).toThrow();\n    job.stop();\n  });\n\n  test('setTime restarts a running job', () => {\n    const job = CronJob.from({ cronTime: '* * * * *', onTick: () => {}, start"
+            },
+            {
+              "path": "__blackbox__/cronjob.test.js",
+              "excerpt": "helpers\n */\nconst { CronJob, sendAt, timeout } = require('../src/index');\n\ndescribe('CronJob - construction', () => {\n  test('creates a CronJob', () => {\n    const job = new CronJob('* * * * *', () => {});\n    expect(job).toBeDefined();\n    job.stop();\n  });\n\n  test('CronJob.from static factory', () => {\n    const job = CronJob.from({ cronTime: '* * * * *', onTick: () => {} });\n    expect(job).toB"
+            },
+            {
+              "path": "__blackbox__/crontime.test.js",
+              "excerpt": "*/\nconst { CronTime, validateCronExpression } = require('../src/index');\n\ndescribe('CronTime - construction', () => {\n  test('creates CronTime from 5-field cron string', () => {\n    expect(new CronTime('0 * * * *')).toBeDefined();\n  });\n\n  test('creates CronTime from 6-field cron string', () => {\n    expect(new CronTime('0 0 * * * *')).toBeDefined();\n  });\n\n  test('toString returns a string', () ="
+            }
+          ],
+          "status": "missing",
+          "reason": "The visible repository includes generated test files under `__blackbox__/`, which conflicts with the instruction not to generate test files or extra test directories."
+        }
+      ],
+      "feature_count": 37,
+      "constraint_count": 0,
+      "implemented_count": 33,
+      "partial_count": 0,
+      "missing_count": 4,
+      "unclear_count": 0,
+      "feature_coverage": 0.8919,
+      "constraint_coverage": 0.8919,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "javascript",
+        "app_style": "library",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.8,
+        "stack_alignment": 3.3,
+        "reference_alignment": 2.2
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "0",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository substantially implements the cron library itself: public exports exist, `CronTime` handles parsing/presets/aliases/validation/timezone logic, `CronJob` handles scheduling and lifecycle methods, system command spawning is present, and build/dependency configuration mostly matches the prompt. The main faithfulness gap is structural: the implementation is placed at the repository root instead of under `src/`, even though the prompt and blackbox imports require `src/index` and a full `src/` source tree.\n\n### Missing List\n\n- Missing `src/` directory with the TypeScript implementation files.\n- Missing `src/index.ts` entrypoint expected by the blackbox imports.\n- Repository contains test files in `__blackbox__/`, contrary to the prompt constraint not to generate tests.\n\n### Critical Constraint Misses\n\n- Source implementation is not under `src/`, so imports from `src/index` required by the prompt/tests are not satisfied.\n- The repository includes test files under `__blackbox__/`, violating the prompt's 'do not generate test files' constraint.",
+    "architecture_review": "### Stack Inference\n\n该仓库实际是一个基于 Node.js/npm 的 TypeScript 库项目，而不是纯 JavaScript：核心实现使用 `.ts` 文件、`tsconfig` 构建、`luxon` 作为运行时依赖，产物目标是 `dist/index.js`。项目风格属于小型时间调度类库，核心模块围绕 `CronTime` 解析与 `CronJob` 调度展开。\n\n### Scoring Mode\n\n本次评分按“架构质量”模式进行，重点看真实仓库里的目录组织、入口约定、构建配置与语言生态习惯是否一致，而不是看功能是否大体可用。摘要只用于定位；结论以 `repo/` 中实际文件和配置为准。\n\n### Strengths\n\n- 核心能力按职责拆成了 `job.ts`、`time.ts`、`constants.ts`、`errors.ts`、`types/`，比完全单文件实现更清晰。\n- `package.json`、`tsconfig.json`、`tsconfig.build.json` 基本齐全，构建命令也与要求的 `tsc -b tsconfig.build.json` 保持一致。\n- 公共导出集中在 `index.ts`，对库消费者来说 API 面相对明确。\n\n### Issues\n\n- 源码文件全部放在仓库根目录，缺少要求中的 `src/` 分层；这不仅让公共入口、内部实现、类型定义混在同一层，也直接违背了黑盒测试会从 `src/index` 导入的约束。\n- 构建产物入口与源码入口的协调性不足：`package.json` 指向 `dist/index.js`，但当前源码入口是根目录 `index.ts` 而非 `src/index.ts`，导致源码布局、测试入口、构建约定三者没有对齐。\n- 测试目录 `__blackbox__/` 与库源码同仓放在根层，且没有把实现代码组织进 `src/`、`types/`、`internal` 等更清晰的层次，库项目的可维护性和可发现性一般。\n- 类型、常量、错误、调度核心虽然被拆成多个文件，但边界仍偏平铺，`job.ts` 和 `time.ts` 承担了大部分行为复杂度，缺少进一步的 parser/scheduler 分层，后续扩展会更容易形成大文件。\n\n### Stack Mismatches\n\n- 推断栈写的是 `javascript`，但仓库真实实现明显是 TypeScript-first；这不影响库方向判断，但会影响对目录和构建习惯的预期。\n- 对一个 TypeScript npm library 来说，把所有源码平铺在根目录而不是 `src/` 下，不符合更常见的工程组织方式。\n\n### Reference Gaps\n\n- 需求明确要求 TypeScript 源码位于 `src/`，仓库实际没有 `src/` 目录，属于最明显的参考实现偏差。\n- 需求要求黑盒测试可直接从 `src/index` 导入完整实现；当前仓库结构无法直接满足这一入口约定。\n- 需求说明是“最小 Node.js package structure”，但当前根目录同时承载源码、配置与黑盒测试，缺少常见的源码目录约束，和参考形态不一致。"
+  },
+  "task": "javascript/node-cron/L1_node-cron",
+  "solver": "generated_outputs"
+}

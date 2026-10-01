@@ -1,0 +1,395 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 19.16,
+  "stdout": ".thread_sleep_time = thread_sleep_time\n        self.unavailable_timeout = unavailable_timeout\n        self.redis_kwargs = redis_kwargs or dict()\n\n        for key, value in self.DEFAULT_REDIS_KWARGS.items():\n            self.redis_kwargs.setdefault(key, value)\n\n        super().__init__(\n            timeout=timeout,\n            check_interval=check_interval,\n            fail_when_locked=fail_when_locked,\n        )\n\n    def get_connection(self) -> redis.client.Redis[str]:\n        if not self.connection:\n            self.connection = redis.client.Redis(**self.redis_kwargs)\n\n        return self.connection\n\n    def channel_handler(self, message: dict[str, str]) -> None:\n        if message.get('type') != 'message':  # pragma: no cover\n            return\n\n        raw_data = message.get('data')\n        if not raw_data:\n            return\n\n        try:\n            data = json.loads(raw_data)\n        except TypeError:  # pragma: no cover\n            logger.debug('TypeError while parsing: %r', message)\n            return\n\n        assert self.connection is not None\n        self.connection.publish(data['response_channel'], str(time.time()))\n\n    @property\n    def client_name(self) -> str:\n        return f'{self.channel}-lock'\n\n    def _timeout_generator(\n        self, timeout: float | None, check_interval: float | None\n    ) -> typing.Iterator[int]:\n        if timeout is None:\n            timeout = 0.0\n        if check_interval is None:\n            check_interval = self.thread_sleep_time\n        deadline = time.monotonic() + timeout\n        first = True\n        while first or time.monotonic() < deadline:\n            first = False\n            effective_interval = (\n                check_interval\n                if check_interval > 0\n                else self.thread_sleep_time\n            )\n            sleep_time = effective_interval * (0.5 + random.random())\n            time.sleep(sleep_time)\n            yield 0\n\n    def acquire(  # type: ignore[override]\n        self,\n        timeout: float | None = None,\n        check_interval: float | None = None,\n        fail_when_locked: bool | None = None,\n    ) -> RedisLock:\n        timeout = coalesce(timeout, self.timeout, 0.0)\n        check_interval = coalesce(\n            check_interval,\n            self.check_interval,\n            0.0,\n        )\n        fail_when_locked = coalesce(\n            fail_when_locked,\n            self.fail_when_locked,\n        )\n\n        assert not self.pubsub, 'This lock is already active'\n        connection = self.get_connection()\n\n        timeout_generator = self._timeout_generator(timeout, check_interval)\n        for _ in timeout_generator:  # pragma: no branch\n            subscribers = connection.pubsub_numsub(self.channel)[0][1]\n\n            if subscribers:\n                logger.debug(\n                    'Found %d lock subscribers for %s',\n                    subscribers,\n                    self.channel,\n                )\n\n                if self.check_or_kill_lock(\n                    connection,\n                    self.unavailable_timeout,\n                ):  # pragma: no branch\n                    continue\n                else:  # pragma: no cover\n                    subscribers = 0\n\n            # Note: this should not be changed to an elif because the if\n            # above can still end up here\n            if not subscribers:\n                connection.client_setname(self.client_name)\n                self.pubsub = connection.pubsub()\n                self.pubsub.subscribe(**{self.channel: self.channel_handler})\n                self.thread = PubSubWorkerThread(\n                    self.pubsub,\n                    sleep_time=self.thread_sleep_time,\n                )\n                self.thread.start()\n                time.sleep(0.01)\n                subscribers = connection.pubsub_numsub(self.channel)[0][1]\n                if subscribers == 1:  # pragma: no branch\n                    return self\n                else:  # pragma: no cover\n                    # Race condition, let's try again\n                    self.release()\n\n            if fail_when_locked:  # pragma: no cover\n                raise AlreadyLocked()\n\n        raise AlreadyLocked()\n\n    def check_or_kill_lock(\n        self,\n        connection: redis.client.Redis[str],\n        timeout: float,\n    ) -> bool | None:\n        # Random channel name to get messages back from the lock\n        response_channel = f'{self.channel}-{random.random()}'\n\n        pubsub = connection.pubsub()\n        pubsub.subscribe(response_channel)\n        connection.publish(\n            self.channel,\n            json.dumps(\n                dict(\n                    response_channel=response_channel,\n                    message='ping',\n                ),\n            ),\n        )\n\n        check_interval = min(self.thread_sleep_time, timeout / 10)\n        for _ in self._timeout_generator(\n            timeout,\n            check_interval,\n        ):  # pragma: no branch\n            if pubsub.get_message(timeout=check_interval):\n                pubsub.close()\n                return True\n\n        for client_ in connection.client_list('pubsub'):  # pragma: no cover\n            if client_.get('name') == self.client_name:\n                logger.warning('Killing unavailable redis client: %r', client_)\n                connection.client_kill_filter(  # pyright: ignore\n                    client_.get('id'),\n                )\n        return None\n\n    def release(self) -> None:\n        if self.thread:  # pragma: no branch\n            self.thread.stop()\n            self.thread.join()\n            self.thread = None\n            time.sleep(0.01)\n\n        if self.pubsub:  # pragma: no branch\n            self.pubsub.unsubscribe(self.channel)\n            self.pubsub.close()\n            self.pubsub = None\n\n    def __del__(self) -> None:\n        self.release()\nexcept ImportError:  # pragma: no cover\n    RedisLock = None  # type: ignore[assignment,misc]\n\n\n#: The package name on Pypi\n#: Current author and maintainer, view the git history for the previous ones\n#: Current author's email address\n#: Version number\n#: Package description for Pypi\n#: Package homepage\n\n\n#: Exception thrown when the file is already locked by someone else\n#: Exception thrown if an error occurred during locking\n\n\n#: Lock a file. Note that this is an advisory lock on Linux/Unix systems\n#: Unlock a file\n\n#: Place an exclusive lock.\n#: Only one process may hold an exclusive lock for a given file at a given\n#: time.\nLOCK_EX: LockFlags = LockFlags.EXCLUSIVE\n\n#: Place a shared lock.\n#: More than one process may hold a shared lock for a given file at a given\n#: time.\nLOCK_SH: LockFlags = LockFlags.SHARED\n\n#: Acquire the lock in a non-blocking fashion.\nLOCK_NB: LockFlags = LockFlags.NON_BLOCKING\n\n#: Remove an existing lock held by this process.\nLOCK_UN: LockFlags = LockFlags.UNBLOCK\n\n#: Locking flags enum\n\n#: Locking utility class to automatically handle opening with timeouts and\n#: context wrappers\n\n__all__ = [\n    'LOCK_EX',\n    'LOCK_NB',\n    'LOCK_SH',\n    'LOCK_UN',\n    'AlreadyLocked',\n    'BoundedSemaphore',\n    'Lock',\n    'LockException',\n    'LockFlags',\n    'NamedBoundedSemaphore',\n    'PidFileLock',\n    'RLock',\n    'RedisLock',\n    'TemporaryFileLock',\n    'lock',\n    'open_atomic',\n    'unlock',\n]\n\n#################\n----------------------------- Captured stderr call -----------------------------\n  File \"/tmp/pytest-of-root/pytest-1/test_combined0/combined.py\", line 897\n    import _thread\n    ^\nIndentationError: expected an indented block after 'try' statement on line 894\n------------------------------ Captured log call -------------------------------\nWARNING  portalocker.__main__:__main__.py:128 Ruff is not installed. Skipping linting and formatting step.\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_combined.py::test_combined -   File \"/tmp/pytest...\n================= 1 failed, 92 passed, 1 deselected in 18.38s ==================\n",
+  "stderr": "",
+  "task": "python/portalocker/L3___main_____read_file",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "test_32",
+        "passed": true
+      },
+      {
+        "name": "test_33",
+        "passed": true
+      },
+      {
+        "name": "test_34",
+        "passed": true
+      },
+      {
+        "name": "test_35",
+        "passed": true
+      },
+      {
+        "name": "test_36",
+        "passed": true
+      },
+      {
+        "name": "test_37",
+        "passed": true
+      },
+      {
+        "name": "test_38",
+        "passed": true
+      },
+      {
+        "name": "test_39",
+        "passed": true
+      },
+      {
+        "name": "test_40",
+        "passed": true
+      },
+      {
+        "name": "test_41",
+        "passed": true
+      },
+      {
+        "name": "test_42",
+        "passed": true
+      },
+      {
+        "name": "test_43",
+        "passed": true
+      },
+      {
+        "name": "test_44",
+        "passed": true
+      },
+      {
+        "name": "test_45",
+        "passed": true
+      },
+      {
+        "name": "test_46",
+        "passed": true
+      },
+      {
+        "name": "test_47",
+        "passed": true
+      },
+      {
+        "name": "test_48",
+        "passed": true
+      },
+      {
+        "name": "test_49",
+        "passed": true
+      },
+      {
+        "name": "test_50",
+        "passed": true
+      },
+      {
+        "name": "test_51",
+        "passed": true
+      },
+      {
+        "name": "test_52",
+        "passed": true
+      },
+      {
+        "name": "test_53",
+        "passed": true
+      },
+      {
+        "name": "test_54",
+        "passed": true
+      },
+      {
+        "name": "test_55",
+        "passed": true
+      },
+      {
+        "name": "test_56",
+        "passed": true
+      },
+      {
+        "name": "test_57",
+        "passed": true
+      },
+      {
+        "name": "test_58",
+        "passed": true
+      },
+      {
+        "name": "test_59",
+        "passed": true
+      },
+      {
+        "name": "test_60",
+        "passed": true
+      },
+      {
+        "name": "test_61",
+        "passed": true
+      },
+      {
+        "name": "test_62",
+        "passed": true
+      },
+      {
+        "name": "test_63",
+        "passed": true
+      },
+      {
+        "name": "test_64",
+        "passed": true
+      },
+      {
+        "name": "test_65",
+        "passed": true
+      },
+      {
+        "name": "test_66",
+        "passed": true
+      },
+      {
+        "name": "test_67",
+        "passed": true
+      },
+      {
+        "name": "test_68",
+        "passed": true
+      },
+      {
+        "name": "test_69",
+        "passed": true
+      },
+      {
+        "name": "test_70",
+        "passed": true
+      },
+      {
+        "name": "test_71",
+        "passed": true
+      },
+      {
+        "name": "test_72",
+        "passed": true
+      },
+      {
+        "name": "test_73",
+        "passed": true
+      },
+      {
+        "name": "test_74",
+        "passed": true
+      },
+      {
+        "name": "test_75",
+        "passed": true
+      },
+      {
+        "name": "test_76",
+        "passed": true
+      },
+      {
+        "name": "test_77",
+        "passed": true
+      },
+      {
+        "name": "test_78",
+        "passed": true
+      },
+      {
+        "name": "test_79",
+        "passed": true
+      },
+      {
+        "name": "test_80",
+        "passed": true
+      },
+      {
+        "name": "test_81",
+        "passed": true
+      },
+      {
+        "name": "test_82",
+        "passed": true
+      },
+      {
+        "name": "test_83",
+        "passed": true
+      },
+      {
+        "name": "test_84",
+        "passed": true
+      },
+      {
+        "name": "test_85",
+        "passed": true
+      },
+      {
+        "name": "test_86",
+        "passed": true
+      },
+      {
+        "name": "test_87",
+        "passed": true
+      },
+      {
+        "name": "test_88",
+        "passed": true
+      },
+      {
+        "name": "test_89",
+        "passed": true
+      },
+      {
+        "name": "test_90",
+        "passed": true
+      },
+      {
+        "name": "test_91",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      }
+    ],
+    "passed": 92,
+    "failed": 1,
+    "total": 93
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9892,
+  "compile_score": 0.5,
+  "test_score": 0.4946,
+  "score": 0.9946
+}

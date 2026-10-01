@@ -1,0 +1,29 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L0_spring-boot-realworld-example-app",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L0_spring-boot-realworld-example-app/prompt.md",
+  "project_root": "datasets/java/spring-boot-realworld-example-app",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers Article (5-arg and 6-arg constructors, toSlug, update with null/blank no-op, tags deduplication), DateTimeCursor (constructor, parse, getData, toString as millis string), Page (default constructor, clamping logic), Util.isEmpty, Tag, User (5 fields, update, getId), FollowRelation, Comment, ArticleFavorite. All tested domain classes are included. The 6-arg Article constructor and joda-time dependency are explicitly called out."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Key contracts are precise: toSlug lowercases, replaces spaces with hyphens, strips punctuation. update treats null/blank as no-op. Page clamping: negative offset->0, limit<=0->20, limit>100->100. DateTimeCursor.toString returns milliseconds as string. Tag equality by name. One notable edge: the test shows whitespace-only title is applied (Util.isEmpty only checks null/empty-string, not whitespace) — the prompt says 'blank strings' but tests contradict this. Minor inconsistency."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests for Article slug generation, update behavior, tag deduplication, DateTimeCursor round-trip, Page clamping, User/Comment/FollowRelation/ArticleFavorite constructors and getters are all derivable from the prompt. The whitespace-only title edge case in CoreDomainBlackboxTest is testable from the Util.isEmpty specification."
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "Minor inconsistency: the prompt says 'update treats null or blank strings as no-op' but the test testUpdateWhitespaceOnlyTitleApplied demonstrates that whitespace-only title IS applied (because Util.isEmpty only returns true for null or empty-string, not whitespace). The prompt should say 'null or empty strings' rather than 'null or blank strings'. This is a small but real conflict."
+    }
+  },
+  "overall_score": 4.38
+}

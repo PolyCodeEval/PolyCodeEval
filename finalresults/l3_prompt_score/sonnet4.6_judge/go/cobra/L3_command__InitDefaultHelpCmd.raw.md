@@ -1,0 +1,13 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the core logic of `InitDefaultHelpCmd`: the early return when no subcommands exist, lazy creation of the help command with standard metadata, group membership via `helpCommandGroupID`, the Run behavior (find by path, error+usage for unknown topics, context propagation, and calling `InitDefaultHelpFlag`/`InitDefaultVersionFlag` before displaying help), and the RemoveCommand+AddCommand pattern to keep the canonical instance current. The shell completion behavior is also well described. Two minor gaps: the description says the error case prints an error \"plus usage\" but the implementation calls `c.Root().Usage()` (not the parent's usage), and the description omits that the `Long` description text is dynamically constructed using `c.DisplayName()`. These are secondary details that don't undermine implementability.",
+  "missing_functionality": [
+    "The Long description string is dynamically built using `c.DisplayName()` — this detail is absent from the description.",
+    "On unknown help topic, `c.Root().Usage()` is called (root's usage), not the parent command's usage — the description says 'print an error plus usage' without specifying it is the root's usage.",
+    "The completion function falls back to `c.Root()` when `cmd == nil` after a successful Find (root help command case) — this nuance is mentioned but could be clearer."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'print an error plus usage for unknown help topics' which is slightly misleading — the implementation prints the error via `c.Printf` and then calls `CheckErr(c.Root().Usage())`, meaning it's the root's usage string, not a generic usage."
+  ],
+  "complete_enough": true
+}

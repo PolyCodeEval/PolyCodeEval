@@ -1,0 +1,91 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.74,
+  "stdout": "            foo = fields.Raw()\n            bar = fields.Raw()\n            flubb = fields.Nested(GrandChildSchema)\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema)\n    \n>       sch = ParentSchema(\n            only=(\"bla\", \"blubb.foo\", \"blubb.flubb.goo\", \"blubb.flubb.gah\"),\n            exclude=(\"blubb.flubb.goo\",),\n        )\n\ntests/unit_tests/test_schema.py:1202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:437: in __init__\n    self._normalize_nested_options()\nsrc/marshmallow/schema.py:958: in _normalize_nested_options\n    self.__apply_nested_option(\"exclude\", self.exclude, \"union\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ParentSchema(many=False)>, option_name = 'exclude'\nfield_names = {'blubb.flubb.goo'}, set_operation = 'union'\n\n    def __apply_nested_option(self, option_name, field_names, set_operation) -> None:\n        \"\"\"Apply nested options to nested fields\"\"\"\n        if field_names is None:\n            return\n    \n        nested_fields = defaultdict(list)\n        for field_name in field_names:\n            if \".\" in field_name:\n                parent, child = field_name.split(\".\", 1)\n                nested_fields[parent].append(child)\n    \n        for key, children in nested_fields.items():\n            if key not in self.declared_fields:\n                continue\n            field = self.declared_fields[key]\n            if isinstance(field, ma_fields.List) and isinstance(field.inner, ma_fields.Nested):\n                field = field.inner\n            if isinstance(field, ma_fields.Nested):\n                original = getattr(field, option_name)\n                if original is None:\n                    value = self.set_class(children)\n                else:\n>                   value = getattr(self.set_class(original), set_operation)(children)\nE                   AttributeError: 'OrderedSet' object has no attribute 'union'\n\nsrc/marshmallow/schema.py:986: AttributeError\n___________________ test_nested_constructor_only_and_exclude ___________________\n\n    def test_nested_constructor_only_and_exclude():\n        class GrandChildSchema(Schema):\n            goo = fields.Raw()\n            gah = fields.Raw()\n            bah = fields.Raw()\n    \n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            flubb = fields.Nested(GrandChildSchema)\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(\n                ChildSchema, only=(\"foo\", \"flubb.goo\", \"flubb.gah\"), exclude=(\"flubb.goo\",)\n            )\n    \n        sch = ParentSchema(only=(\"bla\", \"blubb\"))\n        data = dict(bla=1, bli=2, blubb=dict(foo=3, bar=4, flubb=dict(goo=5, gah=6, bah=7)))\n>       result = sch.dump(data)\n\ntests/unit_tests/test_schema.py:1455: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\nsrc/marshmallow/fields.py:626: in _serialize\n    schema = self.schema\nsrc/marshmallow/fields.py:606: in schema\n    self._schema = schema_class(\nsrc/marshmallow/schema.py:437: in __init__\n    self._normalize_nested_options()\nsrc/marshmallow/schema.py:958: in _normalize_nested_options\n    self.__apply_nested_option(\"exclude\", self.exclude, \"union\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ChildSchema(many=False)>, option_name = 'exclude'\nfield_names = {'flubb.goo'}, set_operation = 'union'\n\n    def __apply_nested_option(self, option_name, field_names, set_operation) -> None:\n        \"\"\"Apply nested options to nested fields\"\"\"\n        if field_names is None:\n            return\n    \n        nested_fields = defaultdict(list)\n        for field_name in field_names:\n            if \".\" in field_name:\n                parent, child = field_name.split(\".\", 1)\n                nested_fields[parent].append(child)\n    \n        for key, children in nested_fields.items():\n            if key not in self.declared_fields:\n                continue\n            field = self.declared_fields[key]\n            if isinstance(field, ma_fields.List) and isinstance(field.inner, ma_fields.Nested):\n                field = field.inner\n            if isinstance(field, ma_fields.Nested):\n                original = getattr(field, option_name)\n                if original is None:\n                    value = self.set_class(children)\n                else:\n>                   value = getattr(self.set_class(original), set_operation)(children)\nE                   AttributeError: 'OrderedSet' object has no attribute 'union'\n\nsrc/marshmallow/schema.py:986: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_multiple_dumps\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[only-expected0]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[exclude-expected1]\nFAILED tests/unit_tests/test_schema.py::test_nested_only_inheritance - Attrib...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_empty_inheritance - ...\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude - AttributeError:...\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude_inheritance - Att...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_and_exclude - Attrib...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_then_exclude_inheritance\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude_and_only_inheritance\nFAILED tests/unit_tests/test_schema.py::test_meta_nested_exclude - AttributeE...\nFAILED tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude\nFAILED tests/unit_tests/test_schema.py::test_nested_constructor_only_and_exclude\n======================= 24 failed, 1155 passed in 4.15s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema____apply_nested_option",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_multiple_dumps",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[only-expected0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[exclude-expected1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_only_then_exclude_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_exclude_and_only_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 17,
+    "total": 17
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

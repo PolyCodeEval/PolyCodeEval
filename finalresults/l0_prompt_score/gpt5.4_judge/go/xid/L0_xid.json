@@ -1,0 +1,30 @@
+{
+  "task": "go/xid/L0_xid",
+  "project": "go/xid",
+  "language": "go",
+  "prompt_path": "datasets/go/xid/tasks/L0_xid/prompt.md",
+  "project_root": "datasets/go/xid",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt覆盖了仓库核心能力：12字节ID结构、生成与解析、字符串与JSON/文本/二进制编解码、字段提取、排序、database/sql集成，以及黑盒测试所需的大部分公开API与边界条件。主要欠缺在于没有覆盖真实源码中的若干实现细节与辅助模块，例如平台相关machine id读取文件、cpuset对pid扰动、独立错误常量与README层面的行为说明。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "核心输入输出契约总体明确，尤其是20字符base32hex格式、12字节布局、nil JSON行为、FromString/FromBytes错误条件、Compare/Sort语义和XID_MACHINE_ID约束，足以指导实现并通过主要黑盒测试。歧义点主要在于部分接口签名与真实代码不完全一致，例如Encode是否返回切片、排序是通过IDs类型还是Sort函数，以及machine ID来源描述与真实实现细节之间存在模糊地带。"
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "Prompt显式列出了包路径、关键导出、黑盒测试行为和多个边界用例，测试导向很强，能够较直接地支持实现可验证版本。尤其对字符串长度与字符集、时间回读、JSON null、FromBytes长度检查、panic条件、排序与比较行为都给出了明确断言，和blackbox_tests覆盖面高度匹配。"
+    },
+    "consistency": {
+      "score": 3.5,
+      "reason": "整体目标与大多数API和真实实现一致，但存在几处明显不一致：prompt声明machine ID在启动时计算一次，而真实代码在NewWithTime中每次调用readMachineID；prompt写明存在IDs类型并实现sort.Interface，但真实导出中并无该类型，仅有内部sorter和Sort函数；machine ID来源描述为hostname或/proc/self/cpuset，而真实代码中cpuset用于扰动pid，machine ID优先来自平台machine id、环境变量或hostname。这些冲突会影响按当前仓库复现的准确性。"
+    }
+  },
+  "overall_score": 4.43,
+  "raw_response_file": "L0_xid.raw.md"
+}

@@ -1,0 +1,18 @@
+{
+  "score": 4.2,
+  "reason": "The file-level description accurately captures the overall architecture: a compiled Babel parser bundle wiring together tokenizer, parser pipeline, plugin composition, AST construction, and public API exports. The function-level descriptions for `parse`, `getParser`, `getParserClass`, and `class Parser` are accurate and match the implementation well. The grouped descriptions for tokenizer helpers, scope/state helpers, statement/expression parsing, plugin-specific helpers, and AST utilities are broadly correct and cover the major behavioral categories. However, the descriptions are intentionally high-level and omit many concrete implementation details — such as the `optionFlags` bitmask encoding in the `Parser` constructor, the `locDataCache`/`resetLocData` packed-location optimization, the `unambiguous` sourceType fallback logic in `parse`, the `validatePlugins` error messages for removed plugins, and the specific mixin ordering in `getParserClass`. These omissions would make it difficult to reconstruct precise behavior for several hollowed functions without additional inference.",
+  "missing_functionality": [
+    "The `Parser` constructor's detailed `optionFlags` bitmask encoding (mapping each option to a specific bit) is not described",
+    "The `locDataCache` / `resetLocData` packed-location optimization and `Uint32Array` allocation strategy in `Tokenizer` constructor is not mentioned",
+    "The `parse` function's `unambiguous` mode fallback logic (try module, check `sawUnambiguousESM`, fall back to script, handle `ambiguousScriptDifferentAst`) is not described in detail",
+    "The `validatePlugins` function's specific validation rules for removed/incompatible plugins (recordAndTuple, decimal, importReflection, moduleAttributes, etc.) are not described",
+    "The `getParserClass` caching key construction (joining plugin names with `|`) and deterministic mixin ordering via `mixinPluginNames` is not described",
+    "The `State.clone()` method's field-by-field copy behavior is not described",
+    "The `createExportedTokens` function's in-place token type replacement logic is not described"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the Parser 'initializes parser-wide options, plugin configuration, filename/index metadata, and the option flags' but does not clarify that `initializeScopes()` is called in the constructor (not in `parse()`), which affects reconstruction order",
+    "The 'unambiguous' mode description omits the `ambiguousScriptDifferentAst` optimization path where the AST is reused with sourceType changed to 'script' rather than re-parsing"
+  ],
+  "complete_enough": false
+}

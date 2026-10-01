@@ -1,0 +1,12 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very well. It correctly explains full-string matching over the pattern subrange, the meanings of ordinary characters, `?`, and `*`, and the retry behavior after `*`. It is also sufficiently detailed to implement the same behavior. The main gap is that it describes the retry behavior as generic backtracking, while the actual implementation uses a specific linear-time restart strategy that remembers only the most recent `*` position and advances the candidate string position monotonically.",
+  "missing_functionality": [
+    "The implementation uses a specific linear-time globbing strategy with saved restart positions (`pattern_next`, `name_next`) rather than unrestricted backtracking.",
+    "On `*`, the implementation records the current `*` position and sets the next retry point to `name + 1`, then immediately advances past the `*` for the zero-length attempt."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying it 'supports backtracking only for `*`' is mostly fine, but slightly imprecise because the code does not perform general recursive backtracking; it performs iterative restart from the last `*` only."
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,23 @@
+{
+  "task": "go/chi/L3_compress__Flush",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_compress__Flush/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_compress__Flush/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/compress.go",
+  "target_symbol": "middleware/compress.go::Flush",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description matches the implementation's main behavior well: it conditionally flushes via `http.Flusher`, and if the writer also supports the special compression flush interface, it invokes that and then flushes the underlying `ResponseWriter` when possible. It is slightly incomplete because it does not make clear that the function first attempts a normal `http.Flusher` flush on `cw.writer()` before separately checking the compression-specific flusher, so both paths may run.",
+  "missing_functionality": [
+    "The function performs two independent interface checks in sequence: it first calls `http.Flusher.Flush()` on `cw.writer()` if available, then separately calls `compressFlusher.Flush()` if available.",
+    "If `cw.writer()` implements both interfaces, both flush calls occur; this ordering is not stated."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_compress__Flush.raw.md"
+}

@@ -1,0 +1,10 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly identifies that the function returns middleware, recovers panics from the wrapped handler, re-panics on `http.ErrAbortHandler`, logs other panics with a stack trace via a request log entry when available or via direct stack printing otherwise, and conditionally writes HTTP 500 unless the request `Connection` header is `Upgrade`. It also correctly notes that normal execution simply delegates to the next handler. The only minor omission is that the implementation specifically uses `debug.Stack()` for the log-entry path and `PrintPrettyStack` for the fallback path, and the source comment mentions request ID printing indirectly through the logging path, but those are secondary details.",
+  "missing_functionality": [
+    "Does not explicitly mention that the middleware is returned as an `http.HandlerFunc` wrapping an inner function.",
+    "Does not note the source-comment detail that request ID printing may be included through the logging/stack-printing behavior."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

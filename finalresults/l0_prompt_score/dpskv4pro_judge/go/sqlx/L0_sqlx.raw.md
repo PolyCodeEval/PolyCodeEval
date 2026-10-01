@@ -1,0 +1,21 @@
+{
+  "project": "sqlx",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt 覆盖 sqlx 对 database/sql 的扩展：命名参数（Named/NamedExec）、结构体扫描（StructScan/Get/Select）、IN 子句扩展（In/Rebind）、BindType。覆盖核心增强能力。"
+    },
+    "unambiguity": {
+      "score": 4.3,
+      "reason": "Named 查询语法（:param 占位符）、StructScan 的 db tag 映射、In 子句生成逻辑、Rebind 占位符替换规则描述清楚。但事务支持（Beginx/BindNamed）未详述。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "测试需求覆盖 IN 子句、Rebind（不同 BindType 占位符）、Named 查询、StructScan。与黑盒测试匹配度高。"
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "DB/Stmt/NamedStmt 及命名查询语法与真实 sqlx 库一致。BindType（QUESTION/DOLLAR/AT）及其对应的 Rebind 行为匹配。"
+    }
+  }
+}

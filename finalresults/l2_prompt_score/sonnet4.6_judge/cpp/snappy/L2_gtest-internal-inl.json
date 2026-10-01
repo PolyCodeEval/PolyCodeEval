@@ -1,0 +1,26 @@
+{
+  "task": "cpp/snappy/L2_gtest-internal-inl",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L2_gtest-internal-inl/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L2_gtest-internal-inl/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-internal-inl.h",
+  "target_file": "third_party/googletest/googletest/src/gtest-internal-inl.h",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.2,
+  "reason": "The file-level description and function-level responsibilities are largely accurate and well-aligned with the implementation. The key behaviors are correctly described: time-based seed derivation with wraparound normalization for `GetRandomSeedFromFlag`, full flag snapshotting in `GTestFlagSaver()`, Fisher-Yates shuffle with bounds checking in `ShuffleRange`, key-equality predicate in `TestPropertyKeyIs::operator()`, digit-first rejection plus strtoull parsing with round-trip overflow check in `ParseNaturalNumber`, and socket write with warning log in `Send`. The deleted copy-assignment operator for `DefaultPerThreadTestPartResultReporter` is correctly identified as a declaration rather than an implementation. One notable gap is that the normalization formula description says 'wraparound modulo behavior' but doesn't precisely describe the `(raw_seed - 1U) % kMaxRandomSeed + 1` formula, which could lead a model to use a simpler `raw_seed % kMaxRandomSeed` that would produce 0 for multiples. The `UnitTestOptions` and `UnitTestImpl` class bodies are hollowed in the skeleton but their descriptions are absent from the function responsibilities, which is acceptable since they are class-level declarations. The `TestPropertyKeyIs::operator()` is listed as a hollowed function but is actually fully implemented in both skeleton and target — this is a minor inconsistency in the task setup rather than a description error. Overall the descriptions are complete enough to reconstruct all eight hollowed bodies correctly.",
+  "missing_functionality": [
+    "The precise normalization formula `(raw_seed - 1U) % kMaxRandomSeed + 1` is not spelled out; the description says 'wraparound modulo behavior' which is ambiguous and could lead to an off-by-one implementation",
+    "The `ShuffleRange` description does not mention that `range_width` is cast to `uint32_t` when calling `random->Generate()`, which is a detail needed for type-correct reconstruction",
+    "No description is provided for the `UnitTestOptions` class body or `UnitTestImpl` class body, which are hollowed in the skeleton (though these may be intentionally out of scope)"
+  ],
+  "incorrect_or_misleading_points": [
+    "`TestPropertyKeyIs::operator()` is listed as a hollowed function in the task but its body is fully present in both the skeleton and the implementation — the description is accurate but the hollowing claim is misleading",
+    "The `DefaultPerThreadTestPartResultReporter` deleted operator= is described as a function responsibility to implement, but it is a declaration in the class body, not a hollowed function body — including it inflates the hollowed count"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_gtest-internal-inl.raw.md"
+}

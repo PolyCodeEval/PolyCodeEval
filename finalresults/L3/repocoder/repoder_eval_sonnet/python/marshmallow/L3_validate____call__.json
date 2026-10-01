@@ -1,0 +1,107 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.19,
+  "stdout": "lidate __________________________\n\nself = <tests.unit_tests.test_schema.TestValidate object at 0x7f3d08e49090>\n\n    def test_validate(self):\n        s = UserSchema()\n        errors = s.validate({\"email\": \"bad-email\"})\n>       assert errors == {\"email\": [\"Not a valid email address.\"]}\nE       AssertionError: assert {'email': [['...l address.']]} == {'email': ['N...il address.']}\nE         \nE         Differing items:\nE         {'email': [['Not a valid email address.']]} != {'email': ['Not a valid email address.']}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:406: AssertionError\n________________________ test_stores_invalid_url_error _________________________\n\n    def test_stores_invalid_url_error():\n        user = {\"name\": \"Steve\", \"homepage\": \"www.foo.com\"}\n        with pytest.raises(ValidationError) as excinfo:\n            UserSchema().load(user)\n        errors = excinfo.value.messages\n        assert \"homepage\" in errors\n        expected = [\"Not a valid URL.\"]\n>       assert errors[\"homepage\"] == expected\nE       AssertionError: assert [['Not a valid URL.']] == ['Not a valid URL.']\nE         \nE         At index 0 diff: ['Not a valid URL.'] != 'Not a valid URL.'\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:496: AssertionError\n__________________________ test_stored_invalid_email ___________________________\n\n    def test_stored_invalid_email():\n        u = {\"name\": \"John\", \"email\": \"johnexample.com\"}\n        with pytest.raises(ValidationError) as excinfo:\n            UserSchema().load(u)\n        errors = excinfo.value.messages\n        assert \"email\" in errors\n>       assert errors[\"email\"][0] == \"Not a valid email address.\"\nE       AssertionError: assert ['Not a valid email address.'] == 'Not a valid email address.'\n\ntests/unit_tests/test_schema.py:511: AssertionError\n__________________________ test_custom_error_message ___________________________\n\n    def test_custom_error_message():\n        class ErrorSchema(Schema):\n            email = fields.Email(error_messages={\"invalid\": \"Invalid email\"})\n            homepage = fields.Url(error_messages={\"invalid\": \"Bad homepage.\"})\n            balance = fields.Decimal(error_messages={\"invalid\": \"Bad balance.\"})\n    \n        u = {\"email\": \"joe.net\", \"homepage\": \"joe@example.com\", \"balance\": \"blah\"}\n        s = ErrorSchema()\n        with pytest.raises(ValidationError) as excinfo:\n            s.load(u)\n        errors = excinfo.value.messages\n        assert \"Bad balance.\" in errors[\"balance\"]\n>       assert \"Bad homepage.\" in errors[\"homepage\"]\nE       AssertionError: assert 'Bad homepage.' in [['Bad homepage.']]\n\ntests/unit_tests/test_schema.py:637: AssertionError\n_______________ TestFieldValidation.test_raises_error_with_list ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f3d08e4b5e0>\n\n    def test_raises_error_with_list(self):\n        def validator(val):\n            raise ValidationError([\"err1\", \"err2\"])\n    \n        class MySchema(Schema):\n            foo = fields.Raw(validate=validator)\n    \n        s = MySchema()\n        errors = s.validate({\"foo\": 42})\n>       assert errors[\"foo\"] == [\"err1\", \"err2\"]\nE       AssertionError: assert [['err1', 'err2']] == ['err1', 'err2']\nE         \nE         At index 0 diff: ['err1', 'err2'] != 'err1'\nE         Right contains one more item: 'err2'\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1786: AssertionError\n________ test_deserialization_with_required_field_and_custom_validator _________\n\n    def test_deserialization_with_required_field_and_custom_validator():\n        def validator(val):\n            if val.lower() not in {\"red\", \"blue\"}:\n                raise ValidationError(\"Color must be red or blue\")\n    \n        class ValidatingSchema(Schema):\n            color = fields.String(\n                required=True,\n                validate=validator,\n            )\n    \n        with pytest.raises(ValidationError) as excinfo:\n            ValidatingSchema().load({\"name\": \"foo\"})\n        errors = excinfo.value.messages\n        assert errors\n        assert \"color\" in errors\n        assert \"Missing data for required field.\" in errors[\"color\"]\n    \n        with pytest.raises(ValidationError) as excinfo:\n            ValidatingSchema().load({\"color\": \"green\"})\n        errors = excinfo.value.messages\n        assert \"color\" in errors\n>       assert \"Color must be red or blue\" in errors[\"color\"]\nE       AssertionError: assert 'Color must be red or blue' in [['Color must be red or blue']]\n\ntests/unit_tests/test_schema.py:2223: AssertionError\n___________________________________ test_and ___________________________________\n\n    def test_and():\n        validator = validate.And(validate.Range(min=0), is_even)\n>       assert validator(2)\nE       assert None\nE        +  where None = <And(validators=(<Range(min=0, max=None, min_inclusive=True, max_inclusive=True, error=None)>, <function is_even at 0x7f3d08d36440>), error=None)>(2)\n\ntests/unit_tests/test_validate.py:1085: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_structured_dict_key_value_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_email_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_list_field_deserialize_multiple_invalid_items\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deserialize_multiple_invalid_items\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_function\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validators\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_field_name_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_validation_errors_are_stored\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field0]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field1]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field2]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field0]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field1]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field2]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_function_validators[field1]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_function_validators[field2]\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_stores_invalid_url_error - Asser...\nFAILED tests/unit_tests/test_schema.py::test_stored_invalid_email - Assertion...\nFAILED tests/unit_tests/test_schema.py::test_custom_error_message - Assertion...\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_list\nFAILED tests/unit_tests/test_schema.py::test_deserialization_with_required_field_and_custom_validator\nFAILED tests/unit_tests/test_validate.py::test_and - assert None\n======================= 26 failed, 1153 passed in 5.54s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_validate____call__",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_structured_dict_key_value_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_email_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_list_field_deserialize_multiple_invalid_items",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deserialize_multiple_invalid_items",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_function",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_field_name_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_validation_errors_are_stored",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_float_with_validators[field2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_function_validators[field1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_function_validators[field2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_deserialization_with_required_field_and_custom_validator",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 21,
+    "total": 21
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

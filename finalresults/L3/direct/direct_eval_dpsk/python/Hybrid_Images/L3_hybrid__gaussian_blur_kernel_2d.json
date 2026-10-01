@@ -1,0 +1,103 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.97,
+  "stdout": "`` or ``np.flip(m, axis=0)``.\n        Requires the array to be at least 1-D.\n    \n        Examples\n        --------\n        >>> import numpy as np\n        >>> A = np.diag([1.0, 2, 3])\n        >>> A\n        array([[1.,  0.,  0.],\n               [0.,  2.,  0.],\n               [0.,  0.,  3.]])\n        >>> np.flipud(A)\n        array([[0.,  0.,  3.],\n               [0.,  2.,  0.],\n               [1.,  0.,  0.]])\n    \n        >>> rng = np.random.default_rng()\n        >>> A = rng.normal(size=(2,3,5))\n        >>> np.all(np.flipud(A) == A[::-1,...])\n        True\n    \n        >>> np.flipud([1,2])\n        array([2, 1])\n    \n        \"\"\"\n        m = asanyarray(m)\n        if m.ndim < 1:\n>           raise ValueError(\"Input must be >= 1-d.\")\nE           ValueError: Input must be >= 1-d.\n\n/usr/local/lib/python3.10/dist-packages/numpy/lib/_twodim_base_impl.py:159: ValueError\n______________________ TestHighLowPass.test_low_pass_9_7 _______________________\n\nself = <unit_test.TestHighLowPass testMethod=test_low_pass_9_7>\n\n    def test_low_pass_9_7(self):\n        r = np.array([[[ 0.17963478,  0.17124501,  0.12221388],\n            [ 0.21933258,  0.20746511,  0.16113371],\n            [ 0.22114507,  0.20886138,  0.16244521],\n            [ 0.22029549,  0.20774176,  0.16180487],\n            [ 0.18792763,  0.17151596,  0.13658299]],\n    \n           [[ 0.18170777,  0.17314406,  0.12382304],\n            [ 0.22168257,  0.20972768,  0.1634043 ],\n            [ 0.2235093 ,  0.21113553,  0.1647422 ],\n            [ 0.22264545,  0.2100001 ,  0.16410069],\n            [ 0.18989056,  0.17328373,  0.13859635]],\n    \n           [[ 0.18158356,  0.17294561,  0.12393794],\n            [ 0.22135196,  0.20945285,  0.1637038 ],\n            [ 0.22317083,  0.21085531,  0.16505207],\n            [ 0.22230311,  0.20971788,  0.16441722],\n            [ 0.18955739,  0.17295608,  0.13893827]],\n    \n           [[ 0.17926668,  0.17065694,  0.12255439],\n            [ 0.2183528 ,  0.20665068,  0.16202127],\n            [ 0.22014196,  0.20803099,  0.16336348],\n            [ 0.21928093,  0.20690543,  0.16274287],\n            [ 0.18694027,  0.17054497,  0.13759625]]])\n>       self.assertTrue(np.allclose(hybrid.low_pass(self.img2, 9, 7), r,\n            atol=1e-08))\n\ntests/unit_tests/unit_test.py:282: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/hybrid.py:98: in low_pass\n    return convolve_2d(img, gaussian_blur_kernel_2d(sigma, size, size))\nsrc/hybrid.py:73: in convolve_2d\n    return cross_correlation_2d(img, np.fliplr(np.flipud(kernel)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nm = array(None, dtype=object)\n\n    @array_function_dispatch(_flip_dispatcher)\n    def flipud(m):\n        \"\"\"\n        Reverse the order of elements along axis 0 (up/down).\n    \n        For a 2-D array, this flips the entries in each column in the up/down\n        direction. Rows are preserved, but appear in a different order than before.\n    \n        Parameters\n        ----------\n        m : array_like\n            Input array.\n    \n        Returns\n        -------\n        out : array_like\n            A view of `m` with the rows reversed.  Since a view is\n            returned, this operation is :math:`\\\\mathcal O(1)`.\n    \n        See Also\n        --------\n        fliplr : Flip array in the left/right direction.\n        flip : Flip array in one or more dimensions.\n        rot90 : Rotate array counterclockwise.\n    \n        Notes\n        -----\n        Equivalent to ``m[::-1, ...]`` or ``np.flip(m, axis=0)``.\n        Requires the array to be at least 1-D.\n    \n        Examples\n        --------\n        >>> import numpy as np\n        >>> A = np.diag([1.0, 2, 3])\n        >>> A\n        array([[1.,  0.,  0.],\n               [0.,  2.,  0.],\n               [0.,  0.,  3.]])\n        >>> np.flipud(A)\n        array([[0.,  0.,  3.],\n               [0.,  2.,  0.],\n               [1.,  0.,  0.]])\n    \n        >>> rng = np.random.default_rng()\n        >>> A = rng.normal(size=(2,3,5))\n        >>> np.all(np.flipud(A) == A[::-1,...])\n        True\n    \n        >>> np.flipud([1,2])\n        array([2, 1])\n    \n        \"\"\"\n        m = asanyarray(m)\n        if m.ndim < 1:\n>           raise ValueError(\"Input must be >= 1-d.\")\nE           ValueError: Input must be >= 1-d.\n\n/usr/local/lib/python3.10/dist-packages/numpy/lib/_twodim_base_impl.py:159: ValueError\n_____________________________ TestHybridImage.test _____________________________\n\nself = <acceptance_test.TestHybridImage testMethod=test>\n\n    def test(self):\n        resources_dir = Path(__file__).resolve().parents[1] / 'resources'\n        left_img = cv2.imread(str(resources_dir / 'dog.jpg'))\n        right_img = cv2.imread(str(resources_dir / 'cat.jpg'))\n        hybrid_image_ref = cv2.imread(str(resources_dir / 'hybrid.png'))\n>       hybrid_image_test = create_hybrid_image(left_img, right_img, 7.0, 13, 'low', 4.1, 8, 'high', 0.65)\n\ntests/acceptance_tests/acceptance_test.py:15: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/hybrid.py:124: in create_hybrid_image\n    img1 = low_pass(img1, sigma1, size1)\nsrc/hybrid.py:98: in low_pass\n    return convolve_2d(img, gaussian_blur_kernel_2d(sigma, size, size))\nsrc/hybrid.py:73: in convolve_2d\n    return cross_correlation_2d(img, np.fliplr(np.flipud(kernel)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nm = array(None, dtype=object)\n\n    @array_function_dispatch(_flip_dispatcher)\n    def flipud(m):\n        \"\"\"\n        Reverse the order of elements along axis 0 (up/down).\n    \n        For a 2-D array, this flips the entries in each column in the up/down\n        direction. Rows are preserved, but appear in a different order than before.\n    \n        Parameters\n        ----------\n        m : array_like\n            Input array.\n    \n        Returns\n        -------\n        out : array_like\n            A view of `m` with the rows reversed.  Since a view is\n            returned, this operation is :math:`\\\\mathcal O(1)`.\n    \n        See Also\n        --------\n        fliplr : Flip array in the left/right direction.\n        flip : Flip array in one or more dimensions.\n        rot90 : Rotate array counterclockwise.\n    \n        Notes\n        -----\n        Equivalent to ``m[::-1, ...]`` or ``np.flip(m, axis=0)``.\n        Requires the array to be at least 1-D.\n    \n        Examples\n        --------\n        >>> import numpy as np\n        >>> A = np.diag([1.0, 2, 3])\n        >>> A\n        array([[1.,  0.,  0.],\n               [0.,  2.,  0.],\n               [0.,  0.,  3.]])\n        >>> np.flipud(A)\n        array([[0.,  0.,  3.],\n               [0.,  2.,  0.],\n               [1.,  0.,  0.]])\n    \n        >>> rng = np.random.default_rng()\n        >>> A = rng.normal(size=(2,3,5))\n        >>> np.all(np.flipud(A) == A[::-1,...])\n        True\n    \n        >>> np.flipud([1,2])\n        array([2, 1])\n    \n        \"\"\"\n        m = asanyarray(m)\n        if m.ndim < 1:\n>           raise ValueError(\"Input must be >= 1-d.\")\nE           ValueError: Input must be >= 1-d.\n\n/usr/local/lib/python3.10/dist-packages/numpy/lib/_twodim_base_impl.py:159: ValueError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/unit_test.py::TestGaussianKernel2D::test_1079_3_5 - T...\nFAILED tests/unit_tests/unit_test.py::TestGaussianKernel2D::test_1_7_3 - Type...\nFAILED tests/unit_tests/unit_test.py::TestGaussianKernel2D::test_5_5_5 - Type...\nFAILED tests/unit_tests/unit_test.py::TestHighLowPass::test_high_pass_2_3 - V...\nFAILED tests/unit_tests/unit_test.py::TestHighLowPass::test_high_pass_9_7 - V...\nFAILED tests/unit_tests/unit_test.py::TestHighLowPass::test_low_pass_2_3 - Va...\nFAILED tests/unit_tests/unit_test.py::TestHighLowPass::test_low_pass_9_7 - Va...\nFAILED tests/acceptance_tests/acceptance_test.py::TestHybridImage::test - Val...\n========================= 8 failed, 12 passed in 0.60s =========================\n",
+  "stderr": "",
+  "task": "python/Hybrid_Images/L3_hybrid__gaussian_blur_kernel_2d",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      },
+      {
+        "name": "failed_7",
+        "passed": false
+      }
+    ],
+    "passed": 12,
+    "failed": 8,
+    "total": 20
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.6,
+  "compile_score": 0.5,
+  "test_score": 0.3,
+  "score": 0.8
+}

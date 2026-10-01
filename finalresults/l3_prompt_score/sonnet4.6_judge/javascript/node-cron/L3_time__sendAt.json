@@ -1,0 +1,26 @@
+{
+  "task": "javascript/node-cron/L3_time__sendAt",
+  "project": "javascript/node-cron",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/node-cron/tasks/L3_time__sendAt/prompt.md",
+  "task_json_path": "datasets/javascript/node-cron/tasks/L3_time__sendAt/task.json",
+  "source_file_path": "datasets/javascript/node-cron/src/src/time.ts",
+  "target_symbol": "src/time.ts::sendAt",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description accurately captures all major behavioral branches of the implementation: base date selection logic, timezone conversion, UTC offset conversion with zone string construction and invalid-date error, real-date past-check with error, single next-run return for missing/NaN/negative input, and array return for valid positive integer input. The UTC offset zone string formatting detail (hours/minutes padding, sign handling, `UTC±HH:MM` format) is not described but that is an implementation detail rather than a functional requirement. The description slightly overstates the condition for the array branch by saying 'integer-like' when the code simply checks `i >= 0` (any non-negative number, not just integers), but this is a minor inaccuracy. Overall the description is complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The UTC offset zone string is formatted as 'UTC±HH:MM' with zero-padded hours and minutes — this specific formatting logic is not described, though it is an implementation detail.",
+    "When i === 0, the code enters the array branch and returns an empty array; the description says 'valid non-negative integer-like value' which implies i=0 is included, but does not explicitly call out the empty-array edge case."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'integer-like value' for the array branch condition, but the code uses `i >= 0` with no integer check — any non-negative number (e.g., 1.5) would enter the array branch.",
+    "The description says the function 'returns that date directly' in real-date mode without mentioning the return type is a single DateTime (not an array), which is implicit but could be clearer."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_time__sendAt.raw.md"
+}

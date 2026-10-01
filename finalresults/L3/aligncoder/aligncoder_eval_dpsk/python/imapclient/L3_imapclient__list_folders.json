@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.5,
+  "stdout": "ub_folders_NO(self):\n        self.client._imap._simple_command.return_value = (\"NO\", [b\"badness\"])\n>       self.assertRaises(IMAPClientError, self.client.list_folders)\n\ntests/unit_tests/test_imapclient.py:73: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:697: in list_folders\n    data = self._raw_command_untagged(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    def _raw_command_untagged(\n        self, command, args, response_name=None, unpack=False, uid=True\n    ):\n        # TODO: eventually this should replace _command_and_check (call it _command)\n>       typ, data = self._raw_command(command, args, uid=uid)\nE       TypeError: cannot unpack non-iterable MockIMAP4 object\n\nsrc/imapclient/imapclient.py:1673: TypeError\n______________________ TestListFolders.test_utf7_decoding ______________________\n\nself = <unit_tests.test_imapclient.TestListFolders testMethod=test_utf7_decoding>\n\n    def test_utf7_decoding(self):\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"A\"',\n                b'(\\\\HasNoChildren) \"/\" \"Hello&AP8-world\"',\n            ],\n        )\n    \n>       folders = self.client.list_folders(\"foo\", \"bar\")\n\ntests/unit_tests/test_imapclient.py:85: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:697: in list_folders\n    data = self._raw_command_untagged(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f1955e92380>\ncommand = b'LIST', args = (b'foo', b'bar'), response_name = 'LIST'\nunpack = False, uid = False\n\n    def _raw_command_untagged(\n        self, command, args, response_name=None, unpack=False, uid=True\n    ):\n        # TODO: eventually this should replace _command_and_check (call it _command)\n>       typ, data = self._raw_command(command, args, uid=uid)\nE       TypeError: cannot unpack non-iterable MockIMAP4 object\n\nsrc/imapclient/imapclient.py:1673: TypeError\n_______ TestFindSpecialFolder.test_find_special_folder_with_special_use ________\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_with_special_use>\n\n    def test_find_special_folder_with_special_use(self):\n        self.client._cached_capabilities = (b\"SPECIAL-USE\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"INBOX\"',\n                b'(\\\\HasNoChildren \\\\Sent) \"/\" \"Sent\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:247: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:796: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:697: in list_folders\n    data = self._raw_command_untagged(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f1955f09090>\ncommand = b'LIST', args = (b'', b'*'), response_name = 'LIST', unpack = False\nuid = False\n\n    def _raw_command_untagged(\n        self, command, args, response_name=None, unpack=False, uid=True\n    ):\n        # TODO: eventually this should replace _command_and_check (call it _command)\n>       typ, data = self._raw_command(command, args, uid=uid)\nE       TypeError: cannot unpack non-iterable MockIMAP4 object\n\nsrc/imapclient/imapclient.py:1673: TypeError\n_ TestFindSpecialFolder.test_find_special_folder_with_special_use_single_flag __\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_with_special_use_single_flag>\n\n    def test_find_special_folder_with_special_use_single_flag(self):\n        self.client._cached_capabilities = (b\"SPECIAL-USE\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"INBOX\"',\n                b'(\\\\Sent) \"/\" \"Sent\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:262: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:796: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:697: in list_folders\n    data = self._raw_command_untagged(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f1955dd8a60>\ncommand = b'LIST', args = (b'', b'*'), response_name = 'LIST', unpack = False\nuid = False\n\n    def _raw_command_untagged(\n        self, command, args, response_name=None, unpack=False, uid=True\n    ):\n        # TODO: eventually this should replace _command_and_check (call it _command)\n>       typ, data = self._raw_command(command, args, uid=uid)\nE       TypeError: cannot unpack non-iterable MockIMAP4 object\n\nsrc/imapclient/imapclient.py:1673: TypeError\n_ TestFindSpecialFolder.test_find_special_folder_without_special_use_nor_namespace _\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_without_special_use_nor_namespace>\n\n    def test_find_special_folder_without_special_use_nor_namespace(self):\n        self.client._cached_capabilities = (b\"FOO\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"Sent Items\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:276: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:796: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:697: in list_folders\n    data = self._raw_command_untagged(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f1955f089a0>\ncommand = b'LIST', args = (b'', b'*'), response_name = 'LIST', unpack = False\nuid = False\n\n    def _raw_command_untagged(\n        self, command, args, response_name=None, unpack=False, uid=True\n    ):\n        # TODO: eventually this should replace _command_and_check (call it _command)\n>       typ, data = self._raw_command(command, args, uid=uid)\nE       TypeError: cannot unpack non-iterable MockIMAP4 object\n\nsrc/imapclient/imapclient.py:1673: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_list_folders\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_list_folders_NO\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_list_sub_folders_NO\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_without_special_use_nor_namespace\n======================== 8 failed, 279 passed in 1.94s =========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient__list_folders",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_list_folders",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_list_folders_NO",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_list_sub_folders_NO",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 7,
+    "total": 7
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

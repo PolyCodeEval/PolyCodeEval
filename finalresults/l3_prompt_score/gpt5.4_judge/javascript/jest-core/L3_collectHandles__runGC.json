@@ -1,0 +1,24 @@
+{
+  "task": "javascript/jest-core/L3_collectHandles__runGC",
+  "project": "javascript/jest-core",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/jest-core/tasks/L3_collectHandles__runGC/prompt.md",
+  "task_json_path": "datasets/javascript/jest-core/tasks/L3_collectHandles__runGC/task.json",
+  "source_file_path": "datasets/javascript/jest-core/src/collectHandles.ts",
+  "target_symbol": "collectHandles.ts::runGC",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation closely: it correctly explains the lazy caching of the GC function, the temporary exposure of GC when needed, the error path if no GC function is found, and the final invocation of the cached function. The main overstatement is that it says the previous runtime flag state is restored, whereas the implementation unconditionally sets `--no-expose-gc` rather than tracking and restoring any prior state. It also omits that `gcFunc` may already be initialized from `globalThis.gc` outside the function, but that is nearby state rather than core logic inside `runGC` itself.",
+  "missing_functionality": [
+    "The implementation relies on a module-level cached `gcFunc` that may already have been initialized from `globalThis.gc` before `runGC` is called."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the previous runtime flag state is restored, but the implementation does not preserve prior state; it simply calls `v8.setFlagsFromString('--no-expose-gc')` after attempting to obtain `gc`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_collectHandles__runGC.raw.md"
+}

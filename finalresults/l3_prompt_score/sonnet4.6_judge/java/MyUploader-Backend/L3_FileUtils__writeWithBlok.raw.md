@@ -1,0 +1,13 @@
+{
+  "score": 3.8,
+  "reason": "The description accurately captures the two most distinctive behaviors: setting the file length to `targetSize` and the special-case seek for the final chunk (`targetSize - srcSize`). However, it omits the non-final chunk seek logic (`chunk * srcSize`), which is equally important for correct chunked writing. It also omits the actual data-copy loop (reading from the `InputStream` in 1024-byte chunks and writing to the `RandomAccessFile`) and the closing of the file handle. These are not trivial secondary details — the data-copy loop is the core write operation. A developer working only from this description would know how to position the cursor but might not know how non-final chunks are positioned, and would have no guidance on the actual write mechanics.",
+  "missing_functionality": [
+    "Seek position for non-final chunks: `randomAccessFile.seek(chunk * srcSize)` — the description only covers the final-chunk case.",
+    "The actual data-copy loop: reading from the InputStream in 1024-byte buffers and writing to the RandomAccessFile.",
+    "Closing the RandomAccessFile after writing."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the function 'prepares a fixed-size destination for chunked writing' but omits that it also performs the write in the same call, making it sound like a setup-only method."
+  ],
+  "complete_enough": false
+}

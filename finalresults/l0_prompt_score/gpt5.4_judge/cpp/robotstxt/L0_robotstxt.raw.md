@@ -1,0 +1,21 @@
+{
+  "project": "robotstxt",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "prompt 覆盖了项目的核心能力：robots.txt 解析、匹配、reporting 组件、CLI、CMake 以及主要公开接口，并明确列出黑盒测试所需 API 与关键行为，足以指导复现当前仓库的主体功能。缺口在于未充分体现源码中的 ParseRobotsTxt 回调式解析器、LineMetadata、unsupported tags 统计、路径提取与转义等实现层面的重要细节，因此对完整性略有影响。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "核心输入输出和判定语义写得较清楚，尤其是 longest-match、Allow 平局优先、通配符和 $ 锚点、user-agent 校验规则、reporter 计数等黑盒行为约束较明确。仍存在一些歧义，例如 parse_results 的精确结构与 tag 枚举并未与真实代码完全对齐，CLI 的具体输出文案和返回码细节也未完全固化，导致实现时仍需结合源码推断。"
+    },
+    "testability": {
+      "score": 4.7,
+      "reason": "prompt 直接给出了黑盒测试所依赖的 include path、namespace、类/函数名和一组关键行为契约，足以支持实现可被黑盒验证的核心能力；对 matcher、key type、reporter 三类测试关注点覆盖较好。扣分点在于少数接口签名表述与真实源码存在轻微抽象化，例如 string_view 与 string/char* 的差异、RobotsParsedLine 真实字段形态未完全展开。"
+    },
+    "consistency": {
+      "score": 3.8,
+      "reason": "整体方向与真实仓库一致，文件划分、核心类名和大多数行为都能对应到源码与黑盒测试。但 prompt 中对 RobotsParsedLine 的描述与实际 reporting_robots.h 不一致，真实代码使用内部 RobotsTagName 枚举而非 KeyType；同时 CLI 只笼统要求 deterministic result，没有反映真实实现中的帮助参数、错误返回码和输出句式。这些都是与现有实现的可见偏差，因此一致性需明显下调。"
+    }
+  }
+}

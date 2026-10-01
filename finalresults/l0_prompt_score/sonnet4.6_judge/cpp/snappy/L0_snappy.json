@@ -1,0 +1,29 @@
+{
+  "task": "cpp/snappy/L0_snappy",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L0_snappy/prompt.md",
+  "project_root": "datasets/cpp/snappy",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers string and raw buffer compress/uncompress, streaming Source/Sink interface and concrete implementations, iovec scatter-gather operations, utility functions (MaxCompressedLength, GetUncompressedLength, IsValidCompressedBuffer, IsValidCompressed, UncompressAsMuchAsPossible), C API with all five functions, CompressionOptions struct, and the snappy-stubs-public.h handwritten requirement. Internal helper header mentioned."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "Function signatures are listed explicitly. CompressionOptions fields and static methods are specified. C API is shown in full. The Source/Sink abstract interface methods are named. However, the exact MaxCompressedLength formula (32 + n + n/6) is not stated, which the blackbox test checks numerically. The compressed format guarantees are also not described."
+    },
+    "testability": {
+      "score": 4.0,
+      "reason": "Roundtrip tests (compress then uncompress), handling of invalid compressed input, and streaming tests are all derivable from the API specification. The MaxCompressedLength test (EXPECT_EQ(MaxCompressedLength(0), 32u) and EXPECT_EQ(MaxCompressedLength(6), 39u)) cannot be implemented correctly without knowing the formula — this is not in the prompt."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "Verified against snappy.h header. CompressionOptions struct with level field and Min/Max/Default static methods matches exactly. Compress, Uncompress, RawCompress, RawUncompress, GetUncompressedLength signatures match. C API (snappy_status enum values 0/1/2, five C functions) matches snappy-c.h. The iovec extension functions match. No conflicts."
+    }
+  },
+  "overall_score": 4.25
+}

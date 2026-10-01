@@ -1,0 +1,23 @@
+{
+  "task": "javascript/babel-parser/L2_expression-scope",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L2_expression-scope/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L2_expression-scope/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/util/expression-scope.ts",
+  "target_file": "util/expression-scope.ts",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The file-level description accurately captures the core purpose — deferred vs. immediate error raising for ambiguous arrow-head constructs — and correctly identifies all four scope types and the propagation model. The four function descriptions map closely to the actual implementations: `recordParameterInitializerError` correctly describes the outward walk, immediate raise on `ParameterDeclaration`, recording in arrow scopes, and stopping at expression boundaries; `recordArrowParameterBindingError` correctly describes top-scope-only inspection and the three-branch behavior; `recordAsyncArrowParametersError` correctly describes walking only while `canBeArrowParameterDeclaration()` is true and recording only for async-arrow scopes; `validateAsPattern` correctly describes iterating current-scope errors, raising each, then clearing the same key from parent arrow scopes. One minor gap: `recordParameterInitializerError` description says the walk starts at the current scope and checks `isCertainlyParameterDeclaration` as the termination condition, but the actual loop structure checks the negative (`while (!scope.isCertainlyParameterDeclaration())`) and raises *after* the loop exits — the description implies raising happens *during* the walk when a parameter scope is encountered, which is slightly misleading about control flow but not wrong in outcome. Overall the descriptions are accurate and complete enough to reconstruct all four functions faithfully.",
+  "missing_functionality": [
+    "The description of `recordParameterInitializerError` does not explicitly mention that the raise happens after the while-loop exits (i.e., when `isCertainlyParameterDeclaration()` is true at the top of the loop check), which could cause a model to place the raise inside the loop body rather than after it."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `recordParameterInitializerError` description says 'If the walk reaches a definite parameter-declaration scope, raise the provided parse error immediately' — this implies the raise is a conditional branch inside the traversal, whereas in the implementation the raise occurs unconditionally after the while-loop terminates (because the only non-return exit from the loop is when `isCertainlyParameterDeclaration()` becomes true). The phrasing could mislead a model into writing an if-branch inside the loop."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_expression-scope.raw.md"
+}

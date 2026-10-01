@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.46,
+  "stdout": "shmallow.Schema.dump` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before serializing) will be passed as\n        an additional argument to the method.\n    \n        .. versionchanged:: 3.0.0 ``many`` is always passed as a keyword arguments to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection`` and ``pass_original`` are keyword-only arguments.\n        \"\"\"\n>       for attr_name, hook_many, processor_kwargs in self._hooks[tag]:\nE       NameError: name 'self' is not defined\n\nsrc/marshmallow/decorators.py:172: NameError\n_____________________ test_decorated_processor_inheritance _____________________\n\n    def test_decorated_processor_inheritance():\n>       class ParentSchema(Schema):\n\ntests/unit_tests/test_decorators.py:215: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_decorators.py:217: in ParentSchema\n    def inherited(self, item, **kwargs):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nfn = <function test_decorated_processor_inheritance.<locals>.ParentSchema.inherited at 0x7fb4c6c42b90>\n\n    def post_dump(\n        fn: typing.Callable[..., typing.Any] | None = None,\n        *,\n        pass_collection: bool = False,\n        pass_original: bool = False,\n    ) -> typing.Callable[..., typing.Any]:\n        \"\"\"Register a method to invoke after serializing an object. The method\n        receives the serialized object and returns the processed object.\n    \n        By default it receives a single object at a time, transparently handling the ``many``\n        argument passed to the `Schema <marshmallow.Schema>`'s :func:`~marshmallow.Schema.dump` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before serializing) will be passed as\n        an additional argument to the method.\n    \n        .. versionchanged:: 3.0.0 ``many`` is always passed as a keyword arguments to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection`` and ``pass_original`` are keyword-only arguments.\n        \"\"\"\n>       for attr_name, hook_many, processor_kwargs in self._hooks[tag]:\nE       NameError: name 'self' is not defined\n\nsrc/marshmallow/decorators.py:172: NameError\n______________ test_decorator_error_handling_with_dump[post_dump] ______________\n\ndecorator = <function post_dump at 0x7fb4c795af80>\n\n    @pytest.mark.parametrize(\"decorator\", [pre_dump, post_dump])\n    def test_decorator_error_handling_with_dump(decorator):\n>       class ExampleSchema(Schema):\n\ntests/unit_tests/test_decorators.py:841: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_decorators.py:843: in ExampleSchema\n    def raise_value_error(self, item, **kwargs):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nfn = <function test_decorator_error_handling_with_dump.<locals>.ExampleSchema.raise_value_error at 0x7fb4c6b71870>\n\n    def post_dump(\n        fn: typing.Callable[..., typing.Any] | None = None,\n        *,\n        pass_collection: bool = False,\n        pass_original: bool = False,\n    ) -> typing.Callable[..., typing.Any]:\n        \"\"\"Register a method to invoke after serializing an object. The method\n        receives the serialized object and returns the processed object.\n    \n        By default it receives a single object at a time, transparently handling the ``many``\n        argument passed to the `Schema <marshmallow.Schema>`'s :func:`~marshmallow.Schema.dump` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before serializing) will be passed as\n        an additional argument to the method.\n    \n        .. versionchanged:: 3.0.0 ``many`` is always passed as a keyword arguments to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection`` and ``pass_original`` are keyword-only arguments.\n        \"\"\"\n>       for attr_name, hook_many, processor_kwargs in self._hooks[tag]:\nE       NameError: name 'self' is not defined\n\nsrc/marshmallow/decorators.py:172: NameError\n_ test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0] _\n\ndata = <tests.unit_tests.test_decorators.Example object at 0x7fb4c7873070>\nexpected_data = {'foo': 0}\nexpected_original_data = <tests.unit_tests.test_decorators.Nested object at 0x7fb4c7873040>\n\n    @pytest.mark.parametrize(\n        (\"data\", \"expected_data\", \"expected_original_data\"),\n        ([example, {\"foo\": 0}, example.nested[0]],),\n    )\n    def test_decorator_post_dump_with_nested_original_and_pass_collection(\n        data, expected_data, expected_original_data\n    ):\n>       class NestedSchema(Schema):\n\ntests/unit_tests/test_decorators.py:873: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_decorators.py:876: in NestedSchema\n    @post_dump(pass_collection=False, pass_original=True)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nfn = None\n\n    def post_dump(\n        fn: typing.Callable[..., typing.Any] | None = None,\n        *,\n        pass_collection: bool = False,\n        pass_original: bool = False,\n    ) -> typing.Callable[..., typing.Any]:\n        \"\"\"Register a method to invoke after serializing an object. The method\n        receives the serialized object and returns the processed object.\n    \n        By default it receives a single object at a time, transparently handling the ``many``\n        argument passed to the `Schema <marshmallow.Schema>`'s :func:`~marshmallow.Schema.dump` call.\n        If ``pass_collection=True``, the raw data (which may be a collection) is passed.\n    \n        If ``pass_original=True``, the original data (before serializing) will be passed as\n        an additional argument to the method.\n    \n        .. versionchanged:: 3.0.0 ``many`` is always passed as a keyword arguments to the decorated method.\n        .. versionchanged:: 4.0.0 ``pass_many`` is renamed to ``pass_collection``.\n        .. versionchanged:: 4.0.0 ``pass_collection`` and ``pass_original`` are keyword-only arguments.\n        \"\"\"\n>       for attr_name, hook_many, processor_kwargs in self._hooks[tag]:\nE       NameError: name 'self' is not defined\n\nsrc/marshmallow/decorators.py:172: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]\n======================= 11 failed, 1168 passed in 4.60s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_decorators__post_dump",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

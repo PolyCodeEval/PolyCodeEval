@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.58,
+  "stdout": "FAIL\tgithub.com/jmoiron/sqlx [build failed]\nok  \tgithub.com/jmoiron/sqlx/reflectx\t(cached)\nok  \tgithub.com/jmoiron/sqlx/types\t(cached)\nFAIL\n",
+  "stderr": "# github.com/jmoiron/sqlx [github.com/jmoiron/sqlx.test]\n./bind.go:143:9: syntax error: unexpected literal 's the function body: at end of statement\n./bind.go:143:30: newline in rune literal\n./bind.go:145:7: syntax error: unexpected literal `go\n        // count the number of arguments to determine if Stmt must be prepared\n        // if we have a slice of arguments, we need to expand them\n        // and rewrite the query\n\n        // find the bindvars and args, count them\n        var flatArgs []interface{}\n        var buf strings.Builder\n        var i, j int\n\n        // count the number of args needed\n        for _, arg := range args {\n            if v, ok := asSliceForIn(arg); ok {\n                vlen := v.Len()\n                if vlen == 0 {\n                    return \"\", nil, errors.New(\"sqlx.In: empty slice passed to 'in' query\")\n                }\n                j += vlen\n            } else {\n                j++\n            }\n        }\n\n        // pre-alloc the flat args slice\n        flatArgs = make([]interface{}, 0, j)\n\n        // find the ? bindvars and replace them with the right number of ?s\n        argIdx := 0\n        for i = 0; i < len(query); i++ {\n            if query[i] == '?' {\n                if argIdx >= len(args) {\n                    return \"\", nil, errors.New(\"sqlx.In: number of bindVars exceeds arguments\")\n                }\n                arg := args[argIdx]\n                argIdx++\n\n                if v, ok := asSliceForIn(arg); ok {\n                    vlen := v.Len()\n                    if vlen == 0 {\n                        return \"\", nil, errors.New(\"sqlx.In: empty slice passed to 'in' query\")\n                    }\n                    // write (?, ?, ...) for each element\n                    for si := 0; si < vlen; si++ {\n                        if si != 0 {\n                            buf.WriteString(\", \")\n                        }\n                        buf.WriteByte('?')\n                    }\n                    flatArgs = appendReflectSlice(flatArgs, v, vlen)\n                } else {\n                    buf.WriteByte('?')\n                    flatArgs = append(flatArgs, arg)\n                }\n            } else {\n                buf.WriteByte(query[i])\n            }\n        }\n\n        if argIdx != len(args) {\n            return \"\", nil, errors.New(\"sqlx.In: number of bindVars less than number arguments\")\n        }\n\n        // check if we have a driver.Valuer as one of the remaining args\n        _ = driver.ErrBadConn // ensure driver import is used\n\n        return buf.String(), flatArgs, nil\n    ` at end of statement\n",
+  "task": "go/sqlx/L3_bind__In",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

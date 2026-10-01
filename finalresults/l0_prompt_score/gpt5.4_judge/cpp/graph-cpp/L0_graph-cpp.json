@@ -1,0 +1,30 @@
+{
+  "task": "cpp/graph-cpp/L0_graph-cpp",
+  "project": "cpp/graph-cpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/graph-cpp/tasks/L0_graph-cpp/prompt.md",
+  "project_root": "datasets/cpp/graph-cpp",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "prompt 覆盖了自定义队列/栈、邻接表/邻接矩阵、非递归 DFS、BFS、文件型 CLI、构建文件与主要头文件路径，足以说明仓库核心功能与大致实现方向。扣分点在于没有反映当前实现里邻接矩阵类能力边界与若干真实细节，无法完整指导复现现有源码的所有关键特征。"
+    },
+    "unambiguity": {
+      "score": 3.4,
+      "reason": "核心输入输出、遍历起点、异常场景和 CLI 调用方式写得较明确，但仍存在关键歧义：邻接矩阵类被描述为与邻接表同接口，却未明确其真实只实现 locate/setVexes/setArcs/打印；同时 API 里混用了 initializer_list、vector、const 成员函数和 0/1 基索引约定，读者较难判断应以哪套契约为准。"
+    },
+    "testability": {
+      "score": 4.1,
+      "reason": "prompt 显式列出 include 路径、类接口、遍历与异常行为，黑盒验证入口比较清晰，足以支撑实现主要可测能力。主要问题是测试契约中对邻接矩阵接口的要求高于真实源码，例如声明了与邻接表同接口，这会让按 prompt 实现的人偏离当前项目实际测试/实现边界。"
+    },
+    "consistency": {
+      "score": 2.9,
+      "reason": "与现有实现存在数个明显不一致点：prompt 声称 AdjacencyMatrixGraph 与邻接表图拥有相同接口并支持 bfs/dfs，但真实 am_graph.hpp 没有这些遍历接口；其 setArcs 真实签名使用 tuple<int,int,int> 而非 tuple<T,T,int>；Queue::front 和 Stack::top 在源码中也不是 const 成员。虽然 CLI 总体描述与源码接近，但这些公共接口层面的冲突会直接影响按 prompt 复现当前仓库。"
+    }
+  },
+  "overall_score": 3.87,
+  "raw_response_file": "L0_graph-cpp.raw.md"
+}

@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.16,
+  "stdout": "estMethod=test_literals>\n\n    def test_literals(self):\n        self.assertEqual(\n>           parse_fetch_response(\n                [\n                    (b\"1 (RFC822.TEXT {4}\", b\"body\"),\n                    (b\" RFC822 {21}\", b\"Subject: test\\r\\n\\r\\nbody\"),\n                    b\")\",\n                ]\n            ),\n            {\n                1: {\n                    b\"RFC822.TEXT\": b\"body\",\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\n\ntests/unit_tests/test_response_parser.py:289: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/response_parser.py:130: in parse_fetch_response\n    msg_response = next(response)\nsrc/imapclient/response_parser.py:95: in gen_parsed_response\n    yield atom(src, token)\nsrc/imapclient/response_parser.py:254: in atom\n    return parse_tuple(src)\nsrc/imapclient/response_parser.py:279: in parse_tuple\n    out.append(atom(src, token))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsrc = <imapclient.response_lexer.TokenSource object at 0x7fef745b7dc0>\ntoken = b'{4}'\n\n    def atom(src: TokenSource, token: bytes) -> _Atom:\n        if token == b\"(\":\n            return parse_tuple(src)\n    \n        if token == b\"NIL\":\n            return None\n    \n        if token[:1] == b'\"':\n            return token[1:-1]\n    \n        if len(token) >= 2 and token[:1] == b\"{\":\n            # Literal token - the actual data follows as next token\n>           return next(src)\nE           TypeError: 'TokenSource' object is not an iterator\n\nsrc/imapclient/response_parser.py:264: TypeError\n______ TestParseFetchResponse.test_literals_and_keys_with_square_brackets ______\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_literals_and_keys_with_square_brackets>\n\n    def test_literals_and_keys_with_square_brackets(self):\n        self.assertEqual(\n>           parse_fetch_response([(b\"1 (BODY[TEXT] {11}\", b\"Hi there.\\r\\n\"), b\")\"]),\n            {1: {b\"BODY[TEXT]\": b\"Hi there.\\r\\n\", b\"SEQ\": 1}},\n        )\n\ntests/unit_tests/test_response_parser.py:307: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/response_parser.py:130: in parse_fetch_response\n    msg_response = next(response)\nsrc/imapclient/response_parser.py:95: in gen_parsed_response\n    yield atom(src, token)\nsrc/imapclient/response_parser.py:254: in atom\n    return parse_tuple(src)\nsrc/imapclient/response_parser.py:279: in parse_tuple\n    out.append(atom(src, token))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsrc = <imapclient.response_lexer.TokenSource object at 0x7fef744a3010>\ntoken = b'{11}'\n\n    def atom(src: TokenSource, token: bytes) -> _Atom:\n        if token == b\"(\":\n            return parse_tuple(src)\n    \n        if token == b\"NIL\":\n            return None\n    \n        if token[:1] == b'\"':\n            return token[1:-1]\n    \n        if len(token) >= 2 and token[:1] == b\"{\":\n            # Literal token - the actual data follows as next token\n>           return next(src)\nE           TypeError: 'TokenSource' object is not an iterator\n\nsrc/imapclient/response_parser.py:264: TypeError\n___________________ TestParseFetchResponse.test_mixed_types ____________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_mixed_types>\n\n    def test_mixed_types(self):\n        self.assertEqual(\n>           parse_fetch_response(\n                [\n                    (\n                        b'1 (INTERNALDATE \" 9-Feb-2007 17:08:08 +0100\" RFC822 {21}',\n                        b\"Subject: test\\r\\n\\r\\nbody\",\n                    ),\n                    b\")\",\n                ]\n            ),\n            {\n                1: {\n                    b\"INTERNALDATE\": datetime_to_native(\n                        datetime(2007, 2, 9, 17, 8, 8, 0, FixedOffset(60))\n                    ),\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\n\ntests/unit_tests/test_response_parser.py:657: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/response_parser.py:130: in parse_fetch_response\n    msg_response = next(response)\nsrc/imapclient/response_parser.py:95: in gen_parsed_response\n    yield atom(src, token)\nsrc/imapclient/response_parser.py:254: in atom\n    return parse_tuple(src)\nsrc/imapclient/response_parser.py:279: in parse_tuple\n    out.append(atom(src, token))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsrc = <imapclient.response_lexer.TokenSource object at 0x7fef751f4bb0>\ntoken = b'{21}'\n\n    def atom(src: TokenSource, token: bytes) -> _Atom:\n        if token == b\"(\":\n            return parse_tuple(src)\n    \n        if token == b\"NIL\":\n            return None\n    \n        if token[:1] == b'\"':\n            return token[1:-1]\n    \n        if len(token) >= 2 and token[:1] == b\"{\":\n            # Literal token - the actual data follows as next token\n>           return next(src)\nE           TypeError: 'TokenSource' object is not an iterator\n\nsrc/imapclient/response_parser.py:264: TypeError\n__________________ TestParseFetchResponse.test_partial_fetch ___________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_partial_fetch>\n\n    def test_partial_fetch(self):\n        body = b\"01234567890123456789\"\n        self.assertEqual(\n>           parse_fetch_response([(b\"123 (UID 367 BODY[]<0> {20}\", body), b\")\"]),\n            {367: {b\"BODY[]<0>\": body, b\"SEQ\": 123}},\n        )\n\ntests/unit_tests/test_response_parser.py:492: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/response_parser.py:130: in parse_fetch_response\n    msg_response = next(response)\nsrc/imapclient/response_parser.py:95: in gen_parsed_response\n    yield atom(src, token)\nsrc/imapclient/response_parser.py:254: in atom\n    return parse_tuple(src)\nsrc/imapclient/response_parser.py:279: in parse_tuple\n    out.append(atom(src, token))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsrc = <imapclient.response_lexer.TokenSource object at 0x7fef74459a50>\ntoken = b'{20}'\n\n    def atom(src: TokenSource, token: bytes) -> _Atom:\n        if token == b\"(\":\n            return parse_tuple(src)\n    \n        if token == b\"NIL\":\n            return None\n    \n        if token[:1] == b'\"':\n            return token[1:-1]\n    \n        if len(token) >= 2 and token[:1] == b\"{\":\n            # Literal token - the actual data follows as next token\n>           return next(src)\nE           TypeError: 'TokenSource' object is not an iterator\n\nsrc/imapclient/response_parser.py:264: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_folder_status.py::TestFolderStatus::test_literal\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_literal\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal_with_more\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_not_an_int\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_partial_fetch\n======================== 11 failed, 276 passed in 1.32s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_response_parser__atom",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_folder_status.py::TestFolderStatus::test_literal",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_literal",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal_with_more",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_not_an_int",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

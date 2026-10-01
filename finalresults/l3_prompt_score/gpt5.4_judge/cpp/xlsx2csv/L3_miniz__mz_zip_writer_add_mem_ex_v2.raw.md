@@ -1,0 +1,14 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely and captures the main control flow: validation, level/flag handling, CRC/uncompressed-size behavior, directory-entry restrictions, ZIP64 promotion, alignment padding, local header and extra data writing, optional compression, data descriptor emission, central-directory registration, and final archive state updates. It is also detailed enough to guide an implementation. The main gaps are a few implementation-specific details around exactly when ZIP64 extra data is emitted and some nuanced error-path behavior.",
+  "missing_functionality": [
+    "The implementation only creates ZIP64 extra data when ZIP64 mode is active and either the uncompressed size or local-header offset reaches 32-bit limits; the description is slightly broader about ZIP64-required entries in general.",
+    "In non-ZIP64 mode, the function performs an early projected-size check that includes user local/central extra-data lengths and a 32-bit data descriptor allowance before deciding to promote to ZIP64.",
+    "Some write-failure paths return MZ_FALSE directly instead of always routing through mz_zip_set_error, so the exact error-setting behavior is not perfectly uniform."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement that a data descriptor is emitted whenever size information cannot be placed directly in the local header 'under this API’s rules' is a bit too broad: this implementation sets the locator/data-descriptor flag whenever uncomp_size is nonzero or when there is nonempty uncompressed input, and it only actually writes the descriptor when uncomp_size is nonzero.",
+    "Saying ZIP64 extra data is emitted in the local header 'for ZIP64-required entries' can be read as applying whenever ZIP64 is needed in principle, but the implementation only emits it when the archive is already in ZIP64 mode and the size/offset fields actually exceed 32-bit limits."
+  ],
+  "complete_enough": true
+}

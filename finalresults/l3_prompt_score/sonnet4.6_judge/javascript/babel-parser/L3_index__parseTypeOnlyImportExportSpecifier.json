@@ -1,0 +1,28 @@
+{
+  "task": "javascript/babel-parser/L3_index__parseTypeOnlyImportExportSpecifier",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__parseTypeOnlyImportExportSpecifier/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__parseTypeOnlyImportExportSpecifier/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::parseTypeOnlyImportExportSpecifier",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core purpose and most of the key behaviors: the import/export field mapping (imported/local vs local/exported), the disambiguation of `type` as modifier vs name, the four specifier forms, the kind marking (type/value), the error raised for nested type-only contexts, the alias consumption and clone fallback, and the `checkIdentifier` call with differing flags. The description is detailed enough that a developer could implement the function with reasonable fidelity. Minor gaps include: it doesn't mention that the initial `leftOfAs` is taken from the already-populated `node[leftOfAsKey]` (i.e., the node arrives pre-populated), it doesn't describe the `canParseAsKeyword` flag and its role in controlling whether a trailing `as` alias is attempted, it doesn't mention the `loc = leftOfAs.start` capture used for the error location, and it slightly mischaracterizes the `else if (tokenIsKeywordOrIdentifier)` branch — in that branch for exports, `parseModuleExportName()` is called (not `parseIdentifier`), which the description does note elsewhere but conflates slightly. The `checkReservedWord` call (only when not followed by `as`) is mentioned abstractly but not precisely enough to reproduce.",
+  "missing_functionality": [
+    "The `canParseAsKeyword` flag and its precise role: it is set to false in several branches to suppress the trailing `as` alias parse, which is a non-trivial control-flow detail.",
+    "The node arrives with `node[leftOfAsKey]` already set; the function reads that initial value rather than starting from scratch.",
+    "The `loc = leftOfAs.start` capture for error reporting location is not mentioned.",
+    "The `checkReservedWord` call is only made when the next token is NOT contextual `as` — this conditional is not clearly described."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'import-side names are parsed/validated with reserved-word handling' but doesn't clarify this only applies in the `else if (tokenIsKeywordOrIdentifier)` branch for imports, and only when not followed by `as`.",
+    "The description implies `checkIdentifier` flags differ between type-only and value imports (4098 vs 4096), which is correct, but it attributes this to 'type-only and value imports' when it actually depends on `hasTypeSpecifier` (the per-specifier type modifier), not `isInTypeOnlyImportExport`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__parseTypeOnlyImportExportSpecifier.raw.md"
+}

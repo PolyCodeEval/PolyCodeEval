@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.66,
+  "stdout": "                   partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n            errors = error_store.errors\n            # Run post processors\n            if not errors and postprocess and self._hooks[POST_LOAD]:\n                try:\n                    result = self._invoke_load_processors(\n                        POST_LOAD,\n                        result,\n                        many=many,\n                        original_data=data,\n                        partial=partial,\n                        unknown=unknown,\n                    )\n                except ValidationError as err:\n                    errors = err.normalized_messages()\n        if errors:\n            exc = ValidationError(errors, data=data, valid_data=result)\n            self.handle_error(exc, data, many=many, partial=partial)\n>           raise exc\nE           marshmallow.exceptions.ValidationError: {'_schema': ['Invalid input type.']}\n\nsrc/marshmallow/schema.py:943: ValidationError\n__________________ test_post_load_method_that_appends_to_data __________________\n\n    def test_post_load_method_that_appends_to_data():\n        class MySchema(Schema):\n            foo = fields.Int()\n    \n            @post_load(pass_collection=True)\n            def append_to_data(self, data, **kwargs):\n                data.append({\"foo\": 42})\n                return data\n    \n            @post_load(pass_collection=False, pass_original=True)\n            def noop(self, data, original_data, **kwargs):\n                if original_data is None:  # added item\n                    assert data == {\"foo\": 42}\n                else:\n                    assert original_data == {\"foo\": 24}\n                    assert data == {\"foo\": 24}\n                return data\n    \n        schema = MySchema(many=True)\n>       assert schema.load([{\"foo\": 24}]) == [{\"foo\": 24}, {\"foo\": 42}]\nE       AssertionError: assert None == [{'foo': 24}, {'foo': 42}]\nE        +  where None = load([{'foo': 24}])\nE        +    where load = <MySchema(many=True)>.load\n\ntests/unit_tests/test_decorators.py:987: AssertionError\n______________ test_loading_single_object_with_collection_schema _______________\n\n    def test_loading_single_object_with_collection_schema():\n        s = UserSchema(many=True)\n        in_data = {\"name\": \"Mick\", \"email\": \"mick@stones.com\"}\n        result = s.load(in_data, many=False)\n>       assert type(result) is User\nE       AssertionError: assert <class 'NoneType'> is User\nE        +  where <class 'NoneType'> = type(None)\n\ntests/unit_tests/test_schema.py:202: AssertionError\n_________________________ test_load_returns_an_object __________________________\n\n    def test_load_returns_an_object():\n        s = UserSchema()\n        result = s.load({\"name\": \"Monty\"})\n>       assert type(result) is User\nE       AssertionError: assert <class 'NoneType'> is User\nE        +  where <class 'NoneType'> = type(None)\n\ntests/unit_tests/test_schema.py:218: AssertionError\n________________________________ test_load_many ________________________________\n\n    def test_load_many():\n        s = UserSchema()\n        in_data = [{\"name\": \"Mick\"}, {\"name\": \"Keith\"}]\n        result = s.load(in_data, many=True)\n>       assert type(result) is list\nE       AssertionError: assert <class 'NoneType'> is list\nE        +  where <class 'NoneType'> = type(None)\n\ntests/unit_tests/test_schema.py:225: AssertionError\n__________________________ test_loads_returns_a_user ___________________________\n\n    def test_loads_returns_a_user():\n        s = UserSchema()\n        result = s.loads(json.dumps({\"name\": \"Monty\"}))\n>       assert type(result) is User\nE       AssertionError: assert <class 'NoneType'> is User\nE        +  where <class 'NoneType'> = type(None)\n\ntests/unit_tests/test_schema.py:294: AssertionError\n_______________________________ test_loads_many ________________________________\n\n    def test_loads_many():\n        s = UserSchema()\n        in_data = [{\"name\": \"Mick\"}, {\"name\": \"Keith\"}]\n        in_json_data = json.dumps(in_data)\n        result = s.loads(in_json_data, many=True)\n>       assert type(result) is list\nE       AssertionError: assert <class 'NoneType'> is list\nE        +  where <class 'NoneType'> = type(None)\n\ntests/unit_tests/test_schema.py:302: AssertionError\n______________________ test_loads_deserializes_from_json _______________________\n\n    def test_loads_deserializes_from_json():\n        user_dict = {\"name\": \"Monty\", \"age\": \"42.3\"}\n        user_json = json.dumps(user_dict)\n        result = UserSchema().loads(user_json)\n>       assert isinstance(result, User)\nE       assert False\nE        +  where False = isinstance(None, User)\n\ntests/unit_tests/test_schema.py:310: AssertionError\n____________________ TestNestedSchema.test_nested_load_many ____________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7fc6ca6b83d0>\n\n    def test_nested_load_many(self):\n        in_data = {\n            \"title\": \"Shine A Light\",\n            \"collaborators\": [\n                {\"name\": \"Mick\", \"email\": \"mick@stones.com\"},\n                {\"name\": \"Keith\", \"email\": \"keith@stones.com\"},\n            ],\n        }\n        data = BlogSchema().load(in_data)\n        collabs = data[\"collaborators\"]\n        assert len(collabs) == 2\n>       assert all(type(each) is User for each in collabs)\nE       assert False\nE        +  where False = all(<generator object TestNestedSchema.test_nested_load_many.<locals>.<genexpr> at 0x7fc6ca4f00b0>)\n\ntests/unit_tests/test_schema.py:1931: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling - A...\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[pre_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[post_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_post_load_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-load]\nFAILED tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data\nFAILED tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema\nFAILED tests/unit_tests/test_schema.py::test_load_returns_an_object - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_load_many - AssertionError: asse...\nFAILED tests/unit_tests/test_schema.py::test_loads_returns_a_user - Assertion...\nFAILED tests/unit_tests/test_schema.py::test_loads_many - AssertionError: ass...\nFAILED tests/unit_tests/test_schema.py::test_loads_deserializes_from_json - a...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many\n======================= 25 failed, 1154 passed in 3.81s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_load_processors",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[pre_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[post_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_post_load_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 18,
+    "total": 18
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

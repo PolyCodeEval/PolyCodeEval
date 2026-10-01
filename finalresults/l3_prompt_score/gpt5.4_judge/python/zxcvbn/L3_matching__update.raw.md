@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures the two-stage gating logic for recording a match, the MAX_DELTA constraint, token extraction, classification into lower/upper/digits/unicode, the assigned sequence-space sizes, ascending detection from the sign of delta, and the structure of the appended result object. It is also detailed enough that someone could implement this helper function with little risk of missing core behavior. Only very minor implementation-level details are omitted.",
+  "missing_functionality": [
+    "It does not explicitly mention that the token is matched against full-string regexes for classification.",
+    "It does not note that the appended token field is taken directly from password[i:j + 1] again rather than reusing the local token variable."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

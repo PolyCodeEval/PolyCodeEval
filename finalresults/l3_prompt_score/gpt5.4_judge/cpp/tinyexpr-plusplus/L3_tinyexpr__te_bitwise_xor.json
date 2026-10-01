@@ -1,0 +1,28 @@
+{
+  "task": "cpp/tinyexpr-plusplus/L3_tinyexpr__te_bitwise_xor",
+  "project": "cpp/tinyexpr-plusplus",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__te_bitwise_xor/prompt.md",
+  "task_json_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__te_bitwise_xor/task.json",
+  "source_file_path": "datasets/cpp/tinyexpr-plusplus/src/tinyexpr.cpp",
+  "target_symbol": "tinyexpr.cpp::te_bitwise_xor",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.6,
+  "reason": "The description gets the core purpose right: this function takes two te_type values and returns their bitwise XOR with no side effects. However, it omits important implemented behavior that is necessary for a faithful reimplementation: both inputs must be exact integers, both must be non-negative, and both must be no larger than te_parser::MAX_BITOPS_VAL, with runtime_error thrown for violations. It also does not mention that the XOR is performed by casting to uint64_t and then back to te_type. The description is not misleading, but it is materially incomplete for implementation purposes.",
+  "missing_functionality": [
+    "Checks that both arguments are integer-valued using std::floor(val) == val.",
+    "Rejects negative inputs and throws std::runtime_error.",
+    "Rejects inputs larger than te_parser::MAX_BITOPS_VAL and throws std::runtime_error.",
+    "Performs the XOR via uint64_t casts before converting the result back to te_type."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying no explicit error handling is visible is inaccurate relative to the full implementation, which has multiple explicit runtime_error checks.",
+    "Saying no special boundary cases are documented misses the implemented non-negative and maximum-value constraints."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_tinyexpr__te_bitwise_xor.raw.md"
+}

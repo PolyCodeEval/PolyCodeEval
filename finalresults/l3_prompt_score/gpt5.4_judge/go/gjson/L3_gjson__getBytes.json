@@ -1,0 +1,25 @@
+{
+  "task": "go/gjson/L3_gjson__getBytes",
+  "project": "go/gjson",
+  "language": "go",
+  "prompt_path": "datasets/go/gjson/tasks/L3_gjson__getBytes/prompt.md",
+  "task_json_path": "datasets/go/gjson/tasks/L3_gjson__getBytes/task.json",
+  "source_file_path": "datasets/go/gjson/src/gjson.go",
+  "target_symbol": "gjson.go::getBytes",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description matches the implementation very well: it correctly covers the nil-input early return, the delegation to the standard lookup, the goal of returning uniquely allocated/safe strings, the special handling when Raw or Str are absent, the substring-of-Raw optimization, and the general case of copying both strings. The main omission is that the implementation specifically performs an unsafe []byte-to-string cast before calling Get and uses pointer-range checks on the returned strings; the description expresses the behavior but not those implementation mechanics. It is also slightly imprecise in saying Raw and Str may be reused 'when Raw and Str already reference the same underlying storage'—the implementation only reuses via the substring-within-Raw case, though exact equality is still covered by that condition.",
+  "missing_functionality": [
+    "Does not mention that the function first unsafely casts the []byte input to string and calls Get on that string.",
+    "Does not mention that only Raw and Str are adjusted; the rest of the Result from Get is otherwise preserved."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase about reusing the lookup result 'when Raw and Str already reference the same underlying storage' is broader than the implementation; the actual optimization is specifically when Str's data lies within Raw's byte range, including equality as a special case."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gjson__getBytes.raw.md"
+}

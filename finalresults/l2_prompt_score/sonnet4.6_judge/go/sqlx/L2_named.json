@@ -1,0 +1,26 @@
+{
+  "task": "go/sqlx/L2_named",
+  "project": "go/sqlx",
+  "language": "go",
+  "prompt_path": "datasets/go/sqlx/tasks/L2_named/prompt.md",
+  "task_json_path": "datasets/go/sqlx/tasks/L2_named/task.json",
+  "source_file_path": "datasets/go/sqlx/src/named.go",
+  "target_file": "named.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The file-level and function-level descriptions are highly accurate and closely match the actual implementation. Every hollowed function is covered with correct behavioral detail: `prepareNamed` correctly describes the bind-type lookup, compilation, and `Preparex` call; `convertMapStringInterface` accurately describes the reflect-based convertibility check; `bindArgs` correctly describes pointer dereferencing, `TraversalsByNameFunc`, and `FieldByIndexesReadOnly`; `bindMapArgs` correctly describes the ordered lookup and error format; `bindStruct` correctly describes the two-step compile-then-bind flow; `findMatchingClosingBracketIndex` correctly describes the depth-tracking scan and zero return on no match; `fixBound` correctly describes the regex-locate, bracket-find, and buffer-construction logic; `bindArray` correctly describes the QUESTION-first compile, length check, per-element binding, `fixBound` expansion, and conditional `Rebind`; `compileNamedQuery` correctly describes all the parsing rules including `::` escape, `:=` passthrough, duplicate names, and all four bind-type emission formats; `bindNamedMapper` correctly describes the map/array/default dispatch and the `convertMapStringInterface` guard. The only minor gap is that `bindArgs` description says 'return an error of the form `could not find name %s in %#v`' but the actual implementation uses `TraversalsByNameFunc` with a callback that returns the error when `len(t) == 0`, which is a slightly different structural detail than implied by the description (which implies a post-loop check). Also, `bindArray` description says 'require a non-zero length' but doesn't mention that the reflect call happens before the length check, and the description of `compileNamedQuery` omits the detail that `::` handling only triggers when `inName` is true and the previous byte was also `:`. These are minor omissions that would not prevent reconstruction.",
+  "missing_functionality": [
+    "compileNamedQuery: the `::` escape is only recognized when already `inName` and the previous byte was `:` — the description implies it is a general escape sequence without clarifying this inName precondition",
+    "bindArgs: the error is returned via the TraversalsByNameFunc callback (len(t)==0 check inside the closure), not as a post-loop check — the description implies a simpler linear scan with a direct error return",
+    "bindArray: the order of operations (compile first, then reflect, then length check) is not explicitly stated; description implies length check comes before per-element binding but doesn't clarify it happens after the compile step"
+  ],
+  "incorrect_or_misleading_points": [
+    "bindNamedMapper description says 'using reflection on reflect.TypeOf(arg)' and checks 'map with string keys' — the implementation checks `t.Key().Kind() == reflect.String` which is accurate, but the description's phrasing 'require that it be convertible to map[string]interface{} using convertMapStringInterface' slightly misrepresents the flow: the map kind check happens first on the type, then convertMapStringInterface is called on the value",
+    "compileNamedQuery description says names include 'underscores and dots' but the allowedBindRunes only covers Letter and Digit — underscores and dots are handled by a separate `|| b == '_' || b == '.'` condition, which the description does not distinguish from the unicode range table check"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_named.raw.md"
+}

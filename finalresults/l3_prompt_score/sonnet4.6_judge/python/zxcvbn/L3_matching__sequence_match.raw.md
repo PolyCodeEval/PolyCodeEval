@@ -1,0 +1,12 @@
+{
+  "score": 4.4,
+  "reason": "The description accurately captures the core algorithm: scanning for constant-delta runs, the single-character early return, the inclusion criteria (span > 1 or abs(delta) == 1), the MAX_DELTA upper bound, the sequence name/space classification, and the output dictionary fields. The note about the ranked dictionary parameter being unused is correct. One subtle detail is slightly off: the description says 'more than one character or is a two-character run with step size 1 or -1', but the actual condition is `j - i > 1 or (delta and abs(delta) == 1)` — meaning any run length qualifies if abs(delta) == 1, not just two-character runs. Also, the description omits the boundary behavior where when a delta changes, the new segment starts at `j` (the last index of the previous segment), not at `k` — this overlap detail matters for correct implementation. Despite these minor gaps, the description is thorough enough to guide a correct implementation.",
+  "missing_functionality": [
+    "When a delta change is detected, the new segment starts at j (= k-1), not at k — there is an index overlap between consecutive segments that the description does not mention.",
+    "The condition for including a run is `j - i > 1 or (delta and abs(delta) == 1)` — any length run qualifies when abs(delta) == 1, not only two-character runs as the description implies."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'a two-character run with step size 1 or -1' qualifies, but the implementation qualifies any run (including length 1, i.e., j - i == 0) when abs(delta) == 1, as long as delta is nonzero."
+  ],
+  "complete_enough": true
+}

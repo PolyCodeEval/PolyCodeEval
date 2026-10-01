@@ -1,0 +1,517 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.48,
+  "stdout": "\nup to date in 384ms\n\n21 packages are looking for funding\n  run `npm fund` for details\n",
+  "stderr": "\n Exception during run: Error: Cannot find module 'chai'\nRequire stack:\n- /workspace/src/test/blackbox/advanced-edge-cases.test.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1140:15)\n    at Module._load (node:internal/modules/cjs/loader:981:27)\n    at Module.require (node:internal/modules/cjs/loader:1231:19)\n    at require (node:internal/modules/helpers:177:18)\n    at Object.<anonymous> (/workspace/src/test/blackbox/advanced-edge-cases.test.js:4:20)\n    at Module._compile (node:internal/modules/cjs/loader:1364:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)\n    at Module.load (node:internal/modules/cjs/loader:1203:32)\n    at Module._load (node:internal/modules/cjs/loader:1019:12)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:203:29)\n    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)\n    at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)\n    at async formattedImport (/workspace/src/node_modules/mocha/lib/nodejs/esm-utils.js:9:14)\n    at async exports.requireOrImport (/workspace/src/node_modules/mocha/lib/nodejs/esm-utils.js:42:28)\n    at async exports.loadFilesAsync (/workspace/src/node_modules/mocha/lib/nodejs/esm-utils.js:100:20)\n    at async singleRun (/workspace/src/node_modules/mocha/lib/cli/run-helpers.js:162:3)\n    at async exports.handler (/workspace/src/node_modules/mocha/lib/cli/run.js:375:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/workspace/src/test/blackbox/advanced-edge-cases.test.js' ]\n}\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && npm install && (node node_modules/typescript/bin/tsc --outDir dist --module commonjs --declaration false --skipLibCheck 2>/dev/null || true) && if [ ! -f dist/mitt.js ] && [ -f dist/index.js ]; then cp dist/index.js dist/mitt.js; fi && mkdir -p test/blackbox && cp /workspace/blackbox_tests/*.test.js test/blackbox/",
+    "test": "cd /workspace/src && node node_modules/mocha/bin/mocha test/blackbox/*.test.js",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && npm install && (node node_modules/typescript/bin/tsc --outDir dist --module commonjs --declaration false --skipLibCheck 2>/dev/null || true) && if [ ! -f dist/mitt.js ] && [ -f dist/index.js ]; then cp dist/index.js dist/mitt.js; fi && mkdir -p test/blackbox && cp /workspace/blackbox_tests/*.test.js test/blackbox/",
+      "test": "cd /workspace/src && node node_modules/mocha/bin/mocha test/blackbox/*.test.js",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.2,
+    "Architecture": 3.6,
+    "Health": 4.5
+  },
+  "overall_score": 2.4,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "partial",
+          "reason": "Public entry points are only partially satisfied: `mitt`/types and emitter APIs exist, but the required runtime file `dist/mitt.js` is not present in the repository."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "default export `mitt` with related TypeScript types",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": ",\n  \"module\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mitt.js\"\n  },\n  \"files\": [\n    \"dist\",\n    \"index.d.ts\",\n    \"src\"\n  ],\n  \"scripts\": {\n    \"bundle\": \"tsc -p tsconfig.json && cp dist/index.js dist/mitt.js && cp dist/index.d"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "r\n\t): void;\n}\n\n/**\n * Mitt: Tiny (~200b) functional event emitter / pubsub.\n * @name mitt\n * @returns {Mitt}\n */\nexport default function mitt<Events extends Record<EventType, unknown>>(\n\tall?: EventHandlerMap<Events>\n): Emitter<Events> {\n\ttype GenericEventHandler =\n\t\t| Handler<Events[keyof Events]>\n\t\t| WildcardHandler<Events>;\n\ttype HandlerCollection = Array<GenericEventHandler>;\n\ttype StoredHandl"
+            },
+            {
+              "path": "index.d.ts",
+              "excerpt": "ever): void;\n}\n/**\n * Mitt: Tiny (~200b) functional event emitter / pubsub.\n * @name mitt\n * @returns {Mitt}\n */\nexport default function mitt<Events extends Record<EventType, unknown>>(all?: EventHandlerMap<Events>): Emitter<Events>;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`src/index.ts` default-exports `mitt`, and `index.d.ts` exposes the related TypeScript types and signatures."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "runtime build output at `dist/mitt.js`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"name\": \"mitt\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tiny functional event emitter / pubsub library.\",\n  \"main\": \"dist/mitt.js\",\n  \"module\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mitt.js\"\n  },\n  \"files\": [\n    \"dist\","
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "mitt - advanced edge cases and additional coverage\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - all.clear()', () => {\n  it('all.clear() removes all handlers for all events', () => {\n    const e = createEmitter();\n    let count = 0;\n    e.on('a', () => count++);\n    e.on('b', () => count++);\n    e."
+            },
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called = false;\n    const h = () => { called = true; };\n    e.on('evt', h);\n    e.off('evt', h);\n    e.e"
+            }
+          ],
+          "status": "missing",
+          "reason": "`package.json` references `dist/mitt.js`, but there is no `dist/mitt.js` file in the repository."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "source/build setup that can also emit `dist/index.js` when appropriate",
+          "evidence": [
+            {
+              "path": "test/blackbox/on-emit.test.js",
+              "excerpt": "/**\n * mitt - creation and on/emit\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - creation', () => {\n  it('creates emitter with on/off/emit/all', () => {\n    const e = createEmitter();\n    expect(e.on).to.be.a('"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"mitt\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tiny functional event emitter / pubsub library.\",\n  \"main\": \"dist/mitt.js\",\n  \"module\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mi"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "export type EventType = string | symbol;\n\n// An event handler can take an optional event argument\n// and should not return a value\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;\n\n// An array of all currently registered event ha"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The build setup compiles `src/index.ts` to `dist/index.js` via `tsconfig.json` and the `bundle` script copies that output to `dist/mitt.js`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "emitter instance methods `on`, `off`, and `emit`, plus the public handler map `all`",
+          "evidence": [
+            {
+              "path": "test/blackbox/on-emit.test.js",
+              "excerpt": "- creation and on/emit\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - creation', () => {\n  it('creates emitter with on/off/emit/all', () => {\n    const e = createEmitter();\n    expect(e.on).to.be.a('function');\n    expect(e.off).to.be.a('function');\n    expect(e.emit).to.be.a('function');\n    expect"
+            },
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called = false;\n    const h = () => { called = true; };\n    e.on('evt', h);\n    e.off('evt', h);\n    e.emit('evt', 'x');\n    expect("
+            },
+            {
+              "path": "index.d.ts",
+              "excerpt": "= Map<keyof Events | '*', EventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>>;\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n    all: EventHandlerMap<Events>;\n    on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n    on(type: '*', handler: WildcardHandler<Events>): void;\n    off<Key extends keyof Events>(type: Key, handler"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Emitter` in `src/index.ts` and `index.d.ts` exposes `on`, `off`, `emit`, and public `all`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`mitt(all?)` — factory function; optionally accepts a pre-existing `Map` to use as the backing handler store. When called without arguments, creates a new empty `Map`.",
+          "evidence": [
+            {
+              "path": "test/blackbox/on-emit.test.js",
+              "excerpt": "/**\n * mitt - creation and on/emit\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - creation', () => {\n  it('creates emitter with on/off/emit/all', () => {\n    const e = createEmitter();"
+            },
+            {
+              "path": "index.d.ts",
+              "excerpt": "= Map<keyof Events | '*', EventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>>;\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n    all: EventHandlerMap<Events>;\n    on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n    on(type: '*', handler: WildcardHandler<Events>): void;\n    off<Key extends keyof Events>(type: Key, handler?"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "<\n\tkeyof Events | '*',\n\tEventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>\n>;\n\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n\tall: EventHandlerMap<Events>;\n\n\ton<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n\ton(type: '*', handler: WildcardHandler<Events>): void;\n\n\toff<Key extends keyof Events>(\n\t\ttype: Key,\n\t\thandler?: Han"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`mitt(all?)` accepts an optional map and otherwise uses `new Map()`, returning an emitter backed by that store."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`all` is a standard JavaScript `Map` and exposes all native Map methods (`get`, `set`, `clear`, `size`, etc.).",
+          "evidence": [
+            {
+              "path": "src/index.ts",
+              "excerpt": "ort type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;\n\n// An array of all currently registered event handlers for a type\nexport type EventHandlerList<T = unknown> = Array<Handler<T>>;\nexport type WildCardEventHandlerList<T = Record<string, unknown>> = Array<\n\tWildcardHandler<T>\n>;\n\n// A map of event types and their corresponding event handlers.\nexp"
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "uire('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - all.clear()', () => {\n  it('all.clear() removes all handlers for all events', () => {\n    const e = createEmitter();\n    let count = 0;\n    e.on('a', () => count++);\n    e.on('b', () => count++);\n    e.on('*', () => count++);\n    e.all.clear();\n    e.emit('a');\n    e.emit('b');"
+            },
+            {
+              "path": "index.d.ts",
+              "excerpt": "Events]> | WildCardEventHandlerList<Events>>;\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n    all: EventHandlerMap<Events>;\n    on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n    on(type: '*', handler: WildcardHandler<Events>): void;\n    off<Key extends keyof Events>(type: Key, handler?: Handler<Events[Key]>): void;\n    off(type: '*', handle"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`all` is the actual backing `Map` instance (`new Map()` or provided map), so native `Map` methods remain available."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Event types may be strings or symbols; symbol event types are supported.",
+          "evidence": [
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called = false;\n    const h ="
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "\"funding\": {\n        \"url\": \"https://paulmillr.com/funding/\"\n      },\n      \"optionalDependencies\": {\n        \"fsevents\": \"~2.3.2\"\n      }\n    },\n    \"node_modules/cliui\": {\n      \"version\": \"7.0.4\",\n      \"dev\": true,\n      \"license\": \"ISC\",\n      \"dependencies\": {\n        \"string-width\": \"^4.2.0\",\n        \"strip-ansi\": \"^6.0.0\",\n        \"wrap-ansi\": \"^7.0.0\"\n      }\n    },\n    \"node_modul"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "export type EventType = string | symbol;\n\n// An event handler can take an optional event argument\n// and should not return a value\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`EventType` is defined as `string | symbol`, and the emitter stores handlers in a `Map` keyed by those event types."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`off(type)` without a second argument clears all handlers registered for that event type.",
+          "evidence": [
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called"
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    expect(e.all.get('test')).to.include(h);\n  });\n\n  it('off removes handler from the all map', () => {\n    const e = createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    e.off('test', h);\n    expect(e.all.get('test')).to.not.include(h);\n  });\n\n  it('multiple handlers for same event stored in same array', () => {\n    const"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "eyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n\ton(type: '*', handler: WildcardHandler<Events>): void;\n\n\toff<Key extends keyof Events>(\n\t\ttype: Key,\n\t\thandler?: Handler<Events[Key]>\n\t): void;\n\toff(type: '*', handler?: WildcardHandler<Events>): void;\n\n\temit<Key extends keyof Events>(type: Key, event: Events[Key]): void;\n\temit<Key extends keyof Events>(\n\t\ttype: undefined extends Event"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`off(type)` with no handler replaces that event type's handler list with an empty array, clearing all registered handlers for that type."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`off(type, handler)` removes only the specified handler reference; other handlers for the same type remain active.",
+          "evidence": [
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called"
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    expect(e.all.get('test')).to.include(h);\n  });\n\n  it('off removes handler from the all map', () => {\n    const e = createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    e.off('test', h);\n    expect(e.all.get('test')).to.not.include(h);\n  });\n\n  it('multiple handlers for same event stored in same array', () => {\n    const"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "eyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n\ton(type: '*', handler: WildcardHandler<Events>): void;\n\n\toff<Key extends keyof Events>(\n\t\ttype: Key,\n\t\thandler?: Handler<Events[Key]>\n\t): void;\n\toff(type: '*', handler?: WildcardHandler<Events>): void;\n\n\temit<Key extends keyof Events>(type: Key, event: Events[Key]): void;\n\temit<Key extends keyof Events>(\n\t\ttype: undefined extends Event"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`off(type, handler)` removes only the matched handler via `indexOf`/`splice`, leaving other handlers intact."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`off` on an event type with no registered handlers is a silent no-op.",
+          "evidence": [
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "eyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n\ton(type: '*', handler: WildcardHandler<Events>): void;\n\n\toff<Key extends keyof Events>(\n\t\ttype: Key,\n\t\thandler?: Handler<Events[Key]>\n\t): void;\n\toff(type: '*', handler?: WildcardHandler<Events>): void;\n\n\temit<Key extends keyof Events>(type: Key, event: Events[Key]): void;\n\temit<Key extends keyof Events>(\n\t\ttype: undefined extends Event"
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    expect(e.all.get('test')).to.include(h);\n  });\n\n  it('off removes handler from the all map', () => {\n    const e = createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    e.off('test', h);\n    expect(e.all.get('test')).to.not.include(h);\n  });\n\n  it('multiple handlers for same event stored in same array', () => {\n    const"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`off` returns early when no handlers are registered for the event type, making it a silent no-op."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`on/off/emit/all` API; wildcard `*` receives all events",
+          "evidence": [
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called = fal"
+            },
+            {
+              "path": "index.d.ts",
+              "excerpt": "export type EventType = string | symbol;\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (type: keyof T, event: T[keyof T]) => void;\nexport type EventHandlerList<T = unknown> = Array<Handler<T>>;\nexport type WildCardEventHandlerList<T = Record<string, unknown>> = Array<WildcardHandler<T>>;\nexport type EventHandlerMap<Eve"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "onal event argument\n// and should not return a value\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;\n\n// An array of all currently registered event handlers for a type\nexport type EventHandlerList<T = unknown> = Array<Handler<T>>;\nexport type WildCardEventHandlerList<T = Record<string,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The emitter exposes `on`/`off`/`emit`/`all`, and `emit` also invokes handlers registered under `'*'`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Creating an Emitter",
+          "evidence": [
+            {
+              "path": "index.d.ts",
+              "excerpt": "= Map<keyof Events | '*', EventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>>;\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n    all: EventHandlerMap<Events>;\n    on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n    on(type: '*', handler: WildcardHandler<Events>): void;\n    off<Key extends keyof Events>(type: Key, handler"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"mitt\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tiny functional event emitter / pubsub library.\",\n  \"main\": \"dist/mitt.js\",\n  \"module\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mi"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "p<\n\tkeyof Events | '*',\n\tEventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>\n>;\n\nexport interface Emitter<Events extends Record<EventType, unknown>> {\n\tall: EventHandlerMap<Events>;\n\n\ton<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;\n\ton(type: '*', handler: WildcardHandler<Events>): void;\n\n\toff<Key extends keyof Events>(\n\t\ttype: Key,\n\t\thandler?: Ha"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes a working `mitt()` factory that creates and returns an emitter instance."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Subscribing",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Subscribing is implemented through `on`, which appends handlers to the per-event handler list."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Unsubscribing",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Unsubscribing is implemented through `off`, supporting both per-handler removal and clearing a type's handlers."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Emitting",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Emitting is implemented through `emit`, which invokes event-specific handlers and wildcard handlers."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Handler Map Access",
+          "evidence": [
+            {
+              "path": "index.d.ts",
+              "excerpt": "export type EventType = string | symbol;\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (type: keyof T, event: T[keyof T]) => void;\nexport type EventHandlerList<T = unknown> = Array<Handler<T>>;\nexport type WildCardEventHandlerList<T = Record<string, unknown>> = Arr"
+            },
+            {
+              "path": "src/index.ts",
+              "excerpt": "export type EventType = string | symbol;\n\n// An event handler can take an optional event argument\n// and should not return a value\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;\n\n// An array of all currently registered"
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - all.clear()', () => {\n  it('all.clear() removes all handlers for all events', () => {\n    const e = createEmitter();\n    let count = 0;\n    e.on('a', () => count++);\n    e.on('b', () => count++);\n    e.on('*', () => count++);\n    e.all.clear();\n    e.emit('a');\n    e.emit('b');\n    expect(count).to.equal(0);\n  });\n\n  it('all.clear"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Handler map access is implemented via the public `all` property, which exposes the backing `Map`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "src/index.ts",
+              "excerpt": "export type EventType = string | symbol;\n\n// An event handler can take an optional event argument\n// and should not return a value\nexport type Handler<T = unknown> = (event: T) => void;\nexport type WildcardHandler<T = Record<string, unknown>> = (\n\ttype: keyof T,\n\tevent: T[keyof T]\n) => void;\n\n// An array of all currently registered event handlers for a type\nexport type EventHandlerList<T = unknown> = Array<Handler<T>>;\nexport type WildCardEventHandlerList<T = Record<string, unknown>> = Array<\n\tWildcardHandler<T>\n>;\n\n// A map of event types and their corresponding event handlers.\nexport type Ev"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "tion\": \"Node\",\n    \"declaration\": true,\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"rootDir\": \"src\",\n    \"outDir\": \"dist\"\n  },\n  \"include\": [\n    \"src/**/*.ts\"\n  ]\n}"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "ault\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mitt.js\"\n  },\n  \"files\": [\n    \"dist\",\n    \"index.d.ts\",\n    \"src\"\n  ],\n  \"scripts\": {\n    \"bundle\": \"tsc -p tsconfig.json && cp dist/index.js dist/mitt.js && cp dist/index.d.ts index.d.ts\"\n  },\n  \"devDependencies\": {\n    \"mocha\": \"^10.8.2\",\n    \"typescript\": \"^5.6.3\"\n  }\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Source files are organized relative to the project root under `src/`, with `tsconfig.json` using `rootDir: \"src\"`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "on\": \"1.0.0\",\n      \"devDependencies\": {\n        \"mocha\": \"^10.8.2\",\n        \"typescript\": \"^5.6.3\"\n      }\n    },\n    \"node_modules/ansi-colors\": {\n      \"version\": \"4.1.3\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"engines\": {\n        \"node\": \">=6\"\n      }\n    },\n    \"node_modules/ansi-regex\": {\n      \"version\": \"5.0.1\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"engines\": {"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "t/mitt.js\"\n  },\n  \"files\": [\n    \"dist\",\n    \"index.d.ts\",\n    \"src\"\n  ],\n  \"scripts\": {\n    \"bundle\": \"tsc -p tsconfig.json && cp dist/index.js dist/mitt.js && cp dist/index.d.ts index.d.ts\"\n  },\n  \"devDependencies\": {\n    \"mocha\": \"^10.8.2\",\n    \"typescript\": \"^5.6.3\"\n  }\n}"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2019\",\n    \"module\": \"CommonJS\",\n    \"moduleResolution\": \"Node\",\n    \"declaration\": true,\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"rootDir\": \"src\",\n    \"outDir\": \"dist\"\n  },\n  \"include\": [\n    \"src/**/*.ts\"\n  ]\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo includes a minimal Node package structure with `package.json`, `package-lock.json`, and `tsconfig.json`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`package.json` must include a `\"bundle\"` script that compiles the TypeScript source and produces `dist/mitt.js`.",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "t/mitt.js\"\n  },\n  \"files\": [\n    \"dist\",\n    \"index.d.ts\",\n    \"src\"\n  ],\n  \"scripts\": {\n    \"bundle\": \"tsc -p tsconfig.json && cp dist/index.js dist/mitt.js && cp dist/index.d.ts index.d.ts\"\n  },\n  \"devDependencies\": {\n    \"mocha\": \"^10.8.2\",\n    \"typescript\": \"^5.6.3\"\n  }\n}"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n  \"name\": \"mitt\",\n  \"version\": \"1.0.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"mitt\",\n      \"version\": \"1.0.0\",\n      \"devDependencies\": {\n        \"mocha\": \"^10.8.2\",\n        \"typescript\": \"^5.6.3\"\n      }\n    },\n    \"node_modules/ansi-colors\": {\n      \"version\": \"4.1.3\",\n      \"dev\": true,\n      \"license\": \"MIT\","
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "trict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"rootDir\": \"src\",\n    \"outDir\": \"dist\"\n  },\n  \"include\": [\n    \"src/**/*.ts\"\n  ]\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`package.json` includes a `bundle` script that runs `tsc` and then copies `dist/index.js` to `dist/mitt.js`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "= createEmitter();\n    const h = () => {};\n    e.on('test', h);\n    e.off('test', h);\n    expect(e.all.get('test')).to.not.include(h);\n  });\n\n  it('multiple handlers for same event stored in same array', () => {\n    const e = createEmitter();\n    const h1 = () => {};\n    const h2 = () => {};\n    e.on('evt', h1);\n    e.on('evt', h2);\n    expect(e.all.get('evt')).to.have.lengthOf(2);\n  });\n});\n\ndes"
+            },
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "t', 'x');\n    expect(h1Called).to.be.false;\n    expect(h2Called).to.be.true;\n  });\n\n  it('off on nonexistent event does not throw', () => {\n    expect(() => createEmitter().off('nonexistent', () => {})).to.not.throw();\n  });\n\n  it('off unregistered handler is silent no-op', () => {\n    const e = createEmitter();\n    let count = 0;\n    const h = () => count++;\n    e.on('evt', h);\n    e.off('evt', ("
+            },
+            {
+              "path": "test/blackbox/on-emit.test.js",
+              "excerpt": "n('evt', () => count++);\n    e.emit('evt', 'x');\n    expect(count).to.equal(2);\n  });\n\n  it('emit with no handlers does not throw', () => {\n    expect(() => createEmitter().emit('nonexistent', 'data')).to.not.throw();\n  });\n\n  it('emit with no payload passes undefined', () => {\n    const e = createEmitter();\n    let received = 'initial';\n    e.on('evt', d => { received = d; });\n    e.emit('evt');"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository contains generated test files under `test/blackbox/`, which violates the instruction not to generate test files."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "build output at `dist/mitt.js`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"name\": \"mitt\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tiny functional event emitter / pubsub library.\",\n  \"main\": \"dist/mitt.js\",\n  \"module\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./dist/mitt.js\"\n    },\n    \"./dist/index.js\": \"./dist/index.js\",\n    \"./dist/mitt.js\": \"./dist/mitt.js\"\n  },\n  \"files\": [\n    \"dist\","
+            },
+            {
+              "path": "test/blackbox/advanced-edge-cases.test.js",
+              "excerpt": "mitt - advanced edge cases and additional coverage\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - all.clear()', () => {\n  it('all.clear() removes all handlers for all events', () => {\n    const e = createEmitter();\n    let count = 0;\n    e.on('a', () => count++);\n    e.on('b', () => count++);\n    e."
+            },
+            {
+              "path": "test/blackbox/off-wildcard.test.js",
+              "excerpt": "/**\n * mitt - off, wildcard, symbol events\n */\nconst { expect } = require('chai');\nconst mitt = require('../../dist/mitt.js');\nconst createEmitter = mitt.default || mitt;\n\ndescribe('mitt - off', () => {\n  it('off removes specific handler', () => {\n    const e = createEmitter();\n    let called = false;\n    const h = () => { called = true; };\n    e.on('evt', h);\n    e.off('evt', h);\n    e.e"
+            }
+          ],
+          "status": "missing",
+          "reason": "The required build artifact `dist/mitt.js` does not exist in the repository."
+        }
+      ],
+      "feature_count": 22,
+      "constraint_count": 0,
+      "implemented_count": 18,
+      "partial_count": 1,
+      "missing_count": 3,
+      "unclear_count": 0,
+      "feature_coverage": 0.8409,
+      "constraint_coverage": 0.8409,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "javascript",
+        "app_style": "library",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.8,
+        "stack_alignment": 3.4,
+        "reference_alignment": 3.6
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 1,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "0",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository does implement the core `mitt` library behavior in TypeScript: a default-exported `mitt` factory, generic type declarations, a public `all` `Map`, `on`/`off`/`emit` methods, wildcard handlers, symbol event support, and build configuration via `tsconfig.json` plus a `bundle` script in `package.json`. The source/build setup is sufficient to emit `dist/index.js` and copy it to `dist/mitt.js` when the bundle script is run.\n\n### Missing List\n\n- `dist/mitt.js` is required but not present.\n- The top-level public entry point requirement is only partially met because the runtime build artifact is missing.\n- Test files were generated under `test/blackbox/`, contrary to the prompt.\n\n### Critical Constraint Misses\n\n- Required runtime artifact `dist/mitt.js` is absent from the repository.\n- The repository includes blackbox test files even though the prompt explicitly said not to generate test files.",
+    "architecture_review": "### Stack Inference\n\n这是一个典型的 **Node.js + TypeScript 的轻量级库项目**：源码位于 `src/`，通过 `tsc` 编译到 `dist/`，用 `package.json` 暴露运行时入口和类型入口。没有前端框架、没有应用层目录，整体目标就是发布一个可被 JavaScript/TypeScript 消费的事件库。\n\n### Scoring Mode\n\n本次按“架构质量”模式评分，重点看真实仓库里的目录组织、源码入口与发布入口的对应关系、TypeScript/Node 库项目的常见工程习惯，以及实现是否贴近需求文档要求；不按功能测试通过率或文件多少直接给高分。\n\n### Strengths\n\n- 目录规模很小，核心实现集中在 `src/index.ts`，对一个微型事件库来说结构清晰，阅读成本低。\n- 源码、构建配置和包清单三者都存在，说明项目至少具备从 TypeScript 源码生成 `dist/` 产物并发布的基本闭环。\n- 公开 API 与需求较贴合：工厂函数、`on/off/emit/all`、类型导出、`Map` 作为存储结构，都在单一入口中统一表达，分层没有过度设计。\n\n### Issues\n\n- `package.json` 将 `main` 指向 `dist/mitt.js`、`module` 指向 `dist/index.js`，但 `tsconfig.json` 只产出 CommonJS；因此 `module` 字段并没有对应到常见的 ESM 构建语义，入口声明与实际构建产物存在错位。\n- 构建脚本 `tsc && cp ...` 通过复制 `dist/index.js` 生成 `dist/mitt.js`，再把 `dist/index.d.ts` 复制到根目录 `index.d.ts`。这说明发布入口是靠后处理拼出来的，不是由清晰的构建配置直接产出，构建层次较弱。\n- 仓库根目录放置手写/复制的 `index.d.ts`，同时源码真实入口在 `src/index.ts`，类型出口与源码出口分离，增加了同步维护成本，也削弱了项目结构一致性。\n- 仓库包含 `test/blackbox/*.test.js`，而原始要求明确说不要生成测试文件；这虽然不一定影响运行，但与交付边界不符。\n- `off(type)` 通过 `store.set(type, [])` 清空监听，而不是删除该 key；这让 `all` 作为公开 `Map` 时会保留空数组条目，虽然行为可用，但从数据结构整洁度看不如直接删除映射自然。\n\n### Stack Mismatches\n\n- 对 JavaScript/TypeScript 库来说，声明 `module` 字段通常意味着要提供 ESM 产物，但这里 `dist/index.js` 实际仍由 `module: \"CommonJS\"` 编译得到，与常见 npm 库发布习惯不一致。\n- TypeScript 库更常见的做法是让 `types` 直接指向编译产物，或让源码入口与类型入口自然对应；当前通过复制 `index.d.ts` 到仓库根目录的方式不够主流。\n- `bundle` 脚本依赖 Unix `cp`，跨平台兼容性较弱，不完全符合常见 npm 库对构建脚本可移植性的工程习惯。\n\n### Reference Gaps\n\n- 参考要求希望是一个最小、干净、可发布的库工程；当前虽然实现了核心源码与 bundle 脚本，但额外提交了测试目录，偏离“不要生成测试文件”的交付要求。\n- 要求强调 `dist/mitt.js` 是运行时产物，并且在合适时也能产出 `dist/index.js`；当前两者关系主要靠复制文件实现，而不是更明确的多入口/单入口构建设计，和参考方案的工程完整度仍有差距。\n- 要求强调最小且依赖极少的项目形态；仓库把发布类型定义复制到根目录、同时保留 `src` 和 `dist` 双入口语义，结构上比必要形态更绕。"
+  },
+  "task": "javascript/mitt/L1_mitt",
+  "solver": "generated_outputs"
+}

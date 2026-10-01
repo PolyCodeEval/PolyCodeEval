@@ -1,0 +1,783 @@
+{
+  "task": "cpp/graph-cpp/L0_graph-cpp",
+  "solver": "chatdev_gpt54_cpp生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.79,
+  "stdout": "",
+  "stderr": "/workspace/blackbox_tests/test_queue.cpp:3:10: fatal error: ../src/include/queue.hpp: No such file or directory\n    3 | #include \"../src/include/queue.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_stack.cpp:3:10: fatal error: ../src/include/stack.hpp: No such file or directory\n    3 | #include \"../src/include/stack.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_al_graph.cpp:4:10: fatal error: ../src/include/al_graph.hpp: No such file or directory\n    4 | #include \"../src/include/al_graph.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_am_graph.cpp:4:10: fatal error: ../src/include/am_graph.hpp: No such file or directory\n    4 | #include \"../src/include/am_graph.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_am_graph_errors.cpp:3:10: fatal error: ../src/include/am_graph.hpp: No such file or directory\n    3 | #include \"../src/include/am_graph.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_edge_cases.cpp:5:10: fatal error: ../src/include/al_graph.hpp: No such file or directory\n    5 | #include \"../src/include/al_graph.hpp\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 3.94,
+    "Architecture": 2.77,
+    "Health": 5.0
+  },
+  "overall_score": 2.18,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "\"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::size_t>(vexNum_),"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "UE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;\n    }\n    void clear() {\n        data_.clear();\n        front_index_ = 0;\n    }\n    void push(const T& va"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repository provides most required public library entry points, but the required runnable CLI entry point is not implemented as C++ and the required `include/...` file layout is not present."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "`Queue<T>` and `Stack<T>` are part of the public library surface.",
+          "evidence": [
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {"
+            },
+            {
+              "path": "stack.hpp",
+              "excerpt": "#ifndef STACK_HPP\n#define STACK_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Stack {\npublic:\n    bool empty() const {\n        return data_.empty();\n    }\n    std::size_t size() const {\n        return data_.size();\n    }"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirect"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/queue.hpp` and `repo/stack.hpp` both declare public template classes `Queue<T>` and `Stack<T>`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`Queue<T>::pop()` and `Stack<T>::pop()` should be value-returning methods.",
+          "evidence": [
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {"
+            },
+            {
+              "path": "stack.hpp",
+              "excerpt": "throw std::out_of_range(\"Stack::top() called on empty stack\");\n        }\n        return data_.back();\n    }\n    T pop() {\n        if (empty()) {\n            throw std::out_of_range(\"Stack::pop() called on empty stack\");\n        }\n        T value = std::move(data_.back());\n        data_.pop_back();\n        return value;\n    }\nprivate:\n    std::vector<T> data_;\n};\n#endif"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirect"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Queue<T>::pop()` and `Stack<T>::pop()` are both declared to return `T` by value."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`Queue<T>::front()` — returns the element at the front without removing it; throws `std::out_of_range` when called on an empty queue.",
+          "evidence": [
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirect"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "PP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Queue<T>::front()` returns a reference to the front element and throws `std::out_of_range` on an empty queue."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`Queue<T>::pop()` throws `std::out_of_range` when called on an empty queue.",
+          "evidence": [
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "PP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDi"
+            },
+            {
+              "path": "stack.hpp",
+              "excerpt": "throw std::out_of_range(\"Stack::top() called on empty stack\");\n        }\n        return data_.back();\n    }\n    T pop() {\n        if (empty()) {\n            throw std::out_of_range(\"Stack::pop() called on empty stack\");\n        }\n        T value = std::move(data_.back());\n        data_.pop_back();\n        return value;\n    }\nprivate:\n    std::vector<T> data_;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Queue<T>::pop()` explicitly throws `std::out_of_range` when the queue is empty."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`Stack<T>::top()` — returns the element at the top without removing it; throws `std::out_of_range` when called on an empty stack.",
+          "evidence": [
+            {
+              "path": "stack.hpp",
+              "excerpt": "#ifndef STACK_HPP\n#define STACK_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Stack {\npublic:\n    bool empty() const {\n        return data_.empty();\n    }\n    std::size_t size() const {\n        return data_.size();\n    }"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "PP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertic"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "PP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          ve"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Stack<T>::top()` returns a reference to the top element and throws `std::out_of_range` on an empty stack."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`Stack<T>::pop()` throws `std::out_of_range` when called on an empty stack.",
+          "evidence": [
+            {
+              "path": "stack.hpp",
+              "excerpt": "#ifndef STACK_HPP\n#define STACK_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Stack {\npublic:\n    bool empty() const {\n        return data_.empty();\n    }\n    std::size_t size() const {\n        return data_.size();\n    }"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "PP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          ve"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "ow std::out_of_range(\"Queue::front() called on empty queue\");\n        }\n        return data_[front_index_];\n    }\n    T pop() {\n        if (empty()) {\n            throw std::out_of_range(\"Queue::pop() called on empty queue\");\n        }\n        T value = std::move(data_[front_index_]);\n        ++front_index_;\n        if (front_index_ > 32 && front_index_ * 2 >= data_.size()) {\n            data_.era"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Stack<T>::pop()` explicitly throws `std::out_of_range` when the stack is empty."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`AdjacencyListGraph<VertexType>` and `AdjacencyMatrixGraph<VertexType>` are public graph abstractions.",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::siz"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "<stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(s"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/al_graph.hpp` and `repo/am_graph.hpp` define public template graph classes `AdjacencyListGraph<VertexType>` and `AdjacencyMatrixGraph<VertexType>`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "both graph classes should preserve constructors of the form `Graph(vexNum, arcNum, isDirected)`",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : ve"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool"
+            },
+            {
+              "path": "graph.cpp",
+              "excerpt": "#include \"al_graph.hpp\"\n#include \"am_graph.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes expose constructors of the form `(int vexNum, int arcNum, bool isDirected)`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`Arc<VertexType>` contains `src`, `dest`, and `weight` fields and supports aggregate initialization",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "de \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& v"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::size_t>(vexNum_),\n                  std::vector<int>(static_cast<std::size"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/graph_common.hpp` defines `Arc<VertexType>` as a plain struct with `src`, `dest`, and `weight`, which supports aggregate initialization."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "graph methods should preserve public signatures shaped like:",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : ve"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool"
+            },
+            {
+              "path": "graph.cpp",
+              "excerpt": "#include \"al_graph.hpp\"\n#include \"am_graph.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes expose the required method shapes for `setVexes`, `setArcs`, `locateVex`, `bfs`, and `dfs_noRes`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`bool setVexes(const std::vector<VertexType>& values)`",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "k.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& values) {"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "p\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::size_t>(vexNum_),\n                  std::vector<int>(static_cast<std::size_t>(vexN"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": ">\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;\n    }\n    void clear() {\n        data_.clear();\n        front_index_ = 0;\n    }\n    void push(const T& value) {\n        data_.push_back(value);\n    }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes define `bool setVexes(const std::vector<VertexType>& values)`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`bool setArcs(const std::vector<Arc<VertexType>>& arcs)` or an equivalent typed arc container",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "k.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& values) {"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "p\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::size_t>(vexNum_),\n                  std::vector<int>(static_cast<std::size_t>(vexN"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": ">\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;\n    }\n    void clear() {\n        data_.clear();\n        front_index_ = 0;\n    }\n    void push(const T& value) {\n        data_.push_back(value);\n    }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes define `bool setArcs(const std::vector<Arc<VertexType>>& arcs)`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`int locateVex(const VertexType& value)`",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "ueue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vecto"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": ".hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::size_t>(vexNum_),\n                  std::vector<int>(stati"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "N_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes define `int locateVex(const VertexType& value) const`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`std::vector<VertexType> bfs()`",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "m_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& values) {\n        if (static_cast<int>(values.size()) != vexNum_) {\n            return false;\n        }\n        vertices_ = values;\n        adjacency_.assign(values.size(), {});\n        return true;\n    }"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes define `std::vector<VertexType> bfs() const`."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`std::vector<VertexType> dfs_noRes()`",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "m_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& values) {\n        if (static_cast<int>(values.size()) != vexNum_) {\n            return false;\n        }\n        vertices_ = values;\n        adjacency_.assign(values.size(), {});\n        return true;\n    }"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes define `std::vector<VertexType> dfs_noRes() const`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`AdjacencyMatrixGraph::locateVex()` returns a 1-based index; `AdjacencyListGraph::locateVex()` returns a 0-based index; both return `-1` for a vertex that is not found.",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "td::vector<Neighbor>> newAdjacency(vertices_.size());\n        for (const auto& arc : arcs) {\n            int srcIndex = locateVex(arc.src);\n            int destIndex = locateVex(arc.dest);\n            if (srcIndex < 0 || destIndex < 0) {\n                return false;\n            }\n            newAdjacency[static_cast<std::size_t>(srcIndex)].push_back({destIndex, arc.weight});\n            if (!isDi"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::si"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "nclude <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;\n    }\n    void clear() {\n        data_.clear();\n        front_index_ = 0;\n    }\n    void push(const T& value) {\n        data_.push_ba"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`AdjacencyListGraph::locateVex()` returns a 0-based index or `-1`, and `AdjacencyMatrixGraph::locateVex()` returns a 1-based index or `-1`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`AdjacencyMatrixGraph::setVexes()` throws `std::out_of_range` when the number of vertices exceeds the matrix capacity.",
+          "evidence": [
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::si"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::size_t>(vexNum_)) {}\n    bool setVexes(const std::vector<VertexType>& values) {\n        if (static_cast<int>(values.size()) != vexNum_) {\n            return false;\n        }\n        vertices_ = values;\n        adjacency_.assign(values.size(), {});\n        return true;\n    }\n    bool setArcs(const std::vector<"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`AdjacencyMatrixGraph::setVexes()` throws `std::out_of_range` when the provided vertex count exceeds `vexNum_`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`AdjacencyMatrixGraph::setArcs()` throws `std::out_of_range` when an arc references a vertex that does not exist in the graph.",
+          "evidence": [
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::si"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "}\n        vertices_ = values;\n        adjacency_.assign(values.size(), {});\n        return true;\n    }\n    bool setArcs(const std::vector<Arc<VertexType>>& arcs) {\n        if (static_cast<int>(vertices_.size()) != vexNum_) {\n            return false;\n        }\n        std::vector<std::vector<Neighbor>> newAdjacency(vertices_.size());\n        for (const auto& arc : arcs) {\n            int s"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`AdjacencyMatrixGraph::setArcs()` throws `std::out_of_range` when an arc references a vertex not found by `locateVex()`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`bfs()` and `dfs_noRes()` visit every vertex in the graph, including vertices in disconnected components",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "return static_cast<int>(i);\n            }\n        }\n        return -1;\n    }\n    std::vector<VertexType> bfs() const {\n        std::vector<VertexType> result;\n        std::vector<bool> visited(vertices_.size(), false);\n        Queue<int> queue;\n        for (std::size_t start = 0; start < vertices_.size(); ++start) {\n            if (visited[start]) {\n                continue;"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "return static_cast<int>(i) + 1;\n            }\n        }\n        return -1;\n    }\n    std::vector<VertexType> bfs() const {\n        std::vector<VertexType> result;\n        std::vector<bool> visited(vertices_.size(), false);\n        Queue<int> queue;\n        for (std::size_t start = 0; start < vertices_.size(); ++start) {\n            if (visited[start]) {\n                continue;"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both `bfs()` and `dfs_noRes()` iterate over all start vertices, so disconnected components are also visited."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`src/main.cpp` is the runnable CLI entry point used for end-to-end graph processing.",
+          "evidence": [
+            {
+              "path": "graph.cpp",
+              "excerpt": "#include \"al_graph.hpp\"\n#include \"am_graph.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\""
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "-std=c++17 -Wall -g -fprofile-arcs -ftest-coverage -Iinclude\nSRC_DIR = src\nOBJ_DIR = obj\nSRCS = $(wildcard $(SRC_DIR)/*.cpp)\nOBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))\nTEST_DIR = unit_tests\nTEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)\nTEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(TEST_SRCS))\nTARGET = graph\nTEST_TARGET = run_tests\nall: $(TARGET)\n$(TARGET): $(OBJS)\n\t$(CX"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : ve"
+            }
+          ],
+          "status": "missing",
+          "reason": "`repo/main.cpp` contains Makefile-style build rules, not a runnable C++ CLI program at `src/main.cpp`."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`include/queue.hpp` defines the custom queue.",
+          "evidence": [
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_("
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDir"
+            }
+          ],
+          "status": "missing",
+          "reason": "The custom queue is defined in `repo/queue.hpp`, not in the required `include/queue.hpp` path."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`include/stack.hpp` defines the custom stack.",
+          "evidence": [
+            {
+              "path": "stack.hpp",
+              "excerpt": "#ifndef STACK_HPP\n#define STACK_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Stack {\npublic:\n    bool empty() const {\n        return data_.empty();\n    }\n    std::size_t size() const {\n        return data_.size();\n    }\n    void c"
+            },
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_("
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDir"
+            }
+          ],
+          "status": "missing",
+          "reason": "The custom stack is defined in `repo/stack.hpp`, not in the required `include/stack.hpp` path."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`include/al_graph.hpp` defines the adjacency-list graph.",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_("
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDir"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "missing",
+          "reason": "The adjacency-list graph is defined in `repo/al_graph.hpp`, not in the required `include/al_graph.hpp` path."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`include/am_graph.hpp` defines the adjacency-matrix graph.",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_("
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDir"
+            },
+            {
+              "path": "graph_common.hpp",
+              "excerpt": "#ifndef GRAPH_COMMON_HPP\n#define GRAPH_COMMON_HPP\ntemplate <typename VertexType>\nstruct Arc {\n    VertexType src;\n    VertexType dest;\n    int weight;\n};\n#endif"
+            }
+          ],
+          "status": "missing",
+          "reason": "The adjacency-matrix graph is defined in `repo/am_graph.hpp`, not in the required `include/am_graph.hpp` path."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Both `AdjacencyListGraph<T>` and `AdjacencyMatrixGraph<T>` must support `operator<<(std::ostream&, const Graph&)` for stream output.",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          adjacency_(static_cast<std::siz"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "ude <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool isDirected)\n        : vexNum_(vexNum < 0 ? 0 : vexNum),\n          arcNum_(arcNum < 0 ? 0 : arcNum),\n          isDirected_(isDirected),\n          vertices_(),\n          matrix_(static_cast<std::si"
+            },
+            {
+              "path": "queue.hpp",
+              "excerpt": "#ifndef QUEUE_HPP\n#define QUEUE_HPP\n#include <cstddef>\n#include <stdexcept>\n#include <utility>\n#include <vector>\ntemplate <typename T>\nclass Queue {\npublic:\n    Queue() : front_index_(0) {}\n    bool empty() const {\n        return size() == 0;\n    }\n    std::size_t size() const {\n        return data_.size() - front_index_;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Both graph classes implement `friend std::ostream& operator<<(std::ostream&, const Graph&)` for stream output."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Custom Containers",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "The repository includes custom `Queue` and `Stack` container implementations rather than using STL queue/stack wrappers."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "Graph Representations",
+          "evidence": [
+            {
+              "path": "al_graph.hpp",
+              "excerpt": "#ifndef AL_GRAPH_HPP\n#define AL_GRAPH_HPP\n#include <ostream>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyListGraph {\npublic:\n    AdjacencyListGraph(int vexNum, int arcNum, bool isDirected)\n        : ve"
+            },
+            {
+              "path": "am_graph.hpp",
+              "excerpt": "#ifndef AM_GRAPH_HPP\n#define AM_GRAPH_HPP\n#include <ostream>\n#include <stdexcept>\n#include <vector>\n#include \"graph_common.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\"\ntemplate <typename VertexType>\nclass AdjacencyMatrixGraph {\npublic:\n    AdjacencyMatrixGraph(int vexNum, int arcNum, bool"
+            },
+            {
+              "path": "graph.cpp",
+              "excerpt": "#include \"al_graph.hpp\"\n#include \"am_graph.hpp\"\n#include \"queue.hpp\"\n#include \"stack.hpp\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository implements both adjacency-list and adjacency-matrix graph representations."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Traversal",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "The repository implements non-recursive BFS and DFS traversal methods on both graph types."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "CLI Program",
+          "evidence": [],
+          "status": "missing",
+          "reason": "A CLI program for graph processing is not present; `repo/main.cpp` is not a C++ CLI implementation."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "p\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_cpp\\\\cpp\\\\graph-cpp\\\\L0_graph-cpp\",\n  \"files_collected\": 7,\n  \"duration_seconds\": 505.37\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The generated files are placed directly at the repository root rather than inside an extra wrapper directory."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "Provide the required source files, header files, and any minimal build configuration needed to compile the project.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "p\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_cpp\\\\cpp\\\\graph-cpp\\\\L0_graph-cpp\",\n  \"files_collected\": 7,\n  \"duration_seconds\": 505.37\n}"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repository includes source and header files, but the build configuration is not provided as a proper build file and the expected CLI source is missing."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "CXX = g++\nCXXFLAGS = -std=c++17 -Wall -g -fprofile-arcs -ftest-coverage -Iinclude\nSRC_DIR = src\nOBJ_DIR = obj\nSRCS = $(wildcard $(SRC_DIR)/*.cpp)\nOBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))\nTEST_DIR = unit_tests\nTEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)\nTEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(TEST_SR"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "p\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_cpp\\\\cpp\\\\graph-cpp\\\\L0_graph-cpp\",\n  \"files_collected\": 7,\n  \"duration_seconds\": 505.37\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No test files, `blackbox_tests/`, or outer wrapper directory were generated in the visible repository."
+        }
+      ],
+      "feature_count": 33,
+      "constraint_count": 0,
+      "implemented_count": 25,
+      "partial_count": 2,
+      "missing_count": 6,
+      "unclear_count": 0,
+      "feature_coverage": 0.7879,
+      "constraint_coverage": 0.7879,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 136231,
+        "completion_tokens": 4923,
+        "total_tokens": 141154
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "cpp",
+        "framework": "cpp",
+        "app_style": "library",
+        "build_system": "cpp",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.8,
+        "stack_alignment": 2.4,
+        "reference_alignment": 3.1
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 82880,
+        "completion_tokens": 1829,
+        "total_tokens": 84709
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository correctly implements the core library pieces: custom `Queue` and `Stack` containers, `Arc<VertexType>`, adjacency-list and adjacency-matrix graph classes, deterministic non-recursive BFS/DFS traversal over disconnected graphs, the required constructor and method signatures, the matrix/list `locateVex()` indexing behavior, the required exception behavior for queue/stack operations and matrix graph setters, and stream output operators for both graph types.\n\n### Missing List\n\n- `src/main.cpp` runnable CLI entry point is absent.\n- Required `include/queue.hpp`, `include/stack.hpp`, `include/al_graph.hpp`, and `include/am_graph.hpp` paths are absent.\n- Minimal build configuration is not correctly provided as its own build file.\n- CLI program capability is not implemented end-to-end.\n\n### Critical Constraint Misses\n\n- The required CLI entry point is missing: `repo/main.cpp` is a Makefile, not a runnable C++ program.\n- The required header layout under `include/` is missing; all headers are emitted at repository root instead.\n- Build/config output is malformed because build rules were placed into `main.cpp` rather than a dedicated build file.",
+    "architecture_review": "### Stack Inference\n\n该仓库是一个面向 C++17 左右的轻量级库加命令行工具场景，主要由模板头文件实现数据结构与图算法，再配合少量 `.cpp` 入口和构建脚本完成可执行程序组装。这类项目的常见工程习惯通常是 `include/` 暴露公共接口、`src/` 放置 CLI 或非模板实现，再以 `Makefile` 或 `CMakeLists.txt` 作为明确构建入口。\n\n### Scoring Mode\n\n本次按“架构质量”评分，而不是按算法点对点验收。判断重点是仓库真实结构是否能支撑一个典型 C++ 小型库加 CLI 程序，包括目录组织、构建入口、源码分层、公共接口落位，以及这些安排是否与需求描述和该语言常见工程习惯一致。这里即使部分头文件实现了功能，若入口和构建布局失真，架构分仍需明显下调。\n\n### Strengths\n\n- 图结构与自定义 `Queue`/`Stack` 至少被拆分为独立头文件，局部模块边界是清楚的。\n- `graph_common.hpp` 抽出公共 `Arc` 类型，说明作者有一定的共享模型意识。\n- 邻接表与邻接矩阵分别建模为独立模板类，库层概念划分基本合理。\n\n### Issues\n\n- `repo/main.cpp` 不是 CLI 入口源码，而是一份 Makefile 内容；这使入口、构建脚本和文件命名完全错位，仓库在最基本的工程组织上就不成立。\n- 仓库根目录没有 `include/` 与 `src/` 分层，和需求中明确给出的公共头文件位置、CLI 入口位置都不一致；对于 C++ 库/命令行项目，这种扁平结构且路径失配会直接削弱可维护性。\n- `repo/graph.cpp` 仅做头文件包含，没有形成清晰的库汇总单元，也没有任何实际实现或 API 封装价值，属于无效构建层。\n- 构建约定混乱：仓库里没有真正命名为 `Makefile`/`CMakeLists.txt` 的构建入口，却把覆盖率和测试相关规则塞进 `main.cpp`；既不符合常见 C++ 构建习惯，也与“不要生成测试文件”的任务约束相冲突。\n- 虽然几个头文件内聚度尚可，但整体缺少明确的应用层与库层边界：没有独立 CLI 解析、I/O 适配、图构建流程，导致项目更像零散头文件集合，而不是完整库加可运行工具。\n\n### Stack Mismatches\n\n- 文件职责与 C++ 工程栈不匹配：`main.cpp` 被用作 Makefile，破坏了源码文件语义。\n- 构建系统名义上像 Make，但文件落位和命名不符合 Make 约定；同时又没有 CMake 等替代标准配置。\n- 作为 library 风格项目，没有把公共头文件集中到 `include/`，与常见发布和复用方式不一致。\n\n### Reference Gaps\n\n- 需求要求 `src/main.cpp` 作为可运行 CLI 入口，但实际 `repo/main.cpp` 是 Makefile 文本，缺少真正的命令行程序实现。\n- 需求要求 `include/queue.hpp`、`include/stack.hpp`、`include/al_graph.hpp`、`include/am_graph.hpp`，实际所有头文件都放在仓库根目录，未体现公共头文件目录。\n- 需求要求提供最小可编译构建配置；实际没有标准命名的构建文件，现有构建内容与仓库布局也不匹配。\n- 需求强调库与 CLI 并存的完整项目源码；实际仓库只有头文件实现和一个空壳 `.cpp`，缺少清晰的应用层组织。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 219111,
+    "completion_tokens": 6752,
+    "total_tokens": 225863,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 136231,
+        "completion_tokens": 4923,
+        "total_tokens": 141154
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 82880,
+        "completion_tokens": 1829,
+        "total_tokens": 84709
+      }
+    ]
+  },
+  "language": "cpp",
+  "project_name": "graph-cpp",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 3.94,
+  "architecture_score": 2.77,
+  "health_score": 5.0,
+  "all_tests_passed": false
+}

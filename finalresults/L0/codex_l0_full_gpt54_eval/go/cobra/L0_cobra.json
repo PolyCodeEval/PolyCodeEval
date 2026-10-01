@@ -1,0 +1,716 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.19,
+  "stdout": "FAIL\tgithub.com/spf13/cobra [build failed]\nFAIL\n",
+  "stderr": "# github.com/spf13/cobra_test [github.com/spf13/cobra.test]\n./test_args_validators_test.go:17:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:31:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:48:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:65:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:82:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:99:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:113:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:130:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:154:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:160:6: cmd.SetArgs undefined (type *cobra.Command has no field or method SetArgs)\n./test_args_validators_test.go:160:6: too many errors\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && go mod download",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && go mod download",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "compile_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.74,
+    "Architecture": 4.43,
+    "Health": 3.5
+  },
+  "overall_score": 2.64,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "outWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\toneRequired       [][]string\n\trequiredTogether  [][]string\n\tversionFlagAdded  bool\n}\n\nfunc (c *Command) Name() string {\n\tuse := strings.TrimSpace(c.Use)\n\tif use == \"\" {\n\t\treturn \"\"\n\t}\n\tif i := strings.IndexByte(use, ' '); i >= 0 {\n\t\treturn use[:i]\n\t}\n\treturn use\n}\n\nfunc (c *Command)"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "te()\n\tif err == nil {\n\t\tt.Fatal(\"expected error when mutually exclusive flags are both set\")\n\t}\n}\n\nfunc TestMarkFlagsOneRequiredRejectsNone(t *testing.T) {\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().String(\"file\", \"\", \"input file\")\n\tcmd.Flags().String(\"url\", \"\", \"input url\")\n\tcmd.MarkFlagsOneRequired(\"file\", \"url\")\n\tcmd.SetArgs([]strin"
+            },
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "}\n\tif tags[0] != \"a\" || tags[1] != \"b\" || tags[2] != \"c\" {\n\t\tt.Fatalf(\"expected [a b c], got %v\", tags)\n\t}\n}\n\nfunc TestRequiredFlagMissingReturnsError(t *testing.T) {\n\tvar name string\n\tcmd := &cobra.Command{\n\t\tUse: \"greet\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().StringVar(&name, \"name\", \"\", \"your name\")\n\tcmd.MarkFlagRequired(\"name\")\n\n\tcmd.SetArgs([]string{})\n\terr := cm"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` defines package `cobra`, `Command`, `AddCommand`, `Execute`, `ExecuteC`, `Flags`, `PersistentFlags`, uses `pflag`, and provides the required positional arg validators."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/spf13/cobra`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/spf13/cobra\n\ngo 1.22\n\nrequire github.com/spf13/pflag v1.0.9"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "e: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fatalf(\"expected Name()='myapp', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandPath(t *testing.T) {\n\troot := &cobra.Command{Use: \"kubectl\"}\n\tsub := &cobra.Command{Use: \"get\"}\n\troot.AddCommand(sub)\n\tif sub.CommandPath() != \"kubectl get\" {\n\t\tt.Fatalf(\"expected 'kubectl get', got %q\", sub.CommandPath())\n\t}\n}\n\nfunc TestCommandPathDeep(t *testing.T) {\n\troot := &"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "return \"\"\n\t}\n\tif i := strings.IndexByte(use, ' '); i >= 0 {\n\t\treturn use[:i]\n\t}\n\treturn use\n}\n\nfunc (c *Command) CommandPath() string {\n\tif c == nil {\n\t\treturn \"\"\n\t}\n\tvar parts []string\n\tfor cur := c; cur != nil; cur = cur.parent {\n\t\tif name := cur.Name(); name != \"\" {\n\t\t\tparts = append(parts, name)\n\t\t}\n\t}\n\tfor i, j := 0, len(parts)-1; i < j; i, j = i+1, j-1 {\n\t\tparts[i], parts[j] = parts[j], part"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/spf13/cobra`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package `cobra` exposing `Command`, `(*Command).AddCommand(...)`, `(*Command).Execute()`, `(*Command).ExecuteC()`, `(*Command).Flags()`, and `(*Command).PersistentFlags()`",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "package cobra\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc"
+            },
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestFlagsParsedCorrectly(t *testing.T) {\n\tvar name string\n\tcmd := &cobra.Command{\n\t\tUse: \"greet\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().StringVar(&name, \"name\", \"\", \"a name\")"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` exposes package `cobra` with `Command`, `(*Command).AddCommand`, `Execute`, `ExecuteC`, `Flags`, and `PersistentFlags`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "integration with flag handling compatible with `pflag`-style command usage",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "package cobra\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "own\"})\n\terr := rootCmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error for unknown subcommand\")\n\t}\n}\n\nfunc TestHelpFlagShowsSubcommandList(t *testing.T) {\n\tvar buf bytes.Buffer\n\trootCmd := &cobra.Command{Use: \"root\"}\n\trootCmd.SetOut(&buf)\n\n\tsub1 := &cobra.Command{\n\t\tUse:   \"alpha\",\n\t\tShort: \"Alpha command\",\n\t\tRun:   func(cmd *cobra.Command, args []string) {},\n\t}\n\tsub2 := &cobra.Command{\n\t\tUse"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "ings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fatalf(\"expected Name()='myapp', got %q\", cmd.Name())\n\t}\n}\n\nfunc T"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` integrates with `github.com/spf13/pflag` for local and persistent flag parsing and usage output."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "built-in argument validator functions: `NoArgs`, `ArbitraryArgs`, `MinimumNArgs(n int) PositionalArgs`, `ExactArgs(n int) PositionalArgs`, and `RangeArgs(min, max int) PositionalArgs`; these conform to the `PositionalArgs` type `func(cmd *Command, args []string) error` and are assigned to `Command.Args`",
+          "evidence": [
+            {
+              "path": "test_args_validators_test.go",
+              "excerpt": "cobra.Command, args []string) error {\n\t\t\tfor _, arg := range args {\n\t\t\t\tif arg == \"forbidden\" {\n\t\t\t\t\treturn fmt.Errorf(\"argument 'forbidden' is not allowed\")\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn nil\n\t\t},\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\n\tcmd.SetArgs([]string{\"ok\", \"forbidden\"})\n\terr := cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from custom validator\")\n\t}\n\n\tcmd.SetArgs([]string{"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "), flagNames...))\n}\n\nfunc NoArgs(cmd *Command, args []string) error {\n\tif len(args) != 0 {\n\t\treturn fmt.Errorf(\"unknown arguments: %s\", strings.Join(args, \" \"))\n\t}\n\treturn nil\n}\n\nfunc ArbitraryArgs(cmd *Command, args []string) error {\n\treturn nil\n}\n\nfunc MinimumNArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) < n {\n\t\t\treturn fmt.Errorf(\"requires at lea"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": ") to be false\")\n\t}\n}\n\nfunc TestExecuteContext(t *testing.T) {\n\ttype ctxKey string\n\tkey := ctxKey(\"testkey\")\n\tvar gotVal interface{}\n\tcmd := &cobra.Command{\n\t\tUse: \"ctx\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tgotVal = cmd.Context().Value(key)\n\t\t},\n\t}\n\tctx := context.WithValue(context.Background(), key, \"hello\")\n\tcmd.SetArgs([]string{})\n\terr := cmd.ExecuteContext(ctx)\n\tif err != nil {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` defines `PositionalArgs`, `NoArgs`, `ArbitraryArgs`, `MinimumNArgs`, `ExactArgs`, and `RangeArgs`, and `Command` has an `Args` field of that type."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "Command Tree",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` implements parent/child command relationships, subcommand lookup, and nested execution via `AddCommand`, `findChild`, and `findCommand`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "Flags and Arguments",
+          "evidence": [
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestFlagsParsedCorrectly(t *testing.T) {\n\tvar name string\n\tcmd := &cobra.Command{\n\t\tUse: \"greet\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().StringVar(&name, \"name\", \"\", \"a name\")\n\n\tcmd.SetArgs([]string{\"--name=world\"})\n\terr := cmd.Execute()\n\tif err != nil {"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "sistentPostRunE func(cmd *Command, args []string) error\n\n\tSilenceErrors bool\n\n\tparent   *Command\n\tcommands []*Command\n\n\tflags           *pflag.FlagSet\n\tpersistentFlags *pflag.FlagSet\n\tflagErrorBuf    strings.Builder\n\n\toutWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\toneRequired       [][]string\n\trequiredTogether  [][]string\n\tversi"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "ings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fatalf(\"expected Name()='myapp', got %q\", cmd.Name())\n\t}\n}\n\nfunc T"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` implements flag storage/parsing with `pflag` plus positional argument validation through `Command.Args`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Hooks and Error Handling",
+          "evidence": [
+            {
+              "path": "test_hooks_test.go",
+              "excerpt": "= append(order, \"run\")\n\t\t},\n\t}\n\n\tcmd.SetArgs([]string{})\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(order) != 2 {\n\t\tt.Fatalf(\"expected 2 calls, got %d\", len(order))\n\t}\n\tif order[0] != \"persistentPreRun\" {\n\t\tt.Fatalf(\"expected persistentPreRun first, got %q\", order[0])\n\t}\n\tif order[1] != \"run\" {\n\t\tt.Fatalf(\"expected run second, got %q\", order[1])\n\t}\n}"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "return target, root.handleError(fmt.Errorf(\"command %q has no action\", target.CommandPath()))\n\t}\n\tif err := target.runHooks(parsedArgs); err != nil {\n\t\treturn target, root.handleError(err)\n\t}\n\treturn target, nil\n}\n\nfunc (c *Command) Help() error {\n\t_, err := fmt.Fprint(c.OutOrStdout(), c.helpText())\n\treturn err\n}\n\nfunc (c *Command) SuggestionsFor(typedName string) []string {\n\ttypedName = strings"
+            },
+            {
+              "path": "test_args_validators_test.go",
+              "excerpt": "ommand, args []string) {},\n\t}\n\n\tcmd.SetArgs([]string{\"one\"})\n\terr := cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error when providing wrong number of args to ExactArgs(2)\")\n\t}\n}\n\nfunc TestNoArgsRejectsAnyArgs(t *testing.T) {\n\tcmd := &cobra.Command{\n\t\tUse:  \"test\",\n\t\tArgs: cobra.NoArgs,\n\t\tRun:  func(cmd *cobra.Command, args []string) {},\n\t}\n\n\tcmd.SetArgs([]string{\"unexpected\"})\n\terr := cmd.E"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` implements lifecycle hooks (`PersistentPreRun`, `PreRun`, `PostRun`, `PersistentPostRun`, and `*E` variants) and centralized error handling via `handleError`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Help and Completion",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "r != nil {\n\t\treturn nil, root.handleError(err)\n\t}\n\tif target.ctx == nil {\n\t\ttarget.ctx = root.Context()\n\t}\n\tparsedArgs, helpRequested, versionRequested, err := target.parseFlags(remaining)\n\tif err != nil {\n\t\treturn target, root.handleError(err)\n\t}\n\tif helpRequested {\n\t\treturn target, nil\n\t}\n\tif versionRequested {\n\t\t_, _ = fmt.Fprintln(target.OutOrStdout(), target.Version)\n\t\ttarget.calledAs = targe"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "}\n\t}\n\tif !found {\n\t\tt.Fatalf(\"expected 'status' in suggestions, got %v\", suggestions)\n\t}\n}\n\nfunc TestHiddenCommandNotInHelp(t *testing.T) {\n\tvar buf bytes.Buffer\n\troot := &cobra.Command{Use: \"root\"}\n\troot.SetOut(&buf)\n\tvisible := &cobra.Command{Use: \"visible\", Short: \"Visible cmd\", Run: func(cmd *cobra.Command, args []string) {}}\n\thidden := &cobra.Command{Use: \"secret\", Short: \"Secret cmd\", Hidde"
+            },
+            {
+              "path": "test_execute_test.go",
+              "excerpt": ": \"norun\",\n\t}\n\n\tcmd.SetArgs([]string{})\n\terr := cmd.Execute()\n\t// A command with no Run, RunE, subcommands should print help but not error\n\t// However, if we try to execute a subcommand that doesn't exist, it errors\n\t// The behavior is: command with no Run prints usage/help\n\tif err != nil {\n\t\tt.Fatalf(\"expected no error for command without Run (prints help), got: %v\", err)\n\t}\n}\n\nfunc TestCommandOu"
+            }
+          ],
+          "status": "partial",
+          "reason": "Help generation is implemented (`Help`, `helpText`), but there is no clear shell-completion feature beyond `SuggestionsFor`, so the broader help-and-completion capability is only partially covered."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`(*Command).Name()` returns the first word of the `Use` string (text before the first space, or the entire Use if no space).",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `Name()` trims `Use` and returns the first token before a space, or the full string if no space exists."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`(*Command).CommandPath()` returns the space-joined path from the root to this command (e.g. \"root child grandchild\").",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `CommandPath()` walks parents, reverses the collected names, and joins them with spaces."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`(*Command).HasAlias(s string) bool` returns true if `s` matches one of the command's `Aliases`.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `HasAlias` checks whether the supplied string matches any entry in `Aliases`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`(*Command).CalledAs() string` returns the name or alias used to invoke the command after execution; returns empty string if not yet called.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` stores invocation name/alias in `calledAs`, returns it via `CalledAs()`, and leaves it empty before execution."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`(*Command).Root() *Command` traverses parents to return the top-level root command.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `Root()` traverses `parent` links until the top-level command."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`(*Command).Parent() *Command` returns the immediate parent; `HasParent()` returns false for the root.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` provides `Parent()` and `HasParent()`, with `HasParent()` false when `parent` is nil."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`(*Command).Runnable() bool` returns true if `Run` or `RunE` is set.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_rune_test.go",
+              "excerpt": "TestRunEErrorPropagatesThroughExecute(t *testing.T) {\n\texpectedErr := errors.New(\"something went wrong\")\n\tcmd := &cobra.Command{\n\t\tUse: \"fail\",\n\t\tRunE: func(cmd *cobra.Command, args []string) error {\n\t\t\treturn expectedErr\n\t\t},\n\t}\n\n\tcmd.SetArgs([]string{})\n\terr := cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from RunE to propagate through Execute\")\n\t}\n\tif err.Error() != expectedErr.Erro"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `Runnable()` returns true when either `Run` or `RunE` is set."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`(*Command).ExecuteContext(ctx context.Context) error` sets the context on the command before executing; child commands inherit the context. Retrieve via `cmd.Context()`.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` provides `ExecuteContext`, `Context`, and context propagation from root to children through `AddCommand` and command resolution."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "When the `Version` field is non-empty, a `--version` flag is auto-added. Invoking it prints the version string to stdout.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "error: %v\", err)\n\t}\n\tif gotVal != \"hello\" {\n\t\tt.Fatalf(\"expected context value 'hello', got %v\", gotVal)\n\t}\n}\n\nfunc TestVersionFlag(t *testing.T) {\n\tvar buf bytes.Buffer\n\tcmd := &cobra.Command{\n\t\tUse:     \"app\",\n\t\tVersion: \"1.2.3\",\n\t\tRun:     func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.SetOut(&buf)\n\tcmd.SetArgs([]string{\"--version\"})\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexp"
+            },
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestFlagsParsedCorrectly(t *testing.T) {\n\tvar name string\n\tcmd := &cobra.Command{\n\t\tUse: \"greet\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().StringVar(&name, \"name\", \"\", \"a name\")\n\n\tcmd.SetArgs([]string{\"--name=world\"})\n\terr := cmd.Execute()\n\tif err != nil {"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "*Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error\n\n\tPersistentPreRun  func(cmd *Command, args []string)\n\tPersistentPreRunE func(cmd *Command, args []string) error\n\tPre"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` auto-adds a `version` flag in `Flags()` when `Version` is non-empty and prints `Version` to stdout when requested."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`(*Command).SuggestionsFor(typedName string) []string` returns child command names that match via Levenshtein distance (default threshold 2) or case-insensitive prefix.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n\t\"sort\"\n\t\"strings\"\n\n\t\"github.com/spf13/pflag\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\ntype Command struct {\n\tUse   string\n\tShort string\n\tLong  string\n\n\tAliases    []string\n\tVersion    string\n\tDeprecated string\n\tHidden     bool\n\n\tArgs PositionalArgs\n\n\tRun  func(cmd *Command, args []string)\n\tRunE func(cmd *Command, args []string) error"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestCommandName(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"serve [flags]\"}\n\tif cmd.Name() != \"serve\" {\n\t\tt.Fatalf(\"expected Name()='serve', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandNameNoSpace(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fa"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestAddCommandAndExecuteSubcommand(t *testing.T) {\n\tvar subRan bool\n\trootCmd := &cobra.Command{\n\t\tUse: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"su"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `SuggestionsFor` returns child command names matching either case-insensitive prefix or Levenshtein distance <= 2."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Commands with `Hidden: true` are runnable but excluded from help output.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "d, args []string)\n\tPersistentPostRunE func(cmd *Command, args []string) error\n\n\tSilenceErrors bool\n\n\tparent   *Command\n\tcommands []*Command\n\n\tflags           *pflag.FlagSet\n\tpersistentFlags *pflag.FlagSet\n\tflagErrorBuf    strings.Builder\n\n\toutWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\toneRequired       [][]string\n\trequiredToget"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "rings.Contains(output, \"secret\") {\n\t\tt.Fatal(\"expected 'secret' to NOT appear in help output\")\n\t}\n}\n\nfunc TestDeprecatedCommandShowsMessage(t *testing.T) {\n\tvar outBuf, errBuf bytes.Buffer\n\troot := &cobra.Command{Use: \"root\"}\n\troot.SetOut(&outBuf)\n\troot.SetErr(&errBuf)\n\tdep := &cobra.Command{\n\t\tUse:        \"oldcmd\",\n\t\tDeprecated: \"use newcmd instead\",\n\t\tRun:        func(cmd *cobra.Command, args []"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "if which != \"second\" {\n\t\tt.Fatalf(\"expected 'second' subcommand to run, got %q\", which)\n\t}\n}\n\nfunc TestDeeplyNestedSubcommands(t *testing.T) {\n\tvar result string\n\trootCmd := &cobra.Command{Use: \"root\"}\n\tlevel1 := &cobra.Command{Use: \"level1\"}\n\tlevel2 := &cobra.Command{Use: \"level2\"}\n\tlevel3 := &cobra.Command{\n\t\tUse: \"level3\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tresult = \"deep\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` excludes hidden commands from `helpText()` via `visibleCommands()`, but hidden commands remain discoverable by `findChild()` and therefore runnable."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Commands with a non-empty `Deprecated` string print a deprecation message to stderr when invoked.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "rings.Contains(output, \"secret\") {\n\t\tt.Fatal(\"expected 'secret' to NOT appear in help output\")\n\t}\n}\n\nfunc TestDeprecatedCommandShowsMessage(t *testing.T) {\n\tvar outBuf, errBuf bytes.Buffer\n\troot := &cobra.Command{Use: \"root\"}\n\troot.SetOut(&outBuf)\n\troot.SetErr(&errBuf)\n\tdep := &cobra.Command{\n\t\tUse:        \"oldcmd\",\n\t\tDeprecated: \"use newcmd instead\",\n\t\tRun:        func(cmd *cobra.Command, args []"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "d, args []string)\n\tPersistentPostRunE func(cmd *Command, args []string) error\n\n\tSilenceErrors bool\n\n\tparent   *Command\n\tcommands []*Command\n\n\tflags           *pflag.FlagSet\n\tpersistentFlags *pflag.FlagSet\n\tflagErrorBuf    strings.Builder\n\n\toutWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\toneRequired       [][]string\n\trequiredToget"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "if which != \"second\" {\n\t\tt.Fatalf(\"expected 'second' subcommand to run, got %q\", which)\n\t}\n}\n\nfunc TestDeeplyNestedSubcommands(t *testing.T) {\n\tvar result string\n\trootCmd := &cobra.Command{Use: \"root\"}\n\tlevel1 := &cobra.Command{Use: \"level1\"}\n\tlevel2 := &cobra.Command{Use: \"level2\"}\n\tlevel3 := &cobra.Command{\n\t\tUse: \"level3\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tresult = \"deep\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` prints a deprecation message to `ErrOrStderr()` when `Deprecated` is non-empty and the command is invoked."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "When `SilenceErrors` is true on the root command, error messages are not printed to stderr on execution failure.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "\"expected deprecation message in output or stderr, got out=%q err=%q\", outBuf.String(), errBuf.String())\n\t}\n}\n\nfunc TestSilenceErrorsSuppressesErrorOutput(t *testing.T) {\n\tvar errBuf bytes.Buffer\n\troot := &cobra.Command{\n\t\tUse:           \"root\",\n\t\tSilenceErrors: true,\n\t}\n\troot.SetErr(&errBuf)\n\tsub := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\troot.AddComma"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "rror\n\tPersistentPostRun func(cmd *Command, args []string)\n\tPersistentPostRunE func(cmd *Command, args []string) error\n\n\tSilenceErrors bool\n\n\tparent   *Command\n\tcommands []*Command\n\n\tflags           *pflag.FlagSet\n\tpersistentFlags *pflag.FlagSet\n\tflagErrorBuf    strings.Builder\n\n\toutWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\tone"
+            },
+            {
+              "path": "test_subcommands_test.go",
+              "excerpt": "Use: \"root\",\n\t}\n\tsubCmd := &cobra.Command{\n\t\tUse: \"sub\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tsubRan = true\n\t\t},\n\t}\n\n\trootCmd.AddCommand(subCmd)\n\trootCmd.SetArgs([]string{\"sub\"})\n\n\terr := rootCmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif !subRan {\n\t\tt.Fatal(\"expected subcommand Run to be called\")\n\t}\n}\n\nfunc TestCorrectSubcommandIsExecuted(t *testing"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` `handleError()` suppresses stderr output when `Root().SilenceErrors` is true."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`MarkFlagsMutuallyExclusive(flagNames ...string)`: execute returns an error if more than one flag from the group is set.",
+          "evidence": [
+            {
+              "path": "test_execute_test.go",
+              "excerpt": "ExecutesRun(t *testing.T) {\n\tvar ran bool\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tran = true\n\t\t},\n\t}\n\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif !ran {\n\t\tt.Fatal(\"expected Run to be called\")\n\t}\n}\n\nfunc TestSetArgsAndExecute(t *testing.T) {\n\tvar buf bytes.Buffer\n\tcmd := &cobra.Command{\n\t\tUse: \"root\",\n\t\tRun"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "{\n\t\t\tsuggestions = append(suggestions, name)\n\t\t}\n\t}\n\tsort.Strings(suggestions)\n\treturn suggestions\n}\n\nfunc (c *Command) MarkFlagsMutuallyExclusive(flagNames ...string) {\n\tc.mutuallyExclusive = append(c.mutuallyExclusive, append([]string(nil), flagNames...))\n}\n\nfunc (c *Command) MarkFlagsOneRequired(flagNames ...string) {\n\tc.oneRequired = append(c.oneRequired, append([]string(nil), flagNames...))\n}"
+            },
+            {
+              "path": "test_args_validators_test.go",
+              "excerpt": "esting.T) {\n\tcmd := &cobra.Command{\n\t\tUse:  \"test\",\n\t\tArgs: cobra.ExactArgs(2),\n\t\tRun:  func(cmd *cobra.Command, args []string) {},\n\t}\n\n\tcmd.SetArgs([]string{\"one\"})\n\terr := cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error when providing wrong number of args to ExactArgs(2)\")\n\t}\n}\n\nfunc TestNoArgsRejectsAnyArgs(t *testing.T) {\n\tcmd := &cobra.Command{\n\t\tUse:  \"test\",\n\t\tArgs: cobra.NoArgs,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` stores mutually exclusive flag groups and `validateFlagGroups()` errors when more than one flag in a group is set."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`MarkFlagsOneRequired(flagNames ...string)`: execute returns an error if none of the flags from the group is set.",
+          "evidence": [
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": ":= cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error when mutually exclusive flags are both set\")\n\t}\n}\n\nfunc TestMarkFlagsOneRequiredRejectsNone(t *testing.T) {\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().String(\"file\", \"\", \"input file\")\n\tcmd.Flags().String(\"url\", \"\", \"input url\")\n\tcmd.MarkFlagsOneRequired(\"file\", \"url\")\n\tcmd.Set"
+            },
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "e cobra_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestFlagsParsedCorrectly(t *testing.T) {\n\tvar name string\n\tcmd := &cobra.Command{\n\t\tUse: \"greet\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().StringVar(&name, \"name\", \"\", \"a name\")\n\n\tcmd.SetArgs([]string{\"--name=world\"})\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif n"
+            },
+            {
+              "path": "command.go",
+              "excerpt": ".string) {\n\tc.mutuallyExclusive = append(c.mutuallyExclusive, append([]string(nil), flagNames...))\n}\n\nfunc (c *Command) MarkFlagsOneRequired(flagNames ...string) {\n\tc.oneRequired = append(c.oneRequired, append([]string(nil), flagNames...))\n}\n\nfunc (c *Command) MarkFlagsRequiredTogether(flagNames ...string) {\n\tc.requiredTogether = append(c.requiredTogether, append([]string(nil), flagNames...))\n}\n\nf"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` stores one-required flag groups and `validateFlagGroups()` errors when none of the flags in a group are set."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`MarkFlagsRequiredTogether(flagNames ...string)`: execute returns an error if only a subset (but not all) of the flags is set.",
+          "evidence": [
+            {
+              "path": "test_execute_test.go",
+              "excerpt": "ExecutesRun(t *testing.T) {\n\tvar ran bool\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tran = true\n\t\t},\n\t}\n\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif !ran {\n\t\tt.Fatal(\"expected Run to be called\")\n\t}\n}\n\nfunc TestSetArgsAndExecute(t *testing.T) {\n\tvar buf bytes.Buffer\n\tcmd := &cobra.Command{\n\t\tUse: \"root\",\n\t\tRun"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "flagNames ...string) {\n\tc.oneRequired = append(c.oneRequired, append([]string(nil), flagNames...))\n}\n\nfunc (c *Command) MarkFlagsRequiredTogether(flagNames ...string) {\n\tc.requiredTogether = append(c.requiredTogether, append([]string(nil), flagNames...))\n}\n\nfunc NoArgs(cmd *Command, args []string) error {\n\tif len(args) != 0 {\n\t\treturn fmt.Errorf(\"unknown arguments: %s\", strings.Join(args, \" \"))\n\t}"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "= cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error when no flag from one-required group is set\")\n\t}\n}\n\nfunc TestMarkFlagsRequiredTogetherRejectsPartial(t *testing.T) {\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().String(\"user\", \"\", \"username\")\n\tcmd.Flags().String(\"pass\", \"\", \"password\")\n\tcmd.MarkFlagsRequiredTogether(\"user\", \"pas"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/command.go` stores required-together flag groups and `validateFlagGroups()` errors when only part of a group is set."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "{\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}\n\nfunc (c *Command) CalledAs() string {\n\treturn c.calledAs\n}\n\nfunc (c *Command) Root() *Command {\n\tcur := c\n\tfor cur != nil && cur.parent != nil {\n\t\tcur = cur.parent\n\t}\n\treturn cur\n}\n\nfunc (c *Command) Parent() *Command {\n\treturn c.parent\n}\n\nfunc (c *Command) HasParent() bool {\n\treturn c != nil && c.parent != nil\n}\n\nfunc (c *Command) Runnable() bool {\n\tretur"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "me() != \"myapp\" {\n\t\tt.Fatalf(\"expected Name()='myapp', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandPath(t *testing.T) {\n\troot := &cobra.Command{Use: \"kubectl\"}\n\tsub := &cobra.Command{Use: \"get\"}\n\troot.AddCommand(sub)\n\tif sub.CommandPath() != \"kubectl get\" {\n\t\tt.Fatalf(\"expected 'kubectl get', got %q\", sub.CommandPath())\n\t}\n}\n\nfunc TestCommandPathDeep(t *testing.T) {\n\troot := &cobra.Command{Use: \"ap"
+            },
+            {
+              "path": "test_execute_test.go",
+              "excerpt": "n to be called\")\n\t}\n}\n\nfunc TestSetArgsAndExecute(t *testing.T) {\n\tvar buf bytes.Buffer\n\tcmd := &cobra.Command{\n\t\tUse: \"root\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tbuf.WriteString(\"executed\")\n\t\t},\n\t}\n\n\tcmd.SetArgs([]string{})\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif buf.String() != \"executed\" {\n\t\tt.Fatalf(\"expected 'executed', got %q\", bu"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The generated project files are placed directly at the repository root (`repo/go.mod`, `repo/command.go`) rather than inside an extra wrapper directory."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/spf13/cobra\n\ngo 1.22\n\nrequire github.com/spf13/pflag v1.0.9"
+            },
+            {
+              "path": "test_flags_test.go",
+              "excerpt": "\"app\",\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\tcmd.Flags().BoolVar(&debug, \"debug\", false, \"enable debug mode\")\n\n\tcmd.SetArgs([]string{\"--debug\"})\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif !debug {\n\t\tt.Fatal(\"expected --debug to be true\")\n\t}\n}\n\nfunc TestIntFlag(t *testing.T) {\n\tvar port int\n\tcmd := &cobra.Command{\n\t\tUse: \"server\",\n\t\tRun: f"
+            },
+            {
+              "path": "command.go",
+              "excerpt": "outWriter io.Writer\n\terrWriter io.Writer\n\n\tctx      context.Context\n\tcalledAs string\n\n\tmutuallyExclusive [][]string\n\toneRequired       [][]string\n\trequiredTogether  [][]string\n\tversionFlagAdded  bool\n}\n\nfunc (c *Command) Name() string {\n\tuse := strings.TrimSpace(c.Use)\n\tif use == \"\" {\n\t\treturn \"\"\n\t}\n\tif i := strings.IndexByte(use, ' '); i >= 0 {\n\t\treturn use[:i]\n\t}\n\treturn use\n}\n\nfunc (c *Command)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository has a standard Go module shape with root-level `go.mod` and the package source in `command.go`."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_args_validators_test.go",
+              "excerpt": "ring) error {\n\t\t\tfor _, arg := range args {\n\t\t\t\tif arg == \"forbidden\" {\n\t\t\t\t\treturn fmt.Errorf(\"argument 'forbidden' is not allowed\")\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn nil\n\t\t},\n\t\tRun: func(cmd *cobra.Command, args []string) {},\n\t}\n\n\tcmd.SetArgs([]string{\"ok\", \"forbidden\"})\n\terr := cmd.Execute()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from custom validator\")\n\t}\n\n\tcmd.SetArgs([]string{\"ok\", \"fine\"})\n\terr = cm"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "sub.CalledAs() != \"ls\" {\n\t\tt.Fatalf(\"expected CalledAs()='ls', got %q\", sub.CalledAs())\n\t}\n}\n\nfunc TestCalledAsEmptyWhenNotCalled(t *testing.T) {\n\tcmd := &cobra.Command{Use: \"test\"}\n\tif cmd.CalledAs() != \"\" {\n\t\tt.Fatalf(\"expected CalledAs()='', got %q\", cmd.CalledAs())\n\t}\n}\n\nfunc TestRootReturnsRoot(t *testing.T) {\n\troot := &cobra.Command{Use: \"root\"}\n\tchild := &cobra.Command{Use: \"child\"}\n\tgrandc"
+            },
+            {
+              "path": "test_execute_test.go",
+              "excerpt": ",\n\t}\n\n\tcmd.SetArgs([]string{})\n\terr := cmd.Execute()\n\t// A command with no Run, RunE, subcommands should print help but not error\n\t// However, if we try to execute a subcommand that doesn't exist, it errors\n\t// The behavior is: command with no Run prints usage/help\n\tif err != nil {\n\t\tt.Fatalf(\"expected no error for command without Run (prints help), got: %v\", err)\n\t}\n}\n\nfunc TestCommandOutputCaptu"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes multiple generated test files such as `repo/test_command_api_test.go` and `repo/test_execute_test.go`, violating the instruction not to generate test files."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Ensure the module path is `github.com/spf13/cobra` and the root package is importable as `cobra` from that module path.",
+          "evidence": [
+            {
+              "path": "command.go",
+              "excerpt": "{\n\t\t\tname = \"flags\"\n\t\t}\n\t\tc.flags = pflag.NewFlagSet(name, pflag.ContinueOnError)\n\t\tc.flags.SetOutput(io.Discard)\n\t}\n\tc.ensureVersionFlag()\n\treturn c.flags\n}\n\nfunc (c *Command) PersistentFlags() *pflag.FlagSet {\n\tif c.persistentFlags == nil {\n\t\tname := c.Name()\n\t\tif name == \"\" {\n\t\t\tname = \"persistent\"\n\t\t}\n\t\tc.persistentFlags = pflag.NewFlagSet(name, pflag.ContinueOnError)\n\t\tc.persistentFlags.SetOu"
+            },
+            {
+              "path": "test_command_api_test.go",
+              "excerpt": "e: \"myapp\"}\n\tif cmd.Name() != \"myapp\" {\n\t\tt.Fatalf(\"expected Name()='myapp', got %q\", cmd.Name())\n\t}\n}\n\nfunc TestCommandPath(t *testing.T) {\n\troot := &cobra.Command{Use: \"kubectl\"}\n\tsub := &cobra.Command{Use: \"get\"}\n\troot.AddCommand(sub)\n\tif sub.CommandPath() != \"kubectl get\" {\n\t\tt.Fatalf(\"expected 'kubectl get', got %q\", sub.CommandPath())\n\t}\n}\n\nfunc TestCommandPathDeep(t *testing.T) {\n\troot := &"
+            },
+            {
+              "path": "test_execute_test.go",
+              "excerpt": "package cobra_test\n\nimport (\n\t\"bytes\"\n\t\"testing\"\n\n\t\"github.com/spf13/cobra\"\n)\n\nfunc TestBasicCommandExecutesRun(t *testing.T) {\n\tvar ran bool\n\tcmd := &cobra.Command{\n\t\tUse: \"test\",\n\t\tRun: func(cmd *cobra.Command, args []string) {\n\t\t\tran = true\n\t\t},\n\t}\n\n\terr := cmd.Execute()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` uses module path `github.com/spf13/cobra`, and `repo/command.go` declares package `cobra` at the module root."
+        }
+      ],
+      "feature_count": 29,
+      "constraint_count": 0,
+      "implemented_count": 27,
+      "partial_count": 1,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.9483,
+      "constraint_coverage": 0.9483,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "go",
+        "framework": "cobra",
+        "app_style": "cli",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.4,
+        "stack_alignment": 5.0,
+        "reference_alignment": 3.9
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 6,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 1,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "0",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository substantially implements the requested Cobra-like core: the module path and root package are correct, the `Command` API and command tree behavior are present, `pflag` integration is wired in, context propagation works, built-in positional validators are defined, version/suggestions/visibility/deprecation/error-suppression behaviors are implemented, and flag-group validation is included.\n\n### Missing List\n\n- Requirement F028 is not met because the repository contains generated test files.\n- Requirement F009 is only partially met because help is implemented but completion support is not clearly implemented beyond command suggestions.\n\n### Critical Constraint Misses\n\n- Generated `_test.go` files are present even though the prompt explicitly forbids generating test files.\n- The broad `Help and Completion` capability is only partially satisfied because no clear shell-completion implementation is present in the repository.",
+    "architecture_review": "### Stack Inference\n\n该仓库是标准 Go module 形态的库项目：根目录下有 `go.mod`，模块路径为 `github.com/spf13/cobra`，核心代码位于根包 `cobra`，依赖 `pflag`，目标是提供 Cobra 风格的 CLI 命令树与 flag 能力。从结构上看它是一个库而不是应用，符合 Go 里“小型库直接放在根包”的常见起点。\n\n### Scoring Mode\n\n本次按“架构评估”模式打分，重点看真实仓库中的目录组织、职责分配、Go 模块布局、入口与实现层次是否协调，而不是按文件多少给高分。该仓库是一个 Go library，不需要 `cmd/` 可执行入口；因此评估重点落在根包布局是否适合承载一个可复用框架。\n\n### Strengths\n\n- `go.mod` 位于仓库根部，模块路径与需求一致，根包可直接被 `github.com/spf13/cobra` 导入，构建入口清晰。\n- 对一个纯库项目来说，没有引入多余的应用层目录或脚手架，顶层结构简单直接。\n- 测试文件围绕公开 API 组织，侧面说明仓库的核心关注点集中在 `Command` 类型及其行为，这与需求主轴基本一致。\n\n### Issues\n\n- `repo/command.go` 将命令树、flag 解析、帮助生成、建议算法、参数校验、hook 调度和输出处理全部堆在单一文件中，职责边界过宽；对一个要作为可复用 CLI 框架的库来说，这种结构后续扩展和维护成本偏高。\n- 仓库没有按关注点拆分实现文件，例如 `command` 核心模型、args validators、help/version、flag-group 校验、suggestion/completion 等都未分层，导致构建入口虽然简单，但内部架构耦合明显。\n- 仓库包含多份 `test_*.go` 文件，而原始要求明确写了“Do not generate test files”；这不影响 Go 构建本身，但与交付形态要求不一致。\n- 从仓库结构看不存在 shell completion 相关实现或独立扩展点；需求将 completion 列为核心能力之一，但当前结构没有体现出这部分模块化设计。\n\n### Stack Mismatches\n\n- 作为 Go 库，根包直出 API 是合理的；但作为 Cobra 这类功能面较宽的框架，只有一个 `command.go` 文件不太符合该栈常见的按能力拆分实现习惯。\n- Go 生态里测试文件通常允许存在，但本任务的交付约束要求不要生成测试文件，当前仓库与该任务约束不一致。\n\n### Reference Gaps\n\n- 需求强调的是一个可复用的 Cobra 风格框架，但仓库结构更像“为测试收敛的最小单文件实现”，缺少能支撑长期演进的模块划分。\n- 需求提到 help 与 completion 为核心能力，结构上只看得到 help/execute 相关实现，没有看到 completion 作为独立能力的文件或层次。\n- 需求要求不要生成测试文件，但实际仓库包含大量测试文件，和参考要求不一致。"
+  },
+  "task": "go/cobra/L0_cobra",
+  "solver": "generated_outputs"
+}

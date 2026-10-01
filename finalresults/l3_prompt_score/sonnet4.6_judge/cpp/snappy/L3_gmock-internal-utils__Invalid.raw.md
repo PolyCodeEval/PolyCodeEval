@@ -1,0 +1,12 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the core purpose: providing a compilable expression of type T for unreachable/non-executed code paths, triggering an assertion failure if actually run, and marking the path as unreachable. It correctly distinguishes between supported compilers (using compiler hints) and unsupported ones (recursion). The main gap is that it doesn't mention the MSVC-specific `__assume(0)` path — it only mentions GCC/Clang's `__builtin_unreachable()` and the recursive fallback, omitting the three-way conditional entirely. The description also slightly overstates the recursion as preserving 'non-returning intent', when in practice it's just a fallback that happens to be recursive. These are secondary details, and the description is sufficient to implement the function's essential behavior.",
+  "missing_functionality": [
+    "No mention of the MSVC-specific `__assume(0)` hint as a third branch in the compiler conditional",
+    "The three-way `#if defined(__GNUC__) || defined(__clang__) / #elif defined(_MSC_VER) / #else` structure is not described — only two cases are implied"
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing the fallback recursion as 'preserving the non-returning intent' is slightly misleading — it's just a syntactic workaround to satisfy the compiler, not a semantic guarantee of non-return"
+  ],
+  "complete_enough": true
+}

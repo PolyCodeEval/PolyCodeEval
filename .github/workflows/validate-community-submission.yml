@@ -1,0 +1,213 @@
+name: Validate community submission
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "community-results/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-submission-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate self-evaluated results
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Locate the new submission
+        id: submission
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          from pathlib import PurePosixPath
+
+          base = os.environ["BASE_SHA"]
+          head = os.environ["HEAD_SHA"]
+          output = subprocess.check_output(
+              ["git", "diff", "--name-status", "-z", base, head]
+          )
+          fields = output.decode("utf-8", errors="surrogateescape").split("\0")
+
+          changes = []
+          index = 0
+          while index < len(fields) and fields[index]:
+              status = fields[index]
+              index += 1
+              path_count = 2 if status.startswith(("R", "C")) else 1
+              paths = fields[index : index + path_count]
+              index += path_count
+              changes.append((status, paths))
+
+          summary_path = os.environ["GITHUB_STEP_SUMMARY"]
+
+          def fail(message: str) -> None:
+              with open(summary_path, "a", encoding="utf-8") as summary:
+                  summary.write("## Community submission validation\n\n")
+                  summary.write(f"**Failed:** {message}\n")
+              print(f"::error::{message}")
+              raise SystemExit(1)
+
+          if not changes:
+              fail("No changed files were found in the pull request.")
+
+          flattened_paths = [path for _, paths in changes for path in paths]
+          outside = [
+              path
+              for path in flattened_paths
+              if not path.startswith("community-results/")
+          ]
+          if outside:
+              preview = ", ".join(outside[:8])
+              suffix = " ..." if len(outside) > 8 else ""
+              fail(
+                  "A community-result pull request may only change files under "
+                  f"community-results/. Found: {preview}{suffix}"
+              )
+
+          non_additions = [
+              f"{status} {', '.join(paths)}"
+              for status, paths in changes
+              if status != "A"
+          ]
+          if non_additions:
+              preview = "; ".join(non_additions[:8])
+              suffix = " ..." if len(non_additions) > 8 else ""
+              fail(
+                  "Community submissions must be newly added files and may not "
+                  f"modify or delete existing results. Found: {preview}{suffix}"
+              )
+
+          submission_dirs = set()
+          for path_text in flattened_paths:
+              path = PurePosixPath(path_text)
+              parts = path.parts
+              if len(parts) < 6:
+                  fail(
+                      "Every submitted file must use "
+                      "community-results/pce-1.0/<level>/<github-user>/"
+                      f"<submission-id>/.... Invalid path: {path_text}"
+                  )
+              if parts[0] != "community-results" or parts[1] != "pce-1.0":
+                  fail(f"Unsupported community result path: {path_text}")
+              if parts[2] not in {"L0", "L1", "L2", "L3"}:
+                  fail(f"Unsupported evaluation level in path: {path_text}")
+              if not re.fullmatch(r"[A-Za-z0-9-]+", parts[3]):
+                  fail(f"Invalid GitHub user path segment: {path_text}")
+              if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", parts[4]):
+                  fail(f"Invalid submission ID path segment: {path_text}")
+              submission_dirs.add(PurePosixPath(*parts[:5]).as_posix())
+
+          if len(submission_dirs) != 1:
+              fail(
+                  "Exactly one new submission directory is allowed per pull "
+                  f"request; found {len(submission_dirs)}."
+              )
+
+          submission_dir = next(iter(submission_dirs))
+          base_entry = subprocess.run(
+              ["git", "cat-file", "-e", f"{base}:{submission_dir}"],
+              stdout=subprocess.DEVNULL,
+              stderr=subprocess.DEVNULL,
+              check=False,
+          )
+          if base_entry.returncode == 0:
+              fail(f"Submission directory already exists: {submission_dir}")
+
+          required = {
+              f"{submission_dir}/submission.json",
+              f"{submission_dir}/evaluation/summary.json",
+          }
+          missing = sorted(required.difference(flattened_paths))
+          if missing:
+              fail("Missing required files: " + ", ".join(missing))
+
+          import json
+
+          metadata_path = PurePosixPath(submission_dir) / "submission.json"
+          try:
+              with open(metadata_path, encoding="utf-8") as handle:
+                  metadata = json.load(handle)
+          except (OSError, ValueError) as error:
+              fail(f"Unable to read submission.json: {error}")
+          path_user = PurePosixPath(submission_dir).parts[3]
+          metadata_user = str(metadata.get("submitter", {}).get("github", ""))
+          pr_author = os.environ["PR_AUTHOR"]
+          if metadata_user.lower() != path_user.lower():
+              fail("submitter.github must match the GitHub user directory.")
+          if metadata_user.lower() != pr_author.lower():
+              fail("submitter.github must match the pull request author.")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output_file:
+              output_file.write(f"submission_dir={submission_dir}\n")
+
+          with open(summary_path, "a", encoding="utf-8") as summary:
+              summary.write("## Community submission validation\n\n")
+              summary.write(f"Submission directory: `{submission_dir}`\n\n")
+              summary.write(f"Changed files: {len(flattened_paths)}\n\n")
+          PY
+
+      - name: Validate native evaluation results
+        env:
+          SUBMISSION_DIR: ${{ steps.submission.outputs.submission_dir }}
+          REPORT_PATH: ${{ runner.temp }}/community-validation-report.json
+        run: |
+          set -o pipefail
+          if [[ ! -f scripts/submission/validate_submission.py ]]; then
+            {
+              echo "### Validator"
+              echo
+              echo "Validation failed because \`scripts/submission/validate_submission.py\` is unavailable."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          set +e
+          python3 scripts/submission/validate_submission.py \
+            "$SUBMISSION_DIR" \
+            --report "$REPORT_PATH" \
+            2>&1 | tee "$RUNNER_TEMP/community-validator.log"
+          status=${PIPESTATUS[0]}
+          set -e
+
+          VALIDATOR_LOG="$RUNNER_TEMP/community-validator.log" python3 - <<'PY'
+          import html
+          import os
+
+          with open(os.environ["VALIDATOR_LOG"], encoding="utf-8", errors="replace") as log:
+              lines = log.readlines()[-200:]
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write("### Validator output\n\n<details><summary>Last 200 lines</summary>\n\n")
+              summary.write("<pre>" + html.escape("".join(lines)) + "</pre>\n\n</details>\n")
+          PY
+
+          exit "$status"
+
+      - name: Upload validation report
+        if: ${{ always() && steps.submission.outputs.submission_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: community-submission-validation-${{ github.event.pull_request.number }}
+          path: |
+            ${{ runner.temp }}/community-validation-report.json
+            ${{ steps.submission.outputs.submission_dir }}/validation-report.json
+          if-no-files-found: ignore
+          retention-days: 14

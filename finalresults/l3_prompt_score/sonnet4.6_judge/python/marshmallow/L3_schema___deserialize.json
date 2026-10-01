@@ -1,0 +1,25 @@
+{
+  "task": "python/marshmallow/L3_schema___deserialize",
+  "project": "python/marshmallow",
+  "language": "python",
+  "prompt_path": "datasets/python/marshmallow/tasks/L3_schema___deserialize/prompt.md",
+  "task_json_path": "datasets/python/marshmallow/tasks/L3_schema___deserialize/task.json",
+  "source_file_path": "datasets/python/marshmallow/src/marshmallow/schema.py",
+  "target_symbol": "schema.py::_deserialize",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description is highly accurate and thorough. It correctly captures all major behaviors: index_errors gating, many-mode type checking and iteration, single-item mapping check, field iteration with data_key resolution, partial loading logic (both boolean and collection forms), nested partial prefix stripping, _call_and_store delegation, missing sentinel filtering, attribute-vs-attr_name key selection, set_value usage, and all three unknown-field handling modes (EXCLUDE/INCLUDE/RAISE). One minor nuance is slightly off: the description says missing values are 'skipped only when partial loading allows that field', but the implementation actually always reads the raw_value and only skips (continues) when partial allows it — non-partial missing fields still proceed to deserialization (passing `missing` to the field's deserialize method). This is a subtle but real behavioral detail. Also, the RAISE branch for unknown fields uses `index_errors` directly rather than the already-resolved `index` variable, which the description glosses over but doesn't contradict. These are minor gaps that don't significantly impair implementability.",
+  "missing_functionality": [
+    "When a field's raw_value is missing and partial does NOT allow skipping, the missing sentinel is still passed through to field.deserialize — the description implies missing fields are simply skipped or not, but doesn't clarify that non-skipped missing fields are still deserialized with the missing sentinel value.",
+    "The RAISE branch for unknown fields re-evaluates `index_errors` inline rather than using the already-resolved `index` variable — a subtle implementation detail not mentioned."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'Missing values are skipped only when partial loading allows that field', which could be read as implying missing fields are otherwise dropped entirely. In reality, non-skipped missing fields are passed as the `missing` sentinel to field.deserialize, not silently dropped."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_schema___deserialize.raw.md"
+}

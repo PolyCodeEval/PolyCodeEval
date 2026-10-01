@@ -1,0 +1,47 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.76,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 1179 items\n\ntests/unit_tests/test_context.py ............                            [  1%]\ntests/unit_tests/test_decorators.py .................................... [  4%]\n........                                                                 [  4%]\ntests/unit_tests/test_deserialization.py ............................... [  7%]\n........................................................................ [ 13%]\n........................................................................ [ 19%]\n........................................................................ [ 25%]\n................FFF...........................................FFF....... [ 31%]\n......................................................................   [ 37%]\ntests/unit_tests/test_error_store.py ...............................     [ 40%]\ntests/unit_tests/test_exceptions.py .......                              [ 40%]\ntests/unit_tests/test_fields.py ........................................ [ 44%]\n...............................................................F...      [ 50%]\ntests/unit_tests/test_options.py ..........                              [ 50%]\ntests/unit_tests/test_registry.py ..........                             [ 51%]\ntests/unit_tests/test_schema.py ........................................ [ 55%]\n........................................................................ [ 61%]\n........................................................................ [ 67%]\n....................                                                     [ 69%]\ntests/unit_tests/test_serialization.py ................................. [ 71%]\n........................................................................ [ 77%]\n.......................                                                  [ 79%]\ntests/unit_tests/test_utils.py ....................                      [ 81%]\ntests/unit_tests/test_validate.py ...................................... [ 84%]\n........................................................................ [ 90%]\n........................................................................ [ 97%]\n...................................                                      [100%]\n\n=================================== FAILURES ===================================\n_ TestFieldDeserialization.test_constant_is_always_included_in_deserialized_data _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7fe2a681d7e0>\n\n    def test_constant_is_always_included_in_deserialized_data(self):\n        class MySchema(Schema):\n            foo = fields.Constant(42)\n    \n        sch = MySchema()\n>       assert sch.load({})[\"foo\"] == 42\nE       KeyError: 'foo'\n\ntests/unit_tests/test_deserialization.py:1429: KeyError\n________ TestFieldDeserialization.test_constant_none_allows_none_value _________\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7fe2a681dab0>\n\n    def test_constant_none_allows_none_value(self):\n        class MySchema(Schema):\n            foo = fields.Constant(None)\n    \n        sch = MySchema()\n        assert sch.load({\"foo\": None})[\"foo\"] is None\n>       assert sch.load({})[\"foo\"] is None\nE       KeyError: 'foo'\n\ntests/unit_tests/test_deserialization.py:1438: KeyError\n_____________ TestFieldDeserialization.test_constant_with_required _____________\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7fe2a681dd80>\n\n    def test_constant_with_required(self):\n        class MySchema(Schema):\n            foo = fields.Constant(42, required=True)\n    \n        sch = MySchema()\n>       assert sch.load({})[\"foo\"] == 42\nE       KeyError: 'foo'\n\ntests/unit_tests/test_deserialization.py:1446: KeyError\n_____ TestSchemaDeserialization.test_deserialize_with_missing_param_value ______\n\nself = <tests.unit_tests.test_deserialization.TestSchemaDeserialization object at 0x7fe2a68412a0>\n\n    def test_deserialize_with_missing_param_value(self):\n        bdate = dt.datetime(2017, 9, 29)\n    \n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(load_default=bdate)\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().load(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == bdate\nE       KeyError: 'birthdate'\n\ntests/unit_tests/test_deserialization.py:1804: KeyError\n____ TestSchemaDeserialization.test_deserialize_with_missing_param_callable ____\n\nself = <tests.unit_tests.test_deserialization.TestSchemaDeserialization object at 0x7fe2a6841570>\n\n    def test_deserialize_with_missing_param_callable(self):\n        bdate = dt.datetime(2017, 9, 29)\n    \n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            birthdate = fields.DateTime(load_default=lambda: bdate)\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().load(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"birthdate\"] == bdate\nE       KeyError: 'birthdate'\n\ntests/unit_tests/test_deserialization.py:1816: KeyError\n______ TestSchemaDeserialization.test_deserialize_with_missing_param_none ______\n\nself = <tests.unit_tests.test_deserialization.TestSchemaDeserialization object at 0x7fe2a6841840>\n\n    def test_deserialize_with_missing_param_none(self):\n        class AliasingUserSerializer(Schema):\n            name = fields.String()\n            years = fields.Integer(load_default=None, allow_none=True)\n    \n        data = {\"name\": \"Mick\"}\n        result = AliasingUserSerializer().load(data)\n        assert result[\"name\"] == \"Mick\"\n>       assert result[\"years\"] is None\nE       KeyError: 'years'\n\ntests/unit_tests/test_deserialization.py:1826: KeyError\n_______________ TestFieldPreAndPostLoad.test_field_pre_load_none _______________\n\nself = <tests.unit_tests.test_fields.TestFieldPreAndPostLoad object at 0x7fe2a66ca950>\n\n    def test_field_pre_load_none(self):\n        def handle_none(value):\n            if value is None:\n                return 0\n            return value\n    \n        class UserSchema(Schema):\n            age = fields.Int(pre_load=handle_none, allow_none=True)\n    \n        schema = UserSchema()\n        result = schema.load({\"age\": None})\n>       assert result[\"age\"] == 0\nE       assert None == 0\n\ntests/unit_tests/test_fields.py:727: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_is_always_included_in_deserialized_data\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_none_allows_none_value\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_with_required\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_value\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_callable\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_none\nFAILED tests/unit_tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_none\n======================== 7 failed, 1172 passed in 4.32s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_is_always_included_in_deserialized_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_none_allows_none_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_constant_with_required",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_callable",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_param_none",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 6,
+    "total": 6
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

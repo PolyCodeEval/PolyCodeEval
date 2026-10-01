@@ -1,0 +1,55 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.56,
+  "stdout": "orage object at 0x7fe79be4bd30>>> = <Table name='foo', total=0, storage=<tinydb.storages.JSONStorage object at 0x7fe79be4bd30>>.search\nE        +      and   Query() = where('int')\n\ntests/unit_tests/test_tinydb.py:570: AssertionError\n_______________________________ test_drop_table ________________________________\n\n    def test_drop_table():\n        db = TinyDB(storage=MemoryStorage)\n        default_table_name = db.table(db.default_table_name).name\n    \n        assert [] == list(db.tables())\n        db.drop_table(default_table_name)\n    \n        db.insert({'a': 1})\n>       assert [default_table_name] == list(db.tables())\nE       AssertionError: assert ['_default'] == []\nE         Left contains one more item: '_default'\nE         Use -v to get more diff\n\ntests/unit_tests/test_tinydb.py:583: AssertionError\n__________________________________ test_repr ___________________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-33/test_repr0')\n\n    def test_repr(tmpdir):\n        path = str(tmpdir.join('db.json'))\n    \n        db = TinyDB(path)\n        db.insert({'a': 1})\n    \n>       assert re.match(\n            r\"<TinyDB \"\n            r\"tables=\\[u?\\'_default\\'\\], \"\n            r\"tables_count=1, \"\n            r\"default_table_documents_count=1, \"\n            r\"all_tables_documents_count=\\[\\'_default=1\\'\\]>\",\n            repr(db))\nE       assert None\nE        +  where None = <function match at 0x7fe79d40a3b0>(\"<TinyDB tables=\\\\[u?\\\\'_default\\\\'\\\\], tables_count=1, default_table_documents_count=1, all_tables_documents_count=\\\\[\\\\'_default=1\\\\'\\\\]>\", '<TinyDB tables=[], tables_count=0, default_table_documents_count=0, all_tables_documents_count=[]>')\nE        +    where <function match at 0x7fe79d40a3b0> = re.match\nE        +    and   '<TinyDB tables=[], tables_count=0, default_table_documents_count=0, all_tables_documents_count=[]>' = repr(<TinyDB tables=[], tables_count=0, default_table_documents_count=0, all_tables_documents_count=[]>)\n\ntests/unit_tests/test_tinydb.py:643: AssertionError\n_________________________________ test_delete __________________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-33/test_delete0')\n\n    def test_delete(tmpdir):\n        path = str(tmpdir.join('db.json'))\n    \n        db = TinyDB(path, ensure_ascii=False)\n        q = Query()\n        db.insert({'network': {'id': '114', 'name': 'ok', 'rpc': 'dac',\n                               'ticker': 'mkay'}})\n>       assert db.search(q.network.id == '114') == [\n            {'network': {'id': '114', 'name': 'ok', 'rpc': 'dac',\n                         'ticker': 'mkay'}}\n        ]\nE       AssertionError: assert [] == [{'network': ...er': 'mkay'}}]\nE         Right contains one more item: {'network': {'id': '114', 'name': 'ok', 'rpc': 'dac', 'ticker': 'mkay'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_tinydb.py:659: AssertionError\n__________________________ test_insert_on_existing_db __________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-33/test_insert_on_existing_db0')\n\n    def test_insert_on_existing_db(tmpdir):\n        path = str(tmpdir.join('db.json'))\n    \n        db = TinyDB(path, ensure_ascii=False)\n        db.insert({'foo': 'bar'})\n    \n>       assert len(db) == 1\nE       assert 0 == 1\nE        +  where 0 = len(<TinyDB tables=[], tables_count=0, default_table_documents_count=0, all_tables_documents_count=[]>)\n\ntests/unit_tests/test_tinydb.py:692: AssertionError\n______________________________ test_lambda_query _______________________________\n\n    def test_lambda_query():\n        db = TinyDB(storage=MemoryStorage)\n        db.insert({'foo': 'bar'})\n    \n        query = lambda doc: doc.get('foo') == 'bar'\n        query.is_cacheable = lambda: False\n>       assert db.search(query) == [{'foo': 'bar'}]\nE       AssertionError: assert [] == [{'foo': 'bar'}]\nE         Right contains one more item: {'foo': 'bar'}\nE         Use -v to get more diff\n\ntests/unit_tests/test_tinydb.py:715: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_middlewares.py::test_caching_json_write - assert...\nFAILED tests/unit_tests/test_storages.py::test_json_kwargs - assert '' == '{\\...\nFAILED tests/unit_tests/test_storages.py::test_json_readwrite - AssertionErro...\nFAILED tests/unit_tests/test_storages.py::test_json_read - AssertionError: as...\nFAILED tests/unit_tests/test_storages.py::test_read_once - assert 2 == 3\nFAILED tests/unit_tests/test_storages.py::test_yaml - AssertionError: assert ...\nFAILED tests/unit_tests/test_tables.py::test_tables_list[memory] - AssertionE...\nFAILED tests/unit_tests/test_tables.py::test_tables_list[json] - AssertionErr...\nFAILED tests/unit_tests/test_tables.py::test_multiple_tables[memory] - Assert...\nFAILED tests/unit_tests/test_tables.py::test_multiple_tables[json] - Assertio...\nFAILED tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[memory]\nFAILED tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[json]\nFAILED tests/unit_tests/test_tables.py::test_zero_cache_size[memory] - Assert...\nFAILED tests/unit_tests/test_tables.py::test_zero_cache_size[json] - Assertio...\nFAILED tests/unit_tests/test_tables.py::test_query_cache_size[memory] - Asser...\nFAILED tests/unit_tests/test_tables.py::test_query_cache_size[json] - Asserti...\nFAILED tests/unit_tests/test_tinydb.py::test_all[memory] - AssertionError: as...\nFAILED tests/unit_tests/test_tinydb.py::test_all[json] - AssertionError: asse...\nFAILED tests/unit_tests/test_tinydb.py::test_insert[memory] - AssertionError:...\nFAILED tests/unit_tests/test_tinydb.py::test_insert[json] - AssertionError: a...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_ids[memory] - AssertionEr...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_ids[json] - AssertionErro...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_with_doc_id[memory] - Ass...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_with_doc_id[json] - Asser...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_with_duplicate_doc_id[memory]\nFAILED tests/unit_tests/test_tinydb.py::test_insert_with_duplicate_doc_id[json]\nFAILED tests/unit_tests/test_tinydb.py::test_insert_invalid_type_raises_error[memory]\nFAILED tests/unit_tests/test_tinydb.py::test_insert_invalid_type_raises_error[json]\nFAILED tests/unit_tests/test_tinydb.py::test_insert_valid_mapping_type[memory]\nFAILED tests/unit_tests/test_tinydb.py::test_insert_valid_mapping_type[json]\nFAILED tests/unit_tests/test_tinydb.py::test_custom_mapping_type_with_json - ...\nFAILED tests/unit_tests/test_tinydb.py::test_update_returns_ids[memory] - Ass...\nFAILED tests/unit_tests/test_tinydb.py::test_update_returns_ids[json] - Asser...\nFAILED tests/unit_tests/test_tinydb.py::test_upsert[memory] - AssertionError:...\nFAILED tests/unit_tests/test_tinydb.py::test_upsert[json] - AssertionError: a...\nFAILED tests/unit_tests/test_tinydb.py::test_upsert_by_id[memory] - Assertion...\nFAILED tests/unit_tests/test_tinydb.py::test_upsert_by_id[json] - AssertionEr...\nFAILED tests/unit_tests/test_tinydb.py::test_multiple_dbs - assert 0 == 3\nFAILED tests/unit_tests/test_tinydb.py::test_unique_ids - IndexError: list in...\nFAILED tests/unit_tests/test_tinydb.py::test_doc_ids_json - AssertionError: a...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_string - Failed: DID NOT ...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_invalid_dict - Failed: DI...\nFAILED tests/unit_tests/test_tinydb.py::test_gc - AssertionError: assert 0 == 1\nFAILED tests/unit_tests/test_tinydb.py::test_drop_table - AssertionError: ass...\nFAILED tests/unit_tests/test_tinydb.py::test_repr - assert None\nFAILED tests/unit_tests/test_tinydb.py::test_delete - AssertionError: assert ...\nFAILED tests/unit_tests/test_tinydb.py::test_insert_on_existing_db - assert 0...\nFAILED tests/unit_tests/test_tinydb.py::test_lambda_query - AssertionError: a...\n======================== 48 failed, 159 passed in 4.13s ========================\n",
+  "stderr": "",
+  "task": "python/tinydb/L3_table__insert",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[memory]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tables.py::test_query_cache_with_mutable_callable[json]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_with_duplicate_doc_id[memory]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_with_duplicate_doc_id[json]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_invalid_type_raises_error[memory]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_invalid_type_raises_error[json]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_valid_mapping_type[memory]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_tinydb.py::test_insert_valid_mapping_type[json]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 8,
+    "total": 8
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

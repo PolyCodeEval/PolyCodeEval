@@ -1,0 +1,21 @@
+{
+  "project": "spring-rest-ecommerce",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "Prompt 覆盖 Spring REST 电商 API（商品/订单/购物车）、分层架构（controller/service/repository/model）。覆盖核心电商 REST 接口。"
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "REST 端点组织和分层结构清晰，但具体 API 路径、请求/响应格式、状态码等未细化。较其他 Java 项目合约略显概括。"
+    },
+    "testability": {
+      "score": 4.3,
+      "reason": "测试需求若覆盖 CRUD 和业务规则则可驱动测试。需更多 API 行为细节完善测试覆盖度。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "Spring Boot REST 架构与真实项目一致。实际项目的数据模型和 API 端点细节可能比 prompt 更丰富。"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly states that the function takes exactly 24 inputs, folds them left-to-right using `te_min_maybe_nan`, includes the 24th argument in the final comparison, assumes `val1` is the valid starting value while later arguments may be NaN, and has no side effects and is `noexcept`. It is also complete enough to reproduce the actual structure of the function. The only small issue is that the wording emphasizes NaN specifically, while the helper actually treats any non-finite value as ignorable, not just NaN.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description frames the helper behavior mainly in terms of NaN, but `te_min_maybe_nan` ignores any non-finite second argument (`!std::isfinite`), which includes infinities as well as NaN."
+  ],
+  "complete_enough": true
+}

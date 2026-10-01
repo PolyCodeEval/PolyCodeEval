@@ -1,0 +1,27 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L3_ArticleDatafetcher__userArticles",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userArticles/prompt.md",
+  "task_json_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userArticles/task.json",
+  "source_file_path": "datasets/java/spring-boot-realworld-example-app/src/main/java/io/spring/graphql/ArticleDatafetcher.java",
+  "target_symbol": "io/spring/graphql/ArticleDatafetcher.java::userArticles",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.9,
+  "reason": "The description matches the main implemented behavior well: this is a GraphQL resolver for a profile's articles, it gets the current user and profile source, validates pagination input in a limited way, and when `first` is present it queries recent articles with an `after` cursor in forward (`NEXT`) direction. However, it is incomplete because the implementation also supports the `last`/`before` backward-pagination branch and builds a `DataFetcherResult<ArticlesConnection>` with page info, edges, and local context. The validation description is also slightly misleading because the code only throws when both `first` and `last` are absent, not when both are present.",
+  "missing_functionality": [
+    "Does not describe the `last` + `before` branch, which fetches articles using a backward cursor page with `Direction.PREV`.",
+    "Does not mention that after fetching articles, the function builds `PageInfo`, converts results into article edges, and wraps them in an `ArticlesConnection`.",
+    "Does not mention that the returned `DataFetcherResult` includes a local context map keyed by article slug."
+  ],
+  "incorrect_or_misleading_points": [
+    "Says exactly one of `first` or `last` must be supplied, but the implementation only checks that they are not both absent; it does not reject the case where both are present.",
+    "Quotes the exception as stating that only one of `first` and `last` must exist, while the actual message is the Chinese string `first 和 last 必须只存在一个`."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_ArticleDatafetcher__userArticles.raw.md"
+}

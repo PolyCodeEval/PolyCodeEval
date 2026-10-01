@@ -1,0 +1,25 @@
+{
+  "task": "go/gjson/L3_gjson__splitPossiblePipe",
+  "project": "go/gjson",
+  "language": "go",
+  "prompt_path": "datasets/go/gjson/tasks/L3_gjson__splitPossiblePipe/prompt.md",
+  "task_json_path": "datasets/go/gjson/tasks/L3_gjson__splitPossiblePipe/task.json",
+  "source_file_path": "datasets/go/gjson/src/gjson.go",
+  "target_symbol": "gjson.go::splitPossiblePipe",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.1,
+  "reason": "The description accurately captures the three main behavioral branches: early exit when no pipe exists, the braced/squashed path handling, and the non-braced scanning loop with escape and selector-region skipping. The core logic and return semantics are correctly described. However, the description slightly overstates the selector-skipping scope — the implementation only skips pipes inside `.[#[...]]` or `.[#(...)]` style selectors (specifically `.#` followed by `[` or `(`), not any `.[#...]` region in general. The description also omits the important detail that the scan returns early (with `ok=false`) when it hits a lone `.` at the end of the path or when `.#` is at the end of the path, which are edge-case early-return conditions in the implementation. The squash logic detail — that `squash` is called on `path[1:]` and the result is re-prefixed with the `{` — is described correctly at a high level. Overall the description is accurate enough to guide a correct implementation with minor gaps.",
+  "missing_functionality": [
+    "The scan returns early (ok=false) when a `.` is the last character in the path, or when `.#` lands at the end of the path — these early-exit conditions are not mentioned.",
+    "The selector-skipping only triggers for `.#[` and `.#(` patterns specifically; the description generalizes this as any `.[#...]`-style region, which is slightly broader than what is implemented."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase '`.[#...]`-style selector regions' implies any dot-hash-bracket pattern, but the implementation requires the exact sequence `.` then `#` then `[` or `(` to enter the depth-tracking loop."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gjson__splitPossiblePipe.raw.md"
+}

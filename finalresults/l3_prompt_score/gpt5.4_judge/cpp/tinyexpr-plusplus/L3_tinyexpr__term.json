@@ -1,0 +1,24 @@
+{
+  "task": "cpp/tinyexpr-plusplus/L3_tinyexpr__term",
+  "project": "cpp/tinyexpr-plusplus",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__term/prompt.md",
+  "task_json_path": "datasets/cpp/tinyexpr-plusplus/tasks/L3_tinyexpr__term/task.json",
+  "source_file_path": "datasets/cpp/tinyexpr-plusplus/src/tinyexpr.cpp",
+  "target_symbol": "tinyexpr.cpp::term",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly identifies that the function parses a term starting from a factor, repeatedly consumes infix binary multiplication/division/modulus operators, parses another factor for each, and builds a left-associative expression tree until a non-multiplicative operator is reached. It is also sufficiently complete to implement the function. The only minor omission is that the implementation explicitly checks that the current token is an infix token and a binary function before comparing against the specific builtins, and it constructs nodes using `new_expr(TE_PURE, func, { ret, factor(theState) })` after advancing with `next_token`, but these are implementation-level details rather than missing core behavior.",
+  "missing_functionality": [
+    "Does not explicitly mention the token-type and binary-function checks (`TOK_INFIX` and `is_function2`) that guard the operator loop.",
+    "Does not mention that the operator token is consumed via `next_token(theState)` before parsing the next factor.",
+    "Does not mention that newly built nodes are created as `TE_PURE` expressions."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_tinyexpr__term.raw.md"
+}

@@ -1,0 +1,26 @@
+{
+  "task": "cpp/jsoncpp/L2_json_value",
+  "project": "cpp/jsoncpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/jsoncpp/tasks/L2_json_value/prompt.md",
+  "task_json_path": "datasets/cpp/jsoncpp/tasks/L2_json_value/task.json",
+  "source_file_path": "datasets/cpp/jsoncpp/src/lib_json/json_value.cpp",
+  "target_file": "json_value.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The file-level description and function-level responsibilities are highly accurate and closely match the actual implementation. Every hollowed function is described with correct behavioral details: the string duplication helpers accurately describe the malloc/memcpy pattern and overflow clamping; the Value constructor switch cases match exactly; the conversion functions (asInt, asUInt, asInt64, asUInt64, asDouble, asFloat, asBool) correctly describe the switch-case structure, range assertions, and failure messages; the container operations (size, clear, resize, insert, removeIndex, removeMember, getMemberNames) match the implementation logic including the sparse-array last-index trick and backward-shift pattern; the isInt/isUInt/isInt64/isUInt64/isIntegral predicates correctly describe the JSON_HAS_INT64 conditional compilation and strict boundary checks; the iterator begin/end methods, setComment trailing-newline stripping, dupPayload deep-copy logic, releasePayload free logic, find lookup, and Path/makePath parsing grammar are all accurately described. Minor gaps include: the description of `asFloat` says '0.0' for null but the implementation returns `0.0` (not `0.0F`), which is a slight imprecision; the `removeIndex` description says 'assign map entry i from (*this)[i+1] using a temporary CZString(i) key on the left-hand side' which matches but omits that the implementation uses `(*value_.map_)[keey]` direct map access rather than `(*this)[i]`; and the `makePath` description mentions 'stray ]' as a separator but the implementation handles both '.' and ']' in the same branch. These are minor and would not prevent reconstruction.",
+  "missing_functionality": [
+    "The description of `asFloat` for null returns '0.0' but the implementation returns the untyped literal `0.0` (not `0.0F`), a minor type precision issue.",
+    "The `removeIndex` description does not mention that the shift loop uses direct map operator[] (`(*value_.map_)[keey]`) rather than `(*this)[i]`, which is a subtle but reconstructable difference.",
+    "The `makePath` description does not explicitly mention that the digit-accumulation loop advances `current` and that after parsing the index, `++current` is applied before checking for `]`, which is a subtle pointer-advance detail."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `Value::Value(ValueType)` description says 'Assert unreachable in the default case' but the implementation uses `JSON_ASSERT_UNREACHABLE` which is `assert(false)` — this is accurate but the description omits that the `booleanValue` case is handled before the default, which is correctly described elsewhere.",
+    "The `isConvertibleTo` description for integer targets says 'allow already-fitting integral values' but the implementation checks `isInt()` / `isUInt()` directly rather than a separate 'already-fitting' predicate — this is accurate in effect but slightly imprecise in wording."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_json_value.raw.md"
+}

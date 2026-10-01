@@ -1,0 +1,99 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.52,
+  "stdout": "   matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:214: ValidationError\n_ test_url_idn_valid[http://\\u0645\\u062b\\u0627\\u0644.\\u0625\\u062e\\u062a\\u0628\\u0627\\u0631] _\n\nvalid_url = 'http://مثال.إختبار'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"https://তৌহিদুর.বাংলা\",\n            \"https://münchen.de\",\n            \"https://例え.jp/path\",\n            \"http://مثال.إختبار\",\n            \"https://üñîçödé.com/path?q=1#frag\",\n            \"http://www.اختبار.com:8080/path\",\n        ],\n    )\n    def test_url_idn_valid(valid_url):\n        validator = validate.URL()\n>       assert validator(valid_url) == valid_url\n\ntests/unit_tests/test_validate.py:308: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'http://مثال.إختبار'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:214: ValidationError\n___ test_url_idn_valid[https://\\xfc\\xf1\\xee\\xe7\\xf6d\\xe9.com/path?q=1#frag] ____\n\nvalid_url = 'https://üñîçödé.com/path?q=1#frag'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"https://তৌহিদুর.বাংলা\",\n            \"https://münchen.de\",\n            \"https://例え.jp/path\",\n            \"http://مثال.إختبار\",\n            \"https://üñîçödé.com/path?q=1#frag\",\n            \"http://www.اختبار.com:8080/path\",\n        ],\n    )\n    def test_url_idn_valid(valid_url):\n        validator = validate.URL()\n>       assert validator(valid_url) == valid_url\n\ntests/unit_tests/test_validate.py:308: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'https://üñîçödé.com/path?q=1#frag'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:214: ValidationError\n_ test_url_idn_valid[http://www.\\u0627\\u062e\\u062a\\u0628\\u0627\\u0631.com:8080/path] _\n\nvalid_url = 'http://www.اختبار.com:8080/path'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"https://তৌহিদুর.বাংলা\",\n            \"https://münchen.de\",\n            \"https://例え.jp/path\",\n            \"http://مثال.إختبار\",\n            \"https://üñîçödé.com/path?q=1#frag\",\n            \"http://www.اختبار.com:8080/path\",\n        ],\n    )\n    def test_url_idn_valid(valid_url):\n        validator = validate.URL()\n>       assert validator(valid_url) == valid_url\n\ntests/unit_tests/test_validate.py:308: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'http://www.اختبار.com:8080/path'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:214: ValidationError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://2001:db8::ff00:42:8329]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://user@pass@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://@pass@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://@@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[suppliers.html]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[suppliers.html]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http:///foo/bar]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u09a4\\u09cc\\u09b9\\u09bf\\u09a6\\u09c1\\u09b0.\\u09ac\\u09be\\u0982\\u09b2\\u09be]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://m\\xfcnchen.de]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u4f8b\\u3048.jp/path]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[http://\\u0645\\u062b\\u0627\\u0644.\\u0625\\u062e\\u062a\\u0628\\u0627\\u0631]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\xfc\\xf1\\xee\\xe7\\xf6d\\xe9.com/path?q=1#frag]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[http://www.\\u0627\\u062e\\u062a\\u0628\\u0627\\u0631.com:8080/path]\n======================= 20 failed, 1159 passed in 2.09s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_validate___regex_generator",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://2001:db8::ff00:42:8329]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://user@pass@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://@pass@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://@@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[suppliers.html]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[suppliers.html]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http:///foo/bar]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u09a4\\u09cc\\u09b9\\u09bf\\u09a6\\u09c1\\u09b0.\\u09ac\\u09be\\u0982\\u09b2\\u09be]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://m\\xfcnchen.de]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u4f8b\\u3048.jp/path]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[http://\\u0645\\u062b\\u0627\\u0644.\\u0625\\u062e\\u062a\\u0628\\u0627\\u0631]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\xfc\\xf1\\xee\\xe7\\xf6d\\xe9.com/path?q=1#frag]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 19,
+    "total": 19
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

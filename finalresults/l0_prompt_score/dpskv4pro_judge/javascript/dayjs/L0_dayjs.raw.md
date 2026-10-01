@@ -1,0 +1,21 @@
+{
+  "project": "dayjs",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt 覆盖 dayjs 核心：构造器、format/parse/操作（add/subtract/startOf/endOf）、比较（isBefore/isAfter/isSame）、查询（day/month/year/hour/minute/second）、locale 和 plugin 系统。覆盖日常日期操作的大部分方法。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "dayjs 链式 API 风格、format 格式化字符串、add/subtract 单位语法、isBefore/isAfter 比较语义描述清楚。但 plugin 注册机制细节未详述。"
+    },
+    "testability": {
+      "score": 4.7,
+      "reason": "测试需求覆盖构造、format、操作、比较、locale 设置。API 合约列出了关键方法签名和返回值类型。黑盒测试匹配度高。"
+    },
+    "consistency": {
+      "score": 4.1,
+      "reason": "dayjs 的函数式 API 风格、format token、immutable 特性与真实库一致。实际 dayjs 有更多 plugin 和高级 API 未在 prompt 列出。"
+    }
+  }
+}

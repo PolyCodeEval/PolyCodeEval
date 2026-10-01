@@ -1,0 +1,25 @@
+{
+  "task": "javascript/mitt/L3_index__mitt",
+  "project": "javascript/mitt",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/mitt/tasks/L3_index__mitt/prompt.md",
+  "task_json_path": "datasets/javascript/mitt/tasks/L3_index__mitt/task.json",
+  "source_file_path": "datasets/javascript/mitt/src/src/index.ts",
+  "target_symbol": "src/index.ts::mitt",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description accurately captures all core behaviors: the optional map reuse, the `all` property exposure, `on` appending to or creating handler lists, `off` splicing a specific handler or clearing the list when omitted, `emit` copying lists via slice before invocation, and wildcard handlers being called after type-specific ones. One minor inaccuracy is the claim that `off` without a handler 'clears all handlers' — the implementation actually sets the list to an empty array `[]` rather than deleting the key, which is a subtle but real distinction. The description also doesn't mention that `off` uses `indexOf` with an unsigned right-shift (`>>> 0`) to safely handle the case where the handler isn't found (effectively a no-op splice at index 0 of length 1 if not found — actually splicing at 0 removes the first element, but this edge case is an implementation detail). Overall the description is thorough and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "off with a handler not found in the list uses `indexOf(...) >>> 0`, which means if the handler is not found, it splices at index 0 (removing the first element) — this edge-case behavior is not mentioned",
+    "off without a handler sets the list to an empty array rather than deleting the key from the map — the description says 'clears all handlers' which is close but imprecise"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says off 'clears all handlers for that type when omitted', but the implementation sets the entry to an empty array `[]`, not removes the key — a subtle difference that could affect implementations"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__mitt.raw.md"
+}

@@ -1,0 +1,47 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.46,
+  "stdout": "---------------------- Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n________________ TestGmailSearch.test_bytes_query_with_charset _________________\n\nself = <unit_tests.test_search.TestGmailSearch testMethod=test_bytes_query_with_charset>\n\n    def test_bytes_query_with_charset(self):\n>       result = self.client.gmail_search(b\"foo bar\", \"utf-42\")\n\ntests/unit_tests/test_search.py:154: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:179: in wrapper\n    return func(client, *args, **kwargs)\nsrc/imapclient/imapclient.py:1133: in gmail_search\n    return self._search([b\"X-GM-RAW\", query], charset)\nsrc/imapclient/imapclient.py:1139: in _search\n    args.extend(_normalise_search_criteria(criteria, charset))\nsrc/imapclient/imapclient.py:1842: in _normalise_search_criteria\n    out.append(_quoted.maybe(to_bytes(item, charset)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncls = <class 'imapclient.imapclient._quoted'>, original = b'foo bar'\n\n    @classmethod\n    def maybe(cls, original):\n        \"\"\"Maybe quote a bytes value.\n    \n        If the input requires no quoting it is returned unchanged.\n    \n        If quoting is required a *_quoted* instance is returned. This\n        holds the quoted version of the input while also providing\n        access to the original unquoted source.\n        \"\"\"\n        safe_atom_chars = set(b\"!#$%&'*+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~\")\n        if all(c in safe_atom_chars for c in original):\n            return original\n        quoted = _quote(original)\n>       return cls(quoted, original)\nE       TypeError: bytes() argument 'encoding' must be str, not bytes\n\nsrc/imapclient/imapclient.py:1878: TypeError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n______________ TestGmailSearch.test_unicode_criteria_with_charset ______________\n\nself = <unit_tests.test_search.TestGmailSearch testMethod=test_unicode_criteria_with_charset>\n\n    def test_unicode_criteria_with_charset(self):\n>       self.client.gmail_search(\"foo \\u2639\", \"utf-8\")\n\ntests/unit_tests/test_search.py:160: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:179: in wrapper\n    return func(client, *args, **kwargs)\nsrc/imapclient/imapclient.py:1133: in gmail_search\n    return self._search([b\"X-GM-RAW\", query], charset)\nsrc/imapclient/imapclient.py:1139: in _search\n    args.extend(_normalise_search_criteria(criteria, charset))\nsrc/imapclient/imapclient.py:1842: in _normalise_search_criteria\n    out.append(_quoted.maybe(to_bytes(item, charset)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncls = <class 'imapclient.imapclient._quoted'>, original = b'foo \\xe2\\x98\\xb9'\n\n    @classmethod\n    def maybe(cls, original):\n        \"\"\"Maybe quote a bytes value.\n    \n        If the input requires no quoting it is returned unchanged.\n    \n        If quoting is required a *_quoted* instance is returned. This\n        holds the quoted version of the input while also providing\n        access to the original unquoted source.\n        \"\"\"\n        safe_atom_chars = set(b\"!#$%&'*+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~\")\n        if all(c in safe_atom_chars for c in original):\n            return original\n        quoted = _quote(original)\n>       return cls(quoted, original)\nE       TypeError: bytes() argument 'encoding' must be str, not bytes\n\nsrc/imapclient/imapclient.py:1878: TypeError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n___________________ Test_normalise_search_criteria.test_list ___________________\n\nself = <unit_tests.test_util_functions.Test_normalise_search_criteria testMethod=test_list>\n\n    def test_list(self):\n>       self.check([\"FOO\", \"\\u263a\"], \"utf-8\", [b\"FOO\", b\"\\xe2\\x98\\xba\"])\n\ntests/unit_tests/test_util_functions.py:131: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_util_functions.py:119: in check\n    actual = _normalise_search_criteria(criteria, charset)\nsrc/imapclient/imapclient.py:1842: in _normalise_search_criteria\n    out.append(_quoted.maybe(to_bytes(item, charset)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncls = <class 'imapclient.imapclient._quoted'>, original = b'\\xe2\\x98\\xba'\n\n    @classmethod\n    def maybe(cls, original):\n        \"\"\"Maybe quote a bytes value.\n    \n        If the input requires no quoting it is returned unchanged.\n    \n        If quoting is required a *_quoted* instance is returned. This\n        holds the quoted version of the input while also providing\n        access to the original unquoted source.\n        \"\"\"\n        safe_atom_chars = set(b\"!#$%&'*+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~\")\n        if all(c in safe_atom_chars for c in original):\n            return original\n        quoted = _quote(original)\n>       return cls(quoted, original)\nE       TypeError: bytes() argument 'encoding' must be str, not bytes\n\nsrc/imapclient/imapclient.py:1878: TypeError\n_________________ Test_normalise_search_criteria.test_quoting __________________\n\nself = <unit_tests.test_util_functions.Test_normalise_search_criteria testMethod=test_quoting>\n\n    def test_quoting(self):\n>       self.check([\"foo bar\"], None, [_quoted(b'\"foo bar\"')])\n\ntests/unit_tests/test_util_functions.py:140: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_util_functions.py:119: in check\n    actual = _normalise_search_criteria(criteria, charset)\nsrc/imapclient/imapclient.py:1842: in _normalise_search_criteria\n    out.append(_quoted.maybe(to_bytes(item, charset)))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncls = <class 'imapclient.imapclient._quoted'>, original = b'foo bar'\n\n    @classmethod\n    def maybe(cls, original):\n        \"\"\"Maybe quote a bytes value.\n    \n        If the input requires no quoting it is returned unchanged.\n    \n        If quoting is required a *_quoted* instance is returned. This\n        holds the quoted version of the input while also providing\n        access to the original unquoted source.\n        \"\"\"\n        safe_atom_chars = set(b\"!#$%&'*+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~\")\n        if all(c in safe_atom_chars for c in original):\n            return original\n        quoted = _quote(original)\n>       return cls(quoted, original)\nE       TypeError: bytes() argument 'encoding' must be str, not bytes\n\nsrc/imapclient/imapclient.py:1878: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_search.py::TestSearch::test_quoting - TypeError:...\nFAILED tests/unit_tests/test_search.py::TestSearch::test_search_custom_exception_with_invalid_list\nFAILED tests/unit_tests/test_search.py::TestSearch::test_unicode_criteria_with_charset\nFAILED tests/unit_tests/test_search.py::TestSearch::test_zero_length_quoting\nFAILED tests/unit_tests/test_search.py::TestGmailSearch::test_bytes_query - T...\nFAILED tests/unit_tests/test_search.py::TestGmailSearch::test_bytes_query_with_charset\nFAILED tests/unit_tests/test_search.py::TestGmailSearch::test_unicode_criteria_with_charset\nFAILED tests/unit_tests/test_util_functions.py::Test_normalise_search_criteria::test_list\nFAILED tests/unit_tests/test_util_functions.py::Test_normalise_search_criteria::test_quoting\n======================== 9 failed, 278 passed in 1.92s =========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient__maybe",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_search.py::TestSearch::test_search_custom_exception_with_invalid_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_search.py::TestSearch::test_unicode_criteria_with_charset",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_search.py::TestSearch::test_zero_length_quoting",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_search.py::TestGmailSearch::test_bytes_query_with_charset",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_search.py::TestGmailSearch::test_unicode_criteria_with_charset",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_util_functions.py::Test_normalise_search_criteria::test_list",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 6,
+    "total": 6
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

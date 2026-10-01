@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The description is an exceptionally thorough and accurate account of the implementation. Every major code path is covered: argument validation, state allocation, file stat retrieval, encryption/patch rejection, method filtering, state initialization, local header reading and signature verification, data-start offset computation, archive-size bounds check, memory-backed vs. streamed access setup, conditional read-buffer allocation for non-memory streamed decompression, comp_remaining tracking, inflator initialization, write-buffer allocation, and all failure-path cleanup. The description even correctly notes the conditional CRC initialization under `MINIZ_DISABLE_ZIP_READER_CRC32_CHECKS`. The only minor omission is that in the memory-backed path `read_buf_size` and `read_buf_avail` are both set to `m_comp_size` (the description says the full compressed size is marked as immediately available, which captures this, but doesn't explicitly mention `read_buf_size` being set), and `read_buf_avail` is set to 0 in the non-memory path — both are small details that don't affect implementability. Overall the description is complete enough to faithfully re-implement the function.",
+  "missing_functionality": [
+    "In the memory-backed path, both read_buf_size and read_buf_avail are set to m_comp_size; the description mentions 'full compressed size as immediately available' but doesn't explicitly call out read_buf_size being set to m_comp_size as well.",
+    "In the non-memory path, read_buf_avail is explicitly set to 0 regardless of whether a read buffer is allocated; this detail is not mentioned."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

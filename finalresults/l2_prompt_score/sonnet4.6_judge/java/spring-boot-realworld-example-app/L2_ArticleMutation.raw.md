@@ -1,0 +1,11 @@
+{
+  "score": 4.7,
+  "reason": "The file-level description accurately captures the component's role as a thin orchestration layer and correctly identifies all five mutation operations. Each function description maps closely to the actual implementation: authentication via `SecurityUtil.getCurrentUser()`, authorization via `AuthorizationService.canWriteArticle`, repository lookups with `ResourceNotFoundException`, and `DataFetcherResult` returns with `localContext`. The descriptions are detailed enough to reconstruct the logic faithfully. The only minor gap is that `SecurityUtil.getCurrentUser()` is never mentioned by name anywhere in the descriptions — a model would need to infer or know this utility class exists, since it's not a field dependency (not injected via constructor) and doesn't appear in the skeleton. This is a small but real omission that could cause a model to miss the correct authentication mechanism.",
+  "missing_functionality": [
+    "SecurityUtil.getCurrentUser() is never mentioned; the descriptions say 'require an authenticated current user' but don't specify the utility class or method used to retrieve it, which is critical since it's not an injected dependency visible in the skeleton."
+  ],
+  "incorrect_or_misleading_points": [
+    "The updateArticle description says 'Look up the target article by slug' first, then 'Require an authenticated current user' — this matches the implementation order correctly, but the favoriteArticle description reverses the order (auth check first, then article lookup), which also matches the implementation. No actual inaccuracy, just worth noting the order difference is intentional and correctly described."
+  ],
+  "complete_enough": true
+}

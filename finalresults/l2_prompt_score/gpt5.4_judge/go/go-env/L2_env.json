@@ -1,0 +1,27 @@
+{
+  "task": "go/go-env/L2_env",
+  "project": "go/go-env",
+  "language": "go",
+  "prompt_path": "datasets/go/go-env/tasks/L2_env/prompt.md",
+  "task_json_path": "datasets/go/go-env/tasks/L2_env/task.json",
+  "source_file_path": "datasets/go/go-env/src/env.go",
+  "target_file": "env.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The prompt matches the implementation very closely at both file and function level. It correctly captures the reflection-based traversal, option/default handling, env-prefix propagation, aggregate error behavior, tag parsing, raw value resolution, expansion, file loading, and the parsing pipeline for scalars, slices, maps, and TextUnmarshaler types. Most functions are described with implementation-level accuracy, including important edge cases like FuncMap merging, anonymous struct recursion, pointer initialization for `init`, contiguous indexed slice discovery, and `getOr`'s empty-string/default rules. The few gaps are minor implementation details rather than major semantic omissions, so the description is largely sufficient for reconstructing the file.",
+  "missing_functionality": [
+    "The file-level description does not mention the concrete built-in special type parsers for url.URL, time.Duration, and time.Location, though the second bullet hints at special concrete types.",
+    "The prompt does not explicitly mention that set() dispatches slice/map handling based on the original field.Kind(), so pointer-to-slice or pointer-to-map values are not parsed through handleSlice/handleMap in this implementation.",
+    "The helper behavior of opts.getRawEnv recursively expanding fallback environment values is not called out separately, though get() mentions expansion usage."
+  ],
+  "incorrect_or_misleading_points": [
+    "In handleSlice, the prompt says to unwrap one pointer layer when the slice element type is a pointer, which is correct, but it may imply generic pointer handling beyond what the implementation actually does; the implementation only supports pointer element slices, not pointer-to-slice fields via set().",
+    "The set() description says the effective concrete type/value for pointer fields is used and then slices/maps are delegated based on the original field.Kind(); this is accurate but easy to overread as full pointer container support, whereas the implementation only handles direct slice/map kinds.",
+    "The parseInternal description says it validates the public parse target; in practice it is also used recursively on nested struct pointers/addresses, though the same validation still applies."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_env.raw.md"
+}

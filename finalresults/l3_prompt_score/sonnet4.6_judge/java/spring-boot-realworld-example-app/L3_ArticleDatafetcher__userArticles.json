@@ -1,0 +1,26 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L3_ArticleDatafetcher__userArticles",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userArticles/prompt.md",
+  "task_json_path": "datasets/java/spring-boot-realworld-example-app/tasks/L3_ArticleDatafetcher__userArticles/task.json",
+  "source_file_path": "datasets/java/spring-boot-realworld-example-app/src/main/java/io/spring/graphql/ArticleDatafetcher.java",
+  "target_symbol": "io/spring/graphql/ArticleDatafetcher.java::userArticles",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description accurately captures the core purpose (GraphQL resolver for profile articles), the validation logic (throwing `IllegalArgumentException` when both `first` and `last` are absent), the authenticated user resolution, and the forward-pagination (`first`/`after`) path. However, it completely omits the backward-pagination branch (`last`/`before` with `Direction.PREV`), which is a significant missing behavior. It also omits the construction of `ArticlesConnection` with `pageInfo` and `edges` (including cursor and node per edge), and the `localContext` map (slug → ArticleData) attached to the `DataFetcherResult`. These omissions mean a developer following only the description would produce an incomplete implementation.",
+  "missing_functionality": [
+    "Backward pagination branch: when `last` is provided (and `first` is null), the function calls `findRecentArticlesWithCursor` with `Direction.PREV` and the `before` cursor",
+    "Construction of `ArticlesConnection` with `pageInfo` (built via `buildArticlePageInfo`) and `edges` list (each edge has a cursor string and a node built via `buildArticleResult`)",
+    "The `DataFetcherResult` includes a `localContext` map from article slug to `ArticleData` for all fetched articles"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'If both are absent' it throws — this is correct, but it implies only the `first`-absent case is validated; the actual check is `first == null && last == null`, which the description words correctly but then fails to describe the `last`-present path at all, making the description feel like only `first` is a valid input"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_ArticleDatafetcher__userArticles.raw.md"
+}

@@ -1,0 +1,287 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 7.33,
+  "stdout": "          raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:198: ValidationError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_relative_url_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_schemes_argument\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_fields_accept_internal_types[Url]\nFAILED tests/unit_tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load\nFAILED tests/unit_tests/test_options.py::TestFieldOrdering::test_nested_field_order_with_only_arg_is_maintained_on_load\nFAILED tests/unit_tests/test_schema.py::test_relative_url_field - marshmallow...\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[https://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[ftp://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[ftps://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.co.jp]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/a%C2%B1b]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/~username/]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://info.example.com/?fred]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.com/blue/red%3Fand+green]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/?array%5Bkey%5D=value]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://xn--rsum-bpad.example.org/]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com:8000/foo]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://user@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://user:pass@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://AZaz09-._~%2A!$&'()*+,;=:@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/foo/bar/../baz]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[https://example.com/../icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/./icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[ftp://example.com/../../../../g]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/g?y/./x]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[/foo/bar]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[/foo?bar]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_valid[/foo?bar#baz]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://123.45.67.8/]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/foo/bar/../baz]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[https://example.com/../icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/./icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[ftp://example.com/../../../../g]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/g?y/./x]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://user.name:pass.word@example]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_custom_scheme - marshmallo...\nFAILED tests/unit_tests/test_validate.py::test_url_custom_scheme_case_insensitive\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/tmp1234]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/tmp/tmp1234]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///C:/Users/test/file.txt]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/C:/Program%20Files/file.exe]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///home/user/documents/test.pdf]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/test%20file.txt]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/tmp1234]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/tmp/tmp1234]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///C:/Users/test/file.txt]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/C:/Program%20Files/file.exe]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///home/user/documents/test.pdf]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/test%20file.txt]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///]\nFAILED tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_and_custom_schemes\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u09a4\\u09cc\\u09b9\\u09bf\\u09a6\\u09c1\\u09b0.\\u09ac\\u09be\\u0982\\u09b2\\u09be]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://m\\xfcnchen.de]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u4f8b\\u3048.jp/path]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[http://\\u0645\\u062b\\u0627\\u0644.\\u0625\\u062e\\u062a\\u0628\\u0627\\u0631]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\xfc\\xf1\\xee\\xe7\\xf6d\\xe9.com/path?q=1#frag]\nFAILED tests/unit_tests/test_validate.py::test_url_idn_valid[http://www.\\u0627\\u062e\\u062a\\u0628\\u0627\\u0631.com:8080/path]\n======================= 69 failed, 1110 passed in 6.52s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_validate___regex_generator",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_relative_url_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_url_field_schemes_argument",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_fields_accept_internal_types[Url]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_options.py::TestFieldOrdering::test_nested_field_order_with_only_arg_is_maintained_on_load",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[https://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[ftp://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[ftps://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.co.jp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/a%C2%B1b]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/~username/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://info.example.com/?fred]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://example.com/blue/red%3Fand+green]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com/?array%5Bkey%5D=value]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://xn--rsum-bpad.example.org/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://www.example.com:8000/foo]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://user@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://user:pass@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://AZaz09-._~%2A!$&'()*+,;=:@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/foo/bar/../baz]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[https://example.com/../icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/./icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[ftp://example.com/../../../../g]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[http://example.com/g?y/./x]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[/foo/bar]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[/foo?bar]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_valid[/foo?bar#baz]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://123.45.67.8/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/foo/bar/../baz]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[https://example.com/../icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/./icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[ftp://example.com/../../../../g]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http://example.com/g?y/./x]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://user.name:pass.word@example]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_custom_scheme_case_insensitive",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/tmp1234]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/tmp/tmp1234]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///C:/Users/test/file.txt]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/C:/Program%20Files/file.exe]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///home/user/documents/test.pdf]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/test%20file.txt]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file:///]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/tmp1234]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/tmp/tmp1234]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///C:/Users/test/file.txt]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/C:/Program%20Files/file.exe]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///home/user/documents/test.pdf]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/test%20file.txt]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_and_custom_schemes",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u09a4\\u09cc\\u09b9\\u09bf\\u09a6\\u09c1\\u09b0.\\u09ac\\u09be\\u0982\\u09b2\\u09be]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://m\\xfcnchen.de]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\u4f8b\\u3048.jp/path]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[http://\\u0645\\u062b\\u0627\\u0644.\\u0625\\u062e\\u062a\\u0628\\u0627\\u0631]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_idn_valid[https://\\xfc\\xf1\\xee\\xe7\\xf6d\\xe9.com/path?q=1#frag]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 66,
+    "total": 66
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,24 @@
+{
+  "task": "java/redis-cache/L3_KryoSerializer__serialize",
+  "project": "java/redis-cache",
+  "language": "java",
+  "prompt_path": "datasets/java/redis-cache/tasks/L3_KryoSerializer__serialize/prompt.md",
+  "task_json_path": "datasets/java/redis-cache/tasks/L3_KryoSerializer__serialize/task.json",
+  "source_file_path": "datasets/java/redis-cache/src/src/main/java/org/mybatis/caches/redis/KryoSerializer.java",
+  "target_symbol": "org/mybatis/caches/redis/KryoSerializer.java::serialize",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description matches the implementation closely: it describes the fast path using Kryo serialization, the prior-known problematic-class check, and the fallback path that both records the class and returns fallback-serialized bytes when Kryo serialization fails. It is slightly generalized in saying the fallback is used when the class is 'unsupported or serialization ... fails for any reason,' but this is consistent enough with the actual catch-all exception behavior. The only notable omissions are small implementation details like the exact Kryo call and buffer construction.",
+  "missing_functionality": [
+    "It does not mention that the known-problematic check is performed specifically via `unnormalClassSet.contains(object.getClass())`.",
+    "It does not mention the creation of `Output` with initial size 200 and unlimited max size (`new Output(200, -1)`).",
+    "It does not mention that serialization uses Kryo's `writeClassAndObject` and returns `output.toBytes()`."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_KryoSerializer__serialize.raw.md"
+}

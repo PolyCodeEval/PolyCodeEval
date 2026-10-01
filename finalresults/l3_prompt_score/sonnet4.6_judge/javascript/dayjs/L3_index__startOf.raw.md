@@ -1,0 +1,10 @@
+{
+  "score": 4.7,
+  "reason": "The description accurately captures all major behaviors: the start/end toggle via the second argument, the supported units and their semantics, UTC-aware mode preservation, locale-based week start for the week unit, and the default clone for unrecognized units. The description correctly notes that `instanceFactory` sets time to midnight (start of day) and delegates to `endOf(C.D)` for end-of-unit on year/month/week cases, and that `instanceFactorySet` zeroes or maxes out sub-unit fields. The only minor gap is that the description doesn't explicitly mention that for the `month` end-of-unit case the implementation uses day=0 of month+1 (last day of current month) rather than day=31, but this is an implementation detail that naturally follows from the described semantics. Everything else is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "Does not mention that end-of-month is computed as day 0 of month+1 (a JavaScript Date trick), though the semantic outcome is correctly described.",
+    "Does not explicitly mention that the `instanceFactory` path (year/month/week) sets time to midnight (00:00:00.000) for start, and delegates to endOf(day) for end, while `instanceFactorySet` path (day/hour/minute/second) uses setHours/setMinutes/setSeconds/setMilliseconds with sliced argument arrays."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

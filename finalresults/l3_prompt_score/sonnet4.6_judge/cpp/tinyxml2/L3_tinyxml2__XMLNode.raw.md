@@ -1,0 +1,27 @@
+{
+  "score": 2.8,
+  "reason": "The description accurately captures the behavior of the mutable `ToComment()` method — it returns null and is virtual/overridable — but it critically misrepresents the scope of the target. The 'FULL FUNCTION IMPLEMENTATION' is the entire `XMLNode` class, not just `ToComment()`. The description ignores the vast majority of the class: DOM traversal methods (Parent, FirstChild, LastChild, siblings), child manipulation (InsertEndChild, InsertFirstChild, InsertAfterChild, DeleteChildren, DeleteChild), cloning (ShallowClone, DeepClone), the visitor pattern (Accept), value access (Value, SetValue), user data (SetUserData, GetUserData), line number tracking, all the other cast methods (ToElement, ToText, ToDocument, ToDeclaration, ToUnknown) and their const overloads, protected members, and private helpers. As a description of the full `XMLNode` class it is severely incomplete. As a description of only the mutable `ToComment()` method it is reasonably accurate but the task targets `XMLNode` as a whole.",
+  "missing_functionality": [
+    "DOM traversal: Parent(), FirstChild(), LastChild(), PreviousSibling(), NextSibling() and their const overloads",
+    "Child element queries: FirstChildElement(), LastChildElement(), PreviousSiblingElement(), NextSiblingElement()",
+    "Child count: ChildElementCount() overloads",
+    "Child manipulation: InsertEndChild(), InsertFirstChild(), InsertAfterChild(), LinkEndChild(), DeleteChildren(), DeleteChild()",
+    "Cloning: ShallowClone() (pure virtual), DeepClone()",
+    "Equality: ShallowEqual() (pure virtual)",
+    "Visitor pattern: Accept() (pure virtual)",
+    "Value access: Value(), SetValue()",
+    "Line number: GetLineNum()",
+    "User data: SetUserData(), GetUserData()",
+    "Document ownership: GetDocument() (mutable and const)",
+    "All other cast methods: ToElement, ToText, ToDocument, ToDeclaration, ToUnknown (both mutable and const overloads)",
+    "Protected members: _document, _parent, _value, _parseLineNum, _firstChild, _lastChild, _prev, _next, _userData",
+    "Private helpers: Unlink, DeleteNode, InsertChildPreamble, ToElementWithName",
+    "Copy/assignment suppression",
+    "Friend declarations for XMLDocument and XMLElement"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description treats the target as only the mutable ToComment() method, but the target is the entire XMLNode class",
+    "Describing XMLNode as a 'conversion-to-comment operation' is misleading — it is a full DOM node base class"
+  ],
+  "complete_enough": false
+}

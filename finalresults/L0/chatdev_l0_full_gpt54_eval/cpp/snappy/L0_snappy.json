@@ -1,0 +1,569 @@
+{
+  "task": "cpp/snappy/L0_snappy",
+  "solver": "chatdev_gpt54_cpp生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.03,
+  "stdout": "",
+  "stderr": "CMake Error: The source directory \"/workspace/src\" does not appear to contain CMakeLists.txt.\nSpecify --help for usage, or press the help button on the CMake GUI.\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.77,
+    "Architecture": 3.13,
+    "Health": 4.5
+  },
+  "overall_score": 2.42,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(Snappy VERSION 1.2.2 LANGUAGES C CXX)\nif(NOT CMAKE_CXX_STANDARD)\n  set(CMAKE_CXX_STANDARD 11)\n  set(CMAKE_CXX_STANDARD_REQUIRED ON)\n  set(CMAKE_CXX_EXTENSIONS OFF)\nendif()\ninclude(TestBigEndian)\ntest_big_endian(SNAPPY_IS_BIG_ENDIAN)\ninclude(CheckInc"
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\n#include <string>\n#include \"snappy-stubs-public.h\"\n#include \"snappy-sinksource.h\"\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel()) {}\n  static i"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo exposes the required public classes and function declarations across `snappy.h` and `snappy-sinksource.h`, covering the listed public entry points."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "`snappy::Source`** (abstract): streaming input interface — `Available()`, `Peek()`, `Skip()`.",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.cc",
+              "excerpt": "#include \"snappy-sinksource.h\"\n#include <cstring>\nnamespace snappy {\nByteArraySource::ByteArraySource(const char* data, size_t size)\n    : ptr_(data), left_(size) {\n}\nsize_t ByteArraySource::Available() const {\n  return left_;\n}\nconst char* ByteArraySource::Peek(size_t* len) {\n  if (len !="
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy-sinksource.h` declares abstract `snappy::Source` with `Available()`, `Peek()`, and `Skip()`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`snappy::Sink`** (abstract): streaming output interface — `Append()`, `GetAppendBuffer()`, `AppendAndTakeOwnership()`.",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.cc",
+              "excerpt": "#include \"snappy-sinksource.h\"\n#include <cstring>\nnamespace snappy {\nByteArraySource::ByteArraySource(const char* data, size_t size)\n    : ptr_(data), left_(size) {\n}\nsize_t ByteArraySource::Available() const {\n  return left_;\n}\nconst char* ByteArraySource::Peek(size_t* len) {\n  if (len !="
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy-sinksource.h` declares abstract `snappy::Sink` with `Append()`, `GetAppendBuffer()`, and `AppendAndTakeOwnership()`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`snappy::ByteArraySource`**: concrete `Source` wrapping a flat `const char*` buffer, with constructor shape `ByteArraySource(const char* data, size_t size)`.",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.cc",
+              "excerpt": "#include \"snappy-sinksource.h\"\n#include <cstring>\nnamespace snappy {\nByteArraySource::ByteArraySource(const char* data, size_t size)\n    : ptr_(data), left_(size) {\n}\nsize_t ByteArraySource::Available() const {\n  return left_;\n}\nconst char* ByteArraySource::Peek(size_t* len) {\n  if (len !="
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy-c.cc",
+              "excerpt": "#include \"snappy-c.h\"\n#include \"snappy.h\"\n#include <string>\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length) {\n  if (compressed_length"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ByteArraySource` is declared with constructor `ByteArraySource(const char* data, size_t size)` and implemented in `snappy-sinksource.cc`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`snappy::UncheckedByteArraySink`**: concrete `Sink` writing to a flat `char*` buffer without bounds checking.",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.cc",
+              "excerpt": "#include \"snappy-sinksource.h\"\n#include <cstring>\nnamespace snappy {\nByteArraySource::ByteArraySource(const char* data, size_t size)\n    : ptr_(data), left_(size) {\n}\nsize_t ByteArraySource::Available() const {\n  return left_;\n}\nconst char* ByteArraySource::Peek(size_t* len) {\n  if (len !="
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": ">\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`UncheckedByteArraySink` is declared as a `Sink` subclass and implemented to write into a raw `char*` buffer without bounds checks."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`snappy::CompressionOptions`**: configuration struct (compression level).",
+          "evidence": [
+            {
+              "path": "snappy.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\n#include <string>\n#include \"snappy-stubs-public.h\"\n#include \"snappy-sinksource.h\"\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel())"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": ">\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.h` defines `snappy::CompressionOptions` as a public struct with a compression-level field."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`snappy::CompressionOptions` should expose a public instance field `level` and public static methods `MinCompressionLevel()`, `MaxCompressionLevel()`, and `DefaultCompressionLevel()`.",
+          "evidence": [
+            {
+              "path": "snappy.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\n#include <string>\n#include \"snappy-stubs-public.h\"\n#include \"snappy-sinksource.h\"\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel())"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": ">\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`CompressionOptions` exposes public field `level` and static methods `MinCompressionLevel()`, `MaxCompressionLevel()`, and `DefaultCompressionLevel()` in `snappy.h`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "root public headers `snappy.h`, `snappy-c.h`, and `snappy-sinksource.h`",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "#pragma once\n#include <cstddef>\nnamespace snappy {\nclass Sink {\n public:\n  virtual ~Sink() {}\n  virtual void Append(const char* bytes, size_t n) = 0;\n  virtual char* GetAppendBuffer(size_t length, char* scratch) {\n    (void)length;\n    return scratch;\n  }\n  virtual char* GetAppendBufferVariable(size_t min_size,"
+            },
+            {
+              "path": "snappy-c.cc",
+              "excerpt": "#include \"snappy-c.h\"\n#include \"snappy.h\"\n#include <string>\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length) {\n  if (compressed_length"
+            },
+            {
+              "path": "snappy-c.h",
+              "excerpt": "#pragma once\n#include <stddef.h>\n#ifdef __cplusplus\nextern \"C\" {\n#endif\ntypedef enum {\n  SNAPPY_OK = 0,\n  SNAPPY_INVALID_INPUT = 1,\n  SNAPPY_BUFFER_TOO_SMALL = 2\n} snappy_status;\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* comp"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo contains the required root public headers `snappy.h`, `snappy-c.h`, and `snappy-sinksource.h`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "public names should include `Compress`, `Uncompress`, `RawCompress`, `RawUncompress`, `RawCompressFromIOVec`, `RawUncompressToIOVec`, `CompressFromIOVec`, `MaxCompressedLength`, `GetUncompressedLength`, `IsValidCompressedBuffer`, `IsValidCompressed`, and `UncompressAsMuchAsPossible`",
+          "evidence": [
+            {
+              "path": "snappy.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\n#include <string>\n#include \"snappy-stubs-public.h\"\n#include \"snappy-sinksource.h\"\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel()) {}\n  static i"
+            },
+            {
+              "path": "snappy-c.cc",
+              "excerpt": "#include \"snappy-c.h\"\n#include \"snappy.h\"\n#include <string>\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length) {\n  if (compress"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }\n  out->push_back(static_cast<char>(value));\n}\nbool ReadVarint32(const char*"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.h` declares all listed public names, and `snappy.cc` provides implementations for them."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "overloads should include `size_t Compress(const char* input, size_t len, std::string* output, const CompressionOptions& options)`, `size_t Compress(Source* reader, Sink* writer, CompressionOptions options)`, `size_t UncompressAsMuchAsPossible(Source* reader, Sink* writer)`, `bool GetUncompressedLength(Source* source, uint32_t* result)`, and `bool IsValidCompressed(Source* compressed)`",
+          "evidence": [
+            {
+              "path": "snappy-c.cc",
+              "excerpt": "#include \"snappy-c.h\"\n#include \"snappy.h\"\n#include <string>\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length) {\n  if (compress"
+            },
+            {
+              "path": "snappy-c.h",
+              "excerpt": "#pragma once\n#include <stddef.h>\n#ifdef __cplusplus\nextern \"C\" {\n#endif\ntypedef enum {\n  SNAPPY_OK = 0,\n  SNAPPY_INVALID_INPUT = 1,\n  SNAPPY_BUFFER_TOO_SMALL = 2\n} snappy_status;\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "#include \"snappy.h\"\n#include \"snappy-internal.h\"\n#include <cstring>\n#include <string>\nnamespace snappy {\nnamespace internal {\nvoid AppendVarint32(uint32_t value, std::string* out) {\n  while (value >= 128) {\n    out->push_back(static_cast<char>((value & 0x7f) | 0x80));\n    value >>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.h` declares all required overloads, including the `CompressionOptions`, `Source`/`Sink`, `GetUncompressedLength(Source*, uint32_t*)`, and `IsValidCompressed(Source*)` variants."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`RawUncompressToIOVec(const char* compressed, size_t n, const struct iovec* iov, size_t iov_cnt)` decompresses into a scatter-gather iovec array",
+          "evidence": [
+            {
+              "path": "snappy.h",
+              "excerpt": "size_t compressed_length,\n                                 char* uncompressed);\nSNAPPY_EXPORT bool RawUncompressToIOVec(const char* compressed,\n                                        size_t compressed_length,\n                                        const struct iovec* iov,\n                                        size_t iov_cnt);\nSNAPPY_EXPORT bool GetUncompressedLength(const"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "ast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }\n  out->push_back(static_cast<char>(value));\n}\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value) {\n  uint32_t result = 0;\n  int shift = 0;\n  size_t i = *index;\n  while (i < len && shift <= 28) {\n    unsigned char byte = static_cast<unsigned char>(data[i++]);\n    result |= static_cast<uint32_t>(byte & 0x7f) << shif"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": "iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value);\nvoid EncodeAllLiteral(const char* input, size_t input_length"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.h` declares `RawUncompressToIOVec(...)`, and `snappy.cc` implements it by decompressing then scattering into the provided iovec array."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`CompressFromIOVec(const struct iovec* iov, size_t iov_cnt, std::string* compressed)` compresses a gather-list of buffers into a std::string",
+          "evidence": [
+            {
+              "path": "snappy.h",
+              "excerpt": "char* compressed,\n                               size_t* compressed_length);\nSNAPPY_EXPORT bool RawCompressFromIOVec(const struct iovec* iov,\n                                        size_t iov_cnt,\n                                        char* compressed,\n                                        size_t* compressed_length);\nSNAPPY_EXPORT bool CompressFromIOVec(const struct iovec"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": "iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value);\nvoid EncodeAllLiteral(const char* input, size_t input_length"
+            },
+            {
+              "path": "snappy.cc",
+              "excerpt": "ast<char>((value & 0x7f) | 0x80));\n    value >>= 7;\n  }\n  out->push_back(static_cast<char>(value));\n}\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value) {\n  uint32_t result = 0;\n  int shift = 0;\n  size_t i = *index;\n  while (i < len && shift <= 28) {\n    unsigned char byte = static_cast<unsigned char>(data[i++]);\n    result |= static_cast<uint32_t>(byte & 0x7f) << shif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.h` declares `CompressFromIOVec(...)`, and `snappy.cc` implements it by gathering iovec data and compressing into a `std::string`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`snappy-internal.h`**: internal helpers used by the implementation.",
+          "evidence": [
+            {
+              "path": "snappy-internal.h",
+              "excerpt": "iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value);\nvoid EncodeAllLiteral(const char* input, s"
+            },
+            {
+              "path": "snappy-stubs-internal.cc",
+              "excerpt": "#include \"snappy-stubs-internal.h\"\n#include <cstring>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst) {\n  std::memcpy(dst, src, 8);\n}\nuint32_t Load32(const void* p) {\n  uint32_t v = 0;\n  std::memcpy(&v, p, sizeof(v));\n  return v;\n}\nvoid Store32(void* p, uint32_t v)"
+            },
+            {
+              "path": "snappy-stubs-internal.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst);\nuint32_t Load32(const void* p);\nvoid Store32(void* p, uint32_t v);\n}  // namespace stubs\n}  // namespace snappy"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo includes `snappy-internal.h` with helper declarations used by `snappy.cc`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`snappy-stubs-internal.h`** and **`snappy-stubs-internal.cc`**: internal stub source files compiled alongside `snappy.cc` and `snappy-c.cc`.",
+          "evidence": [
+            {
+              "path": "snappy-stubs-internal.cc",
+              "excerpt": "#include \"snappy-stubs-internal.h\"\n#include <cstring>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst) {\n  std::memcpy(dst, src, 8);\n}\nuint32_t Load32(const void* p) {\n  uint32_t v = 0;\n  std::memcpy(&v, p, sizeof(v));\n  return v;\n}\nvoid Store32(void* p"
+            },
+            {
+              "path": "snappy-stubs-internal.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst);\nuint32_t Load32(const void* p);\nvoid Store32(void* p, uint32_t v);\n}  // namespace stubs\n}  // namespace snappy"
+            },
+            {
+              "path": "snappy-internal.h",
+              "excerpt": "iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nclass Source;\nclass Sink;\nnamespace internal {\nstatic const unsigned char kTagLiteral = 0x00;\nstatic const unsigned char kTagCopy = 0x01;\nvoid AppendVarint32(uint32_t value, std::string* out);\nbool ReadVarint32(const char* data, size_t len, size_t* index, uint32_t* value);\nvoid EncodeAllLiteral(const char* input, s"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo includes both `snappy-stubs-internal.h` and `snappy-stubs-internal.cc`, and the build script content lists them in the library sources."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Compression",
+          "evidence": [
+            {
+              "path": "snappy.cc",
+              "excerpt": "bytes + source_bytes / 255 + 16;\n}\nsize_t Compress(const char* input, size_t input_length, std::string* compressed) {\n  CompressionOptions options;\n  return Compress(input, input_length, compressed, options);\n}\nsize_t Compress(const char* input,\n                size_t input_length,\n                std::string* compressed,\n                const CompressionOptions& options) {\n  (void)options;\n  if ("
+            },
+            {
+              "path": "snappy.h",
+              "excerpt": "IN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel()) {}\n  static int MinCompressionLevel() { return 1; }\n  static int MaxCompressionLevel() { return 2; }\n  static int DefaultCompressionLevel() { return 1; }\n};\nSNAPPY_EXPORT size_t MaxCompres"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy.cc` implements compression entry points such as `Compress`, `RawCompress`, and iovec-based compression helpers."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Decompression",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`snappy.cc` implements decompression entry points such as `Uncompress`, `RawUncompress`, `RawUncompressToIOVec`, and `UncompressAsMuchAsPossible`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Utility",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Utility APIs including `MaxCompressedLength`, `GetUncompressedLength`, `IsValidCompressedBuffer`, and `IsValidCompressed` are declared and implemented."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "C API (snappy-c.h)",
+          "evidence": [
+            {
+              "path": "snappy-c.cc",
+              "excerpt": "#include \"snappy-c.h\"\n#include \"snappy.h\"\n#include <string>\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length) {\n  if (compressed_length"
+            },
+            {
+              "path": "snappy-c.h",
+              "excerpt": "#pragma once\n#include <stddef.h>\n#ifdef __cplusplus\nextern \"C\" {\n#endif\ntypedef enum {\n  SNAPPY_OK = 0,\n  SNAPPY_INVALID_INPUT = 1,\n  SNAPPY_BUFFER_TOO_SMALL = 2\n} snappy_status;\nsnappy_status snappy_compress(const char* input,\n                              size_t input_length,\n                              char* compressed,\n                              size_t* compressed_length);\nsnappy_status snappy_uncompress(const char* compressed,\n                                size_t compressed_length,\n                                char* uncompressed,\n                                size_t* uncompres"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "ARY_DIR}/config.h\" \"${PROJECT_BINARY_DIR}/config.h\")\nadd_library(snappy\n  snappy-internal.h\n  snappy-stubs-internal.h\n  snappy-c.cc\n  snappy-sinksource.cc\n  snappy-stubs-internal.cc\n  snappy.cc\n)\ntarget_include_directories(snappy PUBLIC\n  \"${PROJECT_SOURCE_DIR}\"\n  \"${PROJECT_BINARY_DIR}\"\n)\ntarget_compile_definitions(snappy PRIVATE -DHAVE_CONFIG_H)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`snappy-c.h` defines the C API and `snappy-c.cc` implements the documented status-returning wrapper functions."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "_snappy\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_cpp\\\\cpp\\\\snappy\\\\L0_snappy\",\n  \"files_collected\": 11,\n  \"duration_seconds\": 641.79\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The generated source/header files are placed at the repository root rather than inside an extra wrapper directory, matching the requested relative project-root layout."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Provide the required source files, header files, and any minimal build configuration needed to compile the project.",
+          "evidence": [
+            {
+              "path": "snappy-sinksource.cc",
+              "excerpt": "#include \"snappy-sinksource.h\"\n#include <cstring>\nnamespace snappy {\nByteArraySource::ByteArraySource(const char* data, size_t size)\n    : ptr_(data), left_(size) {\n}\nsize_t ByteArraySource::Available() const {\n  return left_;\n}\nconst char* ByteArraySource::Peek(size_t* len) {\n  if (len != 0) {\n    *"
+            },
+            {
+              "path": "snappy-sinksource.h",
+              "excerpt": "void* arg) {\n    Append(bytes, n);\n    if (deleter != 0) {\n      deleter(arg, bytes, n);\n    }\n  }\n};\nclass Source {\n public:\n  virtual ~Source() {}\n  virtual size_t Available() const = 0;\n  virtual const char* Peek(size_t* len) = 0;\n  virtual void Skip(size_t n) = 0;\n};\nclass ByteArraySource : public Source {\n public:\n  ByteArraySource(const char* data, size_t size);\n  size_t Availabl"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(Snappy VERSION 1.2.2 LANGUAGES C CXX)\nif(NOT CMAKE_CXX_STANDARD)\n  set(CMAKE_CXX_STANDARD 11)\n  set(CMAKE_CXX_STANDARD_REQUIRED ON)\n  set(CMAKE_CXX_EXTENSIONS OFF)\nendif()\ninclude(TestBigEndian)\ntest_big_endian(SNAPPY_IS_BIG_ENDIAN)\ninclude(CheckInc"
+            }
+          ],
+          "status": "partial",
+          "reason": "The source and header files are present, and a build script body exists, but it is stored in `main.cpp` instead of a standard build file like `CMakeLists.txt`, so the project is not directly buildable as delivered."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(Snappy VERSION 1.2.2 LANGUAGES C CXX)\nif(NOT CMAKE_CXX_STANDARD)\n  set(CMAKE_CXX_STANDARD 11)\n  set(CMAKE_CXX_STANDARD_REQUIRED ON)\n  set(CMAKE_CXX_EXTENSIONS OFF)\nendif()\ninclude(TestBigEndian)\ntest_big_endian(SNAPPY_IS_BIG_ENDIAN)\ninclude(CheckIncludeFile)\ncheck_include_file(\"sys/mman.h\"     HAVE_SYS_MMAN_H)\ncheck_inc"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "_snappy\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_cpp\\\\cpp\\\\snappy\\\\L0_snappy\",\n  \"files_collected\": 11,\n  \"duration_seconds\": 641.79\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo does not contain test files, a `blackbox_tests/` directory, or an extra outer wrapper directory."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`snappy.h` includes `snappy-stubs-public.h` (normally cmake-generated). Provide the necessary stub header files for the build; the build must produce the compiled snappy library.",
+          "evidence": [
+            {
+              "path": "snappy-stubs-internal.cc",
+              "excerpt": "#include \"snappy-stubs-internal.h\"\n#include <cstring>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst) {\n  std::memcpy(dst, src, 8);\n}\nuint32_t Load32(const void* p) {\n  uint32_t v = 0;\n  std::memcpy(&v, p, sizeof(v));\n  return v;\n}\nvoid Store32(void* p"
+            },
+            {
+              "path": "snappy-stubs-internal.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\nnamespace snappy {\nnamespace stubs {\nvoid UnalignedCopy64(const void* src, void* dst);\nuint32_t Load32(const void* p);\nvoid Store32(void* p, uint32_t v);\n}  // namespace stubs\n}  // namespace snappy"
+            },
+            {
+              "path": "snappy.h",
+              "excerpt": "#pragma once\n#include <cstddef>\n#include <cstdint>\n#include <string>\n#include \"snappy-stubs-public.h\"\n#include \"snappy-sinksource.h\"\n#if defined(_WIN32)\nstruct iovec {\n  void* iov_base;\n  size_t iov_len;\n};\n#else\n#include <sys/uio.h>\n#endif\nnamespace snappy {\nstruct CompressionOptions {\n  int level;\n  CompressionOptions() : level(DefaultCompressionLevel())"
+            }
+          ],
+          "status": "partial",
+          "reason": "`snappy.h` includes `snappy-stubs-public.h`, but the repo only contains `snappy-stubs-public.h.in`; combined with the misplaced CMake script in `main.cpp`, the required stub header/build setup is not fully provided as a directly buildable project."
+        }
+      ],
+      "feature_count": 22,
+      "constraint_count": 0,
+      "implemented_count": 20,
+      "partial_count": 2,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 0.9545,
+      "constraint_coverage": 0.9545,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 78457,
+        "completion_tokens": 3235,
+        "total_tokens": 81692
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "cpp",
+        "framework": "cpp",
+        "app_style": "library",
+        "build_system": "cpp",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.2,
+        "stack_alignment": 2.8,
+        "reference_alignment": 3.4
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 125919,
+        "completion_tokens": 2058,
+        "total_tokens": 127977
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 1,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository does contain most of the requested Snappy-style API surface: streaming `Source`/`Sink` abstractions, buffer wrappers, compression/decompression functions, iovec helpers, internal helper headers, and the C API are all present with corresponding implementations. The main gap is packaging/build correctness rather than missing API symbols.\n\n### Missing List\n\n- A real top-level build configuration file is missing; the CMake content is stored in `main.cpp` instead of `CMakeLists.txt`.\n- A concrete `snappy-stubs-public.h` file is not present in the repo; only the `.in` template exists, so the include in `snappy.h` is not satisfiable without a working generation step.\n\n### Critical Constraint Misses\n\n- The build configuration is misplaced in `repo/main.cpp` rather than provided as an actual build file such as `CMakeLists.txt`, so the project is not directly buildable as submitted.\n- `snappy.h` depends on `snappy-stubs-public.h`, but only the template `snappy-stubs-public.h.in` is present in the repo; generation depends on the broken build setup.",
+    "architecture_review": "### Stack Inference\n\nThe repository is clearly a native C++ library exposing both C++ and C interfaces, with headers and `.cc` implementation files centered around a compression API. The intended build system is CMake, but it is represented incorrectly through `main.cpp`, so the stack is C++ library plus CMake in intent, but not in a conventionally realized form.\n\n### Scoring Mode\n\nThis is an architecture review of the actual repository layout, build entrypoints, and module boundaries in `repo/`, not a count of files or a functional correctness audit. Scores emphasize whether the project is organized like a conventional C++ library and whether that structure supports the stated Snappy-style requirements.\n\n### Strengths\n\n- The repo at least groups the public API into recognizable surfaces: `snappy.h`, `snappy-c.h`, `snappy-sinksource.h`, and a smaller internal helper header.\n- C and C++ APIs are separated into distinct files (`snappy-c.cc` vs `snappy.cc`), which is a reasonable boundary for a dual-interface native library.\n- The flat file set is small and easy to scan, so despite weak layering, the codebase is not confusing to navigate at this size.\n\n### Issues\n\n- `repo/main.cpp` is actually a CMake script rather than a C++ translation unit or a properly named `CMakeLists.txt`, so the repository's build entrypoint is structurally misplaced and breaks normal C++ project expectations.\n- The build/config flow is fragmented: `snappy.h` requires `snappy-stubs-public.h`, but the repo only ships `snappy-stubs-public.h.in` and relies on the misnamed build script to generate the real header, making the public include surface depend on a nonstandard setup.\n- The library is only shallowly layered: most core behavior, format parsing, streaming adapters, validation, and iovec support are all concentrated in `snappy.cc`, so the architecture does not separate codec logic, format helpers, and API façade in a way typical of maintainable C++ libraries.\n- `manifest.json` is not part of common native C++ library build conventions here and does not integrate with the actual build story, which adds noise rather than clarifying architecture.\n- The implementation shape does not reflect the PRD's performance-oriented intent: a minimal literal-oriented codec is exposed behind a Snappy-like API, so the repository structure suggests API completion more than a credible compression-library architecture.\n\n### Stack Mismatches\n\n- A file named `main.cpp` containing CMake code is a direct mismatch with normal C++/CMake repository structure.\n- A public-library project would usually separate build metadata from source files more clearly, often with `CMakeLists.txt` and sometimes `include/` and `src/`; this repo keeps everything flat and mixes generated-header concerns into the root.\n- The presence of `manifest.json` does not correspond to a standard role in a small C++ compression library and weakens stack coherence.\n\n### Reference Gaps\n\n- The prompt asks for minimal build/configuration files, but the repo does not provide a conventional build root such as `CMakeLists.txt`; instead that role is incorrectly assigned to `main.cpp`.\n- The prompt describes a production-style Snappy compression library with speed-focused design, while the repository architecture is closer to a small single-file demo codec with thin wrappers.\n- `snappy.h` includes `snappy-stubs-public.h`, but the concrete header is not present in the source tree, only the template `snappy-stubs-public.h.in`, so the published header set is incomplete without a successful custom generation step."
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 204376,
+    "completion_tokens": 5293,
+    "total_tokens": 209669,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 78457,
+        "completion_tokens": 3235,
+        "total_tokens": 81692
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 125919,
+        "completion_tokens": 2058,
+        "total_tokens": 127977
+      }
+    ]
+  },
+  "language": "cpp",
+  "project_name": "snappy",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.77,
+  "architecture_score": 3.13,
+  "health_score": 4.5,
+  "all_tests_passed": false
+}

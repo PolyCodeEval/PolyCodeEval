@@ -1,0 +1,25 @@
+{
+  "task": "javascript/babel-parser/L2_plugins__typescript__index_ts",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L2_plugins__typescript__index_ts/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L2_plugins__typescript__index_ts/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/plugins/typescript/index.ts",
+  "target_file": "plugins/typescript/index.ts",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and all 14 function-level descriptions are accurate and closely match the actual implementation. The file description correctly identifies the plugin's role as a mixin extending the base parser with TypeScript-specific syntax, type parsing, modifier handling, and coexistence with JSX. Each function description captures the essential logic: `keywordTypeFromName` lists all 10 keyword mappings correctly; `tsTokenCanFollowModifier` lists the exact token checks; `tsNextTokenCanFollowModifier` correctly describes the `static` special-case; `tsIsListTerminator` maps all four contexts to the right tokens; `tsParseConstraintForInferType` accurately describes the conditional-types guard; `tsParseTypeAliasDeclaration` covers the `intrinsic` special case and `BindingFlag.TYPE_TS_TYPE`; `tsParseDeclaration` covers all four switch arms; `tsParseTypeArguments` describes the JSX/inType rescanning logic; `parseSubscript` describes the non-null assertion path; `parseStatementContent` covers all TS-specific statement branches including `const enum`, `abstract`, `declare`, `enum`, `global`, `interface`, `module`, `namespace`, and `type`; `parseClassSuper` describes the comment-transfer logic; `parseArrow` describes the speculative try-parse; `tsParseAbstractDeclaration` covers both `class` and `interface` branches; and `chStartsBindingIdentifierAndNotRelationalOperator` accurately describes the sticky regexp check. Minor omissions: `parseStatementContent` description does not mention `nextTokenIsIdentifierOnSameLine` helper used for `module`/`namespace` branches, and the `tsParseTypeArguments` description slightly undersells that the rescan only happens when `curContext() === tc.brace`, but these are minor. Overall the descriptions are complete enough to reconstruct all hollowed functions.",
+  "missing_functionality": [
+    "parseStatementContent: the description does not mention the `nextTokenIsIdentifierOnSameLine` helper used for the `module` and `namespace` branches (distinct from `nextTokenIsIdentifierAndNotTSRelationalOperatorOnSameLine`).",
+    "tsParseTypeArguments: the description says 'inside JSX brace context' but the actual condition is `!this.state.inType && this.curContext() === tc.brace`; the `!this.state.inType` part is not mentioned."
+  ],
+  "incorrect_or_misleading_points": [
+    "tsParseDeclaration for `module`: the description says 'parses an ambient external module declaration' but the implementation calls `tsParseAmbientExternalModuleDeclaration` without further checking for an identifier (unlike `namespace`); this is correct but the description omits that no identifier check is done for `module`.",
+    "parseStatementContent: the description says `module` followed by a same-line identifier raises `InlineModuleDeclarationMustUseString` and then parses as namespace-style, but does not mention that the recovery path passes `tt._namespace` (not `tt._module`) to `tsParseDeclaration`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_plugins__typescript__index_ts.raw.md"
+}

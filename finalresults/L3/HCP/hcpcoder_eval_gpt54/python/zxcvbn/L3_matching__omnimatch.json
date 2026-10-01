@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.19,
+  "stdout": "e:\n                shifted_count = 0\n    \n            while True:\n                prev_char = password[j - 1]\n                found = False\n                found_direction = -1\n                cur_direction = -1\n                try:\n                    adjacents = graph[prev_char] or []\n                except KeyError:\n                    adjacents = []\n                # consider growing pattern by one character if j hasn't gone\n                # over the edge.\n                if j < len(password):\n                    cur_char = password[j]\n>                   for adj in adjacents:\nE                   TypeError: 'int' object is not iterable\n\nsrc/zxcvbn/matching.py:340: TypeError\n___________________________ test_invalid_user_inputs ___________________________\n\n    def test_invalid_user_inputs():\n        # don't raise an error with non-string types for user_inputs\n        input_ = None\n        password = u'pÄssword junkiË'\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:26: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:91: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries))\nsrc/zxcvbn/matching.py:305: in spatial_match\n    matches.extend(spatial_match_helper(password, graph, graph_name))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'pÄssword junkiË'\ngraph = {\"a'ight\": 17718, \"a'right\": 19160, 'aaaaa': 7670, 'aaaaaa': 12767, ...}\ngraph_name = 'us_tv_and_film'\n\n    def spatial_match_helper(password, graph, graph_name):\n        matches = []\n        i = 0\n        while i < len(password) - 1:\n            j = i + 1\n            last_direction = None\n            turns = 0\n            if graph_name in ['qwerty', 'dvorak', ] and \\\n                    SHIFTED_RX.search(password[i]):\n                # initial character is shifted\n                shifted_count = 1\n            else:\n                shifted_count = 0\n    \n            while True:\n                prev_char = password[j - 1]\n                found = False\n                found_direction = -1\n                cur_direction = -1\n                try:\n                    adjacents = graph[prev_char] or []\n                except KeyError:\n                    adjacents = []\n                # consider growing pattern by one character if j hasn't gone\n                # over the edge.\n                if j < len(password):\n                    cur_char = password[j]\n>                   for adj in adjacents:\nE                   TypeError: 'int' object is not iterable\n\nsrc/zxcvbn/matching.py:340: TypeError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:91: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries))\nsrc/zxcvbn/matching.py:305: in spatial_match\n    matches.extend(spatial_match_helper(password, graph, graph_name))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojw...ejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej'\ngraph = {\"a'ight\": 17718, \"a'right\": 19160, 'aaaaa': 7670, 'aaaaaa': 12767, ...}\ngraph_name = 'us_tv_and_film'\n\n    def spatial_match_helper(password, graph, graph_name):\n        matches = []\n        i = 0\n        while i < len(password) - 1:\n            j = i + 1\n            last_direction = None\n            turns = 0\n            if graph_name in ['qwerty', 'dvorak', ] and \\\n                    SHIFTED_RX.search(password[i]):\n                # initial character is shifted\n                shifted_count = 1\n            else:\n                shifted_count = 0\n    \n            while True:\n                prev_char = password[j - 1]\n                found = False\n                found_direction = -1\n                cur_direction = -1\n                try:\n                    adjacents = graph[prev_char] or []\n                except KeyError:\n                    adjacents = []\n                # consider growing pattern by one character if j hasn't gone\n                # over the edge.\n                if j < len(password):\n                    cur_char = password[j]\n>                   for adj in adjacents:\nE                   TypeError: 'int' object is not iterable\n\nsrc/zxcvbn/matching.py:340: TypeError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd30b49ec50>\ncapsys = <_pytest.capture.CaptureFixture object at 0x7fd30b49e560>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:91: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries))\nsrc/zxcvbn/matching.py:283: in repeat_match\n    omnimatch(base_token)\nsrc/zxcvbn/matching.py:91: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 's'\n_regexen = {'english_wikipedia': {\"'aliabad\": 26981, \"'best\": 9383, \"'black\": 17306, \"'blue\": 26324, ...}, 'female_names': {'abbe... 'abel': 420, ...}, 'passwords': {'!qaz2wsx': 8441, '!qazxsw2': 22176, '%%passwo': 9943, '%e2%82%ac': 27913, ...}, ...}\n_ranked_dictionaries = {'english_wikipedia': {\"'aliabad\": 26981, \"'best\": 9383, \"'black\": 17306, \"'blue\": 26324, ...}, 'female_names': {'abbe... 'abel': 420, ...}, 'passwords': {'!qaz2wsx': 8441, '!qazxsw2': 22176, '%%passwo': 9943, '%e2%82%ac': 27913, ...}, ...}\n\n    def regex_match(password, _regexen=REGEXEN, _ranked_dictionaries=RANKED_DICTIONARIES):\n        matches = []\n        for name, regex in _regexen.items():\n>           for rx_match in regex.finditer(password):\nE           AttributeError: 'dict' object has no attribute 'finditer'\n\nsrc/zxcvbn/matching.py:447: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - AttributeErr...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - AttributeError: 'd...\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - AttributeError...\nFAILED tests/unit_tests/zxcvbn_test.py::test_unicode_user_inputs - TypeError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_invalid_user_inputs - TypeError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - TypeError: 'int'...\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - AttributeErro...\n========================= 7 failed, 27 passed in 0.87s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__omnimatch",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      }
+    ],
+    "passed": 27,
+    "failed": 7,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7941,
+  "compile_score": 0.5,
+  "test_score": 0.3971,
+  "score": 0.8971
+}

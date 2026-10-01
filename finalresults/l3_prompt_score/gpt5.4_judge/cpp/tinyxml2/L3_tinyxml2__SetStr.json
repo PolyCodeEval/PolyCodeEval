@@ -1,0 +1,30 @@
+{
+  "task": "cpp/tinyxml2/L3_tinyxml2__SetStr",
+  "project": "cpp/tinyxml2",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__SetStr/prompt.md",
+  "task_json_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__SetStr/task.json",
+  "source_file_path": "datasets/cpp/tinyxml2/src/tinyxml2.cpp",
+  "target_symbol": "tinyxml2.cpp::SetStr",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.6,
+  "reason": "The description gets the broad purpose right: this method stores a string into the StrPair, updates internal state, and records flags. It also correctly notes that prior content is replaced. However, the implementation is more specific than the description: it asserts that the input string is non-null, calls Reset(), allocates a new buffer, copies the full null-terminated string, sets _end to the end of the copied text, and always ORs NEEDS_DELETE into the flags. The description is somewhat tentative ('likely') and misses these concrete behaviors, especially the deep copy and forced ownership flag, which are important for reimplementation.",
+  "missing_functionality": [
+    "Calls Reset() before storing the new string.",
+    "Computes the string length with strlen(str).",
+    "Allocates a new char buffer of size len + 1.",
+    "Copies the full string including the null terminator with memcpy.",
+    "Sets _end to _start + len.",
+    "Always sets _flags to flags | NEEDS_DELETE, not just the supplied flags."
+  ],
+  "incorrect_or_misleading_points": [
+    "The wording suggests it might assign an internal range/pointer directly, but the implementation always makes an owning heap copy.",
+    "The description says null handling cannot be confirmed, but the implementation explicitly asserts that str is non-null."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_tinyxml2__SetStr.raw.md"
+}

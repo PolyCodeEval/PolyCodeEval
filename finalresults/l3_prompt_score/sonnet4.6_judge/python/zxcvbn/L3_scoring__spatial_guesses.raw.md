@@ -1,0 +1,12 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the three main phases of the function: selecting keyboard vs. keypad constants, computing the base guess count via the nested loop, and applying the shifted-character multiplier. The core math is described correctly — iterating lengths from 2 to L, capping turns, using nCk, starting positions, and branching factor. The shifted-character logic is also correctly described. One minor inaccuracy: the description says the inner loop counts 'allowed turns' as capped by both the match's turn count and the maximum possible turns, which is correct in spirit, but the description phrases the branching factor as `pow(d, j)` implicitly — it doesn't explicitly mention that j starts at 1 (not 0), meaning the formula is `nCk(i-1, j-1) * s * d^j` with j ranging from 1 to possible_turns-1. The description also slightly mischaracterizes the 'all shifted or none shifted' doubling condition: the code doubles when `S == 0 or U == 0` (i.e., all shifted OR all unshifted), but the description says 'all characters are shifted or none are shifted', which is correct. Overall the description is sufficiently complete and accurate to implement the function.",
+  "missing_functionality": [
+    "The inner loop runs from j=1 to possible_turns-1 (exclusive upper bound), not up to possible_turns inclusive — this boundary detail is not explicitly stated and could cause an off-by-one error in a reimplementation.",
+    "The formula term is nCk(i-1, j-1) * s * d^j — the description mentions 'number of ways to choose turn locations times starting positions times branching factor' but does not make clear that the nCk argument is (i-1, j-1) specifically, which is a non-obvious detail."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'the branching factor for the allowed number of turns' without clarifying it is d raised to the power j (the current turn index), which could be misread as a single constant multiplier rather than an exponential."
+  ],
+  "complete_enough": true
+}

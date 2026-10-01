@@ -1,0 +1,28 @@
+{
+  "task": "go/gjson/L3_gjson__arrayOrMap",
+  "project": "go/gjson",
+  "language": "go",
+  "prompt_path": "datasets/go/gjson/tasks/L3_gjson__arrayOrMap/prompt.md",
+  "task_json_path": "datasets/go/gjson/tasks/L3_gjson__arrayOrMap/task.json",
+  "source_file_path": "datasets/go/gjson/src/gjson.go",
+  "target_symbol": "gjson.go::arrayOrMap",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.0,
+  "reason": "The description captures the main behavior well: detecting the container start, choosing array vs object storage based on `valueize`, scanning loosely-parsed JSON values, tracking indexes, using alternating object entries as key/value pairs, preserving the first duplicate key, and post-processing array element indexes from `t.Indexes`. However, it overstates correctness in a few places by describing parsing as if it were more JSON-aware than it is. The implementation is intentionally loose: it does not explicitly process separators like `:` or `,`, it simply skips unrecognized non-whitespace bytes during the main scan, and when a nonzero delimiter is requested it will still initialize array storage if that delimiter is not `{`. Overall this is a strong description, but not quite complete/precise enough to fully reproduce the exact implementation.",
+  "missing_functionality": [
+    "The scan loop does not truly parse object syntax; it just ignores whitespace, breaks on `]` or `}`, and skips any other unrecognized bytes such as `:` and `,`.",
+    "When `vc` is nonzero, the function sets `r.vc = vc` even if that delimiter is never found before EOF unless an earlier non-space byte caused early exit.",
+    "If `vc` is nonzero and not `{`, the function initializes array storage, so behavior is not restricted to only valid `[` delimiters."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying it returns an empty result if no valid container start is encountered before a non-space non-matching byte is only fully true for the initial detection phase; once inside the body, unexpected non-whitespace input is usually skipped rather than causing failure.",
+    "The wording 'parse each next value' suggests a structured token-by-token parser, but the implementation is more permissive and simply recognizes value-leading characters while ignoring others.",
+    "The description implies nested objects/arrays are handled as object/array values semantically, but in the implementation they are stored as `Result{Type: JSON, Raw: squash(...)}` and only later converted via `Value()` when `valueize` is true."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gjson__arrayOrMap.raw.md"
+}

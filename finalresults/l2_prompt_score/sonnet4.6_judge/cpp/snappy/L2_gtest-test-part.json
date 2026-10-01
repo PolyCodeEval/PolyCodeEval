@@ -1,0 +1,28 @@
+{
+  "task": "cpp/snappy/L2_gtest-test-part",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L2_gtest-test-part/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L2_gtest-test-part/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/include/gtest/gtest-test-part.h",
+  "target_file": "third_party/googletest/googletest/include/gtest/gtest-test-part.h",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.0,
+  "reason": "The file-level and function-level descriptions are largely accurate and match the implementation well. The TestPartResult class description is thorough, covering the enum, constructor, accessors, predicates, private layout, and ExtractSummary. The operator<< declaration and ReportTestPartResult pure virtual method are correctly described. However, the descriptions omit the TestPartResultArray class entirely (its constructor, Append, GetTestPartResult, size methods, and deleted copy/assign), and the HasNewFatalFailureHelper class body is only partially described — the description mentions ReportTestPartResult as a callback but omits the constructor, destructor, has_new_fatal_failure() accessor, and the two private data members (has_new_fatal_failure_ bool and original_reporter_ pointer), as well as the deleted copy/assign. These omissions are significant enough that a model reconstructing the file would likely miss the TestPartResultArray class entirely and produce an incomplete HasNewFatalFailureHelper.",
+  "missing_functionality": [
+    "TestPartResultArray class is not described at all — its default constructor, Append(), GetTestPartResult(), size(), private vector member, and deleted copy/assign are absent from the descriptions",
+    "HasNewFatalFailureHelper constructor and destructor signatures are not mentioned",
+    "HasNewFatalFailureHelper::has_new_fatal_failure() const accessor is not described",
+    "HasNewFatalFailureHelper private members (has_new_fatal_failure_ bool and original_reporter_ pointer) are not described",
+    "HasNewFatalFailureHelper deleted copy constructor and assignment operator are not mentioned"
+  ],
+  "incorrect_or_misleading_points": [
+    "The file-level description mentions 'a simple array wrapper for collecting results' but provides no function-level description for TestPartResultArray, making it impossible to reconstruct from the prompt alone",
+    "The ReportTestPartResult description conflates the interface method with the HasNewFatalFailureHelper override without clearly distinguishing that HasNewFatalFailureHelper has its own full class body beyond just that one method"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L2_gtest-test-part.raw.md"
+}

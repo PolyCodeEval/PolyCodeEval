@@ -1,0 +1,21 @@
+{
+  "project": "zxcvbn",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt covers the library's core purpose and most major subsystems present in the repository: top-level zxcvbn(password, user_inputs=None), dictionary/l33t/spatial/repeat/sequence/regex/date matching, dynamic-programming scoring, feedback generation, crack-time estimation, bundled frequency lists, packaging, and CLI/stdin usage. It omits some implementation-specific boundaries and repo realities such as the exact returned fields, Decimal-based crack time values, and the actual absence of several advertised configuration hooks."
+    },
+    "unambiguity": {
+      "score": 3.8,
+      "reason": "The main behaviors are described clearly enough to infer a password-strength estimator with JSON-capable CLI output and pattern-based scoring, but several interfaces are underspecified or blurred. The prompt does not pin down the exact result schema, leaves CLI behavior partly informal, and states optional capabilities like max_length override without clarifying whether they are API-only, CLI-only, or both."
+    },
+    "testability": {
+      "score": 3.7,
+      "reason": "The prompt is sufficient to implement black-box-verifiable core behavior such as returning scores, guesses, crack-time displays, feedback, and user-input-sensitive scoring. However, it does not specify the concrete output keys exercised by tests and introduces nonexistent max_length API/CLI behavior, which would misdirect an implementation relative to the repository's actual black-box contract."
+    },
+    "consistency": {
+      "score": 2.9,
+      "reason": "There are notable conflicts with the real codebase. The actual zxcvbn function in src/zxcvbn/__init__.py accepts only password and user_inputs, and the real CLI in src/zxcvbn/__main__.py supports --user-input only; the prompt incorrectly presents max_length as an implemented API and CLI option. It also claims Python 3.8-3.13 support and no legacy/runtime quirks, while setup.py advertises older Python versions and the current code still contains Python-2-era compatibility handling."
+    }
+  }
+}

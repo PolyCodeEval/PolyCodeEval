@@ -1,0 +1,91 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.96,
+  "stdout": ": in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:1298: in _deserialize\n    return func(value)\nsrc/marshmallow/utils.py:44: in from_timestamp\n    return dt.datetime.fromtimestamp(value, tz=dt.timezone.utc)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = 1e+17, args = (), kwargs = {'tz': datetime.timezone.utc}\n\n    def fromtimestamp(self, *args, **kwargs):  # type: ignore[override]\n>       raise OverflowError\nE       OverflowError\n\ntests/unit_tests/test_deserialization.py:38: OverflowError\n_ TestFieldDeserialization.test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp_ms] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7fad247861d0>\nfmt = 'timestamp_ms'\nmock_fromtimestamp = <class 'tests.unit_tests.test_deserialization.MockDateTimeOverflowError'>\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\n        \"mock_fromtimestamp\", [MockDateTimeOSError, MockDateTimeOverflowError]\n    )\n    def test_oversized_timestamp_field_deserialization(self, fmt, mock_fromtimestamp):\n        with patch(\"datetime.datetime\", mock_fromtimestamp):\n            field = fields.DateTime(format=fmt)\n            with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\n>               field.deserialize(99999999999999999)\n\ntests/unit_tests/test_deserialization.py:618: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:1298: in _deserialize\n    return func(value)\nsrc/marshmallow/utils.py:51: in from_timestamp_ms\n    return from_timestamp(value / 1000)\nsrc/marshmallow/utils.py:44: in from_timestamp\n    return dt.datetime.fromtimestamp(value, tz=dt.timezone.utc)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = 100000000000000.0, args = (), kwargs = {'tz': datetime.timezone.utc}\n\n    def fromtimestamp(self, *args, **kwargs):  # type: ignore[override]\n>       raise OverflowError\nE       OverflowError\n\ntests/unit_tests/test_deserialization.py:38: OverflowError\n__________________ test_from_timestamp[1676386740-expected0] ___________________\n\nvalue = 1676386740, expected = datetime.datetime(2023, 2, 14, 14, 59)\n\n    @pytest.mark.parametrize(\n        (\"value\", \"expected\"),\n        [\n            (1676386740, dt.datetime(2023, 2, 14, 14, 59, 00)),\n            (1676386740.58, dt.datetime(2023, 2, 14, 14, 59, 00, 580000)),\n        ],\n    )\n    def test_from_timestamp(value, expected):\n        result = utils.from_timestamp(value)\n        assert type(result) is dt.datetime\n>       assert result == expected\nE       assert datetime.datetime(2023, 2, 14, 14, 59, tzinfo=datetime.timezone.utc) == datetime.datetime(2023, 2, 14, 14, 59)\n\ntests/unit_tests/test_utils.py:116: AssertionError\n_________________ test_from_timestamp[1676386740.58-expected1] _________________\n\nvalue = 1676386740.58\nexpected = datetime.datetime(2023, 2, 14, 14, 59, 0, 580000)\n\n    @pytest.mark.parametrize(\n        (\"value\", \"expected\"),\n        [\n            (1676386740, dt.datetime(2023, 2, 14, 14, 59, 00)),\n            (1676386740.58, dt.datetime(2023, 2, 14, 14, 59, 00, 580000)),\n        ],\n    )\n    def test_from_timestamp(value, expected):\n        result = utils.from_timestamp(value)\n        assert type(result) is dt.datetime\n>       assert result == expected\nE       assert datetime.datetime(2023, 2, 14, 14, 59, 0, 580000, tzinfo=datetime.timezone.utc) == datetime.datetime(2023, 2, 14, 14, 59, 0, 580000)\n\ntests/unit_tests/test_utils.py:116: AssertionError\n___________________ test_from_timestamp_with_negative_value ____________________\n\n    def test_from_timestamp_with_negative_value():\n        value = -10\n>       with pytest.raises(ValueError, match=r\"Not a valid POSIX timestamp\"):\nE       Failed: DID NOT RAISE <class 'ValueError'>\n\ntests/unit_tests/test_utils.py:121: Failed\n_______________ test_from_timestamp_ms[1676386740000-expected0] ________________\n\nvalue = 1676386740000, expected = datetime.datetime(2023, 2, 14, 14, 59)\n\n    @pytest.mark.parametrize(\n        (\"value\", \"expected\"),\n        [\n            (1676386740000, dt.datetime(2023, 2, 14, 14, 59, 00)),\n            (1000, dt.datetime(1970, 1, 1, 0, 0, 1)),\n        ],\n    )\n    def test_from_timestamp_ms(value, expected):\n        result = utils.from_timestamp_ms(value)\n        assert type(result) is dt.datetime\n>       assert result == expected\nE       assert datetime.datetime(2023, 2, 14, 14, 59, tzinfo=datetime.timezone.utc) == datetime.datetime(2023, 2, 14, 14, 59)\n\ntests/unit_tests/test_utils.py:141: AssertionError\n____________________ test_from_timestamp_ms[1000-expected1] ____________________\n\nvalue = 1000, expected = datetime.datetime(1970, 1, 1, 0, 0, 1)\n\n    @pytest.mark.parametrize(\n        (\"value\", \"expected\"),\n        [\n            (1676386740000, dt.datetime(2023, 2, 14, 14, 59, 00)),\n            (1000, dt.datetime(1970, 1, 1, 0, 0, 1)),\n        ],\n    )\n    def test_from_timestamp_ms(value, expected):\n        result = utils.from_timestamp_ms(value)\n        assert type(result) is dt.datetime\n>       assert result == expected\nE       assert datetime.datetime(1970, 1, 1, 0, 0, 1, tzinfo=datetime.timezone.utc) == datetime.datetime(1970, 1, 1, 0, 0, 1)\n\ntests/unit_tests/test_utils.py:141: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected0]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected1]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.12-expected2]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.123456-expected3]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1-expected4]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1384043025000-expected5]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1000-expected6]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp_ms]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp_ms]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp_ms]\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp[1676386740-expected0]\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp[1676386740.58-expected1]\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp_with_negative_value\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp_ms[1676386740000-expected0]\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp_ms[1000-expected1]\n======================= 18 failed, 1161 passed in 4.10s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_utils__from_timestamp",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.12-expected2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025.123456-expected3]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1-expected4]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1384043025000-expected5]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1000-expected6]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp_ms]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp_ms]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp_ms]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_utils.py::test_from_timestamp[1676386740-expected0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_utils.py::test_from_timestamp[1676386740.58-expected1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_utils.py::test_from_timestamp_with_negative_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_utils.py::test_from_timestamp_ms[1676386740000-expected0]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 17,
+    "total": 17
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

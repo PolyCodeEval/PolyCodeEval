@@ -1,0 +1,30 @@
+{
+  "task": "go/go-cache/L0_go-cache",
+  "project": "go/go-cache",
+  "language": "go",
+  "prompt_path": "datasets/go/go-cache/tasks/L0_go-cache/prompt.md",
+  "project_root": "datasets/go/go-cache",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Prompt覆盖了仓库主线能力：TTL缓存、并发安全、增删改查、过期清理、回调、持久化、Items/ItemCount，以及黑盒测试依赖的核心导出与行为。主要遗漏是源码中的分片缓存实现和更大范围的类型专用自增自减族，但这些不属于复现当前L0黑盒核心能力的主体。"
+    },
+    "unambiguity": {
+      "score": 4.7,
+      "reason": "核心接口签名、常量语义、关键行为和多项边界条件都写得较明确，尤其对Add/Replace、Get/GetWithExpiration、默认过期、NoExpiration、回调触发和自动清理条件说明充分。少量接口仍有模糊处，例如完整的类型专用数值方法集合未逐一列出，持久化的合并细节也较简略。"
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "Prompt直接给出包路径、关键导出、部分精确方法签名以及与黑盒测试高度对齐的行为约束，足以支持实现可黑盒验证的核心能力。测试所覆盖的Set/Get、过期、DeleteExpired、NewFrom、Items、OnEvicted、Increment/Decrement等均有明确要求；仅个别测试细节如Items快照语义和错误信息精确文案未完全固定。"
+    },
+    "consistency": {
+      "score": 4.6,
+      "reason": "Prompt与真实实现整体一致：常量值、Cache/New/NewFrom、过期语义、janitor启动条件、GetWithExpiration零时间返回、Items仅返回未过期项、OnEvicted在Delete和DeleteExpired上触发等都匹配。轻微不一致在于源码还包含实验性的sharded实现，且数值操作的完整导出面比prompt列出的更广。"
+    }
+  },
+  "overall_score": 4.67,
+  "raw_response_file": "L0_go-cache.raw.md"
+}

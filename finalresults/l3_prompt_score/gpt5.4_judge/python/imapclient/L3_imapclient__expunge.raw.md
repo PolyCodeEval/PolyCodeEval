@@ -1,0 +1,14 @@
+{
+  "score": 3.6,
+  "reason": "The description captures the main branching behavior correctly: normal expunge when no/falsy messages are provided, and targeted UID-based expunge when messages are provided, including the `use_uid=True` requirement and the `ValueError` otherwise. However, it inaccurately describes the return value for the `messages` case, and it omits some important implementation-level details such as the fact that the branch is triggered only when `messages` is truthy and that message IDs are joined before being passed to the command.",
+  "missing_functionality": [
+    "The targeted expunge path is taken only when `messages` is truthy; falsy values behave like no argument and perform a normal `EXPUNGE`.",
+    "The implementation passes `join_message_ids(messages)` to the command in the targeted expunge case.",
+    "The no-messages case specifically issues `self._imap._command('EXPUNGE')` and then consumes responses until the tagged response."
+  ],
+  "incorrect_or_misleading_points": [
+    "It says the targeted expunge returns the checked command result, but the implementation/docstring indicate the return value in this case is effectively `None` from `_command_and_check` rather than the same tuple shape as the normal expunge path.",
+    "It says the normal expunge returns the tagged completion message together with collected untagged expunge-related responses; while broadly close, the actual implementation returns whatever `_consume_until_tagged_response(tag, 'EXPUNGE')` yields, not an explicitly assembled structure described at that level."
+  ],
+  "complete_enough": false
+}

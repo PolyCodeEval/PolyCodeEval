@@ -1,0 +1,28 @@
+{
+  "task": "cpp/jsoncpp/L2_json_writer",
+  "project": "cpp/jsoncpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/jsoncpp/tasks/L2_json_writer/prompt.md",
+  "task_json_path": "datasets/cpp/jsoncpp/tasks/L2_json_writer/task.json",
+  "source_file_path": "datasets/cpp/jsoncpp/src/lib_json/json_writer.cpp",
+  "target_file": "json_writer.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely across the file: primitive formatting, UTF-8 and escape handling, compact/styled/stream writers, multiline-array heuristics, comment behavior, configurable builder options, validation, and defaults are all accurately captured. It is also detailed enough to guide reconstruction of nearly every hollowed body with the correct control flow and formatting semantics. Only a few implementation-level details are omitted or slightly overstated, but none are severe enough to prevent successful reconstruction.",
+  "missing_functionality": [
+    "The double formatter description does not mention the exact initial temporary buffer size of 36 characters before resize/retry.",
+    "The builder description does not explicitly note the local variable initialization default of PrecisionType(significantDigits) before string dispatch, though the resulting behavior is still described.",
+    "The stream-writer descriptions do not always spell out the precise indented_ state transitions after every branch as literally as the code."
+  ],
+  "incorrect_or_misleading_points": [
+    "The utf8ToCodepoint description says continuation-byte forms are required, but the implementation does not validate continuation-byte bit patterns; it only checks remaining length, decodes payload bits, and applies overlong/surrogate-range checks.",
+    "The utf8ToCodepoint description says invalid/truncated/oversized encodings advance s so the caller loop lands on the last consumed byte for multibyte cases, but in truncated-error paths the implementation returns U+FFFD without advancing s.",
+    "The valueToQuotedStringN fast-path description implies it returns '\"' + contents + '\"' for the provided byte range, but the implementation uses String(\"\\\"\") + value + \"\\\"\", which ignores the explicit length and therefore relies on null-terminated input in that fast path.",
+    "The BuiltStyledStreamWriter::writeCommentAfterValueOnSameLine description says it adds no extra behavior beyond configured comment emissions, but the implementation also implicitly leaves indented_ unchanged rather than forcing it false as StyledStreamWriter does."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_json_writer.raw.md"
+}

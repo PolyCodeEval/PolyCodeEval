@@ -1,0 +1,23 @@
+{
+  "task": "cpp/snappy/L3_snappy__MemCopy64",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_snappy__MemCopy64/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_snappy__MemCopy64/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/snappy.cc",
+  "target_symbol": "snappy.cc::MemCopy64",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly states the size limit, the non-overlap requirement for the first `size` bytes, the allowance for overlap within the larger 64-byte window, and the platform-specific behaviors: x86/AVX copies 32 bytes unconditionally and another 32 when `size > 32`, the generic fallback does the same using `memmove`, and the RISC-V RVV path copies exactly `size` bytes. This is also complete enough to guide a faithful implementation of the function’s externally relevant behavior. Only minor low-level details such as the exact use of `memmove`, assertions, and the RVV loop structure are omitted, which is acceptable.",
+  "missing_functionality": [
+    "It does not mention that the generic fallback specifically uses `std::memmove` rather than `memcpy`, likely to tolerate the permitted overlap in the larger 64-byte window.",
+    "It omits the exact RVV implementation detail that copying is performed in a loop over vector-length-sized chunks until all requested bytes are copied."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_snappy__MemCopy64.raw.md"
+}

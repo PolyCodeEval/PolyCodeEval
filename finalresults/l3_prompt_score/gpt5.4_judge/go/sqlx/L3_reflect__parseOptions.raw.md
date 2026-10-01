@@ -1,0 +1,11 @@
+{
+  "score": 4.4,
+  "reason": "The description matches the implementation well on the main behavior: it splits the tag on commas, ignores the first segment, and stores later segments as key/value options with empty-string values when no equals sign is present. It also correctly notes that an empty map is returned when there are no option segments, and that the map is preallocated from the number of split parts. The main gap is that the implementation uses `strings.Split(opt, \"=\")` rather than splitting only on the first equals sign, so inputs containing multiple `=` characters are not handled as described and may not preserve the full suffix.",
+  "missing_functionality": [
+    "The description does not mention that the implementation checks for `=` with `strings.Contains` before splitting, though this is a minor implementation detail."
+  ],
+  "incorrect_or_misleading_points": [
+    "It says that for segments containing `=`, the text after the first `=` becomes the value. The implementation actually uses `strings.Split` and takes only `kv[1]`, so for strings with multiple `=` characters it does not preserve everything after the first `=`."
+  ],
+  "complete_enough": true
+}

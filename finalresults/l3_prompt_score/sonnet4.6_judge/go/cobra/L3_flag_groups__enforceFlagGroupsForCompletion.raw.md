@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description accurately captures all three core behaviors of the function: marking group flags required when any is set, marking one-required group flags required when none are set, and hiding mutually exclusive flags while keeping the already-set flag visible. It correctly notes the early return on `DisableFlagParsing` and that errors from `MarkFlagRequired` are ignored. The detail about the already-set flag remaining visible for array/slice flags is explicitly called out, matching the implementation's comment. The only minor omission is that the description doesn't mention the intermediate status maps (`groupStatus`, `oneRequiredGroupStatus`, `mutuallyExclusiveGroupStatus`) built via `processFlagForGroupAnnotation`, but this is an implementation detail rather than a behavioral requirement. The description is complete enough to guide a correct reimplementation.",
+  "missing_functionality": [
+    "No mention that status maps are built by iterating all flags via VisitAll and calling processFlagForGroupAnnotation for each annotation type before the enforcement loops run — a subtle but implementable detail."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

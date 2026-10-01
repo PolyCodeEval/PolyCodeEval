@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.24,
+  "stdout": "_____\n\nself = <tests.unit_tests.test_error_store.TestMergeErrors object at 0x7fc972a08e50>\n\n    def test_merging_list_and_dict_with_schema_error(self):\n>       assert merge_errors([\"error1\"], {\"_schema\": \"error2\", \"field1\": \"error3\"}) == {\n            \"_schema\": [\"error1\", \"error2\"],\n            \"field1\": \"error3\",\n        }\n\ntests/unit_tests/test_error_store.py:115: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nerrors1 = ['error1'], errors2 = {'_schema': 'error2', 'field1': 'error3'}\n\n    def merge_errors(errors1, errors2):  # noqa: PLR0911\n        \"\"\"Deeply merge two error messages.\n    \n        The format of ``errors1`` and ``errors2`` matches the ``message``\n        parameter of :exc:`marshmallow.exceptions.ValidationError`.\n        \"\"\"\n        if not errors1:\n            return copy_containers(errors2)\n        if not errors2:\n            return copy_containers(errors1)\n    \n        result = {}\n        for key in set(errors1) | set(errors2):\n            if key not in errors1:\n                result[key] = copy_containers(errors2[key])\n            elif key not in errors2:\n>               result[key] = copy_containers(errors1[key])\nE               TypeError: list indices must be integers or slices, not str\n\nsrc/marshmallow/error_store.py:53: TypeError\n_________________ TestMergeErrors.test_merging_dict_and_string _________________\n\nself = <tests.unit_tests.test_error_store.TestMergeErrors object at 0x7fc972a0a620>\n\n    def test_merging_dict_and_string(self):\n>       assert merge_errors({\"field1\": \"error1\"}, \"error2\") == {\n            \"_schema\": \"error2\",\n            \"field1\": \"error1\",\n        }\n\ntests/unit_tests/test_error_store.py:121: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nerrors1 = {'field1': 'error1'}, errors2 = 'error2'\n\n    def merge_errors(errors1, errors2):  # noqa: PLR0911\n        \"\"\"Deeply merge two error messages.\n    \n        The format of ``errors1`` and ``errors2`` matches the ``message``\n        parameter of :exc:`marshmallow.exceptions.ValidationError`.\n        \"\"\"\n        if not errors1:\n            return copy_containers(errors2)\n        if not errors2:\n            return copy_containers(errors1)\n    \n        result = {}\n        for key in set(errors1) | set(errors2):\n            if key not in errors1:\n>               result[key] = copy_containers(errors2[key])\nE               TypeError: string indices must be integers\n\nsrc/marshmallow/error_store.py:51: TypeError\n______________ TestMergeErrors.test_merging_dict_and_custom_error ______________\n\nself = <tests.unit_tests.test_error_store.TestMergeErrors object at 0x7fc972a09420>\n\n    def test_merging_dict_and_custom_error(self):\n        assert {\n            \"_schema\": CustomError(123, \"error2\"),\n            \"field1\": \"error1\",\n>       } == merge_errors({\"field1\": \"error1\"}, CustomError(123, \"error2\"))\n\ntests/unit_tests/test_error_store.py:130: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nerrors1 = {'field1': 'error1'}\nerrors2 = CustomError(code=123, message='error2')\n\n    def merge_errors(errors1, errors2):  # noqa: PLR0911\n        \"\"\"Deeply merge two error messages.\n    \n        The format of ``errors1`` and ``errors2`` matches the ``message``\n        parameter of :exc:`marshmallow.exceptions.ValidationError`.\n        \"\"\"\n        if not errors1:\n            return copy_containers(errors2)\n        if not errors2:\n            return copy_containers(errors1)\n    \n        result = {}\n        for key in set(errors1) | set(errors2):\n            if key not in errors1:\n>               result[key] = copy_containers(errors2[key])\nE               TypeError: tuple indices must be integers or slices, not str\n\nsrc/marshmallow/error_store.py:51: TypeError\n__________________ TestMergeErrors.test_merging_dict_and_list __________________\n\nself = <tests.unit_tests.test_error_store.TestMergeErrors object at 0x7fc972a0b400>\n\n    def test_merging_dict_and_list(self):\n>       assert merge_errors({\"field1\": \"error1\"}, [\"error2\"]) == {\n            \"_schema\": [\"error2\"],\n            \"field1\": \"error1\",\n        }\n\ntests/unit_tests/test_error_store.py:133: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nerrors1 = {'field1': 'error1'}, errors2 = ['error2']\n\n    def merge_errors(errors1, errors2):  # noqa: PLR0911\n        \"\"\"Deeply merge two error messages.\n    \n        The format of ``errors1`` and ``errors2`` matches the ``message``\n        parameter of :exc:`marshmallow.exceptions.ValidationError`.\n        \"\"\"\n        if not errors1:\n            return copy_containers(errors2)\n        if not errors2:\n            return copy_containers(errors1)\n    \n        result = {}\n        for key in set(errors1) | set(errors2):\n            if key not in errors1:\n>               result[key] = copy_containers(errors2[key])\nE               TypeError: list indices must be integers or slices, not str\n\nsrc/marshmallow/error_store.py:51: TypeError\n_ TestNestedSchema.test_all_errors_on_many_nested_field_with_validates_decorator _\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7fc97277d900>\n\n    def test_all_errors_on_many_nested_field_with_validates_decorator(self):\n        class Inner(Schema):\n            req = fields.Raw(required=True)\n    \n        class Outer(Schema):\n            inner = fields.Nested(Inner, many=True)\n    \n            @validates(\"inner\")\n            def validates_inner(self, data, **kwargs):\n                raise ValidationError(\"not a chance\")\n    \n        outer = Outer()\n        with pytest.raises(ValidationError) as excinfo:\n            outer.load({\"inner\": [{}]})\n        errors = excinfo.value.messages\n        assert \"inner\" in errors\n>       assert \"_schema\" in errors[\"inner\"]\nE       AssertionError: assert '_schema' in [{0: {'req': ['Missing data for required field.']}}, 'not a chance']\n\ntests/unit_tests/test_schema.py:2008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_string\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_string\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_custom_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_custom_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_list\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_dict\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_dict_with_schema_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_list\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_dict\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_dict_with_schema_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_string\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_custom_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_list\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_dict\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_dict_with_schema_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_string\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_custom_error\nFAILED tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_list\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_all_errors_on_many_nested_field_with_validates_decorator\n======================= 19 failed, 1160 passed in 3.28s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_error_store__merge_errors",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_custom_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_custom_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_string_and_dict_with_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_custom_error_and_dict_with_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_custom_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_list_and_dict_with_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_custom_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_list",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 18,
+    "total": 18
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

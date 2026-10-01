@@ -1,0 +1,25 @@
+{
+  "task": "javascript/babel-parser/L3_index__jsxReadToken",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__jsxReadToken/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__jsxReadToken/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/plugins/jsx/index.ts",
+  "target_symbol": "plugins/jsx/index.ts::jsxReadToken",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly captures the main control flow: looping through JSX text, throwing on EOF, treating `<` and `{` as boundaries with special handling when they occur at token start, decoding `&` entities, rejecting `>` and `}`, and normalizing/including newlines via JSX-specific handling. It is also detailed enough to guide an implementation of the function. The only minor omission is that the real function is token-producing rather than literally returning a value, and the description does not mention that after raising on `>`/`}` the code structurally falls through, though that is not behaviorally important.",
+  "missing_functionality": [
+    "The implementation finishes parser tokens (`finishToken`) or delegates to `super.getTokenFromCode` rather than returning a token value directly.",
+    "The newline path specifically calls `jsxReadNewLine(true)`, meaning CRLF is normalized to `\\n`."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'Consumes and returns the next JSX text/token segment' is slightly misleading because the function does not return the segment; it mutates parser state and finishes a token."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__jsxReadToken.raw.md"
+}

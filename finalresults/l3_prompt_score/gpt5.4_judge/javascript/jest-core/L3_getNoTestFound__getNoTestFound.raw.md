@@ -1,0 +1,11 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely: it correctly explains how the message is built, how test files and project counts are derived, how the path-vs-pattern branch works, how `willExitWith0` changes the headline and extra hint, and that the function returns a single formatted string with styling. It is also detailed enough to support reimplementation. The main omissions are minor exact-output details, especially that both branches always include the sentence `Run with --verbose for more details.` and that the pattern branch specifically uses `testPathPatterns.toPretty()` with yellow styling.",
+  "missing_functionality": [
+    "It does not explicitly mention that both return branches include the line `Run with `--verbose` for more details.`",
+    "It does not mention that the pattern text comes specifically from `globalConfig.testPathPatterns.toPretty()`",
+    "It does not note that missing `matches.total` values are treated as 0 via `(testRun.matches.total || 0)`"
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

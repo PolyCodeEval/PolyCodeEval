@@ -1,0 +1,16 @@
+{
+  "score": 3.2,
+  "reason": "The description captures the core purpose (redirect trailing-slash paths to the slash-stripped equivalent), the incompatibility note, and the basic input/output contract. However, it omits several security-critical and behaviorally significant implementation details: backslash normalization to prevent protocol-relative redirect attacks, collapsing of multiple leading/trailing slashes into a single leading slash, preservation of the raw query string in the redirect target, use of HTTP 301 as the redirect status code, and the chi `RouteContext`/`RoutePath` path-resolution logic. These are not minor secondary details — the backslash normalization and slash collapsing are explicit security measures, and the 301 status code is a concrete behavioral contract. A developer implementing from this description alone would produce a simpler and potentially insecure version.",
+  "missing_functionality": [
+    "Backslash normalization: all backslashes in the path are replaced with forward slashes before redirecting, to prevent '/\\evil.com' style protocol-relative redirect attacks",
+    "Slash collapsing: the path is trimmed of leading/trailing slashes and prefixed with a single '/' to normalize multiple slashes",
+    "Query string preservation: if r.URL.RawQuery is non-empty, it is appended to the redirect target",
+    "HTTP 301 (Moved Permanently) is the specific redirect status code used",
+    "Path resolution prefers chi RouteContext.RoutePath over r.URL.Path when a route context is present",
+    "The path length check (len(path) > 1) means a bare '/' is not redirected"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'the docs do not specify any other path normalization rules' — the implementation actually performs significant path normalization (backslash replacement and slash collapsing)"
+  ],
+  "complete_enough": false
+}

@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.11,
+  "stdout": "FAIL\tgithub.com/spf13/cobra [build failed]\nFAIL\tgithub.com/spf13/cobra/doc [build failed]\nFAIL\n",
+  "stderr": "# github.com/spf13/cobra\n./command.go:906:13: syntax error: unexpected name at at end of statement\n./command.go:906:198: newline in rune literal\n./command.go:908:7: syntax error: unexpected literal `go\n    \tif c == nil {\n    \t\treturn fmt.Errorf(\"Called Execute() on a nil Command\")\n    \t}\n\n    \tif len(c.Deprecated) > 0 {\n    \t\tc.Printf(\"Command %q is deprecated, %s\\n\", c.Name(), c.Deprecated)\n    \t}\n\n    \t// initialize help and version flag\n    \tc.InitDefaultHelpFlag()\n    \tc.InitDefaultVersionFlag()\n\n    \terr = c.ParseFlags(a)\n    \tif err != nil {\n    \t\treturn c.FlagErrorFunc()(c, err)\n    \t}\n\n    \t// If help is called, regardless of other flags, return we want help.\n    \t// Also say we need help if the command is not runnable.\n    \thelpVal, err := c.Flags().GetBool(helpFlagName)\n    \tif err != nil {\n    \t\t// if an error occurs here, we set that it's not a help flag\n    \t\thelpVal = false\n    \t}\n\n    \tif helpVal {\n    \t\treturn flag.ErrHelp\n    \t}\n\n    \t// check for the version flag\n    \tif c.Version != \"\" {\n    \t\tversionVal, err := c.Flags().GetBool(\"version\")\n    \t\tif err != nil {\n    \t\t\tversionVal = false\n    \t\t}\n    \t\tif versionVal {\n    \t\t\terr := c.getVersionTemplateFunc()(c.OutOrStdout(), c)\n    \t\t\tif err != nil {\n    \t\t\t\tc.Println(err)\n    \t\t\t}\n    \t\t\treturn nil\n    \t\t}\n    \t}\n\n    \tif !c.Runnable() {\n    \t\treturn flag.ErrHelp\n    \t}\n\n    \tc.initCompleteCmd(a)\n\n    \targWoFlags := c.Flags().Args()\n    \tif c.DisableFlagParsing {\n    \t\targWoFlags = a\n    \t}\n\n    \tif err := c.ValidateArgs(argWoFlags); err != nil {\n    \t\treturn err\n    \t}\n\n    \tif err := c.ValidateRequiredFlags(); err != nil {\n    \t\treturn err\n    \t}\n    \tif err := c.ValidateFlagGroups(); err != nil {\n    \t\treturn err\n    \t}\n\n    \tfor p := c; p != nil; p = p.Parent() {\n    \t\tif p.PersistentPreRunE != nil {\n    \t\t\tif err := p.PersistentPreRunE(c, argWoFlags); err != nil {\n    \t\t\t\treturn err\n    \t\t\t}\n    \t\t\tbreak\n    \t\t} else if p.PersistentPreRun != nil {\n    \t\t\tp.PersistentPreRun(c, argWoFlags)\n    \t\t\tbreak\n    \t\t}\n    \t}\n    \tif c.PreRunE != nil {\n    \t\tif err := c.PreRunE(c, argWoFlags); err != nil {\n    \t\t\treturn err\n    \t\t}\n    \t} else if c.PreRun != nil {\n    \t\tc.PreRun(c, argWoFlags)\n    \t}\n\n    \tif err := interpolatedArgs(c, argWoFlags); err != nil {\n    \t\treturn err\n    \t}\n\n    \tif c.RunE != nil {\n    \t\tif err := c.RunE(c, argWoFlags); err != nil {\n    \t\t\treturn err\n    \t\t}\n    \t} else {\n    \t\tc.Run(c, argWoFlags)\n    \t}\n    \tif c.PostRunE != nil {\n    \t\tif err := c.PostRunE(c, argWoFlags); err != nil {\n    \t\t\treturn err\n    \t\t}\n    \t} else if c.PostRun != nil {\n    \t\tc.PostRun(c, argWoFlags)\n    \t}\n    \tfor p := c; p != nil; p = p.Parent() {\n    \t\tif p.PersistentPostRunE != nil {\n    \t\t\tif err := p.PersistentPostRunE(c, argWoFlags); err != nil {\n    \t\t\t\treturn err\n    \t\t\t}\n    \t\t\tbreak\n    \t\t} else if p.PersistentPostRun != nil {\n    \t\t\tp.PersistentPostRun(c, argWoFlags)\n    \t\t\tbreak\n    \t\t}\n    \t}\n\n    \treturn nil\n    ` at end of statement\n",
+  "task": "go/cobra/L3_command__execute",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

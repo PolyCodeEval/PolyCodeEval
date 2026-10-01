@@ -1,0 +1,29 @@
+{
+  "task": "go/is/L0_is",
+  "project": "go/is",
+  "language": "go",
+  "prompt_path": "datasets/go/is/tasks/L0_is/prompt.md",
+  "project_root": "datasets/go/is",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "All four assertion methods (True, Equal, NoErr, Fail), the T interface, I type, New, NewRelaxed, Helper, and instance-level New/NewRelaxed are described. Strict vs relaxed mode (FailNow vs Fail) is explicit. The Nil and Equality Semantics section covers reflect.DeepEqual, nil types, and nil-vs-empty slice. Minor gap: the source file line number and inline comment extraction feature is mentioned in the overview but not described in the behavioral section, which means an implementer might omit it."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Nil/equality semantics are precisely stated: reflect.DeepEqual used, nil slice/map/chan treated as nil (not failing against nil interface), but nil slice != empty slice. Strict mode calls FailNow; relaxed mode calls Fail (not FailNow). Helper() calls t.Helper(). These are all exactly the right level of specification for the test suite."
+    },
+    "testability": {
+      "score": 5.0,
+      "reason": "All blackbox test cases map 1:1 to the prompt's descriptions: Equal same/different values, nil comparison, nil map/chan vs nil, nil slice vs empty slice, pointer equality, strict FailNow, relaxed Fail, True, NoErr, Fail. The edge_cases tests specifically test the nil type behaviors described in 'Nil and Equality Semantics', making this one of the most testability-focused prompts."
+    },
+    "consistency": {
+      "score": 5.0,
+      "reason": "All described behaviors are accurate to the is source. Module path (github.com/matryer/is), T interface, I type, reflect.DeepEqual usage, and FailNow/Fail distinction all match the implementation."
+    }
+  },
+  "overall_score": 4.75
+}

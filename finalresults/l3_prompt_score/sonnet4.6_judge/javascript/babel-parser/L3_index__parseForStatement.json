@@ -1,0 +1,27 @@
+{
+  "task": "javascript/babel-parser/L3_index__parseForStatement",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__parseForStatement/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__parseForStatement/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::parseForStatement",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description is highly accurate and thorough. It correctly covers all major branches: the semicolon fast-path, declaration-based initializers (var/const/let/using/await using), expression-based initializers, for-in/for-of detection, error cases (ForOfLet, ForOfAsync, ForInUsing, AwaitUsingNotInAsyncContext, unexpected awaitAt), and the conversion to assignable LHS. The ordering and logic match the implementation closely. Minor omissions: it doesn't mention that `scope.enter(0)` is called before `expect(6)` (scope entered before the opening paren is consumed), and it doesn't explicitly note that `startsWithAsync` is tracked before parsing the expression to enable the ForOfAsync check. These are secondary implementation details that don't affect the overall correctness of the description.",
+  "missing_functionality": [
+    "Does not mention that `this.scope.enter(0)` is called before `this.expect(6)` (scope is entered prior to consuming the opening parenthesis).",
+    "Does not mention that `startsWithAsync` is captured before parsing the expression (needed for the `for (async of ...)` error check).",
+    "Does not explicitly mention that `checkDestructuringPrivate` is called on the expression errors before `toAssignable` in the expression-based for-in/for-of path."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'for await is only valid with for...of' when rejecting await in the semicolon (no-init) case — this is accurate in spirit but the implementation simply calls `this.unexpected(awaitAt)` without distinguishing for-in vs for-of at that point.",
+    "The description says the function 'rejects for...in when the left side is a using declaration' — this is correct, but it omits that the same check applies to `await using` (both are covered by `starsWithUsingDeclaration`)."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__parseForStatement.raw.md"
+}

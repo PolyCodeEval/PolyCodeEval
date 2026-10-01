@@ -1,0 +1,680 @@
+{
+  "task": "python/portalocker/L0_portalocker",
+  "solver": "chatdev_sonnet46_python生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.18,
+  "stdout": "7%]\n../../workspace/blackbox_tests/test_flags.py::test_exclusive_and_shared_are_different PASSED [ 59%]\n../../workspace/blackbox_tests/test_lock_class.py::test_lock_context_manager_acquires_and_releases FAILED [ 61%]\n../../workspace/blackbox_tests/test_lock_class.py::test_lock_with_timeout FAILED [ 63%]\n../../workspace/blackbox_tests/test_lock_class.py::test_lock_fail_when_locked_raises_already_locked PASSED [ 65%]\n../../workspace/blackbox_tests/test_lock_class.py::test_lock_writes_content FAILED [ 67%]\n../../workspace/blackbox_tests/test_lock_class.py::test_lock_exclusive_flag FAILED [ 69%]\n../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_exclusive PASSED [ 71%]\n../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_shared PASSED [ 73%]\n../../workspace/blackbox_tests/test_lock_unlock.py::test_unlock_releases_lock PASSED [ 75%]\n../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_exclusive_nonblocking_fails_on_locked_file PASSED [ 77%]\n../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_file_can_be_read_after_unlock PASSED [ 79%]\n../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_file_appears_after_context PASSED [ 81%]\n../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_binary_mode PASSED [ 83%]\n../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_writes_large_content PASSED [ 85%]\n../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_multiline PASSED [ 87%]\n../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_new_file_binary PASSED [ 89%]\n../../workspace/blackbox_tests/test_rlock.py::test_rlock_acquire_multiple_times PASSED [ 91%]\n../../workspace/blackbox_tests/test_rlock.py::test_rlock_release_decrements_count PASSED [ 93%]\n../../workspace/blackbox_tests/test_rlock.py::test_rlock_fully_released_after_matching_releases PASSED [ 95%]\n../../workspace/blackbox_tests/test_rlock.py::test_rlock_context_manager FAILED [ 97%]\n../../workspace/blackbox_tests/test_rlock.py::test_rlock_nested_context_managers PASSED [100%]\n\n=================================== FAILURES ===================================\n_______________________ test_coalesce_custom_test_value ________________________\n/workspace/blackbox_tests/test_extra_coverage.py:48: in test_coalesce_custom_test_value\n    assert coalesce(0, False, True, test_value=0) is False\nE   assert True is False\nE    +  where True = coalesce(0, False, True, test_value=0)\n___________________ test_lock_exception_lock_failed_constant ___________________\n/workspace/blackbox_tests/test_extra_coverage.py:77: in test_lock_exception_lock_failed_constant\n    assert LockException.LOCK_FAILED == 1\nE   assert -1 == 1\nE    +  where -1 = LockException.LOCK_FAILED\n________________ test_open_atomic_raises_if_file_already_exists ________________\n/workspace/blackbox_tests/test_extra_coverage.py:109: in test_open_atomic_raises_if_file_already_exists\n    with pytest.raises(AssertionError):\nE   Failed: DID NOT RAISE AssertionError\n_______________________ test_lock_w_mode_truncates_file ________________________\n/workspace/blackbox_tests/test_extra_coverage.py:123: in test_lock_w_mode_truncates_file\n    fh.write(\"new\")\nE   AttributeError: 'Lock' object has no attribute 'write'\n_________________ test_lock_re_acquire_returns_same_filehandle _________________\n/workspace/src/portalocker/portalocker.py:103: in lock\n    fcntl.flock(file.fileno(), flock_flags)\nE   BlockingIOError: [Errno 11] Resource temporarily unavailable\n\nThe above exception was the direct cause of the following exception:\n/workspace/blackbox_tests/test_extra_coverage.py:133: in test_lock_re_acquire_returns_same_filehandle\n    fh2 = lock.acquire()\n/workspace/src/portalocker/utils.py:165: in acquire\n    self._lock(fh)\n/workspace/src/portalocker/utils.py:189: in _lock\n    lock(fh, self.flags)\n/workspace/src/portalocker/portalocker.py:106: in lock\n    raise AlreadyLocked(\nE   portalocker.exceptions.AlreadyLocked: (-1, 'Resource temporarily unavailable')\n________________________ test_rlock_over_release_raises ________________________\n/workspace/blackbox_tests/test_extra_coverage.py:149: in test_rlock_over_release_raises\n    with pytest.raises(LockException):\nE   Failed: DID NOT RAISE LockException\n______________ test_pid_file_lock_context_returns_none_on_success ______________\n/workspace/blackbox_tests/test_extra_coverage.py:193: in test_pid_file_lock_context_returns_none_on_success\n    assert result is None\nE   assert <portalocker.utils.PidFileLock object at 0x7649ec612710> is None\n__________________ test_named_bounded_semaphore_get_filenames __________________\n/workspace/blackbox_tests/test_extra_coverage.py:221: in test_named_bounded_semaphore_get_filenames\n    sem = NamedBoundedSemaphore(3, name='testsem', directory=str(tmp_path))\nE   TypeError: BoundedSemaphore.__init__() got an unexpected keyword argument 'directory'\n_______________ test_named_bounded_semaphore_filenames_are_paths _______________\n/workspace/blackbox_tests/test_extra_coverage.py:228: in test_named_bounded_semaphore_filenames_are_paths\n    sem = NamedBoundedSemaphore(2, name='pathsem', directory=str(tmp_path))\nE   TypeError: BoundedSemaphore.__init__() got an unexpected keyword argument 'directory'\n_______________ test_lock_context_manager_acquires_and_releases ________________\n/workspace/blackbox_tests/test_lock_class.py:12: in test_lock_context_manager_acquires_and_releases\n    content = fh.read()\nE   AttributeError: 'Lock' object has no attribute 'read'\n____________________________ test_lock_with_timeout ____________________________\n/workspace/blackbox_tests/test_lock_class.py:24: in test_lock_with_timeout\n    content = fh.read()\nE   AttributeError: 'Lock' object has no attribute 'read'\n___________________________ test_lock_writes_content ___________________________\n/workspace/blackbox_tests/test_lock_class.py:47: in test_lock_writes_content\n    fh.write(\"new content\")\nE   AttributeError: 'Lock' object has no attribute 'write'\n___________________________ test_lock_exclusive_flag ___________________________\n/workspace/blackbox_tests/test_lock_class.py:56: in test_lock_exclusive_flag\n    content = fh.read()\nE   AttributeError: 'Lock' object has no attribute 'read'\n__________________________ test_rlock_context_manager __________________________\n/workspace/blackbox_tests/test_rlock.py:48: in test_rlock_context_manager\n    content = fh.read()\nE   AttributeError: 'RLock' object has no attribute 'read'\n=========================== short test summary info ============================\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_coalesce_custom_test_value\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_lock_exception_lock_failed_constant\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_open_atomic_raises_if_file_already_exists\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_lock_w_mode_truncates_file\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_lock_re_acquire_returns_same_filehandle\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_rlock_over_release_raises\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_pid_file_lock_context_returns_none_on_success\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_named_bounded_semaphore_get_filenames\nFAILED ../../workspace/blackbox_tests/test_extra_coverage.py::test_named_bounded_semaphore_filenames_are_paths\nFAILED ../../workspace/blackbox_tests/test_lock_class.py::test_lock_context_manager_acquires_and_releases\nFAILED ../../workspace/blackbox_tests/test_lock_class.py::test_lock_with_timeout\nFAILED ../../workspace/blackbox_tests/test_lock_class.py::test_lock_writes_content\nFAILED ../../workspace/blackbox_tests/test_lock_class.py::test_lock_exclusive_flag\nFAILED ../../workspace/blackbox_tests/test_rlock.py::test_rlock_context_manager\n======================== 14 failed, 35 passed in 5.56s =========================\n",
+  "stderr": "WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n",
+  "test_details": {
+    "tests": [
+      {
+        "name": "../../workspace/blackbox_tests/test_flags.py::test_exclusive_and_shared_are_different",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_class.py::test_lock_context_manager_acquires_and_releases",
+        "passed": false
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_class.py::test_lock_with_timeout",
+        "passed": false
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_class.py::test_lock_fail_when_locked_raises_already_locked",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_class.py::test_lock_writes_content",
+        "passed": false
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_class.py::test_lock_exclusive_flag",
+        "passed": false
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_exclusive",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_shared",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_unlock.py::test_unlock_releases_lock",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_exclusive_nonblocking_fails_on_locked_file",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_lock_unlock.py::test_lock_file_can_be_read_after_unlock",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_file_appears_after_context",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_binary_mode",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_writes_large_content",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_multiline",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_open_atomic.py::test_open_atomic_new_file_binary",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_rlock.py::test_rlock_acquire_multiple_times",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_rlock.py::test_rlock_release_decrements_count",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_rlock.py::test_rlock_fully_released_after_matching_releases",
+        "passed": true
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_rlock.py::test_rlock_context_manager",
+        "passed": false
+      },
+      {
+        "name": "../../workspace/blackbox_tests/test_rlock.py::test_rlock_nested_context_managers",
+        "passed": true
+      }
+    ],
+    "passed": 16,
+    "failed": 5,
+    "total": 21
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 3.81,
+    "Faithfulness": 5.0,
+    "Architecture": 5.0,
+    "Health": 3.5
+  },
+  "overall_score": 4.37,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 16,
+      "tests_failed": 5,
+      "tests_total": 21,
+      "test_pass_ratio": 0.7619,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "main.py",
+              "excerpt": "'''\nportalocker command-line entry point and usage demo.\nProvides a minimal CLI that confirms the library is importable and shows\nthe available lock flag aliases.\n'''\nimport sys\nimport portalocker\ndef main() -> int:\n    '''Print portalocker status and return exit code 0.'''\n    print('portalocker ready.')"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "-> None:\n        if not _REDIS_AVAILABLE:  # pragma: no cover\n            raise ImportError(\n                'Redis is required for RedisLock. '\n                'Install it with: pip install redis'\n            )\n        self.name = name\n        self.timeout = timeout\n        self.check_interval = check_interval\n        self.expire = expire\n        self._token: typing.Optional[str] = None"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/__init__.py` exports the required public surface, including `lock`, `unlock`, `Lock`, `RLock`, `TemporaryFileLock`, `PidFileLock`, `LockFlags`, `open_atomic`, `AlreadyLocked`, `LockException`, `BoundedSemaphore`, `NamedBoundedSemaphore`, and the lock aliases."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "package exports `lock`, `unlock`, `Lock`, `RLock`, `TemporaryFileLock`, `PidFileLock`, `LockFlags`, and `open_atomic`",
+          "evidence": [
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE"
+            },
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "'''\nHigh-level locking utilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile"
+            },
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "'''\nFlag definitions for portalocker.\nDefines the LockFlags enum used throughout the library to specify\nlocking behavior in a cross-platform manner.\nExample usage::\n    >>> from portalocker.flags import LockFlags\n    >>> LockFlags.EXCLUSIVE\n    <LockFlags.EXCLUSIVE: 1>\n    >>> LockFlags.SHARED\n    <LockFlags."
+            }
+          ],
+          "status": "implemented",
+          "reason": "The package-level imports in `portalocker/__init__.py` expose `lock`, `unlock`, `Lock`, `RLock`, `TemporaryFileLock`, `PidFileLock`, `LockFlags`, and `open_atomic`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package exports should also include exception names `AlreadyLocked` and `LockException`",
+          "evidence": [
+            {
+              "path": "portalocker\\exceptions.py",
+              "excerpt": "'''\nException classes for portalocker.\nDefines LockException and AlreadyLocked used throughout the library.\nExample usage::\n    >>> from portalocker.exceptions import LockException, AlreadyLocked\n    >>> LockException.LOCK_FAILED\n    -1\n    >>> exc = LockException('lock failed')"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "onally separate from the core file-locking\nimplementation to keep the Redis dependency optional.\nRequires the ``redis`` package to be installed.\nExample usage (requires a running Redis instance)::\n    # from portalocker.redis import RedisLock\n    # with RedisLock('my-resource', timeout=10):\n    #     ...\n'''\nfrom __future__ import annotations\nimport time\nimport typing\nimport uuid\nfrom portalocker."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/__init__.py` exports `AlreadyLocked` and `LockException`, and `exceptions.py` defines both classes."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "package exports should also include `BoundedSemaphore` and `NamedBoundedSemaphore`",
+          "evidence": [
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE"
+            },
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "'''\nHigh-level locking utilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockExceptio"
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "250429',\n    'types-redis',\n]\nredis = ['redis']\nwin32 = ['pywin32>=226']\n\n[tool.setuptools]\nplatforms = ['any']\ninclude-package-data = false\n\n[tool.setuptools.packages.find]\ninclude = ['portalocker']\n\n[tool.setuptools.package-data]\nportalocker = ['py.typed', 'msvcrt.pyi']\n\n[tool.pytest.ini_options]\nminversion = 8.3\nlog_cli_level = 'INFO'\nxfail_strict = true\nmarkers = [\n    'flaky: mark test as fla"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/__init__.py` exports both `BoundedSemaphore` and `NamedBoundedSemaphore` from `utils.py`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "module-level convenience aliases `LOCK_EX`, `LOCK_SH`, `LOCK_NB`, and `LOCK_UN` must be exported from the package; they map to `LockFlags.EXCLUSIVE`, `LockFlags.SHARED`, `LockFlags.NON_BLOCKING`, and `LockFlags.UNBLOCK` respectively",
+          "evidence": [
+            {
+              "path": "main.py",
+              "excerpt": "point and usage demo.\nProvides a minimal CLI that confirms the library is importable and shows\nthe available lock flag aliases.\n'''\nimport sys\nimport portalocker\ndef main() -> int:\n    '''Print portalocker status and return exit code 0.'''\n    print('portalocker ready.')\n    print(f'  LOCK_EX = {portalocker.LOCK_EX!r}')\n    print(f'  LOCK_SH = {portalocker.LOCK_SH!r}')\n    print(f'  LOCK_NB = {po"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "imitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK_NB == portalocker.LockFlags.NON_BLOCKING\n    True\n    >>> portalocker.LOCK_UN == portalocker.LockFlags.UNBLOCK\n    True\n'''\nfrom porta"
+            },
+            {
+              "path": "portalocker\\portalocker.py",
+              "excerpt": "s  # type: ignore[import]\n    import win32con  # type: ignore[import]\n    import win32file  # type: ignore[import]\n    _LOCK_EX_WIN = win32con.LOCKFILE_EXCLUSIVE_LOCK\n    _LOCK_NB_WIN = win32con.LOCKFILE_FAIL_IMMEDIATELY\n    _OVERLAPPED = pywintypes.OVERLAPPED()\n    def lock(\n        file: typing.IO[typing.Any],\n        flags: LockFlags,\n    ) -> None:\n        '''\n        Lock a file on Windows us"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/__init__.py` defines `LOCK_EX`, `LOCK_SH`, `LOCK_NB`, and `LOCK_UN` as aliases for the corresponding `LockFlags` members."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`portalocker.utils.coalesce(*args, test_value=None)` returns the first argument that is not equal to `test_value` (default `None`); returns `None` when all arguments equal `test_value`",
+          "evidence": [
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "'''\nHigh-level locking utilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport ty"
+            },
+            {
+              "path": "portalocker\\exceptions.py",
+              "excerpt": "'''\nException classes for portalocker.\nDefines LockException and AlreadyLocked used throughout the library.\nExample usage::\n    >>> from portalocker.exceptions import LockException, AlreadyLocked\n    >>> LockException.LOCK_FAILED\n    -1\n    >>> exc = LockException('lock failed')\n    >>> exc.args[0]\n    'l"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/utils.py` defines `coalesce(*args, test_value=None)` with the requested first-non-sentinel behavior."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`PidFileLock.read_pid()` returns the PID (int) written in the lock file, or `None` if the file does not exist",
+          "evidence": [
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "'''\nHigh-level locking utilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked,"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "cker import lock, unlock\nfrom portalocker.utils import (\n    BoundedSemaphore,\n    Lock,\n    NamedBoundedSemaphore,\n    PidFileLock,\n    RLock,\n    TemporaryFileLock,\n    open_atomic,\n)\nLOCK_EX = LockFlags.EXCLUSIVE\nLOCK_SH = LockFlags.SHARED\nLOCK_NB = LockFlags.NON_BLOCKING\nLOCK_UN = LockFlags.UNBLOCK\n__all__ = [\n    'AlreadyLocked',\n    'LockException',\n    'LockFlags',\n    'lock',\n    'unlock',"
+            },
+            {
+              "path": "portalocker\\exceptions.py",
+              "excerpt": "dle associated with the exception.\n        strerror: Optional string description of the error.\n    '''\n    LOCK_FAILED: int = -1\n    def __init__(\n        self,\n        *args: typing.Any,\n        fh: typing.Optional[typing.IO[typing.Any]] = None,\n        **kwargs: typing.Any,\n    ) -> None:\n        self.fh = fh\n        if len(args) >= 2:\n            self.strerror: typing.Optional[str] = str(args[1"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PidFileLock.read_pid()` exists in `portalocker/utils.py` and returns the parsed PID or `None` on missing/invalid file content."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`NamedBoundedSemaphore.get_filenames()` returns the list of `pathlib.Path` lock-file paths (one per slot up to `maximum`)",
+          "evidence": [
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "'\nHigh-level locking utilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker"
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "amming Language :: Python',\n    'Topic :: Education :: Testing',\n    'Topic :: Office/Business',\n    'Topic :: Other/Nonlisted Topic',\n    'Topic :: Software Development :: Libraries :: Python Modules',\n    'Topic :: Software Development :: Libraries',\n    'Topic :: System :: Monitoring',\n    'Typing :: Typed',\n]\nrequires-python = '>=3.9'\ndependencies = [\n    'pywin32>=226; platform_system == \"Win"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "\"chatdev\",\n  \"task\": \"python/portalocker/L0_portalocker\",\n  \"started_at\": \"2026-06-15T11:41:30.855970+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\python\\\\portalocker\\\\tasks\\\\L0_portalocker\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"CLAUDE_SONNET_4_6\",\n  \"token_usage\": {\n    \"prompt_tokens\": 138744,\n    \"completion_tokens\": 33558,\n    \"total_tokens\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`NamedBoundedSemaphore.get_filenames()` is implemented in `portalocker/utils.py` and returns a list of `pathlib.Path` objects for each slot."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "exports `LockException.LOCK_FAILED` constant; `LockException` accepts an optional `fh` keyword argument and an optional second positional `strerror` string",
+          "evidence": [
+            {
+              "path": "portalocker\\exceptions.py",
+              "excerpt": "'''\nException classes for portalocker.\nDefines LockException and AlreadyLocked used throughout the library.\nExample usage::\n    >>> from portalocker.exceptions import LockException, AlreadyLocked\n    >>> LockException.LOCK_FAILED\n    -1\n    >>> exc = LockException('lock failed')\n    >>> exc.args[0]\n    'lock failed'\n    >>> e"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "m __future__ import annotations\nimport time\nimport typing\nimport uuid\nfrom portalocker.exceptions import AlreadyLocked, LockException\ntry:\n    import redis as redis_module\n    _REDIS_AVAILABLE = True\nexcept ImportError:  # pragma: no cover\n    _REDIS_AVAILABLE = False\n    redis_module = None  # type: ignore[assignment]\nDEFAULT_TIMEOUT: float = 5.0\nDEFAULT_CHECK_INTERVAL: float = 0.1\nDEFAULT_EXPIRE"
+            },
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "ng\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker.flags import LockFlags\nfrom portalocker.portalocker import lock, unlock\nlogger = logging.getLogger(__name__)\nDEFAULT_TIMEOUT: float = 5.0\nDEFAULT_CHECK_INTERVAL: float = 0.25\nLOCK_METHOD = LockFlags.EXCLUSIVE | LockFlags.NON_BLOCKING\ndef coalesce("
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LockException.LOCK_FAILED` is defined, and `LockException.__init__` accepts `fh=` plus positional args that include the strerror string used by callers."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "low-level locking behavior in `portalocker/portalocker.py`, with package exports wired through `portalocker/__init__.py`",
+          "evidence": [
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "'''\nFlag definitions for portalocker.\nDefines the LockFlags enum used throughout the library to specify\nlocking behavior in a cross-platform manner.\nExample usage::\n    >>> from portalocker.flags import LockFlags\n    >>> LockFlags.EXCLUSIVE\n    <LockFlags.EXCLUSIVE: 1>\n    >>> LockFlags.SHARED\n    <LockFlags.SHARED: 2>\n    >>> LockFlags.NON_BLOCKING\n    <LockFlags.NON_BLOCKING: 4>"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker"
+            },
+            {
+              "path": "portalocker\\portalocker.py",
+              "excerpt": "'''\nLow-level, platform-specific file locking implementation.\nOn POSIX systems uses ``fcntl.flock``.\nOn Windows systems uses ``win32file`` via pywin32.\nExample usage::\n    >>> import tempfile, os\n    >>> from portalocker.portalocker import lock, unlock\n    >>> from portalocker.flags"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Low-level locking is implemented in `portalocker/portalocker.py`, and the package re-exports the relevant API through `portalocker/__init__.py`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "public flag enums and helpers should support common combinations used by callers",
+          "evidence": [
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "'''\nFlag definitions for portalocker.\nDefines the LockFlags enum used throughout the library to specify\nlocking behavior in a cross-platform manner.\nExample usage::\n    >>> from portalocker.flags import LockFlags\n    >>> LockFlags.EXCLUSIVE\n    <LockFlags.EXCLUSIVE: 1>\n    >>> LockFl"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "s-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK_NB == portalocker.LockFlags.NON_BLOCKING\n    True\n    >>> portalocker.LOCK_UN == portalocker.LockFlags.UNBLOCK\n    True\n'''\nfrom portalocker.exceptions import Al"
+            },
+            {
+              "path": "main.py",
+              "excerpt": "entry point and usage demo.\nProvides a minimal CLI that confirms the library is importable and shows\nthe available lock flag aliases.\n'''\nimport sys\nimport portalocker\ndef main() -> int:\n    '''Print portalocker status and return exit code 0.'''\n    print('portalocker ready.')\n    print(f'  LOCK_EX = {portalocker.LOCK_EX!r}')\n    print(f'  LOCK_SH = {portalocker.LOCK_SH!r}')\n    print(f'  LOCK_NB"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LockFlags` is an `IntFlag` with the common combinations (`EXCLUSIVE`, `SHARED`, `NON_BLOCKING`, `UNBLOCK`) and the package aliases map correctly."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`open_atomic(filename, binary=True)` should be available as a package-level helper for safe file writes",
+          "evidence": [
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "ilities for portalocker.\nProvides Lock, RLock, TemporaryFileLock, PidFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker.flags import LockFlags"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "ort (\n    BoundedSemaphore,\n    Lock,\n    NamedBoundedSemaphore,\n    PidFileLock,\n    RLock,\n    TemporaryFileLock,\n    open_atomic,\n)\nLOCK_EX = LockFlags.EXCLUSIVE\nLOCK_SH = LockFlags.SHARED\nLOCK_NB = LockFlags.NON_BLOCKING\nLOCK_UN = LockFlags.UNBLOCK\n__all__ = [\n    'AlreadyLocked',\n    'LockException',\n    'LockFlags',\n    'lock',\n    'unlock',\n    'Lock',\n    'RLock',\n    'TemporaryFileLock',"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "portalocker.exceptions import AlreadyLocked, LockException\ntry:\n    import redis as redis_module\n    _REDIS_AVAILABLE = True\nexcept ImportError:  # pragma: no cover\n    _REDIS_AVAILABLE = False\n    redis_module = None  # type: ignore[assignment]\nDEFAULT_TIMEOUT: float = 5.0\nDEFAULT_CHECK_INTERVAL: float = 0.1\nDEFAULT_EXPIRE: int = 10\nclass RedisLock:\n    '''\n    A distributed lock backed by Redis"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`open_atomic(filename, binary=True)` is defined in `portalocker/utils.py` and exported at package level."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "include common `LockFlags` members such as `EXCLUSIVE`, `SHARED`, and `NON_BLOCKING`",
+          "evidence": [
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "'''\nFlag definitions for portalocker.\nDefines the LockFlags enum used throughout the library to specify\nlocking behavior in a cross-platform manner.\nExample usage::\n    >>> from portalocker.flags import LockFlags\n    >>> LockFlags.EXCLUSIVE\n    <LockFlags.EXCLUSIVE: 1>\n    >>> LockFlags.SHARED\n    <LockFlags.SHARED: 2>\n    >>> L"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK_NB == portalocker.LockFlags.NON_BLOCKING\n    True\n    >>> portalocker.LOCK_UN == portalocker.LockFlags.UNBLOCK\n    True\n'''\nfrom portalocker.exceptions impor"
+            },
+            {
+              "path": "portalocker\\portalocker.py",
+              "excerpt": ">>> import tempfile, os\n    >>> from portalocker.portalocker import lock, unlock\n    >>> from portalocker.flags import LockFlags\n    >>> fh = open(tempfile.mktemp(), 'w')\n    >>> lock(fh, LockFlags.EXCLUSIVE)\n    >>> unlock(fh)\n    >>> fh.close()\n'''\nimport os\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker.flags import LockFlags\nif os.name == 'nt':"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`flags.py` defines the common `LockFlags` members used by callers."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Core File Locking",
+          "evidence": [
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "'''\nOptional Redis-backed distributed locking for portalocker.\nThis module is intentionally separate from the core file-locking\nimplementation to keep the Redis dependency optional.\nRequires the ``redis`` package to be installed.\nExample usage (requires a running Redis instance)::\n    # from portalocker.redis import RedisLock\n    # with RedisLock('my-resource', timeout=10):\n    #     ..."
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "'''\nportalocker - Cross-platform file locking library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portal"
+            },
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "LOCK: 8>\n    >>> bool(LockFlags.EXCLUSIVE)\n    True\n'''\nimport enum\nclass LockFlags(enum.IntFlag):\n    '''\n    Enum for file lock flags.\n    Members:\n        EXCLUSIVE: Exclusive (write) lock.\n        SHARED: Shared (read) lock.\n        NON_BLOCKING: Non-blocking lock attempt.\n        UNBLOCK: Release / unlock.\n    '''\n    EXCLUSIVE = 1\n    SHARED = 2\n    NON_BLOCKING = 4\n    UNBLOCK = 8"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Core file locking is present in `portalocker/portalocker.py` for both POSIX and Windows paths."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Coordination Helpers",
+          "evidence": [
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "king library.\nThis package provides portable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Coordination helpers are provided via `Lock`, `RLock`, `TemporaryFileLock`, `PidFileLock`, `BoundedSemaphore`, and `NamedBoundedSemaphore` in `utils.py`."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Redis Locking",
+          "evidence": [
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "'''\nOptional Redis-backed distributed locking for portalocker.\nThis module is intentionally separate from the core file-locking\nimplementation to keep the Redis dependency optional.\nRequires the ``redis`` package to be installed.\nExample usage (requires a running Redis instance)::\n    # from"
+            },
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "rtable advisory file locking utilities,\nhigher-level lock helpers, semaphore-like coordination primitives,\nand optional Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK_NB == portalocker.LockFlags.NON_BLOCK"
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "tional-dependencies]\ndocs = ['portalocker[tests]']\ntests = [\n    'coverage-conditional-plugin>=0.9.0',\n    'portalocker[redis]',\n    'pytest-cov>=2.8.1',\n    'pytest-mypy>=0.8.0',\n    'pytest-rerunfailures>=15.0',\n    'pytest-timeout>=2.1.0',\n    'pytest>=5.4.1',\n    'sphinx>=6.0.0',\n    'types-pywin32>=310.0.0.20250429',\n    'types-redis',\n]\nredis = ['redis']\nwin32 = ['pywin32>=226']\n\n[tool.setup"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`portalocker/redis.py` implements optional Redis-backed locking and keeps it separate from the local file-locking code."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "CLI / Packaging Utility",
+          "evidence": [
+            {
+              "path": "main.py",
+              "excerpt": "'''\nportalocker command-line entry point and usage demo.\nProvides a minimal CLI that confirms the library is importable and shows\nthe available lock flag aliases.\n'''\nimport sys\nimport portalocker\ndef main() -> int:\n    '''Print portalocker status and return exit code 0.'''\n    print('portalocker ready.')\n    print(f'  LOCK_EX = {portalocker.LOCK_EX!r}')"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "am check_interval: Polling interval.\n    :param expire: Lock TTL in seconds (auto-release safety net).\n    :param redis_client: A pre-configured ``redis.Redis`` instance.\n                         If ``None``, connects to ``localhost:6379``.\n    :raises ImportError: If ``redis`` package is not installed.\n    '''\n    def __init__(\n        self,\n        name: str,\n        timeout: float = DEFAULT_TIM"
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "[tool.setuptools.package-data]\nportalocker = ['py.typed', 'msvcrt.pyi']\n\n[tool.pytest.ini_options]\nminversion = 8.3\nlog_cli_level = 'INFO'\nxfail_strict = true\nmarkers = [\n    'flaky: mark test as flaky',\n]\nfilterwarnings = [\n    'error',\n    'ignore::DeprecationWarning',\n    'ignore::PendingDeprecationWarning',\n    'ignore::ImportWarning',\n    'ignore::ResourceWarning',\n]\ntestpaths = [\n    'portal"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`main.py` provides a minimal CLI entry point that imports the package and prints the flag aliases."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_sonnet46_python\\\\python\\\\portalocker\\\\L0_portalocker\",\n  \"files_collected\": 12,\n  \"duration_seconds\": 639.55\n}"
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "ning',\n    'ignore::ResourceWarning',\n]\ntestpaths = [\n    'portalocker',\n    'unit_tests',\n    'check_tests',\n]\n\npython_files = [\n    'unit_tests/*.py',\n    'check_tests/*.py',\n]\n\naddopts = '''\n    -ra\n    --strict-markers\n    --strict-config\n    --ignore setup.py\n    --ignore portalocker/_*.py\n    --doctest-modules\n    --cov portalocker\n    --cov-report term-missing\n'''\n\ntimeout = 20"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo is a flat project root with no outer wrapper directory, matching the required layout constraint."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Provide an importable package or module layout and any minimal dependency/config files needed to run the project.",
+          "evidence": [
+            {
+              "path": "main.py",
+              "excerpt": "'''\nportalocker command-line entry point and usage demo.\nProvides a minimal CLI that confirms the library is importable and shows\nthe available lock flag aliases.\n'''\nimport sys\nimport portalocker\ndef main() -> int:\n    '''Print portalocker status and return exit code 0.'''\n    print('portalocker ready.')\n    print(f'  LOCK_EX = {porta"
+            },
+            {
+              "path": "portalocker\\redis.py",
+              "excerpt": "onally separate from the core file-locking\nimplementation to keep the Redis dependency optional.\nRequires the ``redis`` package to be installed.\nExample usage (requires a running Redis instance)::\n    # from portalocker.redis import RedisLock\n    # with RedisLock('my-resource', timeout=10):\n    #     ...\n'''\nfrom __future__ import annotations\nimport time\nimport typing\nimport uuid\nfrom portalocker."
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "250429',\n    'types-redis',\n]\nredis = ['redis']\nwin32 = ['pywin32>=226']\n\n[tool.setuptools]\nplatforms = ['any']\ninclude-package-data = false\n\n[tool.setuptools.packages.find]\ninclude = ['portalocker']\n\n[tool.setuptools.package-data]\nportalocker = ['py.typed', 'msvcrt.pyi']\n\n[tool.pytest.ini_options]\nminversion = 8.3\nlog_cli_level = 'INFO'\nxfail_strict = true\nmarkers = [\n    'flaky: mark test as fla"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes an importable `portalocker` package plus minimal config/build files such as `pyproject.toml` and `requirements.txt`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "idFileLock, BoundedSemaphore,\nNamedBoundedSemaphore, open_atomic, and the coalesce helper.\n'''\nfrom __future__ import annotations\nimport contextlib\nimport logging\nimport os\nimport pathlib\nimport tempfile\nimport time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker.flags import LockFlags\nfrom portalocker.portalocker import lock, unlock\nlogger = logging."
+            },
+            {
+              "path": "pyproject.toml",
+              "excerpt": "'Programming Language :: Python :: Implementation',\n    'Programming Language :: Python',\n    'Topic :: Education :: Testing',\n    'Topic :: Office/Business',\n    'Topic :: Other/Nonlisted Topic',\n    'Topic :: Software Development :: Libraries :: Python Modules',\n    'Topic :: Software Development :: Libraries',\n    'Topic :: System :: Monitoring',\n    'Typing :: Typed',\n]\nrequires-python = '>"
+            },
+            {
+              "path": "portalocker\\exceptions.py",
+              "excerpt": "exc2.fh is None\n    True\n'''\nimport typing\nclass LockException(Exception):\n    '''\n    Exception raised when a lock cannot be acquired.\n    Attributes:\n        LOCK_FAILED: Constant indicating lock failure (-1).\n        fh: Optional file handle associated with the exception.\n        strerror: Optional string description of the error.\n    '''\n    LOCK_FAILED: int = -1\n    def __init__(\n        sel"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No test files, `blackbox_tests/`, or wrapper directory are present in the visible repo."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Ensure `LockFlags` and `open_atomic` are public package-level symbols, alongside the core lock helpers.",
+          "evidence": [
+            {
+              "path": "portalocker\\__init__.py",
+              "excerpt": "Redis-backed distributed locking.\nExample usage::\n    >>> import portalocker\n    >>> portalocker.LOCK_EX == portalocker.LockFlags.EXCLUSIVE\n    True\n    >>> portalocker.LOCK_SH == portalocker.LockFlags.SHARED\n    True\n    >>> portalocker.LOCK_NB == portalocker.LockFlags.NON_BLOCKING\n    True\n    >>> portalocker.LOCK_UN == portalocker.LockFlags.UNBLOCK\n    True\n'''\nfrom portalocker.exceptions impor"
+            },
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "import time\nimport typing\nfrom portalocker.exceptions import AlreadyLocked, LockException\nfrom portalocker.flags import LockFlags\nfrom portalocker.portalocker import lock, unlock\nlogger = logging.getLogger(__name__)\nDEFAULT_TIMEOUT: float = 5.0\nDEFAULT_CHECK_INTERVAL: float = 0.25\nLOCK_METHOD = LockFlags.EXCLUSIVE | LockFlags.NON_BLOCKING\ndef coalesce(\n    *args: typing.Any,\n    test_value: typing"
+            },
+            {
+              "path": "portalocker\\flags.py",
+              "excerpt": "'''\nFlag definitions for portalocker.\nDefines the LockFlags enum used throughout the library to specify\nlocking behavior in a cross-platform manner.\nExample usage::\n    >>> from portalocker.flags import LockFlags\n    >>> LockFlags.EXCLUSIVE\n    <LockFlags.EXCLUSIVE: 1>\n    >>> LockFlags.SHARED\n    <LockFlags.SHARED: 2>\n    >>> L"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`LockFlags` and `open_atomic` are exposed at package level alongside the lock helpers in `__init__.py`."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Include a `requirements.txt` listing any project-level dependencies (pytest and test tools are installed separately by the eval harness).",
+          "evidence": [
+            {
+              "path": "pyproject.toml",
+              "excerpt": "0.0.0.20250429',\n    'types-redis',\n]\nredis = ['redis']\nwin32 = ['pywin32>=226']\n\n[tool.setuptools]\nplatforms = ['any']\ninclude-package-data = false\n\n[tool.setuptools.packages.find]\ninclude = ['portalocker']\n\n[tool.setuptools.package-data]\nportalocker = ['py.typed', 'msvcrt.pyi']\n\n[tool.pytest.ini_options]\nminversion = 8.3\nlog_cli_level = 'INFO'\nxfail_strict = true\nmarkers = [\n    'flaky: mark tes"
+            },
+            {
+              "path": "requirements.txt",
+              "excerpt": "redis"
+            },
+            {
+              "path": "portalocker\\utils.py",
+              "excerpt": "CHECK_INTERVAL: float = 0.25\nLOCK_METHOD = LockFlags.EXCLUSIVE | LockFlags.NON_BLOCKING\ndef coalesce(\n    *args: typing.Any,\n    test_value: typing.Any = None,\n) -> typing.Any:\n    '''\n    Return the first argument that is not equal to ``test_value``.\n    Returns ``None`` when all arguments equal ``test_value``.\n    :param args: Values to test.\n    :param test_value: The sentinel value to skip (de"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`requirements.txt` exists and lists a project dependency (`redis`)."
+        }
+      ],
+      "feature_count": 22,
+      "constraint_count": 0,
+      "implemented_count": 22,
+      "partial_count": 0,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 1.0,
+      "constraint_coverage": 1.0,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 141787,
+        "completion_tokens": 5547,
+        "total_tokens": 147334
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "python",
+        "framework": "python",
+        "app_style": "library",
+        "build_system": "pyproject",
+        "persistence": "redis",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 5.0,
+        "stack_alignment": 5.0,
+        "reference_alignment": 5.0
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 152636,
+        "completion_tokens": 3448,
+        "total_tokens": 156084
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 1,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "127",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository matches the requested portalocker shape: package-level exports are wired correctly, the low-level POSIX/Windows lock implementation exists, the higher-level helpers and semaphore classes are present, and the optional Redis lock is kept separate. The CLI/config files are included, and there are no visible test files or wrapper-directory violations.\n\n### Missing List\n\n- None noted.\n\n### Critical Constraint Misses\n\n- None noted.",
+    "architecture_review": "### Stack Inference\n\n该仓库明确是 Python library 形态，使用 `pyproject.toml` + `setuptools` 构建，核心包位于 `portalocker/`，并把本地文件锁与 `redis.py` 中的分布式锁区分开来。整体技术栈判断与 `task.json` 中的 Python / library / pyproject / Redis 辅助持久化画像基本一致。\n\n### Scoring Mode\n\n本次按“架构质量”而不是“功能是否能跑通”评分，因此重点看真实仓库中的目录组织、模块边界、构建配置、入口设计，以及这些内容是否和 Python 库项目的常见工程习惯一致。评分不会因为文件少就自动偏低，也不会因为看起来像完整项目就自动偏高，而是看这些文件之间是否形成协调、可信、可维护的结构。\n\n### Strengths\n\n- 包边界总体清晰：`portalocker/__init__.py` 负责公共导出，`portalocker/portalocker.py` 负责底层平台锁实现，`portalocker/utils.py` 提供高层锁与协调原语，`portalocker/redis.py` 单独承载分布式锁。\n- 公共 API 组织较完整，需求列出的主要导出项和别名基本都通过包入口统一暴露，作为库使用时发现成本较低。\n- 构建基础设施存在且符合 Python 生态习惯：有 `pyproject.toml`、`requirements.txt`、类型标记文件 `py.typed`，说明作者至少考虑了安装、类型分发和跨平台依赖声明。\n- 将 Redis 能力拆到独立模块而不是混入本地锁主路径，这个分层方向本身是合理的，也符合“核心文件锁优先、扩展能力隔离”的库设计思路。\n\n### Issues\n\n- `pyproject.toml` 与仓库实际内容协调性不足：`readme = 'README.rst'` 指向的文件名与实际 `readme.rst` 不一致，且 pytest 配置引用了不存在的 `unit_tests/`、`check_tests/`，说明打包/工具配置像是从别处迁移而来，没有完全收敛到当前仓库结构。\n- Redis 依赖的分层意图和安装入口不一致：`portalocker/redis.py` 被单独拆分是合理的，但 `requirements.txt` 直接声明 `redis`，削弱了“Redis 可选、与本地锁分离”的架构目标。\n- 库入口和 CLI/构建入口没有很好对齐：存在 `main.py` 这个演示式入口，但 `pyproject.toml` 没有 console script，也没有把它纳入明确的运行模型；对一个以导入为主的 Python library 来说，这个顶层入口显得游离。\n- 整体模块划分清楚，但高层能力大量堆叠在 `portalocker/utils.py` 中，`Lock`、`RLock`、`TemporaryFileLock`、`PidFileLock`、`BoundedSemaphore`、`NamedBoundedSemaphore`、`open_atomic` 全放在单文件，后续扩展时可维护性会下降。\n\n### Stack Mismatches\n\n- 作为现代 Python 库，通常会让默认依赖尽量精简，并通过 optional dependencies 暴露额外能力；这里 `pyproject.toml` 已这样设计，但 `requirements.txt` 又把 `redis` 固化为默认依赖，和常见做法不完全一致。\n- 仓库采用平铺包布局而非 `src/` 布局本身没问题，但其工具配置看起来像面向更完整工程，和当前精简仓库的实际形态有轻微错位。\n\n### Reference Gaps\n\n- 需求强调 Redis 锁应保持可选，但仓库级 `requirements.txt` 仍把 `redis` 设为默认依赖，和参考要求存在偏差。\n- 需求要求包含最小且必要的构建/配置文件；当前 `pyproject.toml` 带有不少与现仓库不匹配的测试与元数据配置，超出了“最小项目形态”且没有与真实文件树保持一致。\n- 需求只要求提供 CLI / packaging utility 的能力，但当前 `main.py` 更像演示脚本，未通过打包配置形成正式入口。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 294423,
+    "completion_tokens": 8995,
+    "total_tokens": 303418,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 141787,
+        "completion_tokens": 5547,
+        "total_tokens": 147334
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 152636,
+        "completion_tokens": 3448,
+        "total_tokens": 156084
+      }
+    ]
+  },
+  "language": "python",
+  "project_name": "portalocker",
+  "build_status": "ok",
+  "correctness": 76.19,
+  "faithfulness_score": 5.0,
+  "architecture_score": 5.0,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

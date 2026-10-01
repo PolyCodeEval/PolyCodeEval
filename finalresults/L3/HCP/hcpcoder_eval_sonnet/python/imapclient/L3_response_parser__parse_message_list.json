@@ -1,0 +1,35 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.51,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 287 items\n\ntests/unit_tests/test_auth.py ...                                        [  1%]\ntests/unit_tests/test_config.py ............                             [  5%]\ntests/unit_tests/test_datetime_util.py ........                          [  8%]\ntests/unit_tests/test_enable.py .....                                    [  9%]\ntests/unit_tests/test_fixed_offset.py ......                             [ 11%]\ntests/unit_tests/test_folder_status.py ...                               [ 12%]\ntests/unit_tests/test_imap_utf7.py ...                                   [ 13%]\ntests/unit_tests/test_imapclient.py .................................... [ 26%]\n.........................................                                [ 40%]\ntests/unit_tests/test_init.py .......                                    [ 43%]\ntests/unit_tests/test_remaining_tasks.py ........                        [ 45%]\ntests/unit_tests/test_response_lexer.py ..............                   [ 50%]\ntests/unit_tests/test_response_parser.py ......................FFF...... [ 61%]\n........................                                                 [ 70%]\ntests/unit_tests/test_search.py ..F.................                     [ 77%]\ntests/unit_tests/test_sort.py ....                                       [ 78%]\ntests/unit_tests/test_starttls.py ....                                   [ 79%]\ntests/unit_tests/test_store.py .........                                 [ 82%]\ntests/unit_tests/test_thread.py ....                                     [ 84%]\ntests/unit_tests/test_util_functions.py ................................ [ 95%]\n........                                                                 [ 98%]\ntests/unit_tests/test_version.py .....                                   [100%]\n\n=================================== FAILURES ===================================\n_______________________ TestParseMessageList.test_modseq _______________________\n\nself = <unit_tests.test_response_parser.TestParseMessageList testMethod=test_modseq>\n\n    def test_modseq(self):\n        out = parse_message_list([b\"1 2 3 (modseq 999)\"])\n        self.assertSequenceEqual(out, [1, 2, 3])\n>       self.assertEqual(out.modseq, 999)\nE       AssertionError: None != 999\n\ntests/unit_tests/test_response_parser.py:211: AssertionError\n_________________ TestParseMessageList.test_modseq_interleaved _________________\n\nself = <unit_tests.test_response_parser.TestParseMessageList testMethod=test_modseq_interleaved>\n\n    def test_modseq_interleaved(self):\n        # Unlikely but test it anyway.\n        out = parse_message_list([b\"1 2 (modseq 9) 3 4\"])\n>       self.assertSequenceEqual(out, [1, 2, 3, 4])\nE       AssertionError: Sequences differ: [1, 2] != [1, 2, 3, 4]\nE       \nE       Second sequence contains 2 additional elements.\nE       First extra element 2:\nE       3\nE       \nE       - [1, 2]\nE       + [1, 2, 3, 4]\n\ntests/unit_tests/test_response_parser.py:221: AssertionError\n__________________ TestParseMessageList.test_modseq_no_space ___________________\n\nself = <unit_tests.test_response_parser.TestParseMessageList testMethod=test_modseq_no_space>\n\n    def test_modseq_no_space(self):\n        out = parse_message_list([b\"1 2 3(modseq 999)\"])\n        self.assertSequenceEqual(out, [1, 2, 3])\n>       self.assertEqual(out.modseq, 999)\nE       AssertionError: None != 999\n\ntests/unit_tests/test_response_parser.py:216: AssertionError\n____________________________ TestSearch.test_modseq ____________________________\n\nself = <unit_tests.test_search.TestSearch testMethod=test_modseq>\n\n    def test_modseq(self):\n        self.client._raw_command_untagged.return_value = [b\"1 2 (MODSEQ 51101)\"]\n    \n        result = self.client.search([\"MODSEQ\", \"40000\"])\n    \n        self.check_call([b\"MODSEQ\", b\"40000\"])\n        self.assertEqual(result, [1, 2])\n>       self.assertEqual(result.modseq, 51101)\nE       AssertionError: None != 51101\n\ntests/unit_tests/test_search.py:83: AssertionError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq\nFAILED tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq_interleaved\nFAILED tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq_no_space\nFAILED tests/unit_tests/test_search.py::TestSearch::test_modseq - AssertionEr...\n======================== 4 failed, 283 passed in 1.10s =========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_response_parser__parse_message_list",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq_interleaved",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseMessageList::test_modseq_no_space",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 3,
+    "total": 3
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

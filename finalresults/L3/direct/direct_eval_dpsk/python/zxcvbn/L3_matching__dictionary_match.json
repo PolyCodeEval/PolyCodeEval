@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.81,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py ...F........                           [ 41%]\ntests/unit_tests/scoring_test.py .............                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py .....F                                   [100%]\n\n=================================== FAILURES ===================================\n___________________________ test_dictionary_matching ___________________________\n\n    def test_dictionary_matching():\n        def dm(pw):\n            return matching.dictionary_match(pw, test_dicts)\n    \n        test_dicts = {\n            'd1': {\n                'motherboard': 1,\n                'mother': 2,\n                'board': 3,\n                'abcd': 4,\n                'cdef': 5,\n            },\n            'd2': {\n                'z': 1,\n                '8': 2,\n                '99': 3,\n                '$': 4,\n                'asdf1234&*': 5,\n            }\n        }\n    \n        matches = dm('motherboard')\n        patterns = ['mother', 'motherboard', 'board']\n        msg = 'matches words that contain other words'\n>       check_matches(msg, matches, 'dictionary', patterns,\n                      [[0, 5], [0, 10], [6, 10]], {\n                          'matched_word': ['mother', 'motherboard', 'board'],\n                          'rank': [2, 1, 3],\n                          'dictionary_name': ['d1', 'd1', 'd1'],\n                      })\n\ntests/unit_tests/matching_test.py:127: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nprefix = 'matches words that contain other words'\nmatches = [{'pattern': 'dictionary', 'i': 0, 'j': 10, 'token': 'motherboard', ...}]\npattern_names = ['dictionary', 'dictionary', 'dictionary']\npatterns = ['mother', 'motherboard', 'board'], ijs = [[0, 5], [0, 10], [6, 10]]\nprops = {'matched_word': ['mother', 'motherboard', 'board'], 'rank': [2, 1, 3], 'dictionary_name': ['d1', 'd1', 'd1']}\n\n    def check_matches(prefix, matches, pattern_names, patterns, ijs, props):\n        if isinstance(pattern_names, str):\n            # shortcut: if checking for a list of the same type of patterns,\n            # allow passing a string 'pat' instead of array ['pat', 'pat', ...]\n            pattern_names = [pattern_names] * len(patterns)\n    \n        is_equal_len_args = len(pattern_names) == len(patterns) == len(ijs)\n        for prop, lst in props.items():\n            # props is structured as: keys that points to list of values\n            if not is_equal_len_args or len(lst) != len(patterns):\n                raise Exception('unequal argument lists to check_matches')\n    \n        msg = \"%s: len(matches) == %s\" % (prefix, len(patterns))\n>       assert len(matches) == len(patterns), msg\nE       AssertionError: matches words that contain other words: len(matches) == 3\nE       assert 1 == 3\nE        +  where 1 = len([{'pattern': 'dictionary', 'i': 0, 'j': 10, 'token': 'motherboard', ...}])\nE        +  and   3 = len(['mother', 'motherboard', 'board'])\n\ntests/unit_tests/matching_test.py:37: AssertionError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa23504ab90>\ncapsys = <_pytest.capture.CaptureFixture object at 0x7fa23504add0>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:35: in zxcvbn\n    result['feedback'] = feedback.get_feedback(result['score'],\nsrc/zxcvbn/feedback.py:26: in get_feedback\n    feedback = get_match_feedback(longest_match, len(sequence) == 1)\nsrc/zxcvbn/feedback.py:43: in get_match_feedback\n    return get_dictionary_match_feedback(match, is_sole_match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'dictionary', 'i': 0, 'j': 7, 'token': 'password', ...}\nis_sole_match = True\n\n    def get_dictionary_match_feedback(match, is_sole_match):\n        warning = ''\n        if match['dictionary_name'] == 'passwords':\n            if is_sole_match and not match.get('l33t', False) and not \\\n>                   match['reversed']:\nE                   KeyError: 'reversed'\n\nsrc/zxcvbn/feedback.py:97: KeyError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_dictionary_matching - Assertio...\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - KeyError: 're...\n========================= 2 failed, 32 passed in 1.45s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__dictionary_match",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      }
+    ],
+    "passed": 32,
+    "failed": 2,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9412,
+  "compile_score": 0.5,
+  "test_score": 0.4706,
+  "score": 0.9706
+}

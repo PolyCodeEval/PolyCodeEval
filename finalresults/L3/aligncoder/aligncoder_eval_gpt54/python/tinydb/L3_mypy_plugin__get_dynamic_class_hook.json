@@ -1,0 +1,27 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 38.13,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-7.4.4, pluggy-1.6.0\nrootdir: /workspace\nplugins: cov-4.1.0\ncollected 207 items\n\ntests/unit_tests/test_middlewares.py ........                            [  3%]\ntests/unit_tests/test_mypy_plugin.py F.F                                 [  5%]\ntests/unit_tests/test_operations.py ..............                       [ 12%]\ntests/unit_tests/test_queries.py ................................        [ 27%]\ntests/unit_tests/test_storages.py .............                          [ 33%]\ntests/unit_tests/test_tables.py ..............................           [ 48%]\ntests/unit_tests/test_tinydb.py ........................................ [ 67%]\n.........................................................                [ 95%]\ntests/unit_tests/test_utils.py ..........                                [100%]\n\n=================================== FAILURES ===================================\n__________ test_get_dynamic_class_hook_returns_hook_for_with_typehint __________\n\n    def test_get_dynamic_class_hook_returns_hook_for_with_typehint():\n        module, _, Options = load_mypy_plugin_module()\n        plugin = module.TinyDBPlugin(Options())\n    \n>       hook = plugin.get_dynamic_class_hook(\"tinydb.utils.with_typehint\")\n\ntests/unit_tests/test_mypy_plugin.py:56: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <tinydb_mypy_plugin_test.TinyDBPlugin object at 0x7f977a58e650>\nfullname = 'tinydb.utils.with_typehint'\n\n    def get_dynamic_class_hook(self, fullname: str) -> CB[DynamicClassDef]:\n        if fullname == 'tinydb.utils.with_typehint':\n>           return self._tinydb_with_typehint_hook\nE           AttributeError: 'TinyDBPlugin' object has no attribute '_tinydb_with_typehint_hook'\n\nsrc/tinydb/mypy_plugin.py:20: AttributeError\n________________ test_dynamic_class_hook_adds_symbol_table_node ________________\n\n    def test_dynamic_class_hook_adds_symbol_table_node():\n        module, NameExpr, Options = load_mypy_plugin_module()\n        plugin = module.TinyDBPlugin(Options())\n        expected = object()\n        plugin.lookup_fully_qualified = lambda _name: expected\n        api = types.SimpleNamespace(\n            add_symbol_table_node=lambda name, node: setattr(api, \"added\", (name, node))\n        )\n        arg = NameExpr(\"Table\")\n        arg.fullname = \"tinydb.table.Table\"\n        ctx = types.SimpleNamespace(\n            call=types.SimpleNamespace(args=[arg]),\n            api=api,\n            name=\"GeneratedTable\",\n        )\n    \n>       hook = plugin.get_dynamic_class_hook(\"tinydb.utils.with_typehint\")\n\ntests/unit_tests/test_mypy_plugin.py:84: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <tinydb_mypy_plugin_test.TinyDBPlugin object at 0x7f977a5ca170>\nfullname = 'tinydb.utils.with_typehint'\n\n    def get_dynamic_class_hook(self, fullname: str) -> CB[DynamicClassDef]:\n        if fullname == 'tinydb.utils.with_typehint':\n>           return self._tinydb_with_typehint_hook\nE           AttributeError: 'TinyDBPlugin' object has no attribute '_tinydb_with_typehint_hook'\n\nsrc/tinydb/mypy_plugin.py:20: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_mypy_plugin.py::test_get_dynamic_class_hook_returns_hook_for_with_typehint\nFAILED tests/unit_tests/test_mypy_plugin.py::test_dynamic_class_hook_adds_symbol_table_node\n======================== 2 failed, 205 passed in 37.39s ========================\n",
+  "stderr": "",
+  "task": "python/tinydb/L3_mypy_plugin__get_dynamic_class_hook",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_mypy_plugin.py::test_get_dynamic_class_hook_returns_hook_for_with_typehint",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 1,
+    "total": 1
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

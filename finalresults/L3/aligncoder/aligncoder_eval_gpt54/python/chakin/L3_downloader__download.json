@@ -1,0 +1,31 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.59,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 6 items\n\ntests/unit_tests/test_downloader.py FF...                                [ 83%]\ntests/acceptance_tests/acceptance_test.py F                              [100%]\n\n=================================== FAILURES ===================================\n_____________________ TestDownloader.test_download_by_name _____________________\n\nself = <test_downloader.TestDownloader testMethod=test_download_by_name>\nmock_urlretrieve = <MagicMock name='urlretrieve' id='140702642992992'>\n\n    @patch('chakin.downloader.urlretrieve')\n    def test_download_by_name(self, mock_urlretrieve):\n        test_save_dir = './test_download'\n        test_file_name = self.name + '.vec'\n        test_save_path = os.path.join(test_save_dir, test_file_name)\n    \n        if not os.path.exists(test_save_dir):\n            os.makedirs(test_save_dir)\n    \n        def fake_urlretrieve(url, filename, reporthook):\n            with open(filename, 'wb') as f:\n                f.write(os.urandom(1024))\n            reporthook(1, 1024, 1024 * 1024)\n            return filename, MagicMock()\n    \n        mock_urlretrieve.side_effect = fake_urlretrieve\n    \n>       download_result = download(name=self.name, save_dir=test_save_dir)\n\ntests/unit_tests/test_downloader.py:30: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nnumber = -1, name = 'word2vec.Wiki-NEologd.50d', save_dir = './test_download'\n\n    def download(number=-1, name=\"\", save_dir='./'):\n        \"\"\"Download pre-trained word vector\n        :param number: integer, default ``None``\n        :param save_dir: str, default './'\n        :return: file path for downloaded file\n        \"\"\"\n>       if total_size > 0:\nE       NameError: name 'total_size' is not defined\n\nsrc/chakin/downloader.py:20: NameError\n____________________ TestDownloader.test_download_by_number ____________________\n\nself = <test_downloader.TestDownloader testMethod=test_download_by_number>\nmock_urlretrieve = <MagicMock name='urlretrieve' id='140702643293968'>\n\n    @patch('chakin.downloader.urlretrieve')\n    def test_download_by_number(self, mock_urlretrieve):\n        test_save_dir = './test_download_number'\n    \n        def fake_urlretrieve(url, filename, reporthook):\n            with open(filename, 'wb') as f:\n                f.write(b'data')\n            reporthook(1, 1, 1)\n            return filename, MagicMock()\n    \n        mock_urlretrieve.side_effect = fake_urlretrieve\n>       result = download(number=self.number, save_dir=test_save_dir)\n\ntests/unit_tests/test_downloader.py:52: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nnumber = 22, name = '', save_dir = './test_download_number'\n\n    def download(number=-1, name=\"\", save_dir='./'):\n        \"\"\"Download pre-trained word vector\n        :param number: integer, default ``None``\n        :param save_dir: str, default './'\n        :return: file path for downloaded file\n        \"\"\"\n>       if total_size > 0:\nE       NameError: name 'total_size' is not defined\n\nsrc/chakin/downloader.py:20: NameError\n___________________ TestDownloader.test_download_acceptance ____________________\n\nself = <acceptance_test.TestDownloader testMethod=test_download_acceptance>\nmock_urlretrieve = <MagicMock name='urlretrieve' id='140702642985792'>\n\n    @patch('chakin.downloader.urlretrieve')\n    def test_download_acceptance(self, mock_urlretrieve):\n        test_save_dir = os.path.join('chakin', 'test_downloads')\n        test_file_name = 'test.vec'\n        test_save_path = os.path.join(test_save_dir, test_file_name)\n    \n        if not os.path.exists(test_save_dir):\n            os.makedirs(test_save_dir)\n    \n        def fake_urlretrieve(url, filename, reporthook):\n            with open(filename, 'wb') as f:\n                f.write(os.urandom(1024))\n            reporthook(1, 1024, 1024 * 1024)\n            return filename, None\n    \n        mock_urlretrieve.side_effect = fake_urlretrieve\n    \n>       download_result = download(number=0, save_dir=test_save_dir)\n\ntests/acceptance_tests/acceptance_test.py:28: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nnumber = 0, name = '', save_dir = 'chakin/test_downloads'\n\n    def download(number=-1, name=\"\", save_dir='./'):\n        \"\"\"Download pre-trained word vector\n        :param number: integer, default ``None``\n        :param save_dir: str, default './'\n        :return: file path for downloaded file\n        \"\"\"\n>       if total_size > 0:\nE       NameError: name 'total_size' is not defined\n\nsrc/chakin/downloader.py:20: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_downloader.py::TestDownloader::test_download_by_name\nFAILED tests/unit_tests/test_downloader.py::TestDownloader::test_download_by_number\nFAILED tests/acceptance_tests/acceptance_test.py::TestDownloader::test_download_acceptance\n========================= 3 failed, 3 passed in 0.85s ==========================\n",
+  "stderr": "",
+  "task": "python/chakin/L3_downloader__download",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_downloader.py::TestDownloader::test_download_by_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_downloader.py::TestDownloader::test_download_by_number",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 2,
+    "total": 2
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,24 @@
+{
+  "task": "go/gjson/L3_gjson__Get",
+  "project": "go/gjson",
+  "language": "go",
+  "prompt_path": "datasets/go/gjson/tasks/L3_gjson__Get/prompt.md",
+  "task_json_path": "datasets/go/gjson/tasks/L3_gjson__Get/task.json",
+  "source_file_path": "datasets/go/gjson/src/gjson.go",
+  "target_symbol": "gjson.go::Get",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: calling the top-level Get on the receiver's Raw JSON, then adjusting index offsets relative to the receiver's starting position. It correctly notes the method is intended for JSON arrays or objects and that the returned Result's position is adjusted by the receiver's offset. However, it omits the important distinction between the two adjustment paths — when `r.Indexes` is non-nil (a multi-index result, e.g. from a multipath query), all entries in the Indexes slice are each incremented, versus the single `r.Index` field being incremented otherwise. This branching logic is a meaningful implementation detail that a developer would need to know to implement the function correctly.",
+  "missing_functionality": [
+    "Does not mention the Indexes slice case: when the result has multiple indexes (r.Indexes != nil), each element in the slice is individually incremented by t.Index, not just the single r.Index field."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'if the returned result references a location within the original text' slightly understates the behavior — the index adjustment is always applied unconditionally, not conditionally based on whether the result references a location."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gjson__Get.raw.md"
+}

@@ -1,0 +1,26 @@
+{
+  "task": "go/go-env/L3_env__doParseField",
+  "project": "go/go-env",
+  "language": "go",
+  "prompt_path": "datasets/go/go-env/tasks/L3_env__doParseField/prompt.md",
+  "task_json_path": "datasets/go/go-env/tasks/L3_env__doParseField/task.json",
+  "source_file_path": "datasets/go/go-env/src/env.go",
+  "target_symbol": "env.go::doParseField",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.0,
+  "reason": "The description matches the implementation well on the main control flow: skip unsettable fields, recurse early for non-nil pointer-to-struct and anonymous unnamed struct fields, parse field params, honor Ignored, invoke the processing callback, optionally initialize nil pointers, and recurse into structs or slices of structs with prefixed options. The main issues are a few imprecise claims: the description says initialization happens for an \"invalid nil pointer,\" but the code uses `isInvalidPtr(refField)` and then dereferences the field afterward, which is more specific than stated; it also implies recursive parsing after initialization for any nested field, while the implementation only recurses for `refField.Kind() == Struct` and for declared slice-of-struct types detected from the type metadata. Overall it is accurate and fairly complete, with only minor wording inaccuracies.",
+  "missing_functionality": [
+    "The description does not make explicit that early recursive handling of struct fields happens before parameter parsing and callback processing for non-nil pointer-to-struct fields and unnamed struct values.",
+    "It does not clearly state that struct recursion after initialization uses `doParse` on the field value itself, while the earlier special cases use `parseInternal` on an interface/address."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying the field is initialized when it is an \"invalid nil pointer\" is imprecise; the implementation specifically checks `params.Init && isInvalidPtr(refField)`.",
+    "The phrase \"nested parsing is performed for struct-valued fields\" is a bit too broad unless read carefully, because the implementation has distinct early-return behavior for non-nil pointer-to-struct and unnamed struct fields, and later recursion only when `refField.Kind() == reflect.Struct`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_env__doParseField.raw.md"
+}

@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.92,
+  "stdout": "i:j],\n                            'graph': graph_name,\n                            'turns': turns,\n                            'shifted_count': shifted_count,\n                        })\n                    i = j\n                    break\n    \n>       return matches\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:370: NameError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:305: in spatial_match\n    matches.extend(spatial_match_helper(password, graph, graph_name))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojw...ejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej'\ngraph = {'!': ['`~', None, None, '2@', 'qQ', None], '\"': [';:', '[{', ']}', None, None, '/?'], '#': ['2@', None, None, '4$', 'eE', 'wW'], '$': ['3#', None, None, '5%', 'rR', 'eE'], ...}\ngraph_name = 'qwerty'\n\n    def spatial_match_helper(password, graph, graph_name):\n        i = 0\n        while i < len(password) - 1:\n            j = i + 1\n            last_direction = None\n            turns = 0\n            shifted_count = 1 if SHIFTED_RX.match(password[i]) else 0\n    \n            while True:\n                prev_char = password[j - 1]\n                found = False\n                found_direction = -1\n                cur_direction = None\n    \n                adjacents = graph.get(prev_char, [])\n                for direction, adjacent in enumerate(adjacents):\n                    if not adjacent:\n                        continue\n                    if password[j] in adjacent:\n                        found = True\n                        found_direction = direction\n                        if adjacent.find(password[j]) != -1 and SHIFTED_RX.match(password[j]):\n                            shifted_count += 1\n                        if last_direction != found_direction:\n                            turns += 1\n                            last_direction = found_direction\n                        break\n    \n                if not found:\n                    if j - i > 2:\n>                       matches.append({\n                            'pattern': 'spatial',\n                            'i': i,\n                            'j': j - 1,\n                            'token': password[i:j],\n                            'graph': graph_name,\n                            'turns': turns,\n                            'shifted_count': shifted_count,\n                        })\nE                       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:343: NameError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7861ba0bb0>\ncapsys = <_pytest.capture.CaptureFixture object at 0x7f7861ba0b20>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:305: in spatial_match\n    matches.extend(spatial_match_helper(password, graph, graph_name))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'password'\ngraph = {'!': ['`~', None, None, '2@', 'qQ', None], '\"': [';:', '[{', ']}', None, None, '/?'], '#': ['2@', None, None, '4$', 'eE', 'wW'], '$': ['3#', None, None, '5%', 'rR', 'eE'], ...}\ngraph_name = 'qwerty'\n\n    def spatial_match_helper(password, graph, graph_name):\n        i = 0\n        while i < len(password) - 1:\n            j = i + 1\n            last_direction = None\n            turns = 0\n            shifted_count = 1 if SHIFTED_RX.match(password[i]) else 0\n    \n            while True:\n                prev_char = password[j - 1]\n                found = False\n                found_direction = -1\n                cur_direction = None\n    \n                adjacents = graph.get(prev_char, [])\n                for direction, adjacent in enumerate(adjacents):\n                    if not adjacent:\n                        continue\n                    if password[j] in adjacent:\n                        found = True\n                        found_direction = direction\n                        if adjacent.find(password[j]) != -1 and SHIFTED_RX.match(password[j]):\n                            shifted_count += 1\n                        if last_direction != found_direction:\n                            turns += 1\n                            last_direction = found_direction\n                        break\n    \n                if not found:\n                    if j - i > 2:\n                        matches.append({\n                            'pattern': 'spatial',\n                            'i': i,\n                            'j': j - 1,\n                            'token': password[i:j],\n                            'graph': graph_name,\n                            'turns': turns,\n                            'shifted_count': shifted_count,\n                        })\n                    i = j\n                    break\n    \n                j += 1\n                if j >= len(password):\n                    if j - i > 2:\n                        matches.append({\n                            'pattern': 'spatial',\n                            'i': i,\n                            'j': j - 1,\n                            'token': password[i:j],\n                            'graph': graph_name,\n                            'turns': turns,\n                            'shifted_count': shifted_count,\n                        })\n                    i = j\n                    break\n    \n>       return matches\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/matching.py:370: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_spatial_matching - NameError: ...\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - NameError: n...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - NameError: name 'm...\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - NameError: nam...\nFAILED tests/unit_tests/zxcvbn_test.py::test_unicode_user_inputs - NameError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_invalid_user_inputs - NameError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - NameError: name ...\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - NameError: na...\n========================= 8 failed, 26 passed in 0.58s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__spatial_match_helper",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      },
+      {
+        "name": "failed_7",
+        "passed": false
+      }
+    ],
+    "passed": 26,
+    "failed": 8,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7647,
+  "compile_score": 0.5,
+  "test_score": 0.3824,
+  "score": 0.8824
+}

@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.87,
+  "stdout": "if self.has_capability(\"NAMESPACE\"):\n            personal_namespaces = self.namespace().personal\n        else:\n            personal_namespaces = _POPULAR_PERSONAL_NAMESPACES\n    \n        for personal_namespace in personal_namespaces:\n            for pattern in _POPULAR_SPECIAL_FOLDERS.get(folder_flag, tuple()):\n                pattern = personal_namespace[0] + pattern\n                sent_folders = self.list_folders(pattern=pattern)\n                if sent_folders:\n>                   return sent_folders[0][2]\nE                   TypeError: 'NoneType' object is not subscriptable\n\nsrc/imapclient/imapclient.py:793: TypeError\n_ TestFindSpecialFolder.test_find_special_folder_with_special_use_single_flag __\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_with_special_use_single_flag>\n\n    def test_find_special_folder_with_special_use_single_flag(self):\n        self.client._cached_capabilities = (b\"SPECIAL-USE\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"INBOX\"',\n                b'(\\\\Sent) \"/\" \"Sent\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:262: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f6aa0360160>\nfolder_flag = b'\\\\Sent'\n\n    def find_special_folder(self, folder_flag):\n        \"\"\"Try to locate a special folder, like the Sent or Trash folder.\n    \n        >>> server.find_special_folder(imapclient.SENT)\n        'INBOX.Sent'\n    \n        This function tries its best to find the correct folder (if any) but\n        uses heuristics when the server is unable to precisely tell where\n        special folders are located.\n    \n        Returns the name of the folder if found, or None otherwise.\n        \"\"\"\n        # Detect folder by looking for known attributes\n        # TODO: avoid listing all folders by using extended LIST (RFC6154)\n        for folder in self.list_folders():\n            if folder and len(folder[0]) > 0 and folder_flag in folder[0]:\n                return folder[2]\n    \n        # Detect folder by looking for common names\n        # We only look for folders in the \"personal\" namespace of the user\n        if self.has_capability(\"NAMESPACE\"):\n            personal_namespaces = self.namespace().personal\n        else:\n            personal_namespaces = _POPULAR_PERSONAL_NAMESPACES\n    \n        for personal_namespace in personal_namespaces:\n            for pattern in _POPULAR_SPECIAL_FOLDERS.get(folder_flag, tuple()):\n                pattern = personal_namespace[0] + pattern\n                sent_folders = self.list_folders(pattern=pattern)\n                if sent_folders:\n>                   return sent_folders[0][2]\nE                   TypeError: 'NoneType' object is not subscriptable\n\nsrc/imapclient/imapclient.py:793: TypeError\n_ TestFindSpecialFolder.test_find_special_folder_without_special_use_nor_namespace _\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_without_special_use_nor_namespace>\n\n    def test_find_special_folder_without_special_use_nor_namespace(self):\n        self.client._cached_capabilities = (b\"FOO\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"Sent Items\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:276: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f6aa0478ca0>\nfolder_flag = b'\\\\Sent'\n\n    def find_special_folder(self, folder_flag):\n        \"\"\"Try to locate a special folder, like the Sent or Trash folder.\n    \n        >>> server.find_special_folder(imapclient.SENT)\n        'INBOX.Sent'\n    \n        This function tries its best to find the correct folder (if any) but\n        uses heuristics when the server is unable to precisely tell where\n        special folders are located.\n    \n        Returns the name of the folder if found, or None otherwise.\n        \"\"\"\n        # Detect folder by looking for known attributes\n        # TODO: avoid listing all folders by using extended LIST (RFC6154)\n        for folder in self.list_folders():\n            if folder and len(folder[0]) > 0 and folder_flag in folder[0]:\n                return folder[2]\n    \n        # Detect folder by looking for common names\n        # We only look for folders in the \"personal\" namespace of the user\n        if self.has_capability(\"NAMESPACE\"):\n            personal_namespaces = self.namespace().personal\n        else:\n            personal_namespaces = _POPULAR_PERSONAL_NAMESPACES\n    \n        for personal_namespace in personal_namespaces:\n            for pattern in _POPULAR_SPECIAL_FOLDERS.get(folder_flag, tuple()):\n                pattern = personal_namespace[0] + pattern\n                sent_folders = self.list_folders(pattern=pattern)\n                if sent_folders:\n>                   return sent_folders[0][2]\nE                   TypeError: 'NoneType' object is not subscriptable\n\nsrc/imapclient/imapclient.py:793: TypeError\n___________________ test_xlist_folders_calls_simple_command ____________________\n\n    def test_xlist_folders_calls_simple_command():\n        client = make_client()\n        client._cached_capabilities = (b\"XLIST\",)\n        client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        client._imap._untagged_response.return_value = (\"XLIST\", [b'(\\\\HasNoChildren) \"/\" \"INBOX\"'])\n    \n        folders = client.xlist_folders()\n    \n>       assert folders == [((b\"\\\\HasNoChildren\",), b\"/\", \"INBOX\")]\nE       AssertionError: assert [None] == [((b'\\\\HasNoC...'/', 'INBOX')]\nE         \nE         At index 0 diff: None != ((b'\\\\HasNoChildren',), b'/', 'INBOX')\nE         Use -v to get more diff\n\ntests/unit_tests/test_remaining_tasks.py:79: AssertionError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_blanks - As...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_empty_response\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_mixed - Ass...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_simple - As...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_without_special_use_nor_namespace\nFAILED tests/unit_tests/test_remaining_tasks.py::test_xlist_folders_calls_simple_command\n======================== 15 failed, 272 passed in 0.91s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient___proc_folder_list",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_empty_response",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_without_special_use_nor_namespace",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

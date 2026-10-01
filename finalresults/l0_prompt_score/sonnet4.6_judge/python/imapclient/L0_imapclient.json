@@ -1,0 +1,29 @@
+{
+  "task": "python/imapclient/L0_imapclient",
+  "project": "python/imapclient",
+  "language": "python",
+  "prompt_path": "datasets/python/imapclient/tasks/L0_imapclient/prompt.md",
+  "project_root": "datasets/python/imapclient",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 3.5,
+      "reason": "Covers utility modules (datetime_util, fixed_offset, imap_utf7, response_types) with reasonable detail. However the main IMAPClient class is described only at the concept level — none of the dozens of specific methods (select_folder, search, fetch, append, list_folders, etc.) are described. The blackbox tests focus on utility modules so the missing IMAPClient method details are tolerable, but it remains a significant gap."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "The utility module behaviors are clearly specified: parse_to_datetime normalise parameter, datetime_to_INTERNALDATE format, format_criteria_date byte output format, Address dataclass fields, SearchIds list subclass with modseq, BodyData.create() factory. FixedOffset class method is mentioned. The FixedOffset tzname format (+HHMM) is implied but not explicitly stated."
+    },
+    "testability": {
+      "score": 4.0,
+      "reason": "Blackbox tests focus on datetime_util, fixed_offset, imap_utf7, and response_types — all covered by the prompt's behavioral constraints. The tzname format (+HHMM/-HHMM) tested in extended tests is not stated in the prompt but follows naturally from timezone offset representation. parse_to_datetime ValueError on invalid input is not mentioned in the prompt but is tested."
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "No direct contradictions. parse_to_datetime normalise=True returns naive, normalise=False returns aware is correctly described. format_criteria_date returning bytes (b'DD-Mon-YYYY') is correct. Address dataclass fields match. One gap: the prompt does not mention that parse_to_datetime raises ValueError for invalid input, which is tested."
+    }
+  },
+  "overall_score": 3.88
+}

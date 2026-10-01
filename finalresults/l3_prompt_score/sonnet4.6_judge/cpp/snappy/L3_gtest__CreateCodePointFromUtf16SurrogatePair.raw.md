@@ -1,0 +1,15 @@
+{
+  "score": 2.8,
+  "reason": "The description captures the high-level purpose (convert a UTF-16 surrogate pair to a Unicode code point) and correctly notes inputs, return type, and absence of side effects. However, it misses the critical implementation details: the specific bit manipulation formula `(((first & mask) << 10) | (second & mask)) + 0x10000`, the 10-bit mask `(1 << 10) - 1`, and crucially the `sizeof(wchar_t) == 2` conditional branch with its fallback behavior of returning `first_u` unchanged when `wchar_t` is 4 bytes. The description explicitly says no error/fallback handling is visible, but the implementation does include a documented fallback. Without the formula and the platform-size conditional, a developer could not implement this function correctly.",
+  "missing_functionality": [
+    "The bit manipulation formula: extract lower 10 bits of each surrogate, shift high surrogate left by 10, OR with low surrogate bits, then add 0x10000",
+    "The 10-bit mask value (1 << 10) - 1 = 0x3FF applied to both surrogates",
+    "The sizeof(wchar_t) == 2 conditional: on 4-byte wchar_t systems, the function falls back to returning the first argument unchanged",
+    "The inputs are typed as wchar_t (not generic 16-bit units), cast internally to uint32_t for arithmetic",
+    "Return type is uint32_t"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description states 'no explicit validation or error handling for invalid or non-surrogate inputs' — but the implementation does provide a documented sensible default (returns first_u) for the non-UTF-16 wchar_t case"
+  ],
+  "complete_enough": false
+}

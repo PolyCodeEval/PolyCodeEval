@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.47,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 11 items\n\ntests/unit_tests/test_instrument.py .                                    [  9%]\ntests/unit_tests/test_pnf.py .....                                       [ 54%]\ntests/unit_tests/test_renko.py ...                                       [ 81%]\ntests/acceptance_tests/test_indicators.py F.                             [100%]\n\n=================================== FAILURES ===================================\n__________________________________ test_renko __________________________________\n\n    def test_renko():\n        \"\"\"\n        Test the Renko indicator by comparing the close prices of the Renko chart\n        generated from the input data with the expected close prices.\n    \n        The Renko chart is generated using the brick size of 4.\n    \n        Raises:\n            AssertionError: If the absolute difference between the close prices of\n            the generated Renko chart and the expected close prices is greater than\n            1e-12.\n        \"\"\"\n        df = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'HOOLI.csv')\n        rdf = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'hooli_renko_4.csv')\n        renko = Renko(df)\n        renko.brick_size = 4\n        cdf = renko.get_ohlc_data()\n>       assert np.all(np.abs(cdf['close'] - rdf['close']) <= 1e-12)\nE       AssertionError: assert np.False_\nE        +  where np.False_ = <function all at 0xffff69f91e30>(0      4.0\\n1      4.0\\n2      4.0\\n3      4.0\\n4      4.0\\n      ... \\n211    4.0\\n212    4.0\\n213    8.0\\n214    8.0\\n215    NaN\\nName: close, Length: 216, dtype: float64 <= 1e-12)\nE        +    where <function all at 0xffff69f91e30> = np.all\nE        +    and   0      4.0\\n1      4.0\\n2      4.0\\n3      4.0\\n4      4.0\\n      ... \\n211    4.0\\n212    4.0\\n213    8.0\\n214    8.0\\n215    NaN\\nName: close, Length: 216, dtype: float64 = <ufunc 'absolute'>((0      144\\n1      136\\n2      132\\n3      128\\n4      124\\n      ... \\n211    196\\n212    200\\n213    204\\n214    196\\n215    204\\nName: close, Length: 216, dtype: int64 - 0      140.0\\n1      132.0\\n2      128.0\\n3      124.0\\n4      120.0\\n       ...  \\n210    196.0\\n211    200.0\\n212    204.0\\n213    196.0\\n214    204.0\\nName: close, Length: 215, dtype: float64))\nE        +      where <ufunc 'absolute'> = np.abs\n\ntests/acceptance_tests/test_indicators.py:25: AssertionError\n=============================== warnings summary ===============================\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_close\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_hl\n  /workspace/src/stocktrends/indicators.py:393: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`\n    df['trend_change'] = df['uptrend'].ne(df['uptrend'].shift().bfill()).astype(int)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/acceptance_tests/test_indicators.py::test_renko - AssertionError...\n=================== 1 failed, 10 passed, 2 warnings in 0.31s ===================\n",
+  "stderr": "",
+  "task": "python/stocktrends/L2_indicators",
+  "solver": "generated_outputs",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      }
+    ],
+    "passed": 10,
+    "failed": 1,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9091,
+  "compile_score": 0.5,
+  "test_score": 0.4545,
+  "score": 0.9545
+}

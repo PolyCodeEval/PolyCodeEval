@@ -1,0 +1,26 @@
+{
+  "task": "go/xid/L3_id__decode",
+  "project": "go/xid",
+  "language": "go",
+  "prompt_path": "datasets/go/xid/tasks/L3_id__decode/prompt.md",
+  "task_json_path": "datasets/go/xid/tasks/L3_id__decode/task.json",
+  "source_file_path": "datasets/go/xid/src/id.go",
+  "target_symbol": "id.go::decode",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core purpose: decoding a 20-byte base32-encoded source into a 12-byte ID using a lookup table and bit reconstruction, performing a bounds check via index panics, and validating the final character against the canonical encoding before returning false on mismatch or true on success. The mention of 'lowercase base32' is slightly misleading since the encoding is a custom base32 variant (not standard lowercase base32), but this is a minor inaccuracy. The description correctly identifies the unrolled bit-shifting scheme and the single canonical-encoding check on the last byte. One notable omission is that the bounds check is implemented via Go's implicit index-out-of-bounds panic mechanism (`_ = src[19]` and `_ = id[11]`) rather than an explicit conditional check — the description calls it a 'bounds/safety check' which is loosely correct but could mislead an implementer into writing an explicit length guard. The description is complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The bounds check is done via deliberate index expressions (`_ = src[19]`, `_ = id[11]`) that trigger a runtime panic on short slices, not an explicit conditional — the description implies a softer 'reject' path for length violations rather than a panic.",
+    "The description does not mention that id[11] is computed first (before the canonical check), and only the remaining bytes are filled after the check passes — the ordering matters for correctness."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing the encoding as 'lowercase base32' is imprecise; it is a custom base32 variant using a specific alphabet (Crockford-style or similar), not standard RFC 4648 base32.",
+    "Saying the function 'rejects the decode' on a length violation implies a false return, but in reality a too-short slice causes a runtime panic, not a graceful false return."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_id__decode.raw.md"
+}

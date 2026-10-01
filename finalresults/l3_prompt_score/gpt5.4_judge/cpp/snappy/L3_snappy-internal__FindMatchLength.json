@@ -1,0 +1,27 @@
+{
+  "task": "cpp/snappy/L3_snappy-internal__FindMatchLength",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_snappy-internal__FindMatchLength/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_snappy-internal__FindMatchLength/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/snappy-internal.h",
+  "target_symbol": "snappy-internal.h::FindMatchLength",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation closely. It correctly captures the main purpose (finding the common prefix length up to `s2_limit`), the meaning of the returned boolean, the optimized fast path for the first 8 bytes when at least 16 bytes are available, the repeated 8-byte chunk matching, the fallback byte-by-byte tail scan, and the performance-only prefetch behavior. It also appropriately notes that `*data` is used to prepare continuation data for the caller and is not always updated. The main gap is that the description slightly overgeneralizes `*data` as a 64-bit continuation value for the next step, while the implementation/comment more specifically guarantee the \"next 5 bytes from the end of the match\" and in the tail mismatch case simply load 8 bytes from `s2` when available. These are secondary details, so the description is still strong overall.",
+  "missing_functionality": [
+    "It does not clearly mention the special tail-region mismatch case where, if at least 8 bytes remain from the mismatch position, `*data` is set to `UNALIGNED_LOAD64(s2)`.",
+    "It omits the more specific nearby-source contract that `*data` is intended to provide the next 5 bytes from the end of the match, not just a generic continuation value.",
+    "It does not explicitly note that when the initial 8-byte block matches, the function sets `matched = 8` and advances `s2` before entering the main loop."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying the second return value indicates whether the match length is known to be shorter than 8 bytes (`true`) or is at least 8 bytes (`false`) is mostly right, but in the early fast-path mismatch case it returns `true` specifically because the mismatch is within the first 8 bytes, not as a general proof mechanism; this is a mild wording issue rather than a real mismatch.",
+    "The statement that `*data` is only guaranteed to be updated in cases where enough bytes are available to form the next 64-bit continuation value is somewhat imprecise: in the optimized 16-byte-available paths it is always updated on mismatch, and in the tail path it is updated only when `s2 <= s2_limit - 8`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_snappy-internal__FindMatchLength.raw.md"
+}

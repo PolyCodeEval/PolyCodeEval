@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description accurately captures all key behaviors: dereferencing via `reflect.Indirect`, panicking on non-struct via `mustBe`, using `m.TypeMap` to get the name-to-field index mapping, iterating over `tm.Names` to build the result map using `FieldByIndexes`, and returning an empty map when no fields are mapped. The note about 'pointer/indirectable value' is slightly broader than what `reflect.Indirect` does (it only dereferences one level of pointer, not arbitrary chains), but this is a minor nuance and the description is functionally accurate enough. All implementation details needed to reproduce the function are present.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description says 'dereferences as far as possible', but `reflect.Indirect` only dereferences a single pointer level (if the value is a Ptr kind). This is a minor inaccuracy but unlikely to cause a wrong implementation."
+  ],
+  "complete_enough": true
+}

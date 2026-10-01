@@ -1,0 +1,25 @@
+{
+  "task": "go/chi/L3_mux__routeHTTP",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_mux__routeHTTP/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_mux__routeHTTP/task.json",
+  "source_file_path": "datasets/go/chi/src/mux.go",
+  "target_symbol": "mux.go::routeHTTP",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "deepseek-v4-pro",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description correctly captures the overall flow (path resolution, method check, tree lookup, and fallback handlers) and most details are accurate. It misses the detail that the routing context method is updated from the request method if not already set, and it slightly misstates the fallback conditions: the implementation uses `rctx.methodNotAllowed` rather than 'path matched but method did not' directly. These are relative minor omissions/inaccuracies, but the description is still largely sufficient for implementing the function.",
+  "missing_functionality": [
+    "When the routing context method is empty, it is set from the request method before checking the method map."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'respond with Method Not Allowed when the routing context indicates the path matched but the method did not', but the actual condition is based on `rctx.methodNotAllowed`, which is set by the tree search (not solely on path-matched-but-method-mismatch).",
+    "It mentions 'passing through the allowed methods recorded in the routing context' but the implementation calls `MethodNotAllowedHandler(rctx.methodsAllowed...)` which is a different signature than the initial `MethodNotAllowedHandler()`."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_mux__routeHTTP.raw.md"
+}

@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_snappy__AdvanceToNextTagARMOptimized",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_snappy__AdvanceToNextTagARMOptimized/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_snappy__AdvanceToNextTagARMOptimized/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/snappy.cc",
+  "target_symbol": "snappy.cc::AdvanceToNextTagARMOptimized",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description accurately captures the core logic: extracting tag_type from the low 2 bits of *tag, branching on literal vs non-literal, computing the correct skip distance in each branch, reading the next tag byte into *tag, advancing ip, and returning tag_type. The literal branch formula ((*tag >> 2) + 1 bytes skipped, then ip advanced by that plus 1) and the non-literal branch formula (ip[tag_type] for next tag, ip += tag_type + 1) are both correctly described. The return value semantics are correct. The description is complete enough to implement the function faithfully.",
+  "missing_functionality": [
+    "The description does not mention the SNAPPY_ATTRIBUTE_ALWAYS_INLINE / inline attribute, though this is a compiler hint rather than functional behavior.",
+    "The description does not mention that ip is accessed as a reference alias to *ip_p (const uint8_t*& ip = *ip_p), though the observable behavior is correctly described."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'reads the next tag from that offset before advancing' for the literal branch, which is accurate, but the phrasing 'plus one additional byte for the next tag position' could be read as adding 1 to the skip for the tag byte itself — this is technically correct but slightly ambiguous compared to the code's clear separation of next_literal_tag and the +1 in ip += next_literal_tag + 1."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_snappy__AdvanceToNextTagARMOptimized.raw.md"
+}

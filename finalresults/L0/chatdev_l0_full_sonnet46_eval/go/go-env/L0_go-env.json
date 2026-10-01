@@ -1,0 +1,665 @@
+{
+  "task": "go/go-env/L0_go-env",
+  "solver": "chatdev_sonnet46_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.36,
+  "stdout": "",
+  "stderr": "main.go:1:1: expected 'package', found SOURCE_FILES\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.33,
+    "Architecture": 1.8,
+    "Health": 3.5
+  },
+  "overall_score": 1.88,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "`go-env` (package `env`) is a zero-dependency Go library for parsing environment variables into structs using struct field tags. It supports all primitive types, slices, maps, nested structs, custom parsers, default values, required fields, file loading, and variable expansion.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// Ta"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/caarlos0/env/v11\n\n// v11.0.1 accidentally introduced a breaking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change regarding the behavior of nil"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseAsGeneric(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {"
+            }
+          ],
+          "status": "partial",
+          "reason": "`repo/env.go` implements parsing for many scalar types, slices, maps, defaults, required fields, file loading, expansion, and custom parsers, but it does not clearly cover all primitive types or the nested-struct prefix behavior implied by the included tests."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Support defaults, required fields, file-backed values, and env var expansion.",
+          "evidence": [
+            {
+              "path": "test_parse_required_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseRequiredMissing(t *testing.T) {\n\ttype config struct {\n\t\tSecret string `env:\"TEST_REQUIRED_SECRET,required\"`\n\t}\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for missing required field, got nil\")\n\t}\n}\n\nfunc TestParseRequiredPresent(t *testing."
+            },
+            {
+              "path": "env.go",
+              "excerpt": "ype FieldParams struct {\n\tOwnKey          string\n\tKey             string\n\tDefaultValue    string\n\tHasDefaultValue bool\n\tRequired        bool\n\tNotEmpty        bool\n\tExpand          bool\n\tUnset           bool\n\tInit            bool\n\tLoadFile        bool\n}\n// ParseError is returned when a value cannot be parsed into its target type.\ntype ParseError struct {\n\tName  string\n\tKey   string\n\tType  reflect.T"
+            },
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "T_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"TEST_DEFAULT_PORT\" envDefault:\"3000\"`\n\t}\n\n\t// Do not set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Host != \"localhost\" {\n\t\tt.Errorf(\"expected 'localhost', got '%s'\", cfg.Host)\n\t}\n\tif cfg.Port != 3000 {\n\t\tt.Errorf(\"expected 3000, got %d\", cfg.Port)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/env.go` explicitly supports defaults (`envDefault`), required fields, file-backed values (`file`), and expansion (`expand`)."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "test_parse_required_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseRequiredMissing(t *testing.T) {\n\ttype config struct {\n\t\tSecret string `env:\"TEST_REQUIRED_SECRET,required\"`\n\t}\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for missing required field, got nil\")\n\t}\n}\n\nfunc TestParseRequiredPresent(t *testing."
+            },
+            {
+              "path": "env.go",
+              "excerpt": "ype FieldParams struct {\n\tOwnKey          string\n\tKey             string\n\tDefaultValue    string\n\tHasDefaultValue bool\n\tRequired        bool\n\tNotEmpty        bool\n\tExpand          bool\n\tUnset           bool\n\tInit            bool\n\tLoadFile        bool\n}\n// ParseError is returned when a value cannot be parsed into its target type.\ntype ParseError struct {\n\tName  string\n\tKey   string\n\tType  reflect.T"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "'%s'\", cfg.Name)\n\t}\n}\n\nfunc TestMustPanicsOnError(t *testing.T) {\n\ttype config struct {\n\t\tPort int `env:\"TEST_MUST_PORT,required\"`\n\t}\n\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Fatal(\"expected Must to panic on error, but it did not\")\n\t\t}\n\t}()\n\n\t// TEST_MUST_PORT is not set, so ParseAs will error, and Must should panic\n\tenv.Must(env.ParseAs[config]())\n}\n\nfunc TestMustReturnsValueOnSucces"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The required public API is present in package `env`: `Parse`, `ParseWithOptions`, `ParseAs`, `Must`, `GetFieldParams`, and `Options` are all defined in `repo/env.go`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "Go module path: `github.com/caarlos0/env/v11`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/caarlos0/env/v11\n\n// v11.0.1 accidentally introduced a breaking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change re"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "ype config struct {\n\t\tEndpoint url.URL `env:\"TEST_PARSE_URL\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_URL\", \"https://example.com:8080/path\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Endpoint.Scheme != \"https\" {\n\t\tt.Errorf(\"expected scheme 'https', got '%s'\", cfg.Endpoint.Scheme)\n\t}\n\tif cfg.Endpoint.Host != \"example.com:8080\" {\n\t\tt.Errorf(\"expec"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "rorf(\"expected 'abc123', got '%s'\", cfg.Token)\n\t}\n}\n\nfunc TestParseExpandEnvVar(t *testing.T) {\n\ttype config struct {\n\t\tPath string `env:\"TEST_EXPAND_PATH,expand\"`\n\t}\n\n\tt.Setenv(\"TEST_EXPAND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment: map[string]string{\n\t\t\t\"TEST_EXPAND_PATH\": \"${TEST_E"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/caarlos0/env/v11`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "package `env` exposing `Parse(v)`, `ParseWithOptions(v, opts)`, `ParseAs[T]()`, `Must[T](t, err)`, `GetFieldParams(v)`, and `Options`",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// Ta"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseAsGeneric(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {"
+            },
+            {
+              "path": "test_parse_prefix_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseWithPrefix(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"HOST\"`\n\t\tPort int    `env:\"PORT\"`\n\t}\n\n\tt.Setenv(\"APP_HOST\", \"myhost\")\n\tt.Setenv(\"APP_PORT\", \"9090\")\n\n\tvar cfg config\n\terr :="
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/env.go` exposes package `env` with `Parse`, `ParseWithOptions`, `ParseAs`, `Must`, `GetFieldParams`, and `Options`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "Parsing",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Core parsing functionality is implemented in `repo/env.go` via `Parse`, `ParseWithOptions`, `parseStruct`, and type-setting helpers."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "Struct Tags",
+          "evidence": [
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "st\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseDefaultWhenNotSet(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TEST_DEFAULT_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"TEST_DEFAULT_PORT\" envDefault:\"3000\"`\n\t}\n\n\t// Do not set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)"
+            },
+            {
+              "path": "test_parse_separator_test.go",
+              "excerpt": "_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseSeparatorSlice(t *testing.T) {\n\ttype config struct {\n\t\tHosts []string `env:\"TEST_SEP_HOSTS\" envSeparator:\":\"`\n\t}\n\n\tt.Setenv(\"TEST_SEP_HOSTS\", \"a:b:c\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(cfg.Hosts) != 3 {\n\t\tt.Fatalf(\"expected 3 elements, got %d\", len("
+            },
+            {
+              "path": "env.go",
+              "excerpt": "reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct tag for default values (default: \"envDefault\").\n\tDefaultTagName s"
+            }
+          ],
+          "status": "partial",
+          "reason": "The library handles several struct tags such as `env`, `envDefault`, `envSeparator`, and `envKeyValSeparator`, but there is no implementation for `envPrefix` even though the repo tests rely on it."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Options",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "of nil slices of complex types.\nretract v11.2.0\n\n// v11.3.0 merges OS environment variables with environments set with Options instead of overriding them.\nretract v11.3.0\n\ngo 1.18"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "AND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment: map[string]string{\n\t\t\t\"TEST_EXPAND_PATH\": \"${TEST_EXPAND_BASE}/sub\",\n\t\t\t\"TEST_EXPAND_BASE\": \"/home/user\",\n\t\t},\n\t})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Path != \"/home/user/sub\" {\n\t\tt.Errorf(\"expected '/home/"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/env.go` defines and uses `Options`, including `Environment`, `UseFieldNameByDefault`, `Prefix`, `TagName`, `DefaultTagName`, and `FuncMap`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Introspection",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Introspection is implemented through `GetFieldParams` and `FieldParams` in `repo/env.go`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Error handling",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "// ParserFunc is a function that parses a string into an arbitrary value.\ntype ParserFunc func(v string) (interface{}, error)\n// FieldParams holds metadata about a struct field's env tag configuration.\ntype FieldParams struct {\n\tOwnKey          string\n\tKey             string\n\tDefaultValue    string\n\tHasDefaultValue bool\n\tRequired        bool\n\tNotEmpty        bool\n\tExpand          bool\n\tUnset"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "t.Setenv(\"TEST_PARSE_NAME\", \"hello\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"hello\" {\n\t\tt.Errorf(\"expected 'hello', got '%s'\", cfg.Name)\n\t}\n}\n\nfunc TestParseInt(t *testing.T) {\n\ttype config struct {\n\t\tPort int `env:\"TEST_PARSE_PORT\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_PORT\", \"8080\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif"
+            },
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Host != \"localhost\" {\n\t\tt.Errorf(\"expected 'localhost', got '%s'\", cfg.Host)\n\t}\n\tif cfg.Port != 3000 {\n\t\tt.Errorf(\"expected 3000, got %d\", cfg.Port)\n\t}\n}\n\nfunc TestParseDefaultOverriddenByEnv(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TE"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/env.go` contains explicit error handling paths and error types such as `ParseError`, `NotSetError`, `EmptyVarError`, and `AggregateError`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`Parse` must return an error if passed a non-pointer or a pointer to a non-struct.",
+          "evidence": [
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseAsGeneric(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"generic_val\" {\n\t\tt.Error"
+            },
+            {
+              "path": "env.go",
+              "excerpt": "t (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct tag for default values (default: \""
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"net/url\"\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseString(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSE_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_NAME\", \"hello\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"hello\" {\n\t\tt.Errorf(\"expected 'h"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ParseWithOptions` checks for non-pointer, nil pointer, and pointer-to-non-struct inputs and returns errors in those cases."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`Parse` must return a parse error when an env value cannot be converted to the target type (e.g., non-numeric string for int).",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "t (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct tag for default values (default: \""
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseAsGeneric(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"generic_val\" {\n\t\tt.Error"
+            },
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseDefaultWhenNotSet(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TEST_DEFAULT_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"TEST_DEFAULT_PORT\" envDefault:\"3000\"`\n\t}\n\n\t// Do not set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Conversion failures from env strings propagate as `ParseError` from `parseStruct`/`setScalar`, covering invalid numeric input."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`notEmpty` tag option: if the env var is set but empty, return an error.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "{\n\tOwnKey          string\n\tKey             string\n\tDefaultValue    string\n\tHasDefaultValue bool\n\tRequired        bool\n\tNotEmpty        bool\n\tExpand          bool\n\tUnset           bool\n\tInit            bool\n\tLoadFile        bool\n}\n// ParseError is returned when a value cannot be parsed into its target type.\ntype ParseError struct {\n\tName  string\n\tKey   string\n\tType  reflect.Type\n\tValue string\n\tErr"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "rr := env.Parse(cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error when passing non-pointer, got nil\")\n\t}\n}\n\nfunc TestParseNotEmptyTag(t *testing.T) {\n\ttype config struct {\n\t\tToken string `env:\"TEST_NOTEMPTY_TOKEN,notEmpty\"`\n\t}\n\n\tt.Setenv(\"TEST_NOTEMPTY_TOKEN\", \"\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for notEmpty field with empty value, got nil\")\n\t}\n}"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "aking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change regarding the behavior of nil slices of complex types.\nretract v11.2.0\n\n// v11.3.0 merges OS environment variables with environments set with Options instead of overriding them.\nretract v11.3.0\n\ngo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`parseStruct` returns `EmptyVarError` when a field marked `notEmpty` is present with an empty value."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`expand` tag option: expand `${VAR}` references in the value using other env vars from the same `Options.Environment`.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "ring\n\tKey             string\n\tDefaultValue    string\n\tHasDefaultValue bool\n\tRequired        bool\n\tNotEmpty        bool\n\tExpand          bool\n\tUnset           bool\n\tInit            bool\n\tLoadFile        bool\n}\n// ParseError is returned when a value cannot be parsed into its target type.\ntype ParseError struct {\n\tName  string\n\tKey   string\n\tType  reflect.Type\n\tValue string\n\tErr   error\n}\nfunc (e *Pa"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "rror: %v\", err)\n\t}\n\tif cfg.Token != \"abc123\" {\n\t\tt.Errorf(\"expected 'abc123', got '%s'\", cfg.Token)\n\t}\n}\n\nfunc TestParseExpandEnvVar(t *testing.T) {\n\ttype config struct {\n\t\tPath string `env:\"TEST_EXPAND_PATH,expand\"`\n\t}\n\n\tt.Setenv(\"TEST_EXPAND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "aking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change regarding the behavior of nil slices of complex types.\nretract v11.2.0\n\n// v11.3.0 merges OS environment variables with environments set with Options instead of overriding them.\nretract v11.3.0\n\ngo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`parseStruct` applies `os.Expand` with lookups against `opts.Environment` when the `expand` option is set."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Field tag `env:\"-\"` causes the field to be ignored entirely (its value is not modified).",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "e string\n\t// DefaultTagName is the struct tag for default values (default: \"envDefault\").\n\tDefaultTagName string\n\t// UseFieldNameByDefault converts struct field names to UPPER_SNAKE_CASE when no tag is present.\n\tUseFieldNameByDefault bool\n\t// Prefix is prepended to every env key.\n\tPrefix string\n\t// FuncMap holds custom parser functions keyed by reflect.Type.\n\tFuncMap map[reflect.Type]ParserFunc\n}"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "T_NOTEMPTY_TOKEN\", \"\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for notEmpty field with empty value, got nil\")\n\t}\n}\n\nfunc TestParseNotEmptyWithValue(t *testing.T) {\n\ttype config struct {\n\t\tToken string `env:\"TEST_NOTEMPTY_TOKEN2,notEmpty\"`\n\t}\n\n\tt.Setenv(\"TEST_NOTEMPTY_TOKEN2\", \"abc123\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf("
+            },
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "t.Errorf(\"expected true, got %v\", cfg.Verbose)\n\t}\n}\n\nfunc TestParseDefaultSlice(t *testing.T) {\n\ttype config struct {\n\t\tTags []string `env:\"TEST_DEFAULT_TAGS\" envDefault:\"alpha,beta,gamma\"`\n\t}\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(cfg.Tags) != 3 {\n\t\tt.Fatalf(\"expected 3 elements, got %d\", len(cfg.Tags))\n\t}\n\tif cfg.Tags[0] != \"a"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`parseStruct` skips fields whose tag value is exactly `-`, leaving them unmodified."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`Options.Environment`: when provided, parse from this map instead of `os.Environ()`.",
+          "evidence": [
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "AND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment: map[string]string{\n\t\t\t\"TEST_EXPAND_PATH\": \"${TEST_EXPAND_BASE}/sub\",\n\t\t\t\"TEST_EXPAND_BASE\": \"/home/user\",\n\t\t},\n\t})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Path != \"/home/user/sub\" {\n\t\tt.Errorf(\"expected '/home/"
+            },
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "of nil slices of complex types.\nretract v11.2.0\n\n// v11.3.0 merges OS environment variables with environments set with Options instead of overriding them.\nretract v11.3.0\n\ngo 1.18"
+            }
+          ],
+          "status": "implemented",
+          "reason": "When `Options.Environment` is provided, `ParseWithOptions` uses it instead of `os.Environ()`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`Options.UseFieldNameByDefault`: when true, derive env key from the struct field name converted to UPPER_SNAKE_CASE (e.g., `ServerHost` becomes `SERVER_HOST`).",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "AND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment: map[string]string{\n\t\t\t\"TEST_EXPAND_PATH\": \"${TEST_EXPAND_BASE}/sub\",\n\t\t\t\"TEST_EXPAND_BASE\": \"/home/user\",\n\t\t},\n\t})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Path != \"/home/user/sub\" {\n\t\tt.Errorf(\"expected '/home/"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "arseBool(t *testing.T) {\n\ttype config struct {\n\t\tDebug bool `env:\"TEST_PARSE_DEBUG\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_DEBUG\", \"true\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Debug != true {\n\t\tt.Errorf(\"expected true, got %v\", cfg.Debug)\n\t}\n}\n\nfunc TestParseFloat64(t *testing.T) {\n\ttype config struct {\n\t\tRate float64 `env:\"TEST_PARSE_RAT"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`parseFieldTag` derives `UPPER_SNAKE_CASE` keys from field names when `UseFieldNameByDefault` is true."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Maps support `envKeyValSeparator` struct tag (default `\":\"`). Combined with `envSeparator` (default `\",\"`) for splitting entries.",
+          "evidence": [
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "st\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseDefaultWhenNotSet(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TEST_DEFAULT_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"TEST_DEFAULT_PORT\" envDefault:\"3000\"`\n\t}\n\n\t// Do not set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "TestParseMapCustomKeyValSeparator(t *testing.T) {\n\ttype config struct {\n\t\tSettings map[string]string `env:\"TEST_MAP_KV\" envKeyValSeparator:\"=\" envSeparator:\";\"`\n\t}\n\n\tt.Setenv(\"TEST_MAP_KV\", \"a=1;b=2;c=3\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Settings[\"a\"] != \"1\" {\n\t\tt.Errorf(\"expected Settings[a]='1', got '%s'\", cfg.Settings[\""
+            },
+            {
+              "path": "test_parse_separator_test.go",
+              "excerpt": "_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseSeparatorSlice(t *testing.T) {\n\ttype config struct {\n\t\tHosts []string `env:\"TEST_SEP_HOSTS\" envSeparator:\":\"`\n\t}\n\n\tt.Setenv(\"TEST_SEP_HOSTS\", \"a:b:c\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(cfg.Hosts) != 3 {\n\t\tt.Fatalf(\"expected 3 elements, got %d\", len("
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setMapField` uses `envKeyValSeparator` with default `:` and `envSeparator` with default `,`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`ToMap([]string) map[string]string`: converts `os.Environ()`-style `KEY=VALUE` slices to a map. Entries with no `=` are excluded; empty values after `=` are preserved.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "opts.DefaultTagName == \"\" {\n\t\topts.DefaultTagName = \"envDefault\"\n\t}\n\tif opts.Environment == nil {\n\t\topts.Environment = ToMap(os.Environ())\n\t}\n\tval := reflect.ValueOf(v)\n\tif val.Kind() != reflect.Ptr {\n\t\treturn fmt.Errorf(\"env: expected a pointer, got %T\", v)\n\t}\n\tif val.IsNil() {\n\t\treturn fmt.Errorf(\"env: expected a non-nil pointer\")\n\t}\n\tval = val.Elem()\n\tif val.Kind() != reflect.Struct {\n\t\treturn"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "err := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected parse error for invalid int value, got nil\")\n\t}\n}\n\nfunc TestToMap(t *testing.T) {\n\tinput := []string{\"FOO=bar\", \"BAZ=qux\", \"EMPTY=\"}\n\tresult := env.ToMap(input)\n\tif result[\"FOO\"] != \"bar\" {\n\t\tt.Errorf(\"expected FOO='bar', got '%s'\", result[\"FOO\"])\n\t}\n\tif result[\"BAZ\"] != \"qux\" {\n\t\tt.Errorf(\"expected BAZ='qux', got '%s'\", result[\"BAZ\"])\n\t}"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"net/url\"\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseString(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSE_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_NAME\", \"hello\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"hello\" {\n\t\tt.Errorf(\"expected 'hello'"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ToMap` in `repo/env.go` converts `KEY=VALUE` slices to a map, skips entries without `=`, and preserves empty values."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`Must[T](t T, err error) T`: returns `t` if err is nil, panics otherwise.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "gs\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the struct tag to look for (default: \"env\").\n\tTagName string\n\t// DefaultTagName is the struct tag for default values (default: \"envDefault\").\n\tDefaultTagName string\n\t// UseFieldNameByDef"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "type config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"generic_val\" {\n\t\tt.Errorf(\"expected 'generic_val', got '%s'\", cfg.Name)\n\t}\n}\n\nfunc TestMustPanicsOnError(t *testing.T) {\n\ttype config struct {\n\t\tPort int `env:\"TEST_MUST_PORT"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "type config struct {\n\t\tName string `env:\"TEST_PARSE_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_NAME\", \"hello\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Name != \"hello\" {\n\t\tt.Errorf(\"expected 'hello', got '%s'\", cfg.Name)\n\t}\n}\n\nfunc TestParseInt(t *testing.T) {\n\ttype config struct {\n\t\tPort int `env:\"TEST_PARSE_PORT\"`\n\t}\n\n\tt.Setenv(\"TEST_PAR"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Must[T]` returns the value on nil error and panics otherwise."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`GetFieldParams(v interface{}) ([]FieldParams, error)`: returns metadata about parsed struct tags without setting values. Each `FieldParams` has `Key`, `DefaultValue`, `HasDefaultValue`, `Required`, and other tag-derived fields.",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "is nil, otherwise panics with err.\nfunc Must[T any](t T, err error) T {\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn t\n}\n// GetFieldParams returns metadata about each env-tagged field in v without setting values.\nfunc GetFieldParams(v interface{}) ([]FieldParams, error) {\n\tval := reflect.ValueOf(v)\n\tif val.Kind() != reflect.Ptr {\n\t\treturn nil, fmt.Errorf(\"env: expected a pointer, got %T\", v)\n\t}\n\tif va"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "got '%s'\", cfg.ServerHost)\n\t}\n\tif cfg.MaxRetries != 5 {\n\t\tt.Errorf(\"expected 5, got %d\", cfg.MaxRetries)\n\t}\n}\n\nfunc TestGetFieldParams(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"GFP_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"GFP_PORT,required\"`\n\t}\n\n\tvar cfg config\n\tparams, err := env.GetFieldParams(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(para"
+            },
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Host != \"localhost\" {\n\t\tt.Errorf(\"expected 'localhost', got '%s'\", cfg.Host)\n\t}\n\tif cfg.Port != 3000 {\n\t\tt.Errorf(\"expected 3000, got %d\", cfg.Port)\n\t}\n}\n\nfunc TestParseDefaultOverriddenByEnv(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TE"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`GetFieldParams` returns `[]FieldParams` with keys, defaults, required flag, and other tag-derived metadata without mutating values."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "-env\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_sonnet46_go生成\\\\go\\\\go-env\\\\L0_go-env\",\n  \"files_collected\": 3,\n  \"duration_seconds\": 371.3\n}"
+            },
+            {
+              "path": "main.go",
+              "excerpt": "SOURCE_FILES?=./...\nTEST_PATTERN?=.\nexport GO111MODULE := on\nsetup:\n\tgo mod tidy\n.PHONY: setup\nbuild:\n\tgo build\n.PHONY: build\ntest:\n\tgo test -v -failfast -race -coverpkg=./... -covermode=atomic -coverprofile=coverage.txt $(SOURCE_FILES) -run $(TEST_PATTERN) -timeout=2m\n.PHONY: test\ncove"
+            }
+          ],
+          "status": "unclear",
+          "reason": "The repo is laid out at the project root with top-level source files, but this output-shape requirement is not fully verifiable from the checked-in repository alone."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/caarlos0/env/v11\n\n// v11.0.1 accidentally introduced a breaking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change re"
+            },
+            {
+              "path": "test_parse_required_test.go",
+              "excerpt": "T) {\n\t// When a field is required but also has a default, the default satisfies the requirement\n\ttype config struct {\n\t\tMode string `env:\"TEST_REQ_DEFAULT_MODE,required\" envDefault:\"production\"`\n\t}\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Mode != \"production\" {\n\t\tt.Errorf(\"expected 'production', got '%s'\", cfg.Mode)\n\t}\n}"
+            },
+            {
+              "path": "env.go",
+              "excerpt": "}\n\treturn parseStruct(val, opts)\n}\n// ParseAs parses environment variables into a new value of type T.\nfunc ParseAs[T any]() (T, error) {\n\tvar t T\n\terr := Parse(&t)\n\treturn t, err\n}\n// ParseAsWithOptions parses environment variables into a new value of type T using opts.\nfunc ParseAsWithOptions[T any](opts Options) (T, error) {\n\tvar t T\n\terr := ParseWithOptions(&t, opts)\n\treturn t, err\n}\n// Must"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo includes `go.mod` and root package source, but the top-level `main.go` contains Makefile syntax rather than valid Go, so the project layout is not fully standard/buildable."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_parse_default_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseDefaultWhenNotSet(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TEST_DEFAULT_HOST\" envDefault:\"localhost\"`\n\t\tPort int    `env:\"TEST_DEFAULT_PORT\" envDefault:\"3000\"`\n\t}\n\n\t// Do not set env vars - defaults should be used\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": ",required\"`\n\t}\n\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Fatal(\"expected Must to panic on error, but it did not\")\n\t\t}\n\t}()\n\n\t// TEST_MUST_PORT is not set, so ParseAs will error, and Must should panic\n\tenv.Must(env.ParseAs[config]())\n}\n\nfunc TestMustReturnsValueOnSuccess(t *testing.T) {\n\ttype config struct {\n\t\tHost string `env:\"TEST_MUST_HOST\" envDefault:\"localhost\"`\n\t}\n\n\tcfg := env.Mus"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"net/url\"\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseString(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSE_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_NAME\", \"hello\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf("
+            }
+          ],
+          "status": "missing",
+          "reason": "The prompt explicitly forbids generating test files, but the repository includes multiple `*_test.go` files."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "Ensure the module path includes the version suffix `v11` and remains importable as `github.com/caarlos0/env/v11`.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/caarlos0/env/v11\n\n// v11.0.1 accidentally introduced a breaking change regarding the behavior of nil pointers.\n// You can now chose to auto-initialize them by setting the `init` tag option.\nretract v11.0.1\n\n// v11.2.0 accidentally introduced a breaking change re"
+            },
+            {
+              "path": "test_parse_basic_test.go",
+              "excerpt": "ype config struct {\n\t\tEndpoint url.URL `env:\"TEST_PARSE_URL\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSE_URL\", \"https://example.com:8080/path\")\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif cfg.Endpoint.Scheme != \"https\" {\n\t\tt.Errorf(\"expected scheme 'https', got '%s'\", cfg.Endpoint.Scheme)\n\t}\n\tif cfg.Endpoint.Host != \"example.com:8080\" {\n\t\tt.Errorf(\"expec"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "rorf(\"expected 'abc123', got '%s'\", cfg.Token)\n\t}\n}\n\nfunc TestParseExpandEnvVar(t *testing.T) {\n\ttype config struct {\n\t\tPath string `env:\"TEST_EXPAND_PATH,expand\"`\n\t}\n\n\tt.Setenv(\"TEST_EXPAND_PATH\", \"${TEST_EXPAND_BASE}/sub\")\n\tt.Setenv(\"TEST_EXPAND_BASE\", \"/home/user\")\n\n\tvar cfg config\n\terr := env.ParseWithOptions(&cfg, env.Options{\n\t\tEnvironment: map[string]string{\n\t\t\t\"TEST_EXPAND_PATH\": \"${TEST_E"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The module path in `repo/go.mod` includes the required `v11` suffix and matches `github.com/caarlos0/env/v11`."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Port int `env:\"PORT,required\"`",
+          "evidence": [
+            {
+              "path": "env.go",
+              "excerpt": "package env\nimport (\n\t\"encoding\"\n\t\"fmt\"\n\t\"os\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n\t\"unicode\"\n)\n// Options configure the behavior of ParseWithOptions.\ntype Options struct {\n\t// Environment overrides os.Environ() as the source of env vars.\n\tEnvironment map[string]string\n\t// TagName is the s"
+            },
+            {
+              "path": "test_parse_required_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseRequiredMissing(t *testing.T) {\n\ttype config struct {\n\t\tSecret string `env:\"TEST_REQUIRED_SECRET,required\"`\n\t}\n\n\tvar cfg config\n\terr := env.Parse(&cfg)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for missing requir"
+            },
+            {
+              "path": "test_parse_extended_test.go",
+              "excerpt": "package env_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/caarlos0/env/v11\"\n)\n\nfunc TestParseAsGeneric(t *testing.T) {\n\ttype config struct {\n\t\tName string `env:\"TEST_PARSEAS_NAME\"`\n\t}\n\n\tt.Setenv(\"TEST_PARSEAS_NAME\", \"generic_val\")\n\n\tcfg, err := env.ParseAs[config]()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Required integer fields are supported by the `required` tag handling plus integer parsing in `repo/env.go`."
+        }
+      ],
+      "feature_count": 26,
+      "constraint_count": 0,
+      "implemented_count": 21,
+      "partial_count": 3,
+      "missing_count": 1,
+      "unclear_count": 1,
+      "feature_coverage": 0.8654,
+      "constraint_coverage": 0.8654,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 133969,
+        "completion_tokens": 4313,
+        "total_tokens": 138282
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.0,
+        "stack_alignment": 1.6,
+        "reference_alignment": 1.8
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 105293,
+        "completion_tokens": 2041,
+        "total_tokens": 107334
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 5,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 1,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "2",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository does implement the main `env` package API and most of the required parsing behavior: typed parsing from environment variables, defaults, required fields, `notEmpty`, `expand`, file-backed values, map and slice parsing, custom parser hooks, `ToMap`, `Must`, and `GetFieldParams`. The module path is correctly set to `github.com/caarlos0/env/v11`, and the package exposes the requested public entry points.\n\n### Missing List\n\n- Prompt constraint violated: generated `*_test.go` files are present.\n- `envPrefix`-style nested prefix handling is not implemented even though nested tests depend on it.\n- Project layout is not fully standard because `main.go` contains Makefile text instead of valid Go code.\n- Full support for the broad claim \"all primitive types\" is not clearly demonstrated by the actual implementation.\n\n### Critical Constraint Misses\n\n- The repository includes generated test files despite the prompt explicitly saying not to generate test files.\n- `repo/main.go` is not valid Go source; it contains Makefile content, so the module is not cleanly buildable as a standard Go project.\n- Nested struct prefix behavior used by the repo tests (`envPrefix`) is not implemented in `repo/env.go`.",
+    "architecture_review": "### Stack Inference\n\nThe repository is clearly intended to be a Go module library: `go.mod` declares `github.com/caarlos0/env/v11`, the main implementation is in package `env`, and the tests import it as a library. The expected stack is therefore a zero-dependency Go library built with standard Go modules, not an application with a runtime entrypoint.\n\n### Scoring Mode\n\nThis is an architecture review, so the score emphasizes whether the real repository shape, entry/build arrangement, and package organization make sense for a Go library. It does not reward size alone; it checks whether files are placed in the right roles, whether the module is buildable in the expected stack, and whether the produced structure matches the reference requirements.\n\n### Strengths\n\n- `go.mod` uses the correct module path suffix `v11`, which matches the required import path for a versioned Go module.\n- The core library API appears to be centered in package `env` at the repository root, which is the conventional placement for a small importable Go package.\n- The repository does at least keep the implementation surface compact and easy to locate: most logic is in `env.go`, and validation-oriented tests are grouped consistently at the root.\n\n### Issues\n\n- `repo/main.go` is not Go source at all; it contains Makefile-style targets, so the module root cannot compile as a valid Go library layout and the declared build/entry structure is internally broken.\n- The repository mixes library code with generated `_test.go` files even though the prompt explicitly said not to generate test files; this is a direct output-shape violation and weakens reference alignment.\n- For a Go library, common project conventions would place automation in `Makefile` and keep `.go` files parseable by `go build`; using `main.go` for non-Go content is a major stack-level mismatch.\n- The implementation is collapsed into a single large `env.go`, which is acceptable for a tiny package, but here it carries parsing, tag decoding, reflection, conversion, error types, and introspection together, making the internal architecture less clear than typical Go library organization.\n- Required public surface and behavior are only partially aligned: `ParseAsWithOptions` exists even though it was not required, while some required behaviors from the prompt are not evidenced in the repository structure or tests, such as a clear dedicated path for file-backed values and stronger metadata/introspection coverage.\n\n### Stack Mismatches\n\n- `main.go` violates normal Go conventions by containing Makefile syntax instead of package declarations and compilable Go code.\n- The project is described and structured as a library, but it still introduces an apparent entry file name associated with executables, which is misleading even before considering that its contents are invalid Go.\n- Automation/build concerns are not separated into conventional files (`Makefile`, CI config, tooling docs); instead they are embedded in a wrongly named source file.\n\n### Reference Gaps\n\n- The prompt required a standard Go module layout for a library package; the presence of non-Go build script text in `main.go` means the delivered root layout does not satisfy that expectation cleanly.\n- The prompt explicitly said not to generate test files, but the repository includes multiple `test_parse_*.go` files at the root.\n- The required entry points list does not include `main.go`, and a library project should not need a faux executable entry file; the repository introduces an unnecessary and malformed top-level file instead of proper build/config files.\n- The reference called out utility/build configuration files as needed; if the intent was to include task automation, it should have been a `Makefile`, not mislabeled as Go source."
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 239262,
+    "completion_tokens": 6354,
+    "total_tokens": 245616,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 133969,
+        "completion_tokens": 4313,
+        "total_tokens": 138282
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 105293,
+        "completion_tokens": 2041,
+        "total_tokens": 107334
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "go-env",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.33,
+  "architecture_score": 1.8,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

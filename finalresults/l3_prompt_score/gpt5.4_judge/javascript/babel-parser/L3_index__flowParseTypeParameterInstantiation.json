@@ -1,0 +1,22 @@
+{
+  "task": "javascript/babel-parser/L3_index__flowParseTypeParameterInstantiation",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__flowParseTypeParameterInstantiation/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__flowParseTypeParameterInstantiation/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::flowParseTypeParameterInstantiation",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly covers creation of a `TypeParameterInstantiation` node, saving/restoring `inType`, running the parse inside `flowInTopLevelContext`, temporarily disabling `noAnonFunctionType`, parsing comma-separated type arguments until `>`, rescanning `<`/`>` when leaving type context in brace context, consuming the closing `>`, and returning the finished node. The only notable overstatement is saying the previous restriction state is restored 'afterward' in a fully safe sense; in the implementation, `noAnonFunctionType` is restored inside the callback but not via `finally`, so an exception during parsing would skip restoration. That is a minor precision issue rather than a major mismatch.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description implies `noAnonFunctionType` is reliably restored afterward, but unlike `flowInTopLevelContext`, the implementation does not use `try/finally` for that restoration, so this is not guaranteed on parse failure."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__flowParseTypeParameterInstantiation.raw.md"
+}

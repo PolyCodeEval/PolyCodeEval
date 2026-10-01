@@ -1,0 +1,978 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 111.43,
+  "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nlibgtest-dev is already the newest version (1.11.0-3).\nSuggested packages:\n  sqlite3-doc\nThe following NEW packages will be installed:\n  libsqlite3-dev\n0 upgraded, 1 newly installed, 0 to remove and 16 not upgraded.\nNeed to get 846 kB of archives.\nAfter this operation, 3152 kB of additional disk space will be used.\nGet:1 http://mirrors.aliyun.com/ubuntu-ports jammy-updates/main arm64 libsqlite3-dev arm64 3.37.2-2ubuntu0.5 [846 kB]\nFetched 846 kB in 1s (578 kB/s)\nSelecting previously unselected package libsqlite3-dev:arm64.\n(Reading database ... \n(Reading database ... 5%\n(Reading database ... 10%\n(Reading database ... 15%\n(Reading database ... 20%\n(Reading database ... 25%\n(Reading database ... 30%\n(Reading database ... 35%\n(Reading database ... 40%\n(Reading database ... 45%\n(Reading database ... 50%\n(Reading database ... 55%\n(Reading database ... 60%\n(Reading database ... 65%\n(Reading database ... 70%\n(Reading database ... 75%\n(Reading database ... 80%\n(Reading database ... 85%\n(Reading database ... 90%\n(Reading database ... 95%\n(Reading database ... 100%\n(Reading database ... 30709 files and directories currently installed.)\nPreparing to unpack .../libsqlite3-dev_3.37.2-2ubuntu0.5_arm64.deb ...\nUnpacking libsqlite3-dev:arm64 (3.37.2-2ubuntu0.5) ...\nSetting up libsqlite3-dev:arm64 (3.37.2-2ubuntu0.5) ...\n",
+  "stderr": "debconf: delaying package configuration, since apt-utils is not installed\n/workspace/blackbox_tests/test_people_management.cpp:6:10: fatal error: ../include/people_management.h: No such file or directory\n    6 | #include \"../include/people_management.h\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n/workspace/blackbox_tests/test_people_management_extra.cpp:17:10: fatal error: ../include/people_management.h: No such file or directory\n   17 | #include \"../include/people_management.h\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\ncc1plus: fatal error: ./src/people_management.cpp: No such file or directory\ncompilation terminated.\ncc1plus: fatal error: ./src/utils.cpp: No such file or directory\ncompilation terminated.\n",
+  "inferred_commands": {
+    "install": "apt-get update -qq && apt-get install -y --no-install-recommends libsqlite3-dev libgtest-dev",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "apt-get update -qq && apt-get install -y --no-install-recommends libsqlite3-dev libgtest-dev",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "compile_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.05,
+    "Architecture": 2.77,
+    "Health": 4.5
+  },
+  "overall_score": 2.16,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "partial",
+          "reason": "Core API and CLI logic are present, but the required header/layout surface is incomplete in the visible repo."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "<executable> <subcommand> <target> [options...]",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "t.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::m"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "\"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::string& target) {\n    if (contains(COMMANDS, subcommand) && contains(TARGETS, target)) {\n        return true;\n    }\n    if (subcommand == \"mentor\" && contains(MENTOR_COMMANDS, target)) {\n        return true;\n    }\n\n    std::cerr << \"Invalid subcommand/targe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`main.cpp` implements `<executable> <subcommand> <target> [options...]` and dispatches on argv."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`PeopleManagement` class**: Core domain logic; wraps all SQLite operations (add, search, delete, update, mentor).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "td::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_management.add(target, options);\n    } else if (subcommand == \"search\") {\n        result = people_management.search(target, options);\n    } else if (sub"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement` is defined with SQLite-backed command dispatch in `people_management.cpp`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "public status constants in `common.h`: `SUCCESS`, `NOT_ENOUGH_OPTIONS`, `RECORD_NOT_EXISTS`, `INVALID_OPTION`, and `FAILURE`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "#include \"people_management.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            escaped += c;"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        retur"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repo references `common.h`, but no visible `include/common.h` file exists here."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "public methods on `PeopleManagement`: `add`, `search`, `delete_record`, `update`, and `mentor`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "td::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_management.add(target, options);\n    } else if (subcommand == \"search\") {\n        result = people_management.search(target, options);\n    } else if (sub"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`add`, `search`, `delete_record`, `update`, and `mentor` are all defined on `PeopleManagement`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`PeopleManagement()` should be available as a default constructor",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "td::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_management.add(target, options);\n    } else if (subcommand == \"search\") {\n        result = people_management.search(target, options);\n    } else if (sub"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement people_management;` in `main.cpp` shows a default constructor is available."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "the main instance methods should preserve signatures shaped like:",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The public method shapes match the required signatures in the implementation file."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`int add(const std::string& entityType, const std::map<std::string, std::string>& options)`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_m"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<s"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement::add(const std::string&, const std::map<...>&)` is implemented."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`int search(const std::string& entityType, const std::map<std::string, std::string>& options)`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_m"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<s"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement::search(const std::string&, const std::map<...>&)` is implemented."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`int delete_record(const std::string& entityType, const std::map<std::string, std::string>& options)`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_m"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<s"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement::delete_record(const std::string&, const std::map<...>&)` is implemented."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`int update(const std::string& entityType, const std::map<std::string, std::string>& options)`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_m"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<s"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement::update(const std::string&, const std::map<...>&)` is implemented."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`int mentor(const std::string& action, const std::map<std::string, std::string>& options)`",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_m"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<s"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`PeopleManagement::mentor(const std::string&, const std::map<...>&)` is implemented."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "required file layout also includes `include/people_management.h`, `src/people_management.cpp`, and `src/utils.cpp`",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_managemen"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "#include \"people_management.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            escaped += c;\n        }\n    }\n    return \"'\" + escaped + \"'\";\n}\n\nstd::string join_conditions(const std::map<std::string, std::string>& options) {\n    std::ostringstream oss;\n    bool first = true;\n    for (const auto& [ke"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "missing",
+          "reason": "Only `main.cpp`, `people_management.cpp`, and `utils.cpp` are visible; the required `include/` and `src/` layout files are absent."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`validate_options` / `build_options` / `handle_options`**: CLI parsing and dispatch layer.",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "urn INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleM"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "D \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::string& target) {\n    if (contains(COMMANDS, subcommand) && contains(TARGETS, target)) {\n        return true;\n    }\n    if (subcommand == \"mentor\" && contains(MENTOR_COMMANDS, target)) {\n        return true;\n    }\n\n    st"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`validate_options`, `build_options`, and `handle_options` are all defined and wired together."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`utils.h`**: Stateless helper utilities (`contains`).",
+          "evidence": [
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "agement.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            escaped += c;\n        }\n    }\n    return"
+            }
+          ],
+          "status": "missing",
+          "reason": "`utils.h` is referenced, but no visible header file exists in the repo."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`common.h`**: Shared constants (column names, command names, error codes, database filename).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "#include \"people_management.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            escaped += c;"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        retur"
+            }
+          ],
+          "status": "missing",
+          "reason": "`common.h` is referenced, but no visible header file exists in the repo."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Database**: SQLite3 with three tables — `people`, `school`, `mentorship`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "}\n\n    return result == SUCCESS ? SUCCESS : FAILURE;\n}\n\nPeopleManagement::PeopleManagement() : db(nullptr) {\n    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {\n        if (db != nullptr) {\n            sqlite3_close(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS school (\"\n        \"id INTEGER PRIMARY KEY AUTOINCREMENT, \""
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The constructor creates the `school`, `people`, and `mentorship` tables with SQLite."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Person Management",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": ");\n    const bool exists = (rc == SQLITE_ROW);\n    sqlite3_finalize(stmt);\n    return exists;\n}\n\nbool PeopleManagement::person_has_type(const std::string& id, int type) const {\n    std::ostringstream oss;\n    oss << \"SELECT 1 FROM people WHERE id=\" << quote(id) << \" AND type=\" << type << \" LIMIT 1;\";\n    return record_exists(oss.str());\n}\n\nint PeopleManagement::add(const std::string& target, const"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Person-related CRUD and mentorship logic is present in `people_management.cpp`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "School Management",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "se(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS school (\"\n        \"id INTEGER PRIMARY KEY AUTOINCREMENT, \"\n        \"name TEXT NOT NULL\"\n        \");\"\n    );\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS people (\"\n        \"id INTEGER PRIMARY KEY AUTOINCREMENT, \"\n        \"name TEXT NOT NULL, \"\n        \"age INTEGER, \""
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "School table creation and school CRUD branches are present."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Mentorship Management",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "\"FOREIGN KEY(school) REFERENCES school(id)\"\n        \");\"\n    );\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS mentorship (\"\n        \"student INTEGER PRIMARY KEY, \"\n        \"mentor INTEGER NOT NULL, \"\n        \"FOREIGN KEY(student) REFERENCES people(id), \"\n        \"FOREIGN KEY(mentor) REFERENCES people(id)\"\n        \");\"\n    );\n}\n\nPeopleManagement::~PeopleManagement() {\n    if (db != nullpt"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentorship table creation and assign/lookup logic are present."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Database Initialization",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Database initialization happens in the constructor via `sqlite3_open` and table creation."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [],
+          "status": "missing",
+          "reason": "The repo does not reflect the required project-root-to-`src/` generation shape described by the prompt."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Required file layout** (paths are hardcoded in the test runner):",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "ql) const {\n    if (db == nullptr) {\n        return false;\n    }\n\n    sqlite3_stmt* stmt = nullptr;\n    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {\n        return false;\n    }\n\n    const int rc = sqlite3_step(stmt);\n    const bool exists = (rc == SQLITE_ROW);\n    sqlite3_finalize(stmt);\n    return exists;\n}\n\nbool PeopleManagement::person_has_type(const std::string&"
+            }
+          ],
+          "status": "missing",
+          "reason": "The hardcoded required file layout is not present in the visible repository."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`include/people_management.h` — public header; place directly under `include/` at project root (blackbox tests include it as `../include/people_management.h`)",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            }
+          ],
+          "status": "missing",
+          "reason": "`include/people_management.h` is not present in the visible repo."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`include/common.h` — shared types/utilities header",
+          "evidence": [],
+          "status": "missing",
+          "reason": "`include/common.h` is not present in the visible repo."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "`src/people_management.cpp` — implementation",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_managemen"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "#include \"people_management.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            escaped += c;\n        }\n    }\n    return \"'\" + escaped + \"'\";\n}\n\nstd::string join_conditions(const std::map<std::string, std::string>& options) {\n    std::ostringstream oss;\n    bool first = true;\n    for (const auto& [ke"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "missing",
+          "reason": "`src/people_management.cpp` is not present; only a root-level `people_management.cpp` exists."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "`src/utils.cpp` — utility functions implementation",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "#include \"people_management.h\"\n\n#include <cstdlib>\n#include <iostream>\n#include <sstream>\n#include <utility>\n\n#include \"common.h\"\n#include \"utils.h\"\n\nnamespace {\n\nstd::string quote(const std::string& value) {\n    std::string escaped;\n    escaped.reserve(value.size());\n    for (char c : value) {\n        if (c == '\\'') {\n            escaped += \"''\";\n        } else {\n            e"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_managemen"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "missing",
+          "reason": "`src/utils.cpp` is not present; only a root-level `utils.cpp` exists."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "sqlite3_close(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS school (\"\n        \"id INTEGER PRIMARY KEY AUTOINCREMENT, \"\n        \"name TEXT NOT NULL\"\n        \");\"\n    );\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS people (\"\n        \"id INTEGER PRIMARY KEY AUTOINCREMENT, \"\n        \"name TEXT NOT NULL, \"\n        \"age INTEG"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No test files, `blackbox_tests/`, or wrapper directory are present in the visible repo."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Returns `true` when subcommand is one of `add`, `search`, `delete`, `update` and target is `person` or `school`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "tring join_conditions(const std::map<std::string, std::string>& options) {\n    std::ostringstream oss;\n    bool first = true;\n    for (const auto& [key, value] : options) {\n        if (!first) {\n            oss << \" AND \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::str"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "t.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::m"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`validate_options` accepts `add/search/delete/update` with `person/school`."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "Returns `true` when subcommand is `mentor` and target is `assign` or `lookup`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "tring join_conditions(const std::map<std::string, std::string>& options) {\n    std::ostringstream oss;\n    bool first = true;\n    for (const auto& [key, value] : options) {\n        if (!first) {\n            oss << \" AND \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::str"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "t.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::m"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`validate_options` accepts `mentor` with `assign/lookup`."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "Returns `false` (and prints to stderr) for any other combination.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "if (!first) {\n            oss << \" AND \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::string& target) {\n    if (contains(COMMANDS, subcommand) && contains(TARGETS, target)) {\n        return true;\n    }\n    if (subcommand == \"mentor\" && contains(MENTOR_COMMANDS,"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Invalid combinations print to `stderr` and return `false`."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "Parses args starting at index 2, treating each pair as `(\"-key\", \"value\")`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "on\" << std::endl;\n    return false;\n}\n\nstd::map<std::string, std::string> build_options(const std::vector<std::string>& args) {\n    std::map<std::string, std::string> options;\n    if (args.size() <= 2) {\n        return options;\n    }\n    if ((args.size() - 2) % 2 != 0) {\n        std::exit(INVALID_OPTION);\n    }\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`build_options` starts parsing at index 2 as key/value pairs."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "Returns an empty map when no key-value pairs are present (args has only subcommand + target).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "}\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key = args[i];\n        if (key.empty() || key[0] != '-') {\n            std::exit(INVALID_OPTION);\n        }\n        if (i + 1 >= args.size()) {\n            std::exit(INVALID_OPTION);\n        }\n        options[key.substr(1)] = args[i + 1];\n    }\n\n    return options;\n}\n\nint handle_options(\n    const std::string&"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "ector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`build_options` returns an empty map when only subcommand and target are present."
+        },
+        {
+          "id": "F034",
+          "type": "feature",
+          "text": "Calls `exit(INVALID_OPTION)` if an option key does not start with `-`, if a key is missing a value, or if the total argument count starting at index 2 is odd.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "> options;\n    if (args.size() <= 2) {\n        return options;\n    }\n    if ((args.size() - 2) % 2 != 0) {\n        std::exit(INVALID_OPTION);\n    }\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key = args[i];\n        if (key.empty() || key[0] != '-') {\n            std::exit(INVALID_OPTION);\n        }\n        if (i + 1 >= args.size()) {\n            std::exit(INV"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`build_options` exits with `INVALID_OPTION` on malformed keys or odd argument counts."
+        },
+        {
+          "id": "F035",
+          "type": "feature",
+          "text": "Returns `true` if the value is present in the vector, `false` otherwise.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "tring join_conditions(const std::map<std::string, std::string>& options) {\n    std::ostringstream oss;\n    bool first = true;\n    for (const auto& [key, value] : options) {\n        if (!first) {\n            oss << \" AND \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::str"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, targe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`contains` returns true when the value exists in the vector."
+        },
+        {
+          "id": "F036",
+          "type": "feature",
+          "text": "Returns `false` for an empty string if the empty string is not in the vector.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "if (!first) {\n            oss << \" AND \";\n        }\n        oss << key << \"=\" << quote(value);\n        first = false;\n    }\n    return oss.str();\n}\n\n}\n\nbool validate_options(const std::string& subcommand, const std::string& target) {\n    if (contains(COMMANDS, subcommand) && contains(TARGETS, target)) {\n        return true;\n    }\n    if (subcommand == \"mentor\" && contains(MENTOR_COMMANDS,"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "#include <iostream>\n#include <string>\n#include <vector>\n\n#include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options"
+            },
+            {
+              "path": "utils.cpp",
+              "excerpt": "#include \"utils.h\"\n\n#include <algorithm>\n\nbool contains(const std::vector<std::string>& values, const std::string& value) {\n    return std::find(values.begin(), values.end(), value) != values.end();\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`contains` uses exact vector search, so an absent empty string returns false."
+        },
+        {
+          "id": "F037",
+          "type": "feature",
+          "text": "Dispatches to the matching `PeopleManagement` method based on subcommand.",
+          "evidence": [
+            {
+              "path": "main.cpp",
+              "excerpt": "args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement people_management;\n    return handle_options(subcommand, target, options, people_management);\n}"
+            },
+            {
+              "path": "people_management.cpp",
+              "excerpt": "td::string& subcommand,\n    const std::string& target,\n    const std::map<std::string, std::string>& options,\n    const PeopleManagement& people_management\n) {\n    int result = INVALID_OPTION;\n    if (subcommand == \"add\") {\n        result = people_management.add(target, options);\n    } else if (subcommand == \"search\") {\n        result = people_management.search(target, options);\n    } else if (sub"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`handle_options` dispatches by subcommand to the matching `PeopleManagement` method."
+        },
+        {
+          "id": "F038",
+          "type": "feature",
+          "text": "Returns `SUCCESS` (0) on success, `FAILURE` (6) when the underlying method fails, and `INVALID_OPTION` (2) for an unrecognised subcommand.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "lt = people_management.mentor(target, options);\n    } else {\n        return INVALID_OPTION;\n    }\n\n    return result == SUCCESS ? SUCCESS : FAILURE;\n}\n\nPeopleManagement::PeopleManagement() : db(nullptr) {\n    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {\n        if (db != nullptr) {\n            sqlite3_close(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql("
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`handle_options` returns `SUCCESS`, `FAILURE`, or `INVALID_OPTION` as required."
+        },
+        {
+          "id": "F039",
+          "type": "feature",
+          "text": "Returns `NOT_ENOUGH_OPTIONS` when options map is empty.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "ID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_back(argv[i]);\n    }\n\n    const std::map<std::string, std::string> options = build_options(args);\n    PeopleManagement"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`search` returns `NOT_ENOUGH_OPTIONS` when the options map is empty."
+        },
+        {
+          "id": "F040",
+          "type": "feature",
+          "text": "Returns `INVALID_OPTION` when any supplied option key is not in the allowed set (`id`, `name`, `age`, `school`, `type` for persons; `id`, `name` for schools).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "ions;\n    if (args.size() <= 2) {\n        return options;\n    }\n    if ((args.size() - 2) % 2 != 0) {\n        std::exit(INVALID_OPTION);\n    }\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key = args[i];\n        if (key.empty() || key[0] != '-') {\n            std::exit(INVALID_OPTION);\n        }\n        if (i + 1 >= args.size()) {\n            std::exit(INVALID_"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`search` validates option keys against the allowed per-target sets."
+        },
+        {
+          "id": "F041",
+          "type": "feature",
+          "text": "Returns `SUCCESS` when the query executes, even if no rows match.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "lt = people_management.mentor(target, options);\n    } else {\n        return INVALID_OPTION;\n    }\n\n    return result == SUCCESS ? SUCCESS : FAILURE;\n}\n\nPeopleManagement::PeopleManagement() : db(nullptr) {\n    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {\n        if (db != nullptr) {\n            sqlite3_close(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql("
+            }
+          ],
+          "status": "implemented",
+          "reason": "`search` returns `SUCCESS` after a successful query execution, regardless of matches."
+        },
+        {
+          "id": "F042",
+          "type": "feature",
+          "text": "Returns `NOT_ENOUGH_OPTIONS` when `-id` is absent.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`update` checks for `-id` and returns `NOT_ENOUGH_OPTIONS` if it is missing."
+        },
+        {
+          "id": "F043",
+          "type": "feature",
+          "text": "Returns `NOT_ENOUGH_OPTIONS` when only `-id` is supplied (no field to update) for persons.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`update` on person returns `NOT_ENOUGH_OPTIONS` when no field besides `-id` is provided."
+        },
+        {
+          "id": "F044",
+          "type": "feature",
+          "text": "Returns `NOT_ENOUGH_OPTIONS` when `-id` is present but `-name` is absent for schools.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`update` on school returns `NOT_ENOUGH_OPTIONS` when `-name` is absent."
+        },
+        {
+          "id": "F045",
+          "type": "feature",
+          "text": "Returns `INVALID_OPTION` when an unrecognised field key is supplied for person updates.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "ions;\n    if (args.size() <= 2) {\n        return options;\n    }\n    if ((args.size() - 2) % 2 != 0) {\n        std::exit(INVALID_OPTION);\n    }\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key = args[i];\n        if (key.empty() || key[0] != '-') {\n            std::exit(INVALID_OPTION);\n        }\n        if (i + 1 >= args.size()) {\n            std::exit(INVALID_"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Person updates reject unrecognised field keys with `INVALID_OPTION`."
+        },
+        {
+          "id": "F046",
+          "type": "feature",
+          "text": "Returns `RECORD_NOT_EXISTS` when the referenced school ID does not exist during a person update.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "uote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_check.str())) {\n                return RECORD_NOT_EXISTS;\n            }\n        }\n\n        sql << \"INSERT INTO people (name, age, school, type) VALUES (\"\n            << quote(options.at(\"name\")) << \",\"\n            << (options.count(\"age\") ? quote(options.at(\"age\")) : \"NULL\") << \",\"\n            << (options.count(\"schoo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Person updates verify the referenced school exists and return `RECORD_NOT_EXISTS` if not."
+        },
+        {
+          "id": "F047",
+          "type": "feature",
+          "text": "Returns `NOT_ENOUGH_OPTIONS` when `-id` option is absent (for both person and school targets).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "\"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.emplace_b"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`delete_record` returns `NOT_ENOUGH_OPTIONS` when `-id` is missing for person and school targets."
+        },
+        {
+          "id": "F048",
+          "type": "feature",
+          "text": "Returns `RECORD_NOT_EXISTS` when the specified ID does not exist in the database.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "uote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_check.str())) {\n                return RECORD_NOT_EXISTS;\n            }\n        }\n\n        sql << \"INSERT INTO people (name, age, school, type) VALUES (\"\n            << quote(options.at(\"name\")) << \",\"\n            << (options.count(\"age\") ? quote(options.at(\"age\")) : \"NULL\") << \",\"\n            << (options.count(\"schoo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`delete_record` checks existence and returns `RECORD_NOT_EXISTS` when the ID is absent."
+        },
+        {
+          "id": "F049",
+          "type": "feature",
+          "text": "For `assign`: returns `NOT_ENOUGH_OPTIONS` if either `-student` or `-mentor` is missing.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor assign requires both `-student` and `-mentor`."
+        },
+        {
+          "id": "F050",
+          "type": "feature",
+          "text": "For `assign`: returns `RECORD_NOT_EXISTS` if the student ID does not reference a person with `type=1`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "uote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_check.str())) {\n                return RECORD_NOT_EXISTS;\n            }\n        }\n\n        sql << \"INSERT INTO people (name, age, school, type) VALUES (\"\n            << quote(options.at(\"name\")) << \",\"\n            << (options.count(\"age\") ? quote(options.at(\"age\")) : \"NULL\") << \",\"\n            << (options.count(\"schoo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor assign validates the student is a `type=1` person."
+        },
+        {
+          "id": "F051",
+          "type": "feature",
+          "text": "For `assign`: returns `RECORD_NOT_EXISTS` if the mentor ID does not reference a person with `type=2`.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "uote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_check.str())) {\n                return RECORD_NOT_EXISTS;\n            }\n        }\n\n        sql << \"INSERT INTO people (name, age, school, type) VALUES (\"\n            << quote(options.at(\"name\")) << \",\"\n            << (options.count(\"age\") ? quote(options.at(\"age\")) : \"NULL\") << \",\"\n            << (options.count(\"schoo"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor assign validates the mentor is a `type=2` person."
+        },
+        {
+          "id": "F052",
+          "type": "feature",
+          "text": "For `assign`: if the student already has a mentor, the existing mentorship row is updated (not duplicated).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "REFERENCES school(id)\"\n        \");\"\n    );\n    execute_sql(\n        \"CREATE TABLE IF NOT EXISTS mentorship (\"\n        \"student INTEGER PRIMARY KEY, \"\n        \"mentor INTEGER NOT NULL, \"\n        \"FOREIGN KEY(student) REFERENCES people(id), \"\n        \"FOREIGN KEY(mentor) REFERENCES people(id)\"\n        \");\"\n    );\n}\n\nPeopleManagement::~PeopleManagement() {\n    if (db != nullptr) {\n        sqlite3_cl"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor assign updates the existing mentorship row when one already exists."
+        },
+        {
+          "id": "F053",
+          "type": "feature",
+          "text": "For `lookup`: returns `NOT_ENOUGH_OPTIONS` when neither `-student` nor `-mentor` is supplied.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "person\") {\n        if (!contains(PERSON_COLUMNS, \"name\") || options.find(\"name\") == options.end()) {\n            return NOT_ENOUGH_OPTIONS;\n        }\n        if (options.find(\"school\") != options.end()) {\n            std::ostringstream school_check;\n            school_check << \"SELECT 1 FROM school WHERE id=\" << quote(options.at(\"school\")) << \" LIMIT 1;\";\n            if (!record_exists(school_chec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor lookup returns `NOT_ENOUGH_OPTIONS` when neither selector is provided."
+        },
+        {
+          "id": "F054",
+          "type": "feature",
+          "text": "For `lookup`: returns `INVALID_OPTION` when both `-student` and `-mentor` are supplied.",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "ions;\n    if (args.size() <= 2) {\n        return options;\n    }\n    if ((args.size() - 2) % 2 != 0) {\n        std::exit(INVALID_OPTION);\n    }\n\n    for (std::size_t i = 2; i < args.size(); i += 2) {\n        const std::string& key = args[i];\n        if (key.empty() || key[0] != '-') {\n            std::exit(INVALID_OPTION);\n        }\n        if (i + 1 >= args.size()) {\n            std::exit(INVALID_"
+            },
+            {
+              "path": "main.cpp",
+              "excerpt": "include \"common.h\"\n#include \"people_management.h\"\n\nint main(int argc, char** argv) {\n    if (argc < 3) {\n        return INVALID_OPTION;\n    }\n\n    const std::string subcommand = argv[1];\n    const std::string target = argv[2];\n    if (!validate_options(subcommand, target)) {\n        return INVALID_OPTION;\n    }\n\n    std::vector<std::string> args;\n    for (int i = 1; i < argc; ++i) {\n        args.e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor lookup returns `INVALID_OPTION` when both selectors are provided."
+        },
+        {
+          "id": "F055",
+          "type": "feature",
+          "text": "For `lookup`: returns `SUCCESS` when exactly one of `-student` or `-mentor` is supplied (one of the two).",
+          "evidence": [
+            {
+              "path": "people_management.cpp",
+              "excerpt": "lt = people_management.mentor(target, options);\n    } else {\n        return INVALID_OPTION;\n    }\n\n    return result == SUCCESS ? SUCCESS : FAILURE;\n}\n\nPeopleManagement::PeopleManagement() : db(nullptr) {\n    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {\n        if (db != nullptr) {\n            sqlite3_close(db);\n            db = nullptr;\n        }\n        return;\n    }\n\n    execute_sql("
+            }
+          ],
+          "status": "implemented",
+          "reason": "Mentor lookup returns `SUCCESS` when exactly one selector is provided."
+        }
+      ],
+      "feature_count": 55,
+      "constraint_count": 0,
+      "implemented_count": 44,
+      "partial_count": 1,
+      "missing_count": 10,
+      "unclear_count": 0,
+      "feature_coverage": 0.8091,
+      "constraint_coverage": 0.8091,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "cpp",
+        "framework": "cpp",
+        "app_style": "library",
+        "build_system": "cpp",
+        "persistence": "sqlite",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.8,
+        "stack_alignment": 3.1,
+        "reference_alignment": 2.4
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 1,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe visible code covers the main CLI flow, SQLite initialization, the three tables, CRUD operations for people and schools, mentorship assign/lookup, option parsing, dispatch, and `contains`. The main gap is packaging: the required header files and the exact `include/` / `src/` layout are not present in the repository snapshot.\n\n### Missing List\n\n- `include/common.h`\n- `include/people_management.h`\n- `src/people_management.cpp`\n- `src/utils.cpp`\n- Hardcoded required project layout\n\n### Critical Constraint Misses\n\n- Missing required visible files: `include/common.h`, `include/people_management.h`, `src/people_management.cpp`, `src/utils.cpp`.\n- The repository layout does not match the hardcoded include/src structure described in the prompt.",
+    "architecture_review": "### Stack Inference\n\n代码表明这是一个 C++ CLI + SQLite 的本地持久化工具，核心通过 `sqlite3_open`/`sqlite3_exec` 直接操作数据库。`main.cpp` 负责命令行入口，`PeopleManagement` 承担业务和存储逻辑，`utils.cpp` 只提供基础容器查找工具，因此技术栈判断为标准的 C++/SQLite 命令行应用。\n\n### Scoring Mode\n\n这是按架构评估来看的，不按文件数量打分。重点看的是目录分层、公共接口边界、入口与核心逻辑的解耦、以及是否符合 C++/SQLite CLI 工具的常见工程习惯。这个仓库虽然实现了部分单文件式逻辑，但整体更像草稿级聚合实现，而不是结构清晰的工程化项目。\n\n### Strengths\n\n- 有清晰的单点入口 `main.cpp`，并且命令分发路径直观。\n- `PeopleManagement` 已经被抽象成独立类，至少在概念上把业务操作集中到了一个 domain 对象里。\n- `utils.cpp` 里的 `contains` 是纯函数式小工具，符合无状态辅助函数的定位。\n\n### Issues\n\n- 仓库只有 `main.cpp`、`people_management.cpp`、`utils.cpp` 三个源文件，没有 `include/`、`src/` 目录划分、公共头文件或构建文件，和需求里硬性要求的项目形态不一致。\n- `people_management.cpp` 把 CLI 解析、SQL 拼接、数据库初始化、CRUD、mentorship 全部塞在一个实现单元里，分层很弱，维护和测试边界都不清晰。\n- 入口文件直接依赖实现侧符号，缺少独立的接口层和可复用的 domain/api 头文件，和“`PeopleManagement` 作为公共入口类”的要求不匹配。\n- 从摘要看没有 `common.h`、`utils.h`、`people_management.h`，意味着状态常量、公开签名和工具函数契约都没有稳定的公共边界。\n- 缺少 SQLite3 构建/链接配置，无法判断该仓库能否按预期被稳定编译和集成。\n\n### Stack Mismatches\n\n- C++/SQLite 任务通常会拆出头文件、实现文件和构建文件；这里缺少头文件和构建系统，工程化程度偏低。\n- 公共 API 预期是稳定可包含的库式接口，但当前实现缺少可见的 `include/*.h` 边界。\n- SQLite 业务逻辑和 CLI 解析耦合在同一实现层，和常见的 C++ 分层习惯不一致。\n\n### Reference Gaps\n\n- 需求明确要求 `include/people_management.h`、`include/common.h`、`src/people_management.cpp`、`src/utils.cpp`，当前仓库结构不满足。\n- 需求要求 `validate_options` / `build_options` / `handle_options`、`common.h` 常量、`utils.h`、以及 `PeopleManagement` 的公共默认构造和方法签名；当前未见这些头文件及其对外契约。\n- 需求要求 SQLite 三表和数据库初始化约束，但现有代码只显示 `.cpp` 内部创建表，缺少对数据库 schema、错误码和可复用接口的公共定义。\n- 需求明确说不要生成测试文件和外层 wrapper，而当前仓库也没有可见的标准构建入口，评审时无法验证完整交付形态。"
+  },
+  "task": "cpp/people_management/L1_people_management",
+  "solver": "generated_outputs"
+}

@@ -1,0 +1,24 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__mz_zip_writer_write_zeros",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_writer_write_zeros/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_writer_write_zeros/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::mz_zip_writer_write_zeros",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description accurately captures all core behaviors: chunked writing of zero bytes, use of the archive's write callback, error handling on short writes via `mz_zip_set_error`, advancing the offset per chunk, and the zero-`n` edge case. One minor detail not mentioned is that the buffer is only `memset` up to `MZ_MIN(sizeof(buf), n)` rather than the full 4096 bytes on the first call — though this is an implementation optimization that doesn't affect observable behavior. The description is complete enough to implement the function faithfully.",
+  "missing_functionality": [
+    "The buffer is partially zeroed on initialization (only up to MZ_MIN(sizeof(buf), n) bytes), not necessarily the full 4096-byte buffer — though this is a minor optimization detail with no behavioral impact."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'records a file-write failure on the archive' which is accurate but slightly understates that it calls mz_zip_set_error() which both sets the error state and returns MZ_FALSE — this is not really misleading though."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_miniz__mz_zip_writer_write_zeros.raw.md"
+}

@@ -1,0 +1,11 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the overall structure: a chi router with collection-level GET and POST handlers, and item-level routes under `/{id}` for GET, PUT, DELETE, and a sync action. The key detail it misses is that the collection root also registers a `PUT /` handler mapped to `rs.Delete` — not a \"DELETE-style handler\" as described, but literally an HTTP PUT method bound to the Delete handler. The description characterizes this as a \"DELETE-style handler\" which is misleading since the actual HTTP method is PUT. The sync route is correctly noted as an action under the item path. Overall the description is close enough to support a reasonable implementation, but the PUT-mapped-to-Delete quirk on the collection root is a meaningful behavioral detail that is mischaracterized.",
+  "missing_functionality": [
+    "The collection root registers `r.Put(\"/\", rs.Delete)` — an HTTP PUT method bound to the Delete handler — which is not accurately conveyed by calling it a 'DELETE-style handler'."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing `r.Put(\"/\", rs.Delete)` as a 'DELETE-style handler' is misleading; the HTTP method is PUT, not DELETE, even though it invokes the Delete function."
+  ],
+  "complete_enough": true
+}

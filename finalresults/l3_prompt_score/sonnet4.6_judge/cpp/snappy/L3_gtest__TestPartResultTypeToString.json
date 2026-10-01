@@ -1,0 +1,29 @@
+{
+  "task": "cpp/snappy/L3_gtest__TestPartResultTypeToString",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__TestPartResultTypeToString/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__TestPartResultTypeToString/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest.cc::TestPartResultTypeToString",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 2.8,
+  "reason": "The description captures the high-level purpose (converting a `TestPartResult::Type` to a human-readable string) and correctly notes the default case and absence of side effects. However, it omits several concrete and important implementation details: the specific enum values handled (`kSkip`, `kSuccess`, `kNonFatalFailure`, `kFatalFailure`), the exact string literals returned for each (`\"Skipped\\n\"`, `\"Success\"`, `\"Failure\\n\"` / `\"error: \"`), the platform-conditional behavior (`#ifdef _MSC_VER` returning `\"error: \"` vs `\"Failure\\n\"`), the fact that both fatal and non-fatal failures map to the same string, and the trailing newlines on some return values. These are not minor details — they are the core mapping logic of the function. A developer using only this description could not reproduce the implementation faithfully.",
+  "missing_functionality": [
+    "Specific enum cases handled: kSkip → \"Skipped\\n\", kSuccess → \"Success\", kNonFatalFailure/kFatalFailure → \"Failure\\n\" (or \"error: \" on MSVC)",
+    "Platform-conditional behavior: on MSVC returns \"error: \", on other platforms returns \"Failure\\n\" for failure cases",
+    "Both kNonFatalFailure and kFatalFailure map to the same string (this merging is a key design decision)",
+    "Trailing newlines present on some return values (\"Skipped\\n\", \"Failure\\n\") but not others (\"Success\")",
+    "Default case returns \"Unknown result type\"",
+    "Return type is `const char*`, not `std::string`"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'any unrecognized/invalid type would be handled according to the function's internal default case if present in the omitted code' — the default case is not omitted, it is present and returns \"Unknown result type\", so framing it as uncertain is misleading"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest__TestPartResultTypeToString.raw.md"
+}

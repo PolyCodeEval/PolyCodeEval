@@ -1,0 +1,9 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very well. It correctly identifies this class as a shared protected base for unordered element matchers, notes storage of the unordered-matching flags, the non-owning vector of matcher describers, the description-related helper methods, the verification/pairing hooks, mutable access to the describer collection, and the singular/plural element-count utility. It is also appropriately framed as a base helper rather than a standalone matcher. The only minor issue is that some wording implies more concrete behavior than is visible in this declaration-only implementation; the actual code here declares these helper methods but does not show their internal logic.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description says the class 'provides internal hooks for validating ... including reporting failures' and 'for finding a valid pairing ... supporting diagnostic reporting'; in this snippet those methods are only declared, so the reporting behavior is inferred from signatures rather than directly implemented here."
+  ],
+  "complete_enough": true
+}

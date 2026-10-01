@@ -1,0 +1,14 @@
+{
+  "score": 4.2,
+  "reason": "The description matches the implementation well on the core behavior: it takes an already-parsed expression, checks for a following `?`, returns the original expression unchanged if none is present, and otherwise parses and returns a `ConditionalExpression`. It also correctly notes normal parse-error behavior for malformed syntax. However, it is somewhat generic and misses a few concrete implementation details that matter for faithfully reproducing the function, especially which parser routines are used for the consequent and alternate branches and that the node is created using the provided `startLoc` with `expr` assigned to `test`.",
+  "missing_functionality": [
+    "It does not specify that the consequent is parsed with `parseMaybeAssignAllowIn()` while the alternate is parsed with `parseMaybeAssign()`.",
+    "It does not mention that the conditional node reuses the provided `startLoc` and sets `node.test = expr` before parsing branches.",
+    "It does not state that the function explicitly requires and consumes a colon via `expect(tt.colon)` between consequent and alternate."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement that it may recursively parse nested conditional branches according to expression precedence rules is only indirectly true; this function itself does not recurse or manage precedence, but delegates branch parsing to other parser methods.",
+    "The mention of `refExpressionErrors` behavior is implied by context, but in this implementation that parameter is unused."
+  ],
+  "complete_enough": true
+}

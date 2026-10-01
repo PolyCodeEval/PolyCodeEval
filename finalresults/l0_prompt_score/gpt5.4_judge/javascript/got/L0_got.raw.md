@@ -1,0 +1,21 @@
+{
+  "project": "got",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 已覆盖该仓库的核心能力与主干结构，包括 promise/stream 双 API、extend/defaults、重试、超时、重定向、hooks、分页、HTTP/2 以及 `source/index.ts`、`source/create.ts`、`source/core/*`、`source/as-promise/*` 的模块划分，足以让实现者把握 got 的主体设计；但对源码里同样较重要的缓存、cookie jar、agent/DNS 细节、进度事件、额外错误类型与部分公共辅助能力提及较少，因此仍有一定缺口。"
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "黑盒测试相关的关键契约写得较明确：包导入路径、必须导出的错误类、`extend`/`mergeOptions`/`defaults`、若干边界行为都被点名；但不少核心语义仍停留在高层描述，例如 option merge 的精确策略、stream/request 对象的具体行为、超时与重试的细节、各错误构造参数与附加字段来源，足以指导大方向实现，但仍会留下实现分歧空间。"
+    },
+    "testability": {
+      "score": 4.4,
+      "reason": "Prompt 明确给出了可直接对照黑盒测试的公共接口和若干 edge case，且要求固定导入入口与模块布局，使实现结果具备较强可验证性；对错误导出、实例扩展、选项合并和默认值对象的测试支撑尤其充分。扣分点在于对流式行为、分页实际观测面、若干 hook/retry/timeout 的外部可见表现仍主要是概述，未完全细化成可断言契约。"
+    },
+    "consistency": {
+      "score": 3.9,
+      "reason": "整体描述与真实源码基本一致：项目确为 Node.js HTTP 客户端，主入口、实例工厂、core transport、as-promise 分层以及错误类和 `extend`/`defaults` 等公共接口都对得上；但仍存在少量不够贴合实现的地方，例如 prompt 将 `got.stream(url)` 描述为返回 `PassThrough` duplex stream，而源码实际是自定义 `Request` duplex 对象，并且真实导出面还包含 CacheError、ReadError、UploadError 等额外类型，说明 prompt 与当前实现并非完全严丝合缝。"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.32,
+  "stdout": "FAIL\tgithub.com/jmoiron/sqlx [build failed]\nFAIL\tgithub.com/jmoiron/sqlx/reflectx [build failed]\nok  \tgithub.com/jmoiron/sqlx/types\t(cached)\nFAIL\n",
+  "stderr": "# github.com/jmoiron/sqlx/reflectx\nreflectx/reflect.go:343:9: syntax error: unexpected literal 's the function body: at end of statement\nreflectx/reflect.go:343:30: newline in rune literal\nreflectx/reflect.go:345:7: syntax error: unexpected literal `go\n        m := &StructMap{\n            Paths: make(map[string]*FieldInfo),\n            Names: make(map[string]*FieldInfo),\n        }\n\n        root := &FieldInfo{}\n        m.Tree = root\n\n        type typeQueue struct {\n            t  reflect.Type\n            fi *FieldInfo\n            pp string // parent path\n        }\n\n        queue := []typeQueue{{Deref(t), root, \"\"}}\n\n        for len(queue) > 0 {\n            // pop the first item off the queue\n            item := queue[0]\n            queue = queue[1:]\n\n            // dereference pointer types\n            current := Deref(item.t)\n\n            // if it's not a struct, skip it\n            if current.Kind() != reflect.Struct {\n                continue\n            }\n\n            for i := 0; i < current.NumField(); i++ {\n                f := current.Field(i)\n\n                // build the index path for this field\n                index := make([]int, len(item.fi.Index)+1)\n                copy(index, item.fi.Index)\n                index[len(item.fi.Index)] = i\n\n                // parse the tag and field name\n                tag, name := parseName(f, tagName, mapFunc, tagMapFunc)\n\n                // determine the full path for this field\n                var path string\n                if item.pp == \"\" {\n                    path = name\n                } else {\n                    path = item.pp + \".\" + name\n                }\n\n                // build a FieldInfo for this field\n                fi := &FieldInfo{\n                    Index:   index,\n                    Field:   f,\n                    Name:    name,\n                    Zero:    reflect.New(f.Type).Elem(),\n                    Options: parseOptions(tag),\n                    Path:    path,\n                    Parent:  item.fi,\n                }\n\n                // check if this field is an embedded struct\n                ft := Deref(f.Type)\n                isStruct := ft.Kind() == reflect.Struct\n\n                // anonymous (embedded) fields\n                if f.Anonymous && isStruct {\n                    fi.Embedded = true\n                    // recurse into embedded structs\n                    queue = append(queue, typeQueue{ft, fi, item.pp})\n                } else if isStruct && tag != \"\" && name != \"\" {\n                    // named struct with a tag — treat children as nested\n                    queue = append(queue, typeQueue{ft, fi, path})\n                }\n\n                // add to the index\n                m.Index = append(m.Index, fi)\n\n                // only register named (non-empty) fields in Paths and Names\n                if name != \"\" {\n                    // Paths uses full dot-separated path\n                    m.Paths[path] = fi\n                    // Names uses just the field name (last segment wins)\n                    if _, ok := m.Names[name]; !ok {\n                        m.Names[name] = fi\n                    }\n                }\n\n                // attach as child of parent FieldInfo\n                item.fi.Children = append(item.fi.Children, fi)\n            }\n        }\n\n        return m\n    ` at end of statement\n",
+  "task": "go/sqlx/L3_reflect__getMapping",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

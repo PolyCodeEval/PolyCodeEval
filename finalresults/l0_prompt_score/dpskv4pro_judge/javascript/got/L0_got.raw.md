@@ -1,0 +1,21 @@
+{
+  "project": "got",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 覆盖 got 核心 HTTP 客户端：请求 API（got/got.get/got.post）、extend/mergeOptions 实例定制、错误类层次（RequestError/HTTPError/TimeoutError/CancelError 等）、promise/stream 双模式。覆盖主要请求和错误处理能力。"
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "错误类层次结构、extend 的继承行为、mergeOptions 合并策略描述清楚。但实际 API 方法签名和 option 类型繁多，prompt 中的 API 合约仅覆盖核心。"
+    },
+    "testability": {
+      "score": 4.4,
+      "reason": "测试需求覆盖错误类构造（error.response/error.timings）、extend/mergeOptions 行为。黑盒测试映射清楚。"
+    },
+    "consistency": {
+      "score": 3.9,
+      "reason": "错误类层次与真实 got 一致。但真实 got 是 ESM-first 的，而 prompt 使用 require('../dist/source/index.js') 的导入方式与实际包结构可能有细微偏差。"
+    }
+  }
+}

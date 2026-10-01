@@ -1,0 +1,11 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures that the function walks the node tree, skips pure stub-only leaves without subroutes, groups endpoints by pattern, builds per-route handler maps with reverse method-name translation and special handling for the ALL method as \"*\", and returns the collected flat slice of Route values. The only notable mismatch is that the implementation filters out empty patterns but does not filter out nil handlers during the grouping phase; nil handlers are only skipped later when building the handler map. That is a minor detail and does not materially distort the function’s behavior. Overall, this is complete enough to implement the function.",
+  "missing_functionality": [
+    "The description does not explicitly mention that traversal is performed via walk over both endpoint-bearing nodes and child nodes, though this is only a minor omission."
+  ],
+  "incorrect_or_misleading_points": [
+    "It says to ignore handler entries that do not have a non-empty pattern or do not have an attached handler, but the implementation only ignores empty-pattern entries during grouping; nil-handler entries may still participate in grouping and are skipped later when populating the method map."
+  ],
+  "complete_enough": true
+}

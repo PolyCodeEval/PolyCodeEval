@@ -1,0 +1,33 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::mz_zip_reader_extract_to_mem_no_alloc1",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.2,
+  "reason": "The description captures the high-level purpose correctly — extracting a ZIP entry by index into a caller-supplied buffer without allocation — and correctly notes the no-alloc intent, buffer size requirement, and error-on-failure behavior. However, it significantly mischaracterizes the 'no_alloc' guarantee: the implementation *will* fall back to allocating a temporary read buffer internally when neither an in-memory archive nor a user read buffer is available, so the 'no allocation' claim is not strictly true. The description also omits several important behavioral details: the `flags` parameter (including `MZ_ZIP_FLAG_COMPRESSED_DATA` for raw compressed output), the optional `st` file-stat pointer that bypasses the internal stat lookup, CRC32 verification after decompression, support for both stored and deflate methods, encryption/patch-file rejection, directory and zero-length file early-return as success, local header parsing and validation, and the three distinct read-buffer strategies (in-memory archive, user buffer, or fallback allocation). The return type is `mz_bool`, not an enum. These omissions would make it difficult to implement the function correctly from the description alone.",
+  "missing_functionality": [
+    "flags parameter and MZ_ZIP_FLAG_COMPRESSED_DATA behavior (raw compressed data output path)",
+    "optional st (mz_zip_archive_file_stat*) parameter that skips internal file_stat lookup",
+    "CRC32 verification of decompressed (or stored) data",
+    "three read-buffer strategies: in-memory archive pointer, user-supplied buffer, and fallback internal allocation",
+    "encryption and patch-file detection returning unsupported error",
+    "method validation: only stored (0) and deflate supported",
+    "directory entries and zero-length files return MZ_TRUE immediately",
+    "local directory header parsing and signature validation",
+    "return type is mz_bool, not an enum"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description states the function relies on caller-supplied buffers 'rather than allocating memory itself' — the implementation does allocate a temporary read buffer when no user read buffer and no in-memory archive is present",
+    "Description says the return value is an 'enum' status — it is actually mz_bool (MZ_TRUE/MZ_FALSE)"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1.raw.md"
+}

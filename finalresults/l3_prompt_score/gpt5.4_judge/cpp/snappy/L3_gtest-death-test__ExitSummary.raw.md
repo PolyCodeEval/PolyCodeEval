@@ -1,0 +1,15 @@
+{
+  "score": 3.7,
+  "reason": "The description captures the high-level purpose correctly: the function takes an exit code and returns a formatted human-readable summary with no side effects. However, it is too generic to fully support reimplementation. The implementation has important platform-specific behavior: on Windows/Fuchsia it always reports the raw exit status, while on other platforms it distinguishes normal exit from signal termination using wait-style macros and optionally appends a core-dump note. Those concrete branches and output strings are not described, so the summary matches the intent but misses significant implementation detail.",
+  "missing_functionality": [
+    "Platform-specific behavior is omitted: Windows/Fuchsia format the raw exit code directly, while other platforms interpret it via wait-status macros.",
+    "The function distinguishes between normal exit (`Exited with exit status N`) and signal termination (`Terminated by signal N`) on non-Windows/Fuchsia platforms.",
+    "If `WCOREDUMP(exit_code)` is available and true, the function appends ` (core dumped)` to the message.",
+    "The exact output phrasing is not specified, which is important for a formatting utility."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying only that it returns a summary in a `wait(2)`-style format is somewhat misleading because on Windows/Fuchsia it does not interpret the code with wait-style semantics; it simply prints the exit status.",
+    "The statement that no special cases for particular codes are visible understates the implementation's explicit branching on exited vs signaled and possible core-dump status."
+  ],
+  "complete_enough": false
+}

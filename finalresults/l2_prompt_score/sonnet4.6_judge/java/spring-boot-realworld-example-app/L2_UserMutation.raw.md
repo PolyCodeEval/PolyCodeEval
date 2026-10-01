@@ -1,0 +1,11 @@
+{
+  "score": 4.8,
+  "reason": "The file-level description accurately characterizes the component as a thin GraphQL mutation adapter using DataFetcherResult with localContext, and all three function descriptions closely match the actual implementation. The createUser description correctly captures the ConstraintViolationException catch-and-convert pattern, the empty UserPayload builder pattern, and the localContext user attachment. The login description correctly describes the Optional lookup, password matching via PasswordEncoder, success/failure branching, and the exception type. The updateUser description correctly identifies the AnonymousAuthenticationToken check, null principal guard, principal cast, UpdateUserParam builder with all five fields, UpdateUserCommand invocation, and the localContext return. The only minor gap is that the updateUser description says to check for 'null principal' as a separate condition, which matches the code (`authentication.getPrincipal() == null`), but does not mention that a null `authentication` itself could be an issue — though the implementation also does not guard against that. Overall the descriptions are precise, complete, and sufficient to reconstruct the file faithfully.",
+  "missing_functionality": [
+    "No mention that authentication itself could be null (though the implementation also does not guard this, so it is a shared omission rather than a description gap)"
+  ],
+  "incorrect_or_misleading_points": [
+    "The updateUser description says 'Treat unauthenticated access as either an AnonymousAuthenticationToken or a null principal' which slightly implies these are two independent checks on the same object, but the code uses a single OR condition on the authentication object and its principal — this is accurate but could be read as checking two separate objects"
+  ],
+  "complete_enough": true
+}

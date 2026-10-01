@@ -1,0 +1,25 @@
+{
+  "task": "go/chi/L3_mux__Find",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_mux__Find/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_mux__Find/task.json",
+  "source_file_path": "datasets/go/chi/src/mux.go",
+  "target_symbol": "mux.go::Find",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation closely. It correctly states that the function looks up a route pattern by method and path, returns an empty string for unsupported methods or failed matches, mutates the provided route context during matching, returns the endpoint pattern for terminal matches, and recursively resolves subrouter matches by combining the parent and child patterns. It is also specific enough to support implementation. The only notable omission is the exact handling of the parent pattern when descending into subroutes: the implementation trims a trailing `/*` from the parent pattern before appending the subpattern, and if no node is found at all it returns the current `rctx.routePattern` value rather than explicitly checking for a match failure first.",
+  "missing_functionality": [
+    "Does not mention that when combining a parent subroute pattern with a nested match, the implementation removes a trailing `/*` from the parent pattern before concatenation.",
+    "Does not mention that the initial pattern comes from `rctx.routePattern` after the tree lookup."
+  ],
+  "incorrect_or_misleading_points": [
+    "Says it returns an empty string when no matching route can be resolved, but in the implementation if `FindRoute` returns no node, the function returns `rctx.routePattern`, which is only empty if the context was not populated otherwise. This is slightly stronger than what the code guarantees directly."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_mux__Find.raw.md"
+}

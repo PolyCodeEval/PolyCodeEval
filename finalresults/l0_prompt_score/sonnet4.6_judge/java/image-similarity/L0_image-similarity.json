@@ -1,0 +1,29 @@
+{
+  "task": "java/image-similarity/L0_image-similarity",
+  "project": "java/image-similarity",
+  "language": "java",
+  "prompt_path": "datasets/java/image-similarity/tasks/L0_image-similarity/prompt.md",
+  "project_root": "datasets/java/image-similarity",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers ImageHistogram (match with Bhattacharyya coefficient, symmetry, self-similarity >= 0.99, score in [0,1]) and ImagePHash (distance, symmetry, self-distance=0, custom constructor). CLI workflow described. Minor omission: the prompt does not specify the 'mode' parameter semantics for the CLI or what input file format looks like, but the blackbox tests don't test CLI either."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Key thresholds (>= 0.8 for similar histogram, < 10 for similar phash) and properties (symmetry, self-identity, range [0,1]) are precisely stated. The ImagePHash(int size, int smallerSize) accepting any positive integers is explicit. No significant ambiguity for the tested classes."
+    },
+    "testability": {
+      "score": 4.0,
+      "reason": "Tests verify same-image scores, symmetry, range constraints, and cross-image thresholds. These are blackbox-verifiable given the specified thresholds. However, the tests rely on specific image files (imgs/1.jpg through 4.jpg) which must be available in the test environment — this is an infrastructure dependency not mentioned in the prompt, but is a test infrastructure concern rather than a prompt deficiency."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "No conflicts. The Bhattacharyya coefficient specification and the Hamming distance specification match test assertions. Symmetry and self-identity properties are consistent with what tests verify. The custom constructor accepting arbitrary positive integers is consistent with the test using ImagePHash(32, 8)."
+    }
+  },
+  "overall_score": 4.38
+}

@@ -1,0 +1,783 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.35,
+  "stdout": "\nup to date in 603ms\n\n53 packages are looking for funding\n  run `npm fund` for details\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.17.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0\nnpm notice To update run: npm install -g npm@11.17.0\nnpm notice\n● Validation Error:\n\n  Module /workspace/src/node_modules/babel-jest/build/index.js in the transform option was not found.\n         <rootDir> is: /workspace/src\n\n  Configuration Documentation:\n  https://jestjs.io/docs/configuration\n\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && sed -i 's|workspace:*|*|g' package.json 2>/dev/null || true && npm install && mkdir -p node_modules/@jest/test-utils && cp jest-test-utils-shim.js node_modules/@jest/test-utils/index.js && echo '{\"name\":\"@jest/test-utils\",\"version\":\"30.3.0\",\"main\":\"index.js\"}' > node_modules/@jest/test-utils/package.json && mkdir -p __tests__ && cp /workspace/blackbox_tests/*.test.js __tests__/",
+    "test": "cd /workspace/src && ./node_modules/.bin/jest __tests__/jest-core.test.js __tests__/jest-core-extra.test.js --no-coverage -u",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && sed -i 's|workspace:*|*|g' package.json 2>/dev/null || true && npm install && mkdir -p node_modules/@jest/test-utils && cp jest-test-utils-shim.js node_modules/@jest/test-utils/index.js && echo '{\"name\":\"@jest/test-utils\",\"version\":\"30.3.0\",\"main\":\"index.js\"}' > node_modules/@jest/test-utils/package.json && mkdir -p __tests__ && cp /workspace/blackbox_tests/*.test.js __tests__/",
+      "test": "cd /workspace/src && ./node_modules/.bin/jest __tests__/jest-core.test.js __tests__/jest-core-extra.test.js --no-coverage -u",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.92,
+    "Architecture": 3.87,
+    "Health": 4.5
+  },
+  "overall_score": 2.65,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "collectHandles.ts",
+              "excerpt": "esult = () => Promise<Array<Error>>;\n\nfunction stackIsFromUser(stack: string) {\n  // Either the test file, or something required by it\n  if (stack.includes('Runtime.requireModule')) {\n    return true;\n  }\n\n  // jest-jasmine it or describe call\n  if (stack.includes('asyncJestTest') || stack.includes('asyncJestLifecycle')) {\n    return true;\n  }\n\n  // An async function call from within circus\n  if ("
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "atedResult) => void;\n  failedTestsCache?: FailedTestsCache;\n  filter?: Filter;\n}): Promise<void> {\n  // Clear cache for required modules - there might be different resolutions\n  // from Jest's config loading to running the tests\n  Resolver.clearDefaultResolverCache();\n\n  const Sequencer: typeof TestSequencer = await requireOrImportModule(\n    globalConfig.testSequencer,\n  );\n  const sequencer = ne"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`runJest.ts`, `cli/index.ts`, and the supporting orchestration modules are present at the package root and wired together."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "package-level programmatic APIs and internal orchestration modules used by Jest runtime integration",
+          "evidence": [
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCov"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "t) => void;\n  failedTestsCache?: FailedTestsCache;\n  filter?: Filter;\n}): Promise<void> {\n  // Clear cache for required modules - there might be different resolutions\n  // from Jest's config loading to running the tests\n  Resolver.clearDefaultResolverCache();\n\n  const Sequencer: typeof TestSequencer = await requireOrImportModule(\n    globalConfig.testSequencer,\n  );\n  const sequencer = new Sequenc"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ----------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo includes the core runtime integration surface (`index.ts`, `runJest.ts`, `watch.ts`, `cli/index.ts`, and the test-utils shim)."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`SearchSource.ts` and `TestScheduler.ts` as core execution/discovery modules",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "noSCM;\n};\n\nfunction normalizePosix(filePath: string) {\n  return filePath.replaceAll('\\\\', '/');\n}\n\nexport default class SearchSource {\n  private readonly _context: TestContext;\n  private _dependencyResolver: DependencyResolver | null;\n  private readonly _testPathCases: TestPathCases = [];\n\n  constructor(context: TestContext) {\n    const {config} = context;\n    this._context = context;\n    this._de"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "erDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env package.\nconst AGENT_ENV_VARS = [\n  'AI_AGENT',\n  'AUGMENT_AGENT',\n  'CLAUDE_CODE',\n  'CLAUDECODE',\n  'CODEX_SANDBOX',\n  'CODEX_THRE"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SearchSource.ts` and `TestScheduler.ts` exist at the project root and implement discovery/execution logic."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`FailedTestsCache` with its public methods `setTestResults(results)` and `filterTests(tests)`",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "lackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------------------------------\nimport ReporterDispatcher from '../ReporterDispatcher';\n\ndescribe("
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core FailedTestsCache.\n */\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache', () => {\n  test('filterTests returns all tests when no failures recorded', () => {\n    const cache = new FailedTestsCache();\n    const tests = [\n      { path: '/a.js' },\n      {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` exports the class with `setTestResults` and `filterTests`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`ReporterDispatcher` as a public module at the project root, with methods `register(reporter)`, `unregister(Ctor)`, `onRunStart`, `onTestFileStart`, `onTestFileResult`, `onTestCaseStart`, `onTestCaseResult`, `onRunComplete`, `getErrors()`, and `hasErrors()`",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "mport type {Circus} from '@jest/types';\nimport type {ReporterConstructor} from './TestScheduler';\n\nexport default class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this."
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "rorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env packag"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ReporterDispatcher.ts` implements the required reporter lifecycle methods plus `getErrors()` and `hasErrors()`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`SnapshotInteractiveMode` as a public module at the project root",
+          "evidence": [
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "Chars} from 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\nconst {ARROW, CLEAR} = specialChars;\n\nexport default class SnapshotInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLo"
+            },
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "{skipNodeResolution: this._context.config.skipNodeResolution},\n          ),\n        ),\n      };\n    }\n\n    const testModulesMap = dependencyResolver.resolveInverseModuleMap(\n      allPaths,\n      this.isTestFilePath.bind(this),\n      {skipNodeResolution: this._context.config.skipNodeResolution},\n    );\n\n    const allPathsAbsolute = new Set([...allPaths].map(p => path.resolve(p)));\n\n    const co"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "pshotResolver,\n  cleanup as cleanupSnapshots,\n} from 'jest-snapshot';\nimport {ErrorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running in"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SnapshotInteractiveMode.ts` exists at the root and exports the interactive snapshot mode class."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "package exports should include the concrete programmatic entry points used by the repository runtime, not only internal module files",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"types\": \"./build/index.d.ts\",\n      \"require\": \"./build/index.js\",\n      \"default\": \"./build/index.js\"\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"scripts\": {\n    \"build\": \"babel . --extensions .ts,.js --out-dir build --ignore '**/__tests__/**','**/node_modules/**','build/**' --copy-files\",\n    \"test\": \"jest\"\n  },\n  \"dependencies\": {\n    \"@jest/console\": \"^30.2.0\",\n    \"@jest/pattern\""
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n  \"name\": \"@jest/core\",\n  \"version\": \"30.3.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"@jest/core\",\n      \"version\": \"30.3.0\",\n      \"dependencies\": {\n        \"@jest/console\": \"^30.2.0\",\n        \"@jest/pattern\": \"^30.0.1\",\n        \"@jest/reporters\": \"^30.2.0\",\n        \"@jest/test-result\": \"^30.2.0\",\n        \"@jest/transform\": \""
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage: false,\n  collect"
+            }
+          ],
+          "status": "partial",
+          "reason": "`package.json` exports only `.` and `./package.json`; the export map does not explicitly expose additional concrete entry points such as `cli`, `runJest`, or `watch`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`FailedTestsCache` should remain the default export of its package-root-relative module",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "yRealpath} from 'jest-util';\nimport {JestHook, type JestHookEmitter, type TestWatcher} from 'jest-watcher';\nimport type FailedTestsCache from './FailedTestsCache';\nimport SearchSource from './SearchSource';\nimport {type TestSchedulerContext, createTestScheduler} from './TestScheduler';\nimport collectNodeHandles, {\n  type HandleCollectionResult,\n} from './collectHandles';\nimport getNoTestsFoundMess"
+            },
+            {
+              "path": "watch.ts",
+              "excerpt": "gOptions,\n  JestHook,\n  KEYS,\n  TestWatcher,\n  type WatchPlugin,\n  type WatchPluginClass,\n} from 'jest-watcher';\nimport FailedTestsCache from './FailedTestsCache';\nimport SearchSource from './SearchSource';\nimport getChangedFilesPromise from './getChangedFilesPromise';\nimport activeFilters from './lib/activeFiltersMessage';\nimport createContext from './lib/createContext';\nimport isValidPath from '"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` is the default export at the package root."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`setTestResults(results)` should accept an array of test-result objects that include fields such as `numFailingTests`, `testFilePath`, and `testResults`",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {\n    this._enabledTestsMap = (testResults || []).reduce<TestMap>(\n      (suiteMap, testResult) => {\n        if (testResult.testExecError) {\n          suiteMap[testResult.testFilePath] = {};\n          return suiteMap;\n        }"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "es file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not found'),\n        testResults: [],\n      },\n    ]);\n    const filtered = cache.filterTests([{ path: '/exec-error.js' }, { path: '/other.js' }])"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "s.length;\n    this._updateTestRunnerConfig = updateConfig;\n    this._isActive = true;\n    this._run();\n  }\n\n  updateWithResults(results: AggregatedResult): void {\n    if (!results.snapshot.failure && results.numFailedTests > 0) {\n      return this._drawUIOverlay();\n    }\n    this._testAssertions.shift();\n    if (this._testAssertions.length === 0) {\n      return this._drawUIOverlay();\n    }\n    ret"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setTestResults` accepts `TestResult[]` and uses `numFailingTests`, `testFilePath`, and `testResults` fields."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`filterTests(tests)` should accept and return arrays of test descriptors shaped around a `path` field",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "ord<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "--------\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache (edge cases)', () => {\n  test('filterTests includes file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not foun"
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "FailedTestsCache.\n */\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache', () => {\n  test('filterTests returns all tests when no failures recorded', () => {\n    const cache = new FailedTestsCache();\n    const tests = [\n      { path: '/a.js' },\n      { path: '/b.js' },\n    ];\n    expect(cache.filterTests(tests)).toEqual(tests);\n  });\n\n  test('filterTests returns only fa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`filterTests` operates on arrays of test descriptors using the `path` field."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Test Discovery",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "icensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport type {Test, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "siEscapes from 'ansi-escapes';\nimport chalk from 'chalk';\nimport type {AggregatedResult, AssertionLocation} from '@jest/test-result';\nimport {pluralize, specialChars} from 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\ntype RunnerUpdateFunction = (failure?: AssertionLocation) => void;\n\nconst {ARROW, CLEAR} = specialChars;\n\nfunction describeKey(key: string, description: string) {\n  return `${chal"
+            },
+            {
+              "path": "TestNamePatternPrompt.ts",
+              "excerpt": "t,\n  type ScrollOptions,\n  printPatternCaret,\n  printRestoredPatternCaret,\n} from 'jest-watcher';\n\nexport default class TestNamePatternPrompt extends PatternPrompt {\n  constructor(pipe: NodeJS.WritableStream, prompt: Prompt) {\n    super(pipe, prompt, 'tests');\n  }\n\n  protected override _onChange(pattern: string, options: ScrollOptions): void {\n    super._onChange(pattern, options);\n    this._print"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Test discovery is implemented by `SearchSource.ts` and related runtime wiring."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Scheduling and Execution",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Scheduling/execution is implemented by `TestScheduler.ts` and `runJest.ts`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Reporting / Interactive Flows",
+          "evidence": [
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": ") {\n  return `${chalk.dim(`${ARROW}Press`)} ${key} ${chalk.dim(description)}`;\n}\n\nconst TestProgressLabel = chalk.bold('Interactive Test Progress');\n\nexport default class FailedTestsInteractiveMode {\n  private _isActive = false;\n  private _countPaths = 0;\n  private _skippedNum = 0;\n  private _testAssertions: Array<AssertionLocation> = [];\n  private _updateTestRunnerConfig?: RunnerUpdateFunction;"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "rom 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\nconst {ARROW, CLEAR} = specialChars;\n\nexport default class SnapshotInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLocation>;"
+            },
+            {
+              "path": "plugins/FailedTestsInteractive.ts",
+              "excerpt": "gin,\n  type JestHookSubscriber,\n  type UpdateConfigCallback,\n  type UsageData,\n} from 'jest-watcher';\nimport FailedTestsInteractiveMode from '../FailedTestsInteractiveMode';\n\nexport default class FailedTestsInteractivePlugin extends BaseWatchPlugin {\n  private _failedTestAssertions?: Array<AssertionLocation>;\n  private readonly _manager = new FailedTestsInteractiveMode(this._stdout);\n\n  override a"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Reporting and interactive flows are implemented by `ReporterDispatcher.ts`, `SnapshotInteractiveMode.ts`, and related plugins."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Generate paths relative to the JavaScript project root. In evaluation, the project root is `/workspace/src/`, so your relative paths are written as `/workspace/src/<relative_path>`.",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "dSnapshotResolver(this._context.config),\n      );\n    }\n\n    return this._dependencyResolver;\n  }\n\n  private _filterTestPathsWithStats(\n    allPaths: Array<Test>,\n    testPathPatternsExecutor: TestPathPatternsExecutor,\n  ): SearchResult {\n    const data: SearchResult = {\n      stats: {\n        roots: 0,\n        testMatch: 0,\n        testPathIgnorePatterns: 0,\n        testRegex: 0,\n      },\n      t"
+            },
+            {
+              "path": "cli/index.ts",
+              "excerpt": "} catch (error) {\n          return error;\n        }\n        return undefined;\n      })();\n    }\n    filter = async (testPaths: Array<string>) => {\n      if (filterSetupPromise) {\n        // Expect an undefined return value unless there was an error.\n        const err = await filterSetupPromise;\n        if (err) {\n          throw err;\n        }\n      }\n      return rawFilter(testPaths);\n    };\n  }"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "zeToJSON';\nimport runGlobalHook from './runGlobalHook';\nimport type {Filter, TestRunData} from './types';\n\nconst getTestPaths = async (\n  globalConfig: Config.GlobalConfig,\n  projectConfig: Config.ProjectConfig,\n  source: SearchSource,\n  outputStream: WriteStream,\n  changedFiles: ChangedFiles | undefined,\n  jestHooks: JestHookEmitter,\n  filter?: Filter,\n) => {\n  const data = await source.getTestPa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository paths are already rooted at the package root layout expected by the task."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "\"peerDependencies\": {\n        \"@babel/core\": \"^7.0.0\"\n      }\n    },\n    \"node_modules/@babel/helper-define-polyfill-provider\": {\n      \"version\": \"0.6.8\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@babel/helper-compilation-targets\": \"^7.28.6\",\n        \"@babel/helper-plugin-utils\": \"^7.28.6\",\n        \"debug\": \"^4.4.3\",\n        \"lodash.debounce\": \"^4.0.8\","
+            },
+            {
+              "path": "package.json",
+              "excerpt": "age.json\"\n  },\n  \"scripts\": {\n    \"build\": \"babel . --extensions .ts,.js --out-dir build --ignore '**/__tests__/**','**/node_modules/**','build/**' --copy-files\",\n    \"test\": \"jest\"\n  },\n  \"dependencies\": {\n    \"@jest/console\": \"^30.2.0\",\n    \"@jest/pattern\": \"^30.0.1\",\n    \"@jest/reporters\": \"^30.2.0\",\n    \"@jest/test-result\": \"^30.2.0\",\n    \"@jest/transform\": \"^30.2.0\",\n    \"@jest/types\": \"^30.2"
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage: false,\n  collectCoverageFrom: [],\n  coverageDirecto"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`package.json`, `package-lock.json`, and the Babel build script/config are present."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "getNoTestFoundRelatedToChangedFiles.ts",
+              "excerpt": "'chalk';\nimport type {Config} from '@jest/types';\nimport {isInteractive} from 'jest-util';\n\nexport default function getNoTestFoundRelatedToChangedFiles(\n  globalConfig: Config.GlobalConfig,\n): string {\n  const ref = globalConfig.changedSince\n    ? `\"${globalConfig.changedSince}\"`\n    : 'last commit';\n  let msg = chalk.bold(`No tests found related to files changed since ${ref}.`);\n  if (isInteract"
+            },
+            {
+              "path": "getNoTestFound.ts",
+              "excerpt": "jest/types';\nimport {pluralize} from 'jest-util';\nimport type {TestRunData} from './types';\n\nexport default function getNoTestFound(\n  testRunData: TestRunData,\n  globalConfig: Config.GlobalConfig,\n  willExitWith0: boolean,\n): string {\n  const testFiles = testRunData.reduce(\n    (current, testRun) => current + (testRun.matches.total || 0),\n    0,\n  );\n  const dataMessage = globalConfig.runTestsByP"
+            },
+            {
+              "path": "getNoTestFoundVerbose.ts",
+              "excerpt": "pes';\nimport {pluralize} from 'jest-util';\nimport type {Stats, TestRunData} from './types';\n\nexport default function getNoTestFoundVerbose(\n  testRunData: TestRunData,\n  globalConfig: Config.GlobalConfig,\n  willExitWith0: boolean,\n): string {\n  const individualResults = testRunData.map(testRun => {\n    const stats = testRun.matches.stats || ({} as Stats);\n    const config = testRun.context.config;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "No extra test generation or wrapper directory is required by the repo contents."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Keep package-level source files such as `index.ts`, `SearchSource.ts`, and `TestScheduler.ts` at their normal project-root-relative locations.",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "/**\n * Copyright (c) Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport * as os from 'os';\nimport * as path from 'path';\nimport type {TestPathPatternsExecutor} from '@jest/pattern';\nimport type {Test, TestContext} from '@j"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "(e.g. fs.readFile).\\n' +\n          '  - Timers not properly mocked (e.g. setInterval, setTimeout).\\n' +\n          '  - Keeping references to the global scope.';\n        return onFailure(test, {message, stack: new Error(message).stack});\n      }\n      addResult(aggregatedResults, testResult);\n      await this._dispatcher.onTestFileResult(\n        test,\n        testResult,\n        aggregatedResults"
+            },
+            {
+              "path": "cli/index.ts",
+              "excerpt": "'s');\n\n    const message =\n      chalk.red(\n        `\\nJest has detected the following ${openHandlesString} potentially keeping Jest from exiting:\\n\\n`,\n      ) + formatted.join('\\n\\n');\n\n    console.error(message);\n  }\n\n  performance.mark('jest/runCLI:end');\n  return {globalConfig, results};\n}\n\nconst buildContextsAndHasteMaps = async (\n  configs: Array<Config.ProjectConfig>,\n  globalConfig: Confi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts`, `SearchSource.ts`, and `TestScheduler.ts` are located at the project root."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Preserve the package layout and internal module organization expected by the runtime tests, including the package-level entry points used by `jest-core.test.js`.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n  \"name\": \"@jest/core\",\n  \"version\": \"30.3.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"@jest/core\",\n      \"version\": \"30.3.0\",\n      \"dependencies\": {\n        \"@jest/console\": \"^30.2.0\",\n        \"@jest/pattern\": \"^30.0.1\",\n        \"@jest/reporters\": \"^30.2.0\",\n        \"@jest/test-result\": \"^30.2.0\",\n        \"@jest/transform\": \""
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\"types\": \"./build/index.d.ts\",\n      \"require\": \"./build/index.js\",\n      \"default\": \"./build/index.js\"\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"scripts\": {\n    \"build\": \"babel . --extensions .ts,.js --out-dir build --ignore '**/__tests__/**','**/node_modules/**','build/**' --copy-files\",\n    \"test\": \"jest\"\n  },\n  \"dependencies\": {\n    \"@jest/console\": \"^30.2.0\",\n    \"@jest/pattern\""
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage: false,\n  collect"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The package layout matches the runtime-facing entry points used by the repo's own imports and tests."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`FailedTestsCache.ts` (or `.js`) should exist at the project root, not inside a nested `src/` subdirectory.",
+          "evidence": [
+            {
+              "path": "getNoTestFoundVerbose.ts",
+              "excerpt": "otDir}.\\nMake sure Jest's configuration does not exclude this directory.\\nTo set up Jest, make sure a package.json file exists.\\nJest Documentation: https://jestjs.io/docs/configuration`;\n  });\n\n  const dataMessage = globalConfig.runTestsByPath\n    ? `Files: ${globalConfig.nonFlagArgs.map(p => `\"${p}\"`).join(', ')}`\n    : `Pattern: ${chalk.yellow(globalConfig.testPathPatterns.toPretty())} - 0 matc"
+            },
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "getNoTestFound.ts",
+              "excerpt": "orms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {pluralize} from 'jest-util';\nimport type {TestRunData} from './types';\n\nexport default function getNoTestFound(\n  testRunData: TestRunData,\n  globalConfig: Config."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` exists at the project root."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "The project must include a file named `jest-test-utils-shim.js` at the project root — this shim replaces the `@jest/test-utils` module at install time and must export the utilities that `jest-core` depends on.",
+          "evidence": [
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "g and makeProjectConfig helpers used in tests.\n */\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage: false,\n  collectCoverageFrom: [],\n  coverageDirectory: '',\n  coveragePathIgnorePatterns: [],\n  coverageProvider: 'babel',\n  coverageReporters: ['json', 'text', 'lcov', 'clover'],\n  coverageThresh"
+            },
+            {
+              "path": "getChangedFilesPromise.ts",
+              "excerpt": "tExecError(error, configs[0], {\n        noStackTrace: true,\n      })\n        .split('\\n')\n        .filter(line => !line.includes('Command failed:'))\n        .join('\\n');\n      console.error(chalk.red(`\\n\\n${message}`));\n      process.exit(1);\n    });\n  }\n\n  return undefined;\n}"
+            },
+            {
+              "path": "getNoTestFoundRelatedToChangedFiles.ts",
+              "excerpt": ") Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {isInteractive} from 'jest-util';\n\nexport default function getNoTestFoundRelatedToChangedFiles(\n  globalConfig: Config.GlobalConfig,\n): string {\n  const"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`jest-test-utils-shim.js` exists at the project root and exports the helpers Jest core depends on."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "if Babel is needed, provide `babel.config.js` in CommonJS format (`module.exports = { ... }`); the required content is:",
+          "evidence": [
+            {
+              "path": "babel.config.js",
+              "excerpt": "module.exports = {\n  presets: [\n    ['@babel/preset-env', {targets: {node: 'current'}, modules: 'commonjs'}],\n    ['@babel/preset-typescript', {allowDeclareFields: true, onlyRemoveTypeImports: true}],\n  ],\n};"
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "rage: false,\n  collectCoverageFrom: [],\n  coverageDirectory: '',\n  coveragePathIgnorePatterns: [],\n  coverageProvider: 'babel',\n  coverageReporters: ['json', 'text', 'lcov', 'clover'],\n  coverageThreshold: {},\n  detectLeaks: false,\n  detectOpenHandles: false,\n  errorOnDeprecated: false,\n  expand: false,\n  filter: undefined,\n  findRelatedTests: false,\n  forceExit: false,\n  fakeTimers: {enableGlobal"
+            },
+            {
+              "path": "jest.config.js",
+              "excerpt": "est_root/',\n    '/test_root_with_',\n  ],\n  modulePathIgnorePatterns: ['/build/'],\n  transform: {\n    '^.+\\\\.[jt]sx?$': 'babel-jest',\n  },\n  snapshotSerializers: ['jest-serializer-ansi-escapes'],\n};"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`babel.config.js` exists in the required CommonJS format with the requested presets."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`setTestResults([])` (empty array) causes `filterTests` to return an empty array (no tests pass the filter).",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "es file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not found'),\n        testResults: [],\n      },\n    ]);\n    const filtered = cache.filterTests([{ path: '/exec-error.js' }, { path: '/other.js' }])"
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "];\n    expect(cache.filterTests(tests)).toEqual(tests);\n  });\n\n  test('filterTests returns only failed tests after setTestResults', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 1,\n        testFilePath: '/failed.js',\n        testResults: [{ fullName: 'test 1', status: 'failed' }],\n      },\n      {\n        numFailingTests: 0,"
+            },
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {\n    this._enabledTestsMap = (testResults || []).reduce<TestMap>(\n      (suiteMap, testResult) => {\n        if (testResult.testExecError) {\n          suiteMap[testResult.testFilePath] = {};\n          return suiteMap;\n        }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.filterTests` returns an empty array after `setTestResults([])` because the enabled map is empty."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "A `TestResult` with a truthy `testExecError` field causes its `testFilePath` to be included in the filter (even if `numFailingTests` is 0), so that file passes `filterTests`.",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "d under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport type {Test, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "onsole', async () => {\n    dispatcher.register({ onTestFileResult: jest.fn().mockResolvedValue(undefined) });\n    const testResult = { coverage: {data: true}, console: ['log'], testResults: [] };\n    await dispatcher.onTestFileResult({}, testResult, {});\n    expect(testResult.coverage).toBeUndefined();\n    expect(testResult.console).toBeUndefined();\n  });\n\n  test('onTestFileResult falls back to on"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "'@jest/reporters';\nimport {\n  type AggregatedResult,\n  type SerializableError,\n  type Test,\n  type TestContext,\n  type TestResult,\n  addResult,\n  buildFailureTestResult,\n  makeEmptyAggregatedTestResult,\n} from '@jest/test-result';\nimport {createScriptTransformer} from '@jest/transform';\nimport type {Config} from '@jest/types';\nimport {formatExecError, separateMessageFromStack} from 'jest-message-"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setTestResults` includes files with truthy `testExecError` in the enabled map."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Paths not present in any `testFilePath` from `setTestResults` are excluded by `filterTests`.",
+          "evidence": [
+            {
+              "path": "cli/index.ts",
+              "excerpt": "} catch (error) {\n          return error;\n        }\n        return undefined;\n      })();\n    }\n    filter = async (testPaths: Array<string>) => {\n      if (filterSetupPromise) {\n        // Expect an undefined return value unless there was an error.\n        const err = await filterSetupPromise;\n        if (err) {\n          throw err;\n        }\n      }\n      return rawFilter(testPaths);\n    };\n  }"
+            },
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "dSnapshotResolver(this._context.config),\n      );\n    }\n\n    return this._dependencyResolver;\n  }\n\n  private _filterTestPathsWithStats(\n    allPaths: Array<Test>,\n    testPathPatternsExecutor: TestPathPatternsExecutor,\n  ): SearchResult {\n    const data: SearchResult = {\n      stats: {\n        roots: 0,\n        testMatch: 0,\n        testPathIgnorePatterns: 0,\n        testRegex: 0,\n      },\n      t"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "orter);\n    dispatcher.unregister(MyReporter);\n    await dispatcher.onRunStart({}, {});\n    expect(reporter.onRunStart).not.toHaveBeenCalled();\n  });\n\n  test('onTestFileResult clears coverage and console', async () => {\n    dispatcher.register({ onTestFileResult: jest.fn().mockResolvedValue(undefined) });\n    const testResult = { coverage: {data: true}, console: ['log'], testResults: [] };\n    awa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`filterTests` only returns tests whose `path` exists in the enabled map, excluding others."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`ReporterDispatcher` exposes: `register(reporter)`, `unregister(ReporterConstructor)`, `onRunStart(results, options)`, `onTestFileStart(test)`, `onTestFileResult(test, testResult, results)`, `onTestCaseStart(test, info)`, `onTestCaseResult(test, result)`, `onRunComplete(contexts, results)`, `getErrors()`, and `hasErrors()`.",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "mport type {Circus} from '@jest/types';\nimport type {ReporterConstructor} from './TestScheduler';\n\nexport default class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this."
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "rorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env packag"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ReporterDispatcher` exposes all required lifecycle methods and error helpers."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "`register(reporter)` appends the reporter; `unregister(Ctor)` removes all reporters that are `instanceof Ctor`.",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "t class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this._reporters.filter(\n      reporter => !(reporter instanceof reporterConstructor),\n    );\n  }\n\n  async onTestFileR"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "=> {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "ispatcher();\n    this._globalConfig = globalConfig;\n  }\n\n  addReporter(reporter: Reporter): void {\n    this._dispatcher.register(reporter);\n  }\n\n  removeReporter(reporterConstructor: ReporterConstructor): void {\n    this._dispatcher.unregister(reporterConstructor);\n  }\n\n  async scheduleTests(\n    tests: Array<Test>,\n    watcher: TestWatcher,\n  ): Promise<AggregatedResult> {\n    const onTestFileSta"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`register` appends reporters and `unregister` filters by `instanceof` the provided constructor."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "`getErrors()` returns an array of errors collected via each reporter's optional `getLastError()` method (only non-falsy values).",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "eporter.onRunComplete(testContexts, results);\n      }\n    }\n  }\n\n  // Return a list of last errors for every reporter\n  getErrors(): Array<Error> {\n    return this._reporters.reduce<Array<Error>>((list, reporter) => {\n      const error = reporter.getLastError?.();\n      return error ? [...list, error] : list;\n    }, []);\n  }\n\n  hasErrors(): boolean {\n    return this.getErrors().length > 0;\n  }\n}"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "porterConstructor): void {\n    this._dispatcher.unregister(reporterConstructor);\n  }\n\n  async scheduleTests(\n    tests: Array<Test>,\n    watcher: TestWatcher,\n  ): Promise<AggregatedResult> {\n    const onTestFileStart =\n      this._dispatcher.onTestFileStart.bind(this._dispatcher);\n    const timings = [];\n    const testContexts = new Set<TestContext>();\n\n    for (const test of tests) {\n      testC"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`getErrors()` collects truthy `getLastError()` values from reporters."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "`hasErrors()` returns `true` when `getErrors()` is non-empty, `false` otherwise.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "dispatcher = new ReporterDispatcher();\n  });\n\n  test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});"
+            },
+            {
+              "path": "collectHandles.ts",
+              "excerpt": "g) {\n  // Either the test file, or something required by it\n  if (stack.includes('Runtime.requireModule')) {\n    return true;\n  }\n\n  // jest-jasmine it or describe call\n  if (stack.includes('asyncJestTest') || stack.includes('asyncJestLifecycle')) {\n    return true;\n  }\n\n  // An async function call from within circus\n  if (stack.includes('callAsyncCircusFn')) {\n    // jest-circus it or describe ca"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "this._countPaths = this._testAssertions.length;\n    this._updateTestRunnerConfig = updateConfig;\n    this._isActive = true;\n    this._run();\n  }\n\n  updateWithResults(results: AggregatedResult): void {\n    if (!results.snapshot.failure && results.numFailedTests > 0) {\n      return this._drawUIOverlay();\n    }\n    this._testAssertions.shift();\n    if (this._testAssertions.length === 0) {\n      ret"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`hasErrors()` delegates to whether `getErrors()` is non-empty."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Reporters are called in registration order.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "> {\n  let dispatcher;\n\n  beforeEach(() => {\n    dispatcher = new ReporterDispatcher();\n  });\n\n  test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "pe Reporter,\n  type ReporterContext,\n  SummaryReporter,\n  type SummaryReporterOptions,\n  VerboseReporter,\n} from '@jest/reporters';\nimport {\n  type AggregatedResult,\n  type SerializableError,\n  type Test,\n  type TestContext,\n  type TestResult,\n  addResult,\n  buildFailureTestResult,\n  makeEmptyAggregatedTestResult,\n} from '@jest/test-result';\nimport {createScriptTransformer} from '@jest/transform';"
+            },
+            {
+              "path": "lib/watchPluginsHelpers.ts",
+              "excerpt": "(usageInfoA && usageInfoB) {\n        // external plugins in alphabetical order\n        return usageInfoA.key.localeCompare(usageInfoB.key);\n      }\n      return 0;\n    })\n    .map(p => p.getUsageInfo && p.getUsageInfo(globalConfig))\n    .filter(isNonNullable);"
+            }
+          ],
+          "status": "implemented",
+          "reason": "All dispatcher methods iterate reporters in registration order."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "Constructor: `new SnapshotInteractiveMode(pipe)` where `pipe` is a writable stream (`{write}`). Starts inactive with `getSkippedNum() === 0`.",
+          "evidence": [
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "private _testAssertions!: Array<AssertionLocation>;\n  private _countPaths!: number;\n  private _skippedNum: number;\n\n  constructor(pipe: NodeJS.WritableStream) {\n    this._pipe = pipe;\n    this._isActive = false;\n    this._skippedNum = 0;\n  }\n\n  isActive(): boolean {\n    return this._isActive;\n  }\n\n  getSkippedNum(): number {\n    return this._skippedNum;\n  }\n\n  private _clearTestSummary() {\n    t"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "private _testAssertions: Array<AssertionLocation> = [];\n  private _updateTestRunnerConfig?: RunnerUpdateFunction;\n\n  constructor(private readonly _pipe: NodeJS.WritableStream) {\n    this._pipe = _pipe;\n  }\n\n  isActive(): boolean {\n    return this._isActive;\n  }\n\n  put(key: string): void {\n    switch (key) {\n      case 's':\n        if (this._skippedNum === this._testAssertions.length) {"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "cher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by constructor', async () => {\n    class MyReporter {\n      onRunStart() {}\n    }\n    const reporter = new MyReporter();\n    reporter.onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register(reporter);\n    dispatcher.unregister(MyReporter);\n    await dispatcher.o"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SnapshotInteractiveMode` starts inactive with skipped count at 0."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "`run(failedSnapshotTestAssertions, onConfigChange)`: if the array is empty, does nothing (stays inactive). Otherwise, sets `isActive()` to `true` and immediately calls `onConfigChange` with the first assertion as the active item.",
+          "evidence": [
+            {
+              "path": "runJest.ts",
+              "excerpt": "ort getNoTestsFoundMessage from './getNoTestsFoundMessage';\nimport serializeToJSON from './lib/serializeToJSON';\nimport runGlobalHook from './runGlobalHook';\nimport type {Filter, TestRunData} from './types';\n\nconst getTestPaths = async (\n  globalConfig: Config.GlobalConfig,\n  projectConfig: Config.ProjectConfig,\n  source: SearchSource,\n  outputStream: WriteStream,\n  changedFiles: ChangedFiles | un"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "otInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLocation>;\n  private _countPaths!: number;\n  private _skippedNum: number;\n\n  constructor(pipe: NodeJS.WritableStream) {\n    this"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by constructor', async () => {\n    class MyReporter {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`run([] , ...)` returns without activating the mode; non-empty runs activate and invoke the callback with the first assertion."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "`abort()`: deactivates the mode (sets `isActive()` to `false`), resets `getSkippedNum()` to `0`, and notifies the config callback that no assertion is pending.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": ";\n    expect(instance.isActive()).toBe(true);\n    expect(cb).toHaveBeenCalledWith(assertions[0], false);\n  });\n\n  test('abort deactivates and resets skippedNum to 0', () => {\n    const cb = jest.fn();\n    instance.run([{ fullName: 'snap 1', path: 'a.test.js' }], cb);\n    instance.abort();\n    expect(instance.isActive()).toBe(false);\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toHa"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "break;\n      case 'u':\n        this._run(true);\n        break;\n      case 'q':\n      case KEYS.ESCAPE:\n        this.abort();\n        break;\n      case 'r':\n        this.restart();\n        break;\n      case KEYS.ENTER:\n        if (this._testAssertions.length === 0) {\n          this.abort();\n        } else {\n          this._run(false);\n        }\n        break;\n      default:\n        break;\n    }"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "this._drawUIDoneWithSkipped();\n        }\n        break;\n      case 'q':\n      case KEYS.ESCAPE:\n        this.abort();\n        break;\n      case 'r':\n        this.restart();\n        break;\n      case KEYS.ENTER:\n        if (this._testAssertions.length === 0) {\n          this.abort();\n        } else {\n          this._run();\n        }\n        break;\n      default:\n    }\n  }\n\n  run(\n    fai"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`abort()` clears active state, resets skipped count, and calls the config callback with `null, false`."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "`restart()`: resets `getSkippedNum()` to `0` and re-triggers the run from the first remaining assertion.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "se);\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toHaveBeenLastCalledWith(null, false);\n  });\n\n  test('restart resets skippedNum and re-runs first assertion', () => {\n    const cb = jest.fn();\n    const assertions = [{ fullName: 'snap 1', path: 'a.test.js' }];\n    instance.run(assertions, cb);\n    instance.restart();\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toH"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "ARROW + stats,\n      `\\n${chalk.bold('Watch Usage')}`,\n      `${chalk.dim(`${ARROW}Press `)}r${chalk.dim(\n        ' to restart Interactive Snapshot Mode.',\n      )}`,\n      `${chalk.dim(`${ARROW}Press `)}q${chalk.dim(\n        ' to quit Interactive Snapshot Mode.',\n      )}`,\n    ];\n    this._pipe.write(`${messages.filter(Boolean).join('\\n')}\\n`);\n  }\n\n  private _drawUIDone() {\n    this._pipe.writ"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "break;\n      case 'q':\n      case KEYS.ESCAPE:\n        this.abort();\n        break;\n      case 'r':\n        this.restart();\n        break;\n      case KEYS.ENTER:\n        if (this._testAssertions.length === 0) {\n          this.abort();\n        } else {\n          this._run();\n        }\n        break;\n      default:\n    }\n  }\n\n  run(\n    failedTestAssertions: Array<AssertionLocation>,\n    upda"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`restart()` resets skipped count and re-runs from the current assertion set."
+        }
+      ],
+      "feature_count": 33,
+      "constraint_count": 0,
+      "implemented_count": 32,
+      "partial_count": 1,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 0.9848,
+      "constraint_coverage": 0.9848,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "javascript",
+        "app_style": "cli",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.0,
+        "stack_alignment": 4.1,
+        "reference_alignment": 3.5
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 7,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "0",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repo contains the requested `jest-core` orchestration surface at the package root: discovery (`SearchSource.ts`), scheduling/execution (`TestScheduler.ts`, `runJest.ts`, `cli/index.ts`, `watch.ts`), reporting (`ReporterDispatcher.ts`), and interactive snapshot/failure flows (`SnapshotInteractiveMode.ts`, `FailedTestsInteractiveMode.ts`). The required root-level `FailedTestsCache.ts` and `jest-test-utils-shim.js` are present, and the Babel/CommonJS build config is in place.\n\n### Missing List\n\n- Explicit subpath package exports for concrete runtime entry points such as `cli`, `runJest`, and `watch` are not defined in `package.json`.\n\n### Critical Constraint Misses\n\n- `package.json` does not explicitly export the additional runtime entry points beyond the root export map.",
+    "architecture_review": "### Stack Inference\n\n这是一个以 **Node.js + npm** 为基础的 **CLI/程序化库混合包**。源码主体使用 **TypeScript 语法的 `.ts` 文件**，通过 **Babel** 做 CommonJS 转译，测试使用 Jest 自举；整体风格更接近 Jest monorepo 中的核心 orchestration package，而不是普通前端或服务端应用。\n\n### Scoring Mode\n\n本次按“架构质量”评估，不看仓库大小，也不把文件多视为加分项；重点看真实目录结构、入口暴露、构建方式和模块分层是否自洽，以及这些选择是否符合 Node.js CLI/库混合包的常见工程习惯。\n\n### Strengths\n\n- 核心职责分层基本清楚：`SearchSource.ts` 负责发现，`TestScheduler.ts` 负责调度，`runJest.ts` 负责高层执行串联，`ReporterDispatcher.ts` 与交互模式模块独立存在，主干职责边界是成立的。\n- 目录组织符合 Node/Jest 生态习惯：根级入口文件配合 `cli/`、`lib/`、`plugins/` 子目录，既保留包级公共模块，也把辅助工具和 watch 插件收拢到了合理位置。\n- `index.ts` 统一导出主要程序化 API，配合 `package.json`、`babel.config.js`、`jest.config.js`、`tsconfig.json` 构成了完整的包工程骨架，整体可构建、可测试、可发布的意图明确。\n\n### Issues\n\n- `package.json` 的 `exports` 只暴露了 `.` 和 `./package.json`，没有暴露 `ReporterDispatcher`、`SnapshotInteractiveMode`、`FailedTestsCache` 等根级公共模块；在启用 `exports` 的 Node 包里，这会直接限制这些“公共入口”的可访问性，入口设计与仓库实际分层不完全一致。\n- 构建链路不协调：`package.json` 声明 `types: ./build/index.d.ts`，仓库也提供了 `tsconfig.json` 且开启 `declaration`，但实际 `build` 脚本只跑 Babel，不会产出 `.d.ts`；这意味着发布产物的 JS 与类型声明策略是脱节的。\n- 项目根目录承载了大量执行、提示、消息和交互模块，虽然贴近 Jest 真实包布局，但对一个从零生成的最小实现来说，顶层略拥挤，概念分区主要依赖文件命名而不是更清晰的目录边界。\n\n### Stack Mismatches\n\n- 任务摘要把栈概括为 `javascript`，但仓库实际主要源码是 TypeScript 文件，并依赖 Babel 处理 TS 语法；这不算错误，但与“纯 JavaScript 项目”的直觉有偏差。\n- 仓库既像库包又包含 CLI 入口与 watch/interactive 流程，属于多入口核心包；如果按普通 CLI 或普通库来理解，结构会显得比典型同类项目更扁平、更重。\n\n### Reference Gaps\n\n- 与原始要求“不要生成测试文件”不符，仓库实际包含 `__tests__/jest-core.test.js` 和 `__tests__/jest-core-extra.test.js`。\n- 原始要求强调包导出应覆盖运行时使用的具体程序化入口，但当前 `exports` 没有提供这些根级子路径导出，和要求存在明显落差。\n- 要求里把 `ReporterDispatcher`、`SnapshotInteractiveMode` 视为项目根级公共模块；虽然文件确实存在于根目录，但包级导出策略没有把这种公共性完整落实到消费方式上。"
+  },
+  "task": "javascript/jest-core/L1_jest-core",
+  "solver": "generated_outputs"
+}

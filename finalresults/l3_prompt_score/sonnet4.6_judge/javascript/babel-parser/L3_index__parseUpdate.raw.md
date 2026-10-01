@@ -1,0 +1,12 @@
+{
+  "score": 4.6,
+  "reason": "The description accurately captures all major behaviors: the prefix-update fast path (finishNode + checkLVal + return), the base expression parse via parseExprSubscripts, the early return on expression errors, the while-loop consuming postfix operators guarded by tokenIsPostfix and canInsertSemicolon, the construction of non-prefix UpdateExpression nodes, the checkLVal call, and the reuse of startLoc for postfix nodes. One subtle implementation detail is slightly mischaracterized: the description says 'validate that the operand is a valid l-value/update target' as a separate step after building the node, but in the implementation checkLVal is called with both the original expr and the finished node simultaneously in a single statement (`this.checkLVal(expr, expr = this.finishNode(node, 'UpdateExpression'))`), meaning the finished node is also assigned to expr in the same call. This is a minor nuance. The description is complete enough to implement the function correctly.",
+  "missing_functionality": [
+    "The description does not mention that node.operator is set from this.state.value before calling this.next()",
+    "The simultaneous assignment of expr within the checkLVal call (expr = this.finishNode(...)) is not captured — the description treats finishNode and the expr update as separate from checkLVal"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'build a new non-prefix UpdateExpression whose argument is the expression parsed so far, advance past the operator, validate that the operand is a valid l-value/update target, and use the resulting update expression as the new expression value' — this implies a sequential order where finishNode happens before checkLVal and expr is updated afterward, but in the implementation finishNode and the expr update happen inside the checkLVal call itself"
+  ],
+  "complete_enough": true
+}

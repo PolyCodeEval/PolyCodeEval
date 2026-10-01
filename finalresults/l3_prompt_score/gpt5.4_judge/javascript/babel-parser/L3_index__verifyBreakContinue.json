@@ -1,0 +1,22 @@
+{
+  "task": "javascript/babel-parser/L3_index__verifyBreakContinue",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__verifyBreakContinue/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__verifyBreakContinue/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::verifyBreakContinue",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation closely: it correctly explains that the function scans the parser's label stack, matches either any label for unlabeled statements or a same-named label for labeled statements, allows `break` on matching non-null label contexts, restricts `continue` to loop-kind labels, and raises `IllegalBreakContinue` with the appropriate statement type when no valid match is found. It also captures the special-case behavior where a labeled `break` is accepted once a matching named label is found even if that label is not loop-capable. The main gap is that it overstates traversal order by saying \"from innermost outward,\" which is not evident from the function itself and depends on external stack ordering, though this does not materially affect the core behavior.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "It says labels are searched from innermost outward, but the implementation simply iterates `this.state.labels` from index 0 upward; the actual nesting direction is not established by this function alone."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__verifyBreakContinue.raw.md"
+}

@@ -1,0 +1,28 @@
+{
+  "task": "cpp/snappy/L3_gtest-death-test__InDeathTestChild",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-death-test__InDeathTestChild/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-death-test__InDeathTestChild/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-death-test.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest-death-test.cc::InDeathTestChild",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.1,
+  "reason": "The description correctly captures the main purpose, return semantics, internal-only warning, and the Valgrind-related motivation. However, it omits the key implementation detail that the result depends on platform and death-test style: on Windows/Fuchsia it checks whether `internal_run_death_test` is non-empty, while on other platforms it uses that same flag only for `threadsafe` style and otherwise returns `g_in_fast_death_test_child`. Because these branches are central to implementing the function, the description is accurate at a high level but not fully complete for reimplementation.",
+  "missing_functionality": [
+    "Does not mention the platform-specific branching for Windows/Fuchsia versus other platforms.",
+    "Does not mention the dependency on `death_test_style` being `threadsafe` on non-Windows/Fuchsia platforms.",
+    "Does not mention the fallback to `g_in_fast_death_test_child` for non-threadsafe fast death tests.",
+    "Does not specify that the function determines child status by checking whether `internal_run_death_test` is empty in some cases."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying side effects are undocumented is acceptable, but the function is more specifically a pure flag/query based on global/gtest state.",
+    "The description is slightly too generic because it implies a single simple boolean check, while the actual implementation uses multiple conditional mechanisms depending on platform and mode."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest-death-test__InDeathTestChild.raw.md"
+}

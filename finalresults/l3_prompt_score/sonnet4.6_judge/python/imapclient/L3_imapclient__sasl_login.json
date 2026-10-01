@@ -1,0 +1,24 @@
+{
+  "task": "python/imapclient/L3_imapclient__sasl_login",
+  "project": "python/imapclient",
+  "language": "python",
+  "prompt_path": "datasets/python/imapclient/tasks/L3_imapclient__sasl_login/prompt.md",
+  "task_json_path": "datasets/python/imapclient/tasks/L3_imapclient__sasl_login/task.json",
+  "source_file_path": "datasets/python/imapclient/src/imapclient/imapclient.py",
+  "target_symbol": "imapclient.py::sasl_login",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description accurately captures all key behaviors of the implementation: delegating to `self._imap.authenticate` with the mechanism name and callable, checking for an \"OK\" status, returning `data[0]` on success, raising a `LoginError` on non-OK status, and converting `IMAPClientError` exceptions into `LoginError`. The flow and error handling are described correctly. The only minor gap is that the description says the non-OK path raises a \"login-related failure\" without specifying it also goes through the `IMAPClientError` → `LoginError` conversion path (the non-OK branch raises `IMAPClientError` which is then caught and re-raised as `LoginError`), but this is a subtle implementation detail that doesn't materially affect completeness.",
+  "missing_functionality": [
+    "The description does not clarify that the non-OK status path raises an IMAPClientError internally, which is then caught by the same except block and re-raised as LoginError — the two error paths are actually unified through a single catch."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies the non-OK path directly raises a 'login-related failure', slightly obscuring that it first raises IMAPClientError which is then caught and converted to LoginError — the same conversion path used for external IMAPClientError exceptions."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_imapclient__sasl_login.raw.md"
+}

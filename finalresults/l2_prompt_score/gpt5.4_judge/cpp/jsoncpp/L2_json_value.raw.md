@@ -1,0 +1,15 @@
+{
+  "score": 4.8,
+  "reason": "The file-level summary and nearly all function-level descriptions align very closely with the actual implementation of `json_value.cpp`. The prompt captures the important storage conventions, conversion rules, mutation semantics, iterator behavior, comment handling, and path parsing/resolution logic with high fidelity. It is also detailed enough to guide reconstruction of the hollowed functions, including key edge cases like prefixed-string decoding, sparse-array size behavior, null/object lookup semantics, and numeric range assertions. Only a few small implementation details are omitted or slightly overstated, but none are major enough to prevent successful reconstruction.",
+  "missing_functionality": [
+    "The descriptions do not mention the exact static empty-string local used by `Value::Value(ValueType type)` for default string construction, though the behavior is otherwise captured.",
+    "The prompt does not explicitly note that `removeIndex()` shifts elements by copy-assigning from `(*this)[i + 1]` into `(*value_.map_)[CZString(i)]`, rather than moving; this is minor but slightly affects exact reconstruction.",
+    "The Path parsing description does not explicitly mention the concrete pointer initialization (`current = path.c_str()`, `end = current + path.length()`) or use of `strchr(\"[.\", *current)` when scanning member names, though the parsing behavior itself is described."
+  ],
+  "incorrect_or_misleading_points": [
+    "For `duplicateAndPrefixStringValue`, the description says to write the prefix via `reinterpret_cast<unsigned*>`; the implementation uses `*reinterpret_cast<unsigned*>(newString) = length`, which is equivalent but slightly more specific.",
+    "For `Value::asInt64()`, the description says to assert the real is 'not exactly `minInt64` as a double'; the implementation compares `value_.real_ != minInt64`, relying on the constant directly, which is effectively the same intent.",
+    "For `Path::resolve(const Value&, const Value&)`, the description says to look up the member with `operator[]` and treat `Value::nullSingleton()` as missing; that matches implementation behavior, but could mislead slightly because an existing member whose value is JSON null is also treated as failure by this API."
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,27 @@
+{
+  "task": "cpp/tinyexpr-plusplus/L2_tinyexpr_h",
+  "project": "cpp/tinyexpr-plusplus",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyexpr-plusplus/tasks/L2_tinyexpr_h/prompt.md",
+  "task_json_path": "datasets/cpp/tinyexpr-plusplus/tasks/L2_tinyexpr_h/task.json",
+  "source_file_path": "datasets/cpp/tinyexpr-plusplus/src/tinyexpr.h",
+  "target_file": "tinyexpr.h",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The file-level summary matches the header well: it correctly identifies this as the public TinyExpr++ header containing type definitions, traits, parser configuration/state, and several inline/private helper implementations. The function-level descriptions are also very close to the actual implementations for all 9 hollowed bodies, including the copy-constructor recompilation behavior, exact integer-limit computation, constant update semantics, defensive constant lookup, parser reset logic, resolver-cache cleanup, identifier validation, arity inspection via variant visitation, and expression node allocation sizing/copying. Overall this is strong enough to guide reconstruction of the missing bodies with high fidelity.",
+  "missing_functionality": [
+    "The copy-constructor description does not explicitly note that, unlike operator=, it does not call reset_state() before recompiling; this is harmless in practice for a fresh object but is a real implementation detail.",
+    "The reset_state description says current variable lookup bookkeeping is reset to a built-in/custom iterator sentinel; the implementation specifically sets m_currentVar to m_functions.cend(), which is more specific than the prompt states.",
+    "The new_expr description omits that the implementation uses std::ranges::copy specifically and wraps the resize expression in a redundant std::max(..., 0), though this does not affect semantics."
+  ],
+  "incorrect_or_misleading_points": [
+    "In set_constant, the description says recompilation should occur only when an existing constant is changed. The implementation recompiles only in that branch, so this is accurate, but the prompt could mislead by implying recompilation is conceptually required rather than simply performed via compile(m_expression).",
+    "The get_max_integer description is slightly overexplained: saying '2^(mantissa_bits-1) plus 2^(mantissa_bits-1)-1' is correct, but the phrase 'for the effective integer bit capacity' may suggest a derived bitness calculation not explicitly present in code.",
+    "The reset_state description mentions 'current built-in/custom iterator sentinel'; the implementation only resets m_currentVar to the built-in function end iterator and m_varFound to false, so mentioning custom lookup sentinel is somewhat imprecise."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_tinyexpr_h.raw.md"
+}

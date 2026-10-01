@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.94,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py .....F......                           [ 41%]\ntests/unit_tests/scoring_test.py .............                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py ......                                   [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_l33t_matching ______________________________\n\n    def test_l33t_matching():\n        test_table = {\n            'a': ['4', '@'],\n            'c': ['(', '{', '[', '<'],\n            'g': ['6', '9'],\n            'o': ['0'],\n        }\n        for pw, expected in [\n            ['', {}],\n            ['abcdefgo123578!#$&*)]}>', {}],\n            ['a', {}],\n            ['4', {'a': ['4']}],\n            ['4@', {'a': ['4', '@']}],\n            ['4({60', {'a': ['4'], 'c': ['(', '{'], 'g': ['6'], 'o': ['0']}],\n        ]:\n            msg = \"reduces l33t table to only the substitutions that a password might be employing\"\n            assert matching.relevant_l33t_subtable(pw, test_table) == expected, msg\n    \n        for table, subs in [\n            [{}, [{}]],\n            [{'a': ['@']}, [{'@': 'a'}]],\n            [{'a': ['@', '4']}, [{'@': 'a'}, {'4': 'a'}]],\n            [{'a': ['@', '4'], 'c': ['(']},\n             [{'@': 'a', '(': 'c'}, {'4': 'a', '(': 'c'}]],\n        ]:\n            msg = \"enumerates the different sets of l33t substitutions a password might be using\"\n            assert matching.enumerate_l33t_subs(table) == subs, msg\n    \n        def lm(pw):\n            return matching.l33t_match(pw, dicts, test_table)\n    \n        dicts = {\n            'words': {\n                'aac': 1,\n                'password': 3,\n                'paassword': 4,\n                'asdf0': 5,\n            },\n            'words2': {\n                'cgo': 1,\n            }\n        }\n        assert lm('') == [], \"doesn't match ''\"\n        assert lm('password') == [], \"doesn't match pure dictionary words\"\n        for password, pattern, word, dictionary_name, rank, ij, sub in [\n            ['p4ssword', 'p4ssword', 'password', 'words', 3, [0, 7], {'4': 'a'}],\n            ['p@ssw0rd', 'p@ssw0rd', 'password', 'words', 3, [0, 7],\n             {'@': 'a', '0': 'o'}],\n            ['aSdfO{G0asDfO', '{G0', 'cgo', 'words2', 1, [5, 7],\n             {'{': 'c', '0': 'o'}],\n        ]:\n            msg = \"matches against common l33t substitutions\"\n            check_matches(msg, lm(password), 'dictionary', [pattern], [ij],\n                          {\n                              'l33t': [True],\n                              'sub': [sub],\n                              'matched_word': [word],\n                              'rank': [rank],\n                              'dictionary_name': [dictionary_name],\n                          })\n    \n        matches = lm('@a(go{G0')\n        msg = \"matches against overlapping l33t patterns\"\n>       check_matches(msg, matches, 'dictionary', ['@a(', '(go', '{G0'],\n                      [[0, 2], [2, 4], [5, 7]], {\n                          'l33t': [True, True, True],\n                          'sub': [{'@': 'a', '(': 'c'}, {'(': 'c'},\n                                  {'{': 'c', '0': 'o'}],\n                          'matched_word': ['aac', 'cgo', 'cgo'],\n                          'rank': [1, 1, 1],\n                          'dictionary_name': ['words', 'words2', 'words2'],\n                      })\n\ntests/unit_tests/matching_test.py:273: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nprefix = 'matches against overlapping l33t patterns'\nmatches = [{'dictionary_name': 'words', 'i': 0, 'j': 2, 'l33t': True, ...}, {'dictionary_name': 'words2', 'i': 2, 'j': 4, 'l33t': True, ...}, {'dictionary_name': 'words2', 'i': 5, 'j': 7, 'l33t': True, ...}]\npattern_names = ['dictionary', 'dictionary', 'dictionary']\npatterns = ['@a(', '(go', '{G0'], ijs = [[0, 2], [2, 4], [5, 7]]\nprops = {'dictionary_name': ['words', 'words2', 'words2'], 'l33t': [True, True, True], 'matched_word': ['aac', 'cgo', 'cgo'], 'rank': [1, 1, 1], ...}\n\n    def check_matches(prefix, matches, pattern_names, patterns, ijs, props):\n        if isinstance(pattern_names, str):\n            # shortcut: if checking for a list of the same type of patterns,\n            # allow passing a string 'pat' instead of array ['pat', 'pat', ...]\n            pattern_names = [pattern_names] * len(patterns)\n    \n        is_equal_len_args = len(pattern_names) == len(patterns) == len(ijs)\n        for prop, lst in props.items():\n            # props is structured as: keys that points to list of values\n            if not is_equal_len_args or len(lst) != len(patterns):\n                raise Exception('unequal argument lists to check_matches')\n    \n        msg = \"%s: len(matches) == %s\" % (prefix, len(patterns))\n        assert len(matches) == len(patterns), msg\n        for k in range(len(patterns)):\n            match = matches[k]\n            pattern_name = pattern_names[k]\n            pattern = patterns[k]\n            i, j = ijs[k]\n            msg = \"%s: matches[%s]['pattern'] == '%s'\" % (prefix, k, pattern_name)\n            assert match['pattern'] == pattern_name, msg\n    \n            msg = \"%s: matches[%s] should have [i, j] of [%s, %s]\" % (\n                prefix, k, i, j)\n            assert [match['i'], match['j']] == [i, j], msg\n    \n            msg = \"%s: matches[%s]['token'] == '%s'\" % (prefix, k, pattern)\n            assert match['token'] == pattern, msg\n    \n            for prop_name, prop_list in props.items():\n                prop_msg = prop_list[k]\n                if isinstance(prop_msg, str):\n                    prop_msg = \"'%s'\" % prop_msg\n                msg = \"%s: matches[%s].%s == %s\" % (prefix, k, prop_name, prop_msg)\n>               assert match[prop_name] == prop_list[k], msg\nE               AssertionError: matches against overlapping l33t patterns: matches[0].sub == {'@': 'a', '(': 'c'}\nE               assert {'(': 'c', '0': 'o', '@': 'a'} == {'(': 'c', '@': 'a'}\nE                 \nE                 Omitting 2 identical items, use -vv to show\nE                 Left contains 1 more item:\nE                 {'0': 'o'}\nE                 Use -v to get more diff\n\ntests/unit_tests/matching_test.py:58: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_l33t_matching - AssertionError...\n========================= 1 failed, 33 passed in 1.05s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__l33t_match",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "test_32",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      }
+    ],
+    "passed": 33,
+    "failed": 1,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9706,
+  "compile_score": 0.5,
+  "test_score": 0.4853,
+  "score": 0.9853
+}

@@ -1,0 +1,23 @@
+{
+  "task": "python/portalocker/L3_utils__open_atomic",
+  "project": "python/portalocker",
+  "language": "python",
+  "prompt_path": "datasets/python/portalocker/tasks/L3_utils__open_atomic/prompt.md",
+  "task_json_path": "datasets/python/portalocker/tasks/L3_utils__open_atomic/task.json",
+  "source_file_path": "datasets/python/portalocker/src/portalocker/utils.py",
+  "target_symbol": "utils.py::open_atomic",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description matches the implementation very well: it is a context manager, accepts either a string path or pathlib.Path, asserts that the destination does not already exist, creates parent directories, writes through a temporary file in the same directory, flushes and fsyncs before renaming, and attempts cleanup afterward with suppressed errors. It is also sufficient to reimplement the function. The main slight mismatch is that the wording around cleanup and rename failure is broader than the exact control flow: cleanup of the temp file happens in the final rename/cleanup phase, while exceptions raised inside the caller's with-block occur before that phase. Also, the description's phrasing about atomic replacement is a bit more general than the implementation's simpler os.rename behavior under the precondition that the target is absent.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "Saying cleanup occurs 'if the rename fails or any exit path is taken' is slightly imprecise, because if an exception is raised inside the caller's with-block before flush/fsync/rename, the later rename-and-cleanup block is not reached by this generator context manager.",
+    "The description says the rename operation 'replaces the absent target atomically when supported by the platform'; the implementation specifically asserts the target does not exist first, so replacement behavior is not actually part of the implemented contract."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_utils__open_atomic.raw.md"
+}

@@ -1,0 +1,27 @@
+{
+  "task": "cpp/xlsx2csv/L3_tinyxml2__XMLUtil",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_tinyxml2__XMLUtil/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_tinyxml2__XMLUtil/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/include/tinyxml2.h",
+  "target_symbol": "tinyxml2.h::XMLUtil",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly identifies that XMLUtil is a utility class containing whitespace skipping, XML name validation, hex-prefix detection, bounded string comparison, a simplified UTF-8/high-bit check, and declarations for BOM/entity/UTF conversion plus primitive serialization/parsing helpers and configurable boolean serialization strings. It is also appropriately framed as a class-level description rather than pretending to describe bodies for methods that are only declared here. The main gap is that some implementation-specific details are omitted or slightly generalized, such as the use of assertions on non-null inputs and nonnegative length, the mutable SkipWhiteSpace overload being just a const-cast wrapper, and the fact that the UTF-8 helper actually tests any high-bit byte rather than true continuation bytes. Still, the core behavior is accurate and sufficiently complete overall.",
+  "missing_functionality": [
+    "Does not mention the explicit TIXMLASSERT checks for non-null pointers in SkipWhiteSpace and StringEqual, or for nonnegative nChar in StringEqual.",
+    "Does not mention that the non-const SkipWhiteSpace overload simply delegates to the const overload via const_cast.",
+    "Does not mention that StringEqual uses strncmp exactly."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description refers to UTF-8 continuation/high-bit bytes; the implementation's IsUTF8Continuation is actually just a high-bit test ((p & 0x80) != 0), not a true UTF-8 continuation-byte check.",
+    "Saying the class provides UTF-8 support is broadly fine, but most of the UTF-8-related items in this snippet are declarations only, not implemented behavior here."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_tinyxml2__XMLUtil.raw.md"
+}

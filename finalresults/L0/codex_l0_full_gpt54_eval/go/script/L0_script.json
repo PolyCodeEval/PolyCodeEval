@@ -1,0 +1,628 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 8.39,
+  "stdout": "",
+  "stderr": "go: downloading github.com/itchyny/timefmt-go v0.1.5\ngo: updates to go.mod needed; to update it:\n\tgo mod tidy\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && go mod download",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && go mod download",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.33,
+    "Architecture": 3.53,
+    "Health": 3.0
+  },
+  "overall_score": 2.26,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "(string(data))\n\t\tcounts := make(map[string]int, len(lines))\n\t\tfor _, line := range lines {\n\t\t\tcounts[line]++\n\t\t}\n\t\ttype entry struct {\n\t\t\tline  string\n\t\t\tcount int\n\t\t}\n\t\tentries := make([]entry, 0, len(counts))\n\t\tfor line, count := range counts {\n\t\t\tentries = append(entries, entry{line: line, count: count})\n\t\t}\n\t\tsort.Slice(entries, func(i, j int) bool {\n\t\t\tif entries[i].count != entries[j].count"
+            }
+          ],
+          "status": "partial",
+          "reason": "仓库提供了 `script` 包、`Pipe` 类型、所列 sources，以及大多数所列方法；但部分正则相关 API 的参数类型与需求描述不一致，因此整体只算部分实现。"
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/bitfield/script`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/bitfield/script\n\ngo 1.22\n\nrequire github.com/itchyny/gojq v0.12.13"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "n(t *testing.T) {\n\t// File(\"nonexistent\") should propagate error through the chain\n\t_, err := script.File(\"/nonexistent_path_that_does_not_exist_xyz\").Match(\"foo\").String()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from File with nonexistent path to propagate through chain\")\n\t}\n}"
+            },
+            {
+              "path": "test_file_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFileNonExistentPathError(t *testing.T) {\n\tp := script.File(\"/nonexistent/path/that/does/not/exist.txt\")\n\toutput, err := p.String()\n\t// Either err is non-nil or output is empty (depending on version)\n\tif err == nil && output != \"\" {\n\t\tt.Fatal(\"expected error or empty output for non-existent file"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/go.mod] 明确声明 `module github.com/bitfield/script`。"
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package `script` exposing the central chainable type `Pipe`",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "package script\n\nimport (\n\t\"bytes\"\n\t\"encoding/base64\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"os\"\n\t\"os/exec\"\n\t\"path/filepath\"\n\t\"regexp\"\n\t\"sort\"\n\t\"strings\"\n\t\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pip"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)"
+            },
+            {
+              "path": "test_column_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestColumnExtractsFirstColumn(t *testing.T) {\n\tinput := \"one two three\\nfour five six\\n\"\n\tgot, err := script.Echo(input).Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 定义了 `package script`，并导出了中心链式类型 `Pipe`。"
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "package-level constructors and sources include `NewPipe()`, `File(path)`, `Exec(cmd)`, `Echo(s)`, `Stdin()`, `Get(url)`, and `Slice(values)`",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}\n\n// Echo returns a pipe containing s.\nfunc Echo(s string) *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte(s), exitSt"
+            },
+            {
+              "path": "test_file_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFileNonExistentPathError(t *testing.T) {\n\tp := script.File(\"/nonexistent/path/that/does/not/exist.txt\")\n\toutput, err := p.String()\n\t// Either err is non-nil or output is empty (depending on version)\n\tif err == nil && output != \"\" {\n\t\tt.Fatal(\"expected error or empty output for no"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "cted {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestErrorPropagationThroughChain(t *testing.T) {\n\t// File(\"nonexistent\") should propagate error through the chain\n\t_, err := script.File(\"/nonexistent_path_that_does_not_exist_xyz\").Match(\"foo\").String()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from File with nonexistent path to propagate through chain\")\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 明确定义了 `NewPipe()`, `File(path)`, `Exec(cmd)`, `Echo(s)`, `Stdin()`, `Get(url)`, `Slice(values)`。"
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`Pipe` methods should preserve names such as `Error()`, `Match`, `MatchRegexp`, `Reject`, `RejectRegexp`, `First`, `Last`, `Column`, `JQ`, `Join`, `Replace`, `ReplaceRegexp`, `CountLines`, `String`, `Basename`, `Dirname`, `Freq`, `EncodeBase64`, `DecodeBase64`, and `ExitStatus`",
+          "evidence": [
+            {
+              "path": "test_match_test.go",
+              "excerpt": "banana\\napricot\\ncherry\\n\"\n\tgot, err := script.Echo(input).Match(\"ap\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"apple\\napricot\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestRejectFiltersLinesNotContainingString(t *testing.T) {\n\tinput := \"apple\\nbanana\\napricot\\ncherry\\n\"\n\tgot, err := script.Echo(input).Reject(\"ap\""
+            },
+            {
+              "path": "script.go",
+              "excerpt": "\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}\n\n// Echo returns a p"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, g"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 存在 `Error`, `Match`, `MatchRegexp`, `Reject`, `RejectRegexp`, `First`, `Last`, `Column`, `JQ`, `Join`, `Replace`, `ReplaceRegexp`, `CountLines`, `String`, `Basename`, `Dirname`, `Freq`, `EncodeBase64`, `DecodeBase64`, `ExitStatus` 这些方法名。"
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "Sources (create a Pipe)",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}\n\n// Echo returns a p"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, g"
+            },
+            {
+              "path": "test_column_test.go",
+              "excerpt": "ted := \"two\\nfive\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestColumnOnEmptyPipe(t *testing.T) {\n\tgot, err := script.Echo(\"\").Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for Column on empty pipe, got %q\", got)\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 实现了多个 source 构造器，均返回 `*Pipe`。"
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "Filters (transform a Pipe)",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "line, !rx.MatchString(line), nil\n\t})\n}\n\n// First keeps the first n lines.\nfunc (p *Pipe) First(n int) *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\tif n <= 0 {\n\t\t\treturn []byte{}, nil\n\t\t}\n\t\tlines := splitLines(string(data))\n\t\tif n > len(lines) {\n\t\t\tn = len(lines)\n\t\t}\n\t\treturn []byte(strings.Join(lines[:n], \"\\n\")), nil\n\t})\n}\n\n// Last keeps the last n lines.\nfunc (p *Pipe) Last(n"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "r\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestPipeChainingMultipleFilters(t *testing.T) {\n\tinput := \"apple pie\\nbanana split\\napricot jam\\ncherry pie\\n\"\n\tgot, err := script.Echo(input).Match(\"ap\").Match(\"pie\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"apple pie\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expect"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "\"3 apple\\n2 banana\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestRejectRegexpFiltersOutMatches(t *testing.T) {\n\tinput := \"foo123\\nbar456\\nfoo789\\nbaz000\\n\"\n\tgot, err := script.Echo(input).RejectRegexp(regexp.MustCompile(`^foo`)).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"bar456\\nbaz000\\n\"\n\tif got != expected {\n\t\tt.F"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 实现了 `Match`、`Reject`、`First`、`Last`、`Column`、`Replace`、`JQ` 等过滤/变换方法。"
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Sinks (consume a Pipe)",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}\n\n// Echo returns a p"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, g"
+            },
+            {
+              "path": "test_column_test.go",
+              "excerpt": "ted := \"two\\nfive\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestColumnOnEmptyPipe(t *testing.T) {\n\tgot, err := script.Echo(\"\").Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for Column on empty pipe, got %q\", got)\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 实现了 `String()`、`CountLines()`、`Error()`、`ExitStatus()` 等消费型终端操作。"
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`NewPipe()` returns a pipe with empty content (reading it produces \"\").",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}\n\n// Echo returns a pipe containing s.\nfunc Echo(s string) *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte(s), exitSt"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "_, _ = p.String()\n\tif p.ExitStatus() != 0 {\n\t\tt.Fatalf(\"expected exit status 0, got %d\", p.ExitStatus())\n\t}\n}\n\nfunc TestNewPipeProducesEmptyOutput(t *testing.T) {\n\tgot, err := script.NewPipe().String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string from NewPipe, got %q\", got)\n\t}\n}\n\nfunc TestFirstNegativeReturnsEmpty(t *testing.T) {\n\tin"
+            },
+            {
+              "path": "test_file_test.go",
+              "excerpt": "= nil && output != \"\" {\n\t\tt.Fatal(\"expected error or empty output for non-existent file\")\n\t}\n}\n\nfunc TestFileNonExistentPipeError(t *testing.T) {\n\tp := script.File(\"/nonexistent/path/that/does/not/exist.txt\")\n\tif p.Error() == nil {\n\t\t// Some versions set error lazily on read; try reading\n\t\t_, _ = p.String()\n\t}\n\t// After attempting to read, the pipe should have an error\n\t// We just verify it doesn'"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`NewPipe()` 返回空字节内容；`String()` 读取后得到空字符串。"
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`CountLines()` returns 0 for empty input.",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "tents as a string.\nfunc (p *Pipe) String() (string, error) {\n\tres := p.result()\n\treturn string(res.data), res.err\n}\n\n// CountLines counts the number of lines in the pipe.\nfunc (p *Pipe) CountLines() (int, error) {\n\tres := p.result()\n\tif res.err != nil {\n\t\treturn 0, res.err\n\t}\n\treturn len(splitLines(string(res.data))), nil\n}\n\n// Match keeps lines containing s.\nfunc (p *Pipe) Match(s string) *Pipe {"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"regexp\"\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestCountLinesMultipleLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\n\"\n\tn, err := script.Echo(input).CountLines()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif n != 4 {\n\t\tt.Fatalf(\"expected 4 lines, got %d\", n)\n\t}\n}\n\nfunc TestCountLinesEmptyInput(t *testing"
+            },
+            {
+              "path": "test_first_last_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFirstReturnsFirstNLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\nfive\\n\"\n\tgot, err := script.Echo(input).First(3).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\ntwo\\nthree\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`CountLines()` 对空输入会调用 `splitLines(\"\")` 返回 `nil`，长度为 0。"
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`First(n)` with n <= 0 produces no output. `First(n)` where n exceeds total lines returns all lines.",
+          "evidence": [
+            {
+              "path": "test_first_last_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFirstReturnsFirstNLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\nfive\\n\"\n\tgot, err := script.Echo(input).First(3).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\ntwo\\nthree\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\","
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "pected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string from NewPipe, got %q\", got)\n\t}\n}\n\nfunc TestFirstNegativeReturnsEmpty(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\n\"\n\tgot, err := script.Echo(input).First(-1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for First(-1), got %q\", got)\n\t}\n}\n\nfunc TestLas"
+            },
+            {
+              "path": "script.go",
+              "excerpt": "}\n\treturn p.filterLines(func(line string) (string, bool, error) {\n\t\treturn line, !rx.MatchString(line), nil\n\t})\n}\n\n// First keeps the first n lines.\nfunc (p *Pipe) First(n int) *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\tif n <= 0 {\n\t\t\treturn []byte{}, nil\n\t\t}\n\t\tlines := splitLines(string(data))\n\t\tif n > len(lines) {\n\t\t\tn = len(lines)\n\t\t}\n\t\treturn []byte(strings.Join(lines["
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 中 `First(n)` 对 `n <= 0` 返回空输出，对 `n > len(lines)` 会截断为全部行。"
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`Last(n)` with n <= 0 produces no output.",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "ected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for First(-1), got %q\", got)\n\t}\n}\n\nfunc TestLastZeroReturnsEmpty(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\n\"\n\tgot, err := script.Echo(input).Last(0).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for Last(0), got %q\", got)\n\t}\n}\n\nfunc TestLastNegative"
+            },
+            {
+              "path": "test_first_last_test.go",
+              "excerpt": "expected := \"one\\ntwo\\nthree\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestLastReturnsLastNLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\nfive\\n\"\n\tgot, err := script.Echo(input).Last(2).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"four\\nfive\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expecte"
+            },
+            {
+              "path": "script.go",
+              "excerpt": "string(data))\n\t\tif n > len(lines) {\n\t\t\tn = len(lines)\n\t\t}\n\t\treturn []byte(strings.Join(lines[:n], \"\\n\")), nil\n\t})\n}\n\n// Last keeps the last n lines.\nfunc (p *Pipe) Last(n int) *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\tif n <= 0 {\n\t\t\treturn []byte{}, nil\n\t\t}\n\t\tlines := splitLines(string(data))\n\t\tif n >= len(lines) {\n\t\t\treturn []byte(strings.Join(lines, \"\\n\")), nil\n\t\t}\n\t\tretu"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 中 `Last(n)` 对 `n <= 0` 返回空输出。"
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`Column(col)` skips lines that have fewer than `col` whitespace-delimited fields.",
+          "evidence": [
+            {
+              "path": "test_column_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestColumnExtractsFirstColumn(t *testing.T) {\n\tinput := \"one two three\\nfour five six\\n\"\n\tgot, err := script.Echo(input).Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\nfour\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", e"
+            },
+            {
+              "path": "script.go",
+              "excerpt": "urn []byte(strings.Join(lines, \"\\n\")), nil\n\t\t}\n\t\treturn []byte(strings.Join(lines[len(lines)-n:], \"\\n\")), nil\n\t})\n}\n\n// Column extracts the 1-based whitespace-delimited field col from each line.\nfunc (p *Pipe) Column(col int) *Pipe {\n\treturn p.filterLines(func(line string) (string, bool, error) {\n\t\tif col <= 0 {\n\t\t\treturn \"\", false, nil\n\t\t}\n\t\tfields := strings.Fields(line)\n\t\tif len(fields) < col {"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "pected error: %v\", err)\n\t}\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empty string for Last(-5), got %q\", got)\n\t}\n}\n\nfunc TestColumnSkipsShortLines(t *testing.T) {\n\tinput := \"one two three\\nfour\\nfive six\\n\"\n\tgot, err := script.Echo(input).Column(2).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\t// \"four\" only has 1 column so it should be skipped\n\texpected := \"two\\nsix\\n\"\n\tif got"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 中 `Column(col)` 对字段数不足 `col` 的行返回 `keep=false`，会跳过该行。"
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`Basename()` applies `filepath.Base` to each line (extracts the final path component).",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "ransform(func(data []byte) ([]byte, error) {\n\t\treturn []byte(rx.ReplaceAllString(string(data), replace)), nil\n\t})\n}\n\n// Basename applies filepath.Base to each line.\nfunc (p *Pipe) Basename() *Pipe {\n\treturn p.mapLines(filepath.Base)\n}\n\n// Dirname applies filepath.Dir to each line.\nfunc (p *Pipe) Dirname() *Pipe {\n\treturn p.mapLines(filepath.Dir)\n}\n\n// Freq counts line frequency and sorts by descen"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "f(\"unexpected error: %v\", err)\n\t}\n\tif n != 0 {\n\t\tt.Fatalf(\"expected 0 lines for empty input, got %d\", n)\n\t}\n}\n\nfunc TestBasenameExtractsFilename(t *testing.T) {\n\tinput := \"/usr/local/bin/foo\\n/home/user/bar\\n\"\n\tgot, err := script.Echo(input).Basename().String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo\\nbar\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %"
+            },
+            {
+              "path": "test_column_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestColumnExtractsFirstColumn(t *testing.T) {\n\tinput := \"one two three\\nfour five six\\n\"\n\tgot, err := script.Echo(input).Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\nfour\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expecte"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 的 `Basename()` 直接通过 `filepath.Base` 映射每一行。"
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`Dirname()` applies `filepath.Dir` to each line (extracts the parent directory).",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "Basename applies filepath.Base to each line.\nfunc (p *Pipe) Basename() *Pipe {\n\treturn p.mapLines(filepath.Base)\n}\n\n// Dirname applies filepath.Dir to each line.\nfunc (p *Pipe) Dirname() *Pipe {\n\treturn p.mapLines(filepath.Dir)\n}\n\n// Freq counts line frequency and sorts by descending count then alphabetically.\nfunc (p *Pipe) Freq() *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "err)\n\t}\n\texpected := \"foo\\nbar\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestDirnameExtractsDirectory(t *testing.T) {\n\tinput := \"/usr/local/bin/foo\\n/home/user/bar\\n\"\n\tgot, err := script.Echo(input).Dirname().String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"/usr/local/bin\\n/home/user\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"e"
+            },
+            {
+              "path": "test_column_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestColumnExtractsFirstColumn(t *testing.T) {\n\tinput := \"one two three\\nfour five six\\n\"\n\tgot, err := script.Echo(input).Column(1).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\nfour\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expecte"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 的 `Dirname()` 直接通过 `filepath.Dir` 映射每一行。"
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`Freq()` counts line frequencies and outputs lines prefixed with count, sorted by descending frequency then alphabetically for ties.",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "// Dirname applies filepath.Dir to each line.\nfunc (p *Pipe) Dirname() *Pipe {\n\treturn p.mapLines(filepath.Dir)\n}\n\n// Freq counts line frequency and sorts by descending count then alphabetically.\nfunc (p *Pipe) Freq() *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\tlines := splitLines(string(data))\n\t\tcounts := make(map[string]int, len(lines))\n\t\tfor _, line := range lines {\n\t\t\tc"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ":= \"/usr/local/bin\\n/home/user\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestFreqCountsAndSorts(t *testing.T) {\n\tinput := \"apple\\nbanana\\napple\\napple\\nbanana\\n\"\n\tgot, err := script.Echo(input).Freq().String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"3 apple\\n2 banana\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %"
+            },
+            {
+              "path": "test_slice_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestSliceCountLines(t *testing.T) {\n\tinput := []string{\"one\", \"two\", \"three\"}\n\tn, err := script.Slice(input).CountLines()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif n != 3 {\n\t\tt.Fatalf(\"expected 3 lines, got %d\", n)\n\t}\n}\n\nfunc TestSliceString(t *testing.T) {\n\tinput := []st"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 的 `Freq()` 统计频次，并按频次降序、同频按字典序排序输出 `\"<count> <line>\"`。"
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`RejectRegexp(re)` produces only lines that do not match the compiled regexp.",
+          "evidence": [
+            {
+              "path": "test_match_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"regexp\"\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestMatchFiltersLinesContainingString(t *testing.T) {\n\tinput := \"apple\\nbanana\\napricot\\ncherry\\n\"\n\tgot, err := script.Echo(input).Match(\"ap\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"apple\\napricot\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %"
+            },
+            {
+              "path": "script.go",
+              "excerpt": ")\n\t}\n\treturn p.filterLines(func(line string) (string, bool, error) {\n\t\treturn line, rx.MatchString(line), nil\n\t})\n}\n\n// RejectRegexp discards lines matching re.\nfunc (p *Pipe) RejectRegexp(re string) *Pipe {\n\trx, err := regexp.Compile(re)\n\tif err != nil {\n\t\treturn p.withError(err)\n\t}\n\treturn p.filterLines(func(line string) (string, bool, error) {\n\t\treturn line, !rx.MatchString(line), nil\n\t})\n}\n\n//"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "expected := \"3 apple\\n2 banana\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestRejectRegexpFiltersOutMatches(t *testing.T) {\n\tinput := \"foo123\\nbar456\\nfoo789\\nbaz000\\n\"\n\tgot, err := script.Echo(input).RejectRegexp(regexp.MustCompile(`^foo`)).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"bar456\\nbaz000\\n\"\n\tif got != expe"
+            }
+          ],
+          "status": "partial",
+          "reason": "实现了按正则排除的行为，但 [repo/script.go] 的 `RejectRegexp` 参数类型是 `string`，不是需求描述中的已编译 regexp。"
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`ReplaceRegexp(re, replace)` replaces all regexp matches in each line; `$1`, `$2` etc. refer to capture groups.",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "ransform(func(data []byte) ([]byte, error) {\n\t\treturn []byte(strings.ReplaceAll(string(data), old, new)), nil\n\t})\n}\n\n// ReplaceRegexp replaces matches of re with replace.\nfunc (p *Pipe) ReplaceRegexp(re, replace string) *Pipe {\n\trx, err := regexp.Compile(re)\n\tif err != nil {\n\t\treturn p.withError(err)\n\t}\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\treturn []byte(rx.ReplaceAllString(str"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "}\n\texpected := \"bar456\\nbaz000\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestReplaceRegexpWithCapture(t *testing.T) {\n\tinput := \"hello world\\nfoo bar\\n\"\n\tre := regexp.MustCompile(`(\\w+) (\\w+)`)\n\tgot, err := script.Echo(input).ReplaceRegexp(re, \"$2 $1\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"world hello\\nbar foo\\"
+            },
+            {
+              "path": "test_match_test.go",
+              "excerpt": "89\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestRejectWithEmptyStringMatchesAll(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\n\"\n\tgot, err := script.Echo(input).Reject(\"\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\t// Empty string is contained in every line, so Reject(\"\") rejects all lines\n\tif got != \"\" {\n\t\tt.Fatalf(\"expected empt"
+            }
+          ],
+          "status": "partial",
+          "reason": "实现了基于正则的替换和捕获组展开，但 [repo/script.go] 的 `ReplaceRegexp` 参数类型是 `string`，不是需求描述中的已编译 regexp。"
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`EncodeBase64()` encodes pipe contents as standard base64. `DecodeBase64()` decodes standard base64 input.",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "entries {\n\t\t\tout[i] = fmt.Sprintf(\"%d %s\", e.count, e.line)\n\t\t}\n\t\treturn []byte(strings.Join(out, \"\\n\")), nil\n\t})\n}\n\n// EncodeBase64 encodes the pipe contents using standard base64.\nfunc (p *Pipe) EncodeBase64() *Pipe {\n\treturn p.transform(func(data []byte) ([]byte, error) {\n\t\tdst := make([]byte, base64.StdEncoding.EncodedLen(len(data)))\n\t\tbase64.StdEncoding.Encode(dst, data)\n\t\treturn dst, nil\n\t})"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "got)\n\t}\n}\n\nfunc TestEncodeDecodeBase64Roundtrip(t *testing.T) {\n\tinput := \"hello world\"\n\tgot, err := script.Echo(input).EncodeBase64().DecodeBase64().String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != input {\n\t\tt.Fatalf(\"expected %q, got %q\", input, got)\n\t}\n}\n\nfunc TestExitStatusZeroOnSuccess(t *testing.T) {\n\tp := script.Echo(\"hello\\n\")\n\t_, _ = p.String()\n\tif p.ExitSta"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, g"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 实现了标准库 `base64.StdEncoding` 的编码与解码。"
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`ExitStatus()` returns 0 when the pipe has no error.",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "p\"\n\t\"sort\"\n\t\"strings\"\n\t\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {\n\treturn newSource(func() result {\n\t\treturn result{data: []byte{}, exitStatus: 0}\n\t})\n}"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ".Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif got != input {\n\t\tt.Fatalf(\"expected %q, got %q\", input, got)\n\t}\n}\n\nfunc TestExitStatusZeroOnSuccess(t *testing.T) {\n\tp := script.Echo(\"hello\\n\")\n\t_, _ = p.String()\n\tif p.ExitStatus() != 0 {\n\t\tt.Fatalf(\"expected exit status 0, got %d\", p.ExitStatus())\n\t}\n}\n\nfunc TestNewPipeProducesEmptyOutput(t *testing.T) {\n\tgot, err := script.NewPipe().String()\n\tif err"
+            },
+            {
+              "path": "test_first_last_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFirstReturnsFirstNLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\nfive\\n\"\n\tgot, err := script.Echo(input).First(3).String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"one\\ntwo\\nthree\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 的 `ExitStatus()` 在 `res.err == nil` 时显式返回 0。"
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`JQ(query)` applies a jq query to JSON input; JQ string results are output in JSON string format",
+          "evidence": [
+            {
+              "path": "script.go",
+              "excerpt": "Encoding.DecodeString(trimmed)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\treturn decoded, nil\n\t})\n}\n\n// JQ applies a jq query to JSON input.\nfunc (p *Pipe) JQ(query string) *Pipe {\n\tcompiled, err := gojq.Parse(query)\n\tif err != nil {\n\t\treturn p.withError(err)\n\t}\n\tcode, err := gojq.Compile(compiled)\n\tif err != nil {\n\t\treturn p.withError(err"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "test\n\nimport (\n\t\"regexp\"\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestCountLinesMultipleLines(t *testing.T) {\n\tinput := \"one\\ntwo\\nthree\\nfour\\n\"\n\tn, err := script.Echo(input).CountLines()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif n != 4 {\n\t\tt.Fatalf(\"expected 4 lines, got %d\", n)\n\t}\n}\n\nfunc TestCountLinesEmptyInput(t *testing.T) {\n\tn, err := script.Echo(\"\").CountLin"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "cript_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestPipeCha"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/script.go] 使用 `gojq` 执行查询，并通过 `json.Marshal` 输出结果，因此字符串结果会以 JSON 字符串格式输出。"
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [],
+          "status": "unclear",
+          "reason": "这是对生成输出位置的约束，不是当前仓库中可直接验证的运行时/静态特性。"
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/bitfield/script\n\ngo 1.22\n\nrequire github.com/itchyny/gojq v0.12.13"
+            },
+            {
+              "path": "script.go",
+              "excerpt": "exitStatus: 1}\n\t\t}\n\t\treturn result{data: data, exitStatus: 0}\n\t})\n}\n\n// Stdin returns a pipe containing the contents of standard input.\nfunc Stdin() *Pipe {\n\treturn newSource(func() result {\n\t\tdata, err := io.ReadAll(os.Stdin)\n\t\tif err != nil {\n\t\t\treturn result{err: err, exitStatus: 1}\n\t\t}\n\t\treturn result{data: data, exitStatus: 0}\n\t})\n}\n\n// Get fetches url and returns its response body.\nfunc Get("
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库包含标准 Go 模块文件 `go.mod`、`go.sum`，根包文件为 `script.go`。"
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "{\n\t// File(\"nonexistent\") should propagate error through the chain\n\t_, err := script.File(\"/nonexistent_path_that_does_not_exist_xyz\").Match(\"foo\").String()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from File with nonexistent path to propagate through chain\")\n\t}\n}"
+            },
+            {
+              "path": "test_file_test.go",
+              "excerpt": "om/bitfield/script\"\n)\n\nfunc TestFileNonExistentPathError(t *testing.T) {\n\tp := script.File(\"/nonexistent/path/that/does/not/exist.txt\")\n\toutput, err := p.String()\n\t// Either err is non-nil or output is empty (depending on version)\n\tif err == nil && output != \"\" {\n\t\tt.Fatal(\"expected error or empty output for non-existent file\")\n\t}\n}\n\nfunc TestFileNonExistentPipeError(t *testing.T) {\n\tp := script.F"
+            },
+            {
+              "path": "test_match_test.go",
+              "excerpt": "ple\\napricot\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, got)\n\t}\n}\n\nfunc TestRejectFiltersLinesNotContainingString(t *testing.T) {\n\tinput := \"apple\\nbanana\\napricot\\ncherry\\n\"\n\tgot, err := script.Echo(input).Reject(\"ap\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"banana\\ncherry\\n\"\n\tif got != expected {\n\t\tt.Fatalf(\"expected %q, got %q"
+            }
+          ],
+          "status": "missing",
+          "reason": "仓库中实际包含多个 `*_test.go` 测试文件，违反“Do not generate test files”。"
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "Ensure the module path is `github.com/bitfield/script` and the root package is importable as `script`.",
+          "evidence": [
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "n(t *testing.T) {\n\t// File(\"nonexistent\") should propagate error through the chain\n\t_, err := script.File(\"/nonexistent_path_that_does_not_exist_xyz\").Match(\"foo\").String()\n\tif err == nil {\n\t\tt.Fatal(\"expected error from File with nonexistent path to propagate through chain\")\n\t}\n}"
+            },
+            {
+              "path": "test_file_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestFileNonExistentPathError(t *testing.T) {\n\tp := script.File(\"/nonexistent/path/that/does/not/exist.txt\")\n\toutput, err := p.String()\n\t// Either err is non-nil or output is empty (depending on version)\n\tif err == nil && output != \"\" {\n\t\tt.Fatal(\"expected error or empty output for non-existent file"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/bitfield/script\n\ngo 1.22\n\nrequire github.com/itchyny/gojq v0.12.13"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/go.mod] 模块路径正确，且根文件 [repo/script.go] 使用 `package script`，可作为 `script` 导入。"
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "The `JQ` method requires the external dependency `github.com/itchyny/gojq`; it must be listed in `go.mod`.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/bitfield/script\n\ngo 1.22\n\nrequire github.com/itchyny/gojq v0.12.13"
+            },
+            {
+              "path": "script.go",
+              "excerpt": "64\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"os\"\n\t\"os/exec\"\n\t\"path/filepath\"\n\t\"regexp\"\n\t\"sort\"\n\t\"strings\"\n\t\"sync\"\n\n\t\"github.com/itchyny/gojq\"\n)\n\ntype result struct {\n\tdata       []byte\n\terr        error\n\texitStatus int\n}\n\n// Pipe represents a lazily evaluated pipeline.\ntype Pipe struct {\n\tonce sync.Once\n\teval func() result\n\tres  result\n}\n\n// NewPipe returns an empty pipe.\nfunc NewPipe() *Pipe {"
+            },
+            {
+              "path": "test_chaining_test.go",
+              "excerpt": "package script_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/bitfield/script\"\n)\n\nfunc TestPipeChainingEchoMatchString(t *testing.T) {\n\tinput := \"foo bar\\nbaz qux\\nfoo baz\\n\"\n\tgot, err := script.Echo(input).Match(\"foo\").String()\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\texpected := \"foo bar\\nfoo baz\\n\"\n\tif got"
+            }
+          ],
+          "status": "implemented",
+          "reason": "[repo/go.mod] 明确列出了依赖 `github.com/itchyny/gojq`。"
+        }
+      ],
+      "feature_count": 26,
+      "constraint_count": 0,
+      "implemented_count": 21,
+      "partial_count": 3,
+      "missing_count": 1,
+      "unclear_count": 1,
+      "feature_coverage": 0.8654,
+      "constraint_coverage": 0.8654,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.6,
+        "stack_alignment": 3.8,
+        "reference_alignment": 3.2
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 16,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "0",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\n仓库主体实现了一个可链式调用的 `script` Go 库，包含正确的模块路径、`Pipe` 类型、所需 sources、主要 filters/sinks，以及 `gojq` 依赖。大多数行为约束也能从 `script.go` 中直接确认，包括空管道、行计数、首尾截取、列提取、路径处理、频次统计、Base64 和 JQ 处理。\n\n### Missing List\n\n- `F024` 未满足：仓库包含测试文件。\n- `F017` 仅部分满足：`RejectRegexp` 行为存在，但参数类型不是需求所述的已编译 regexp。\n- `F018` 仅部分满足：`ReplaceRegexp` 行为存在，但参数类型不是需求所述的已编译 regexp。\n- `F001` 仅部分满足：公共入口总体具备，但正则 API 仍与需求描述不完全一致。\n\n### Critical Constraint Misses\n\n- 生成结果包含多个 `*_test.go` 文件，违反了“Do not generate test files”这一明确约束。\n- 正则相关 API 与需求不完全一致：`RejectRegexp` 和 `ReplaceRegexp` 接收 `string`，而需求描述要求基于已编译 regexp。",
+    "architecture_review": "### Stack Inference\n\n这是一个标准的 Go Modules 单包库项目：根模块路径是 `github.com/bitfield/script`，核心对外包为 `script`，没有应用层入口，也没有前端或持久化成分。整体更像一个“小型文本处理 DSL 库”，以链式 `Pipe` API 为中心，依赖 `gojq` 提供 JSON 查询能力。\n\n### Scoring Mode\n\n本次评分按“Go 库项目的架构质量”进行，而不是按功能是否部分可用来给分。我主要依据 `prompt.md` 的目标形态、`task.json` 的栈信息，以及 `repo/` 中真实的模块布局、入口组织、构建文件和职责分配来判断结构合理性、Go 工程习惯契合度，以及与需求参考的对齐程度。\n\n### Strengths\n\n- 模块根结构很简单，`go.mod`、`go.sum` 和根包源码的布局对 Go 使用者来说容易定位与导入。\n- 模块路径、包名和库类型基本一致，构建入口没有多余包装层，导入路径直接可用。\n- `script.go` 以 `Pipe` 为唯一核心抽象，至少在概念上维持了统一入口，避免了多种并行范式混用。\n- `go.mod` 已正确声明外部依赖 `github.com/itchyny/gojq`，构建层没有引入复杂或非标准工具链。\n\n### Issues\n\n- `repo/` 采用单文件 `script.go` 承载 source/filter/sink、HTTP、exec、JSON、base64、路径处理等全部职责，作为库项目可运行但分层过于扁平；随着 API 扩展，公共入口、执行模型和各类变换会持续耦合，架构伸缩性较弱。\n- 仓库根目录混入大量 `test_*.go`，而原始要求明确说“不生成 test files”；这不只是交付偏差，也让最终项目形态从“最小可导入库”变成“实现+验证样例”的混合结构。\n- 公共 API 设计与需求/实际测试预期存在明显不一致：`MatchRegexp`/`RejectRegexp`/`ReplaceRegexp` 在实现中接收 `string`，但需求与仓库测试都指向 `regexp` 语义；`Join` 实现要求参数，但测试按无参默认空格使用。这说明入口层接口没有稳定对齐。\n- 构建层虽然有标准 `go.mod`/`go.sum`，但工程没有文档、示例目录或更细分包来解释 `Pipe` 的惰性执行模型、错误传播和 I/O 边界；对一个以 API 为核心的 Go 库来说，可维护性和可发现性不足。\n- 实现把命令执行、HTTP 获取、JSON 查询等副作用型 source 与纯文本变换全部塞进同一包同一文件，没有明确区分 source/filter/sink 组织边界，导致代码阅读路径依赖函数顺序而非目录结构。\n\n### Stack Mismatches\n\n- 对 Go 库而言，`go.mod` 放在根目录、包名与模块路径一致，这一点符合常见习惯；但将全部实现集中在一个巨大文件里，不太符合可维护 Go 库常见的按职责拆分方式。\n- Go 社区通常重视 API 稳定性和清晰签名；当前实现与测试对 `regexp` 参数、`Join` 默认行为的分歧，反映出接口设计没有达到常见库工程的一致性要求。\n- 需求要求交付源码而非测试，仓库却以测试驱动形态暴露出来，这和题目要求的最小库交付模式不一致。\n\n### Reference Gaps\n\n- 原始要求明确强调 source/filter/sink 三类能力，但仓库没有在结构上体现这三层，只是在单文件内顺序堆叠方法。\n- 原始要求禁止生成测试文件，但仓库包含一组顶层测试文件，项目形态与交付约束不符。\n- 需求要求保留若干公共方法名及行为约束，但实际 API 签名与测试/需求存在偏差，说明参考实现对齐不完整。\n- `JQ` 依赖 `github.com/itchyny/gojq` 已写入 `go.mod`，这一点对齐较好；但除依赖声明外，缺少 README/示例来支撑该核心能力的工程可用性。"
+  },
+  "task": "go/script/L0_script",
+  "solver": "generated_outputs"
+}

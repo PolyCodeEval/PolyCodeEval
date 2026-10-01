@@ -1,0 +1,13 @@
+{
+  "score": 4.2,
+  "reason": "The description is comprehensive and accurately captures the vast majority of the implementation's behavior: name sanitization, compCmd selection, debug/escape helpers, cursor truncation, empty-argument handling with legacy vs. newer PowerShell version branching, ActiveHelp disabling, directive parsing, error-directive early return, tab-separated candidate parsing, longest-name tracking, space-description substitution, prefix filtering, equal-sign flag stripping/restoring, keep-order vs. sort behavior, no-file-comp empty-string fallback, PSReadLine mode detection, Complete/MenuComplete/Default mode output formatting, FullLanguage vs. fallback string output, and final Register-ArgumentCompleter call. Two notable gaps: (1) the description says FilterFileExt and FilterDirs directives 'preserve or removes file-completion behavior according to the received directive', but the implementation actually returns early (unsupported) for both, emitting no completions at all — this is a meaningful behavioral inaccuracy. (2) In Complete mode with multiple matches, the description says completions are 'formatted with aligned names and optional descriptions' but doesn't capture that the CompletionText itself (used as the insertion text) includes the padded name plus description, which affects what gets inserted vs. displayed — a subtle but implementable detail. These are minor enough that the description remains largely sufficient for reimplementation.",
+  "missing_functionality": [
+    "FilterFileExt and FilterDirs directives cause an early return (unsupported), not conditional file-completion preservation as implied",
+    "In Complete mode with multiple matches, the CompletionText inserted includes both the padded name and description string (not just the name), which affects the actual insertion text",
+    "WordToComplete is only re-derived from Arguments when it is non-empty; when empty it stays empty (not re-derived) — the description omits this conditional"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description states the completer 'preserves or removes file-completion behavior according to the received directive' for FilterFileExt/FilterDirs, but the implementation returns early for both, effectively providing no completions rather than filtering by extension or directory"
+  ],
+  "complete_enough": true
+}

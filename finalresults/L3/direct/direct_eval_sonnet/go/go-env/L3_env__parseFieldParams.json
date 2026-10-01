@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.28,
+  "stdout": "FAIL\tgithub.com/caarlos0/env/v11 [build failed]\nFAIL\n",
+  "stderr": "# github.com/caarlos0/env/v11 [github.com/caarlos0/env/v11.test]\n./env.go:551:13: syntax error: unexpected name at at end of statement\n./env.go:554:8: syntax error: unexpected name Parse at end of statement\n./env.go:555:8: syntax error: unexpected name Handle at end of statement\n./env.go:556:8: syntax error: unexpected name Apply at end of statement\n./env.go:559:9: syntax error: unexpected literal 's the function body: at end of statement\n./env.go:559:30: newline in rune literal\n./env.go:561:7: syntax error: unexpected literal `go\n    func parseFieldParams(field reflect.StructField, opts Options) (FieldParams, error) {\n        tagName := opts.TagName\n        if tagName == \"\" {\n            tagName = \"env\"\n        }\n\n        ownKey, tagOpts := parseKeyForOption(field.Tag.Get(tagName))\n\n        // Handle \"-\" to ignore the field\n        if ownKey == \"-\" {\n            return FieldParams{Ignored: true}, nil\n        }\n\n        // If no key is provided and UseFieldNameByDefault is set, derive the key from the field name\n        if ownKey == \"\" && opts.UseFieldNameByDefault {\n            ownKey = toEnvName(field.Name)\n        }\n\n        fp := FieldParams{\n            OwnKey: ownKey,\n            Key:    opts.Prefix + ownKey,\n        }\n\n        // Parse tag options (e.g., \"env:\\\"KEY,required,file,...\\\"\")\n        for _, tagOpt := range tagOpts {\n            switch tagOpt {\n            case \"file\":\n                fp.LoadFile = true\n            case \"required\":\n                fp.Required = true\n            case \"unset\":\n                fp.Unset = true\n            case \"notEmpty\":\n                fp.NotEmpty = true\n            case \"expand\":\n                fp.Expand = true\n            case \"init\":\n                fp.Init = true\n            default:\n                return FieldParams{}, newNoSupportedTagOptionError(tagOpt)\n            }\n        }\n\n        // Parse the default value tag\n        defaultValueTagName := opts.DefaultValueTagName\n        if defaultValueTagName == \"\" {\n            defaultValueTagName = \"envDefault\"\n        }\n\n        defaultValue, hasDefaultValue := field.Tag.Lookup(defaultValueTagName)\n        fp.DefaultValue = defaultValue\n        fp.HasDefaultValue = hasDefaultValue\n\n        // If RequiredIfNoDef is set and there's no default, mark as required\n        if opts.RequiredIfNoDef && !hasDefaultValue {\n            fp.Required = true\n        }\n\n        return fp, nil\n    }\n    ` at end of statement\n./env.go:624:9: syntax error: unexpected name key at end of statement\n./env.go:625:17: invalid character U+2192 '→' in identifier\n./env.go:626:13: syntax error: unexpected name key at end of statement\n./env.go:626:13: too many errors\n",
+  "task": "go/go-env/L3_env__parseFieldParams",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

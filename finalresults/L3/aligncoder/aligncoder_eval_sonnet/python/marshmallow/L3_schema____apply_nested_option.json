@@ -1,0 +1,75 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.33,
+  "stdout": " # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.List)\n        assert isinstance(children_field.inner, fields.Nested)\n>       assert getattr(children_field.inner.schema, param) == expected_attribute\nE       AssertionError: assert OrderedSet(['...ame', 'name']) == {'age', 'name', 'surname'}\nE         \nE         Use -v to get more diff\n\ntests/unit_tests/test_fields.py:481: AssertionError\n_ TestDictNested.test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only] _\n\nself = <tests.unit_tests.test_fields.TestDictNested object at 0x7fab41f5f8e0>\nparam = 'only'\n\n    @pytest.mark.parametrize(\"param\", (\"only\", \"exclude\", \"dump_only\", \"load_only\"))\n    def test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested(\n        self, param\n    ):\n        class Child(Schema):\n            name = fields.String()\n            age = fields.Integer()\n    \n        class Family(Schema):\n            children = fields.Dict(values=fields.Nested(Child))\n    \n        schema = Family(**{param: [\"children.name\"]})  # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.Dict)\n        assert isinstance(children_field.value_field, fields.Nested)\n>       assert getattr(children_field.value_field.schema, param) == {\"name\"}\nE       AssertionError: assert None == {'name'}\nE        +  where None = getattr(<Child(many=False)>, 'only')\nE        +    where <Child(many=False)> = <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>.schema\nE        +      where <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})> = <fields.Dict(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump_...ld.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'invalid': 'Not a valid mapping type.'})>.value_field\n\ntests/unit_tests/test_fields.py:581: AssertionError\n_ TestDictNested.test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude] _\n\nself = <tests.unit_tests.test_fields.TestDictNested object at 0x7fab41f5f7f0>\nparam = 'exclude'\n\n    @pytest.mark.parametrize(\"param\", (\"only\", \"exclude\", \"dump_only\", \"load_only\"))\n    def test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested(\n        self, param\n    ):\n        class Child(Schema):\n            name = fields.String()\n            age = fields.Integer()\n    \n        class Family(Schema):\n            children = fields.Dict(values=fields.Nested(Child))\n    \n        schema = Family(**{param: [\"children.name\"]})  # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.Dict)\n        assert isinstance(children_field.value_field, fields.Nested)\n>       assert getattr(children_field.value_field.schema, param) == {\"name\"}\nE       AssertionError: assert set() == {'name'}\nE         \nE         Extra items in the right set:\nE         'name'\nE         Use -v to get more diff\n\ntests/unit_tests/test_fields.py:581: AssertionError\n_ TestDictNested.test_dict_nested_only_and_exclude_merged_with_nested[only-expected0] _\n\nself = <tests.unit_tests.test_fields.TestDictNested object at 0x7fab41f5d480>\nparam = 'only', expected = {'name'}\n\n    @pytest.mark.parametrize(\n        (\"param\", \"expected\"),\n        ((\"only\", {\"name\"}), (\"exclude\", {\"name\", \"surname\", \"age\"})),\n    )\n    def test_dict_nested_only_and_exclude_merged_with_nested(self, param, expected):\n        class Child(Schema):\n            name = fields.String()\n            surname = fields.String()\n            age = fields.Integer()\n    \n        class Family(Schema):\n            children = fields.Dict(\n                values=fields.Nested(Child, **{param: (\"name\", \"surname\")})  # type: ignore[arg-type]\n            )\n    \n        schema = Family(**{param: [\"children.name\", \"children.age\"]})  # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.Dict)\n>       assert getattr(children_field.value_field, param) == expected\nE       AssertionError: assert ('name', 'surname') == {'name'}\nE         \nE         Use -v to get more diff\n\ntests/unit_tests/test_fields.py:601: AssertionError\n_ TestDictNested.test_dict_nested_only_and_exclude_merged_with_nested[exclude-expected1] _\n\nself = <tests.unit_tests.test_fields.TestDictNested object at 0x7fab41f80250>\nparam = 'exclude', expected = {'age', 'name', 'surname'}\n\n    @pytest.mark.parametrize(\n        (\"param\", \"expected\"),\n        ((\"only\", {\"name\"}), (\"exclude\", {\"name\", \"surname\", \"age\"})),\n    )\n    def test_dict_nested_only_and_exclude_merged_with_nested(self, param, expected):\n        class Child(Schema):\n            name = fields.String()\n            surname = fields.String()\n            age = fields.Integer()\n    \n        class Family(Schema):\n            children = fields.Dict(\n                values=fields.Nested(Child, **{param: (\"name\", \"surname\")})  # type: ignore[arg-type]\n            )\n    \n        schema = Family(**{param: [\"children.name\", \"children.age\"]})  # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.Dict)\n>       assert getattr(children_field.value_field, param) == expected\nE       AssertionError: assert ('name', 'surname') == {'age', 'name', 'surname'}\nE         \nE         Use -v to get more diff\n\ntests/unit_tests/test_fields.py:601: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_multiple_dumps\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[only-expected0]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[exclude-expected1]\n======================= 14 failed, 1165 passed in 3.64s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema____apply_nested_option",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_multiple_dumps",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[only-expected0]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 13,
+    "total": 13
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,29 @@
+{
+  "task": "javascript/node-cron/L0_node-cron",
+  "project": "javascript/node-cron",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/node-cron/tasks/L0_node-cron/prompt.md",
+  "project_root": "datasets/javascript/node-cron",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "CronJob (constructor, from, all instance methods, isActive/isCallbackRunning, name, runOnInit, errorHandler, setTime, cronTime property, lastDate null before first tick), CronTime (string/Date/DateTime constructor, realDate, timezone/utcOffset validation, toJSON 6-element, toString space-joined, sendAt, getTimeout, getNextDateFrom, validateCronExpression), presets (@yearly through @weekends), month/day aliases (jan-dec, sun-sat), TypeScript source requirement, luxon dependency all covered. Minor gap: lastDate returning Date after runOnInit is implied but not explicitly called out."
+    },
+    "unambiguity": {
+      "score": 4.3,
+      "reason": "toJSON is explicitly 6-element and toString is space-joined. setTime throws on non-CronTime. realDate=true for Date/DateTime constructor. validateCronExpression returns {valid} object. runOnInit fires callback immediately on construction. CronJob constructor positional signature given. getNextDateFrom signature specified. Minor ambiguity: the positional argument order for name and errorHandler in the CronJob constructor is implied but not enumerated clearly for all edge cases."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Advanced test cases are all covered: CronTime from Date (realDate), timezone throws on invalid, toJSON array/toString, getNextDateFrom with timezone, additional presets, alias validation, field-count validation, out-of-range validation, step-zero validation, CronJob name/runOnInit/isCallbackRunning/setTime/errorHandler. An implementer can produce passing implementations from this prompt."
+    },
+    "consistency": {
+      "score": 4.3,
+      "reason": "No conflicts. setTime throws on non-CronTime matches test. toJSON 6-element matches test. realDate=true for Date matches test. validateCronExpression returns {valid:bool} matches test. runOnInit fires immediately matches test. lastDate returns Date instance after runOnInit is consistent with stated 'returns last execution Date'. Timeout exclusion of @swc/jest is documented correctly."
+    }
+  },
+  "overall_score": 4.40
+}

@@ -1,0 +1,29 @@
+{
+  "task": "python/Hybrid_Images/L0_Hybrid_Images",
+  "project": "python/Hybrid_Images",
+  "language": "python",
+  "prompt_path": "datasets/python/Hybrid_Images/tasks/L0_Hybrid_Images/prompt.md",
+  "project_root": "datasets/python/Hybrid_Images",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "All six public functions are named and their signatures provided. Core behavior of create_hybrid_image (filter selection by high_low string, mixin_ratio scaling, uint8 normalization, clipping, output dtype) is covered. low_pass and high_pass are mentioned in signatures but their behavior is implicitly derived from Gaussian blur; this is fine."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Function signatures are precise NumPy-typed. The create_hybrid_image contract is well-specified: high_low1/high_low2 matched case-insensitively, mixin_ratio semantics, uint8 normalization, clip to [0,255], return uint8 array. The relationship between convolve_2d and cross_correlation_2d (kernel flip) is implied but not stated explicitly."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Tests verify output shape/dtype, mixin_ratio behavior, filter mode selection, and the relationship between convolve and cross-correlate for symmetric vs asymmetric kernels. The uint8 normalization and output clipping contracts in the prompt directly support these blackbox tests."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "No contradictions. The convolve_2d vs cross_correlation_2d distinction (kernel flip for non-symmetric kernels) is correctly implied. Output dtype uint8 and value range [0,255] are consistently described. Module path hybrid.py matches test imports."
+    }
+  },
+  "overall_score": 4.5
+}

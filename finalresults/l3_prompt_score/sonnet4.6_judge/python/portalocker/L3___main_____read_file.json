@@ -1,0 +1,28 @@
+{
+  "task": "python/portalocker/L3___main_____read_file",
+  "project": "python/portalocker",
+  "language": "python",
+  "prompt_path": "datasets/python/portalocker/tasks/L3___main_____read_file/prompt.md",
+  "task_json_path": "datasets/python/portalocker/tasks/L3___main_____read_file/task.json",
+  "source_file_path": "datasets/python/portalocker/src/portalocker/__main__.py",
+  "target_symbol": "__main__.py::_read_file",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description captures the overall purpose well: yielding cleaned lines, tracking seen files, handling relative imports recursively, supporting parenthesized multi-line imports, skipping `__future__` lines, and logging on ASCII decode errors. However, it contains a notable inaccuracy: it says the function handles both `from_` (single module) and multi-name imports, but mischaracterizes the distinction. More importantly, it misses a key behavioral detail — when inside a parenthesized block and the closing `)` is found, the line after `)` is split and then `continue`d (discarded), not yielded. The description also omits that `from_` imports add the module name to `names` and recurse using `from_` directly (not splitting on commas), while non-`from_` imports split on commas. The description says 'record the imported module names' for both cases but the code treats them differently. The snippet offset of 100 bytes for the error context is not mentioned, which is a minor omission. Overall the description is close enough to guide an implementation but the paren-block closing behavior and the `from_` vs names distinction are imprecise enough to cause subtle implementation errors.",
+  "missing_functionality": [
+    "When the closing ')' is found inside a paren block, the remainder of that line after ')' is discarded (continue), not yielded — this is not described.",
+    "The distinction between 'from_' imports (single module, no comma-splitting) and plain relative imports (comma-split names) is not clearly described; the description conflates them.",
+    "The snippet in the error log uses a fixed offset of 100 bytes around the error byte range — not mentioned.",
+    "The `from_` group from the regex determines whether it's a 'from X import ...' style vs a plain 'import X, Y' style; this regex-group-driven branching is not described."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'record the imported module names and recursively yield from the corresponding sibling source files' for both import forms, but the code handles 'from_' imports differently from multi-name imports (no comma split for from_ case).",
+    "The description implies the line after ')' in a paren block might be processed, but the code always continues (discards) after finding ')'."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3___main_____read_file.raw.md"
+}

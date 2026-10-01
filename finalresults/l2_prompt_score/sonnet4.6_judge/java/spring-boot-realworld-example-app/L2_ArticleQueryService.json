@@ -1,0 +1,23 @@
+{
+  "task": "java/spring-boot-realworld-example-app/L2_ArticleQueryService",
+  "project": "java/spring-boot-realworld-example-app",
+  "language": "java",
+  "prompt_path": "datasets/java/spring-boot-realworld-example-app/tasks/L2_ArticleQueryService/prompt.md",
+  "task_json_path": "datasets/java/spring-boot-realworld-example-app/tasks/L2_ArticleQueryService/task.json",
+  "source_file_path": "datasets/java/spring-boot-realworld-example-app/src/main/java/io/spring/application/ArticleQueryService.java",
+  "target_file": "io/spring/application/ArticleQueryService.java",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and function-level responsibilities are highly accurate and closely match the actual implementation. All nine hollowed functions are described with correct behavioral details: null checks, Optional wrapping, overfetch-by-one logic, backward paging reversal, batch enrichment delegation, and the distinction between single-item and list enrichment paths. One minor gap is that `findUserFeedWithCursor` in the description says it queries article ids then resolves them, but the implementation actually calls `findArticlesOfAuthorsWithCursor` which returns full `ArticleData` objects directly (not ids), making the description slightly misleading on that point. The `findUserFeed` description correctly captures the order of operations (load articles, enrich, then count). Overall the descriptions are complete and precise enough that a model could reconstruct all nine functions faithfully.",
+  "missing_functionality": [
+    "The description for findUserFeedWithCursor implies an id-based query followed by resolution into ArticleData, but the implementation calls articleReadService.findArticlesOfAuthorsWithCursor which returns List<ArticleData> directly, skipping a separate id-resolution step."
+  ],
+  "incorrect_or_misleading_points": [
+    "findUserFeedWithCursor description says 'query feed articles for those followed authors using cursor pagination, with the result list itself being overfetched' — this is accurate in effect but the phrasing 'result list' vs 'id list' is ambiguous since the actual return is ArticleData not ids, unlike findRecentArticlesWithCursor which does work with ids first."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_ArticleQueryService.raw.md"
+}

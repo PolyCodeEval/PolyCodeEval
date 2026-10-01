@@ -1,0 +1,502 @@
+{
+  "passed": false,
+  "exit_code": -1,
+  "duration_seconds": 600.01,
+  "stdout": "",
+  "stderr": "Docker run timed out after 600s",
+  "inferred_commands": {
+    "install": "cd /workspace/src && go mod download",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && go mod download",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.75,
+    "Architecture": 3.93,
+    "Health": 5.0
+  },
+  "overall_score": 2.67,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` defines package `gonanoid` with `New`, `Must`, `Generate`, and `MustGenerate`, and exposes predefined alphabets."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/matoous/go-nanoid/v2`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/matoous/go-nanoid/v2\n\ngo 1.23"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "ove coverage.\nfunc TestGenerateWithUnicodeAlphabet(t *testing.T) {\n\t// Test Generate with unicode alphabet (covers more paths)\n\tid, err := gonanoid.Generate(\"こちんにабдежиклмнは你好喂שלום😯😪🥱😌😛äöüß\", 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate with unicode alphabet error: %v\", err)\n\t}\n\tif len([]rune(id)) != 10 {\n\t\tt.Errorf(\"expected 10 runes, got %d\", len([]rune(id)))\n\t}\n}\n\nfunc TestMustGenerateWithCustomAl"
+            },
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "package main\n\nimport (\n\t\"fmt\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc main() {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Default ID:\", id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)\n\n\tid, err = gonanoid.Generate(\"abcdef0123456"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/matoous/go-nanoid/v2`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package name `gonanoid` exposing `New(l ...int)`, `Must(l ...int)`, `Generate(alphabet, size)`, and `MustGenerate(alphabet, size)`",
+          "evidence": [
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical charac"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\n// TestGenerateZeroSize verifies that Generate returns an error when size is 0.\nfunc TestGenerateZeroSize(t *testing.T) {\n\t_, err := gonanoid.Generate(\"abc\", 0)\n\tif err == nil {"
+            },
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestGenerateValid(t *testing.T) {\n\talphabet := \"abcdefghijklmnopqrstuvwxyz\"\n\tid, err := gonanoid.Generate(alphabet, 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate() returned erro"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` uses `package gonanoid` and defines `New(l ...int)`, `Must(l ...int)`, `Generate(alphabet string, size int)`, and `MustGenerate(alphabet string, size int)`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "predefined alphabets such as `AlphaNum`, `Alpha`, and `Numeric`",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "id not\")\n\t\t}\n\t}()\n\tgonanoid.MustGenerate(strings.Repeat(\"a\", 256), 10)\n}\n\n// TestAlphaNumConstant verifies the AlphaNum predefined alphabet contains expected characters.\nfunc TestAlphaNumConstant(t *testing.T) {\n\texpected := \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\"\n\tif gonanoid.AlphaNum != expected {\n\t\tt.Fatalf(\"AlphaNum = %q, want %q\", gonanoid.AlphaNum, expected)\n\t}\n}\n\n//"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "the alphabet. Example: if the alphabet has 6 = (110)_2 characters it is sufficient to use mask 7 = (111)_2\nfunc getMask(alphabetSize int) int {\n\treturn (1 << uint(math.Ceil(math.Log2(float64(alphabetSize))))) - 1\n}\n\n// Generate is a low-level function to change alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size mus"
+            },
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "import (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestGenerateValid(t *testing.T) {\n\talphabet := \"abcdefghijklmnopqrstuvwxyz\"\n\tid, err := gonanoid.Generate(alphabet, 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate() returned error: %v\", err)\n\t}\n\tif len(id) != 10 {\n\t\tt.Fatalf(\"expected length 10, got %d\", len(id))\n\t}\n\tfor _, c := range id {\n\t\tif !strings.ContainsRune(al"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` exports `AlphaNum`, `Alpha`, and `Numeric`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "Default ID Generation",
+          "evidence": [
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "ub.com/matoous/go-nanoid/v2\"\n)\n\nfunc main() {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Default ID:\", id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)\n\n\tid, err = gonanoid.Generate(\"abcdef0123456789\", 16)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Hex ID:\", id)\n\n\tfmt.Println(\"Must ID:\", gonanoid.Must())\n\tfmt.Print"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical characters.\n\tAlphaNum = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "anoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\n// TestNewMultipleParamsError tests the default case in New() when more than one\n// length parameter is passed.\nfunc TestNewMultipleParamsError(t *testing.T) {\n\t_, err := gonanoid.New(10, 20)\n\tif err == nil {\n\t\tt.Error(\"expected error when passing multiple length parameters\")\n\t}\n}\n\n// TestExampleFunctions exercises the"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Default ID generation is implemented via `New()` using `defaultAlphabet` and `defaultSize` in `repo/gonanoid.go`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "Custom Alphabet Generation",
+          "evidence": [
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "}\n\tif len([]rune(id)) != 10 {\n\t\tt.Errorf(\"expected 10 runes, got %d\", len([]rune(id)))\n\t}\n}\n\nfunc TestMustGenerateWithCustomAlphabet(t *testing.T) {\n\tid := gonanoid.MustGenerate(\"🚀💩🦄🤖\", 4)\n\tif len([]rune(id)) != 4 {\n\t\tt.Errorf(\"expected 4 runes, got %d\", len([]rune(id)))\n\t}\n}"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "ings.ContainsRune(defaultAlphabet, c) {\n\t\t\tt.Fatalf(\"character %c not in default alphabet\", c)\n\t\t}\n\t}\n}\n\n// TestMustWithCustomLength verifies that Must with a custom length does not panic and returns the correct length.\nfunc TestMustWithCustomLength(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"Must(10) panicked unexpectedly: %v\", r)\n\t\t}\n\t}()\n\tid := gonanoid.Must(10)"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical characters.\n\tAlphaNum = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Custom alphabet generation is implemented by `Generate(alphabet string, size int)` in `repo/gonanoid.go`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "Predefined Alphabets",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "id not\")\n\t\t}\n\t}()\n\tgonanoid.MustGenerate(strings.Repeat(\"a\", 256), 10)\n}\n\n// TestAlphaNumConstant verifies the AlphaNum predefined alphabet contains expected characters.\nfunc TestAlphaNumConstant(t *testing.T) {\n\texpected := \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\"\n\tif gonanoid.AlphaNum != expected {\n\t\tt.Fatalf(\"AlphaNum = %q, want %q\", gonanoid.AlphaNum, expected)\n\t}\n}\n\n//"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "the alphabet. Example: if the alphabet has 6 = (110)_2 characters it is sufficient to use mask 7 = (111)_2\nfunc getMask(alphabetSize int) int {\n\treturn (1 << uint(math.Ceil(math.Log2(float64(alphabetSize))))) - 1\n}\n\n// Generate is a low-level function to change alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size mus"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Predefined alphabets are present as exported constants in `repo/gonanoid.go`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`Generate` returns an error for invalid size (<=0) or invalid alphabet (empty or >255 bytes).",
+          "evidence": [
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestGenerateValid(t *testing.T) {\n\talphabet := \"abcdefghijklmnopqrstuvwxyz\"\n\tid, err := gonanoid.Generate(alphabet, 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate() returned error: %v\", err)\n\t}\n\tif len(id) != 10 {\n\t\tt.Fatalf(\"expected length 10, got %d\", len(id))\n\t}\n\tfor _, c := range id"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\n// TestGenerateZeroSize verifies that Generate returns an error when size is 0.\nfunc TestGenerateZeroSize(t *testing.T) {\n\t_, err := gonanoid.Generate(\"abc\", 0)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for size=0, got nil\")\n\t}\n}\n\n// TestGenerateNegativeSize verifies that Generate retu"
+            },
+            {
+              "path": "test_mustgenerate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestMustGenerateValid(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"MustGenerate() panicked unexpectedly: %v\", r)\n\t\t}\n\t}()\n\tid := gonanoid.MustGenerate(\"abcdef\", 8)\n\tif len(id) != 8 {\n\t\tt.Fatalf(\"expected length 8, got %d\", len(id))\n\t}\n}\n\nfunc TestMustGener"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` returns errors when `size <= 0` and when `alphabet` is empty or `len(alphabet) > 255`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`New` must return an error if a negative length is passed.",
+          "evidence": [
+            {
+              "path": "test_new_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestNewDefault(t *testing.T) {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tt.Fatalf(\"New() returned error: %v\", err)\n\t}\n\tif len(id) != 21 {\n\t\tt.Fatalf(\"expected length 21, got %d\", len(id))\n\t}\n}\n\nfunc TestNewCustomLength(t *testing.T) {\n\tid, err := gonanoid.New(10)\n\tif err != nil {"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "ge alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size must be greater than 0\")\n\t}\n\tif len(alphabet) == 0 || len(alphabet) > 255 {\n\t\treturn \"\", errors.New(\"nanoid: alphabet must be between 1 and 255 characters\")\n\t}\n\n\tmask := getMask(len(alphabet))\n\t// estimate bytes needed per step: size * 1.6 / mask bits\n\tstep := i"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "rned error: %v\", err)\n\t}\n\tif id1 == id2 {\n\t\tt.Fatalf(\"two Generate() calls produced the same ID: %s\", id1)\n\t}\n}\n\n// TestNewUsesDefaultAlphabet verifies that New() only produces characters from the default URL-safe alphabet.\nfunc TestNewUsesDefaultAlphabet(t *testing.T) {\n\tdefaultAlphabet := \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\tid, err := gonanoid.New()\n\tif err != nil"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` checks `if l[0] < 0` in `New` and returns an error."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`New` must return an error if more than one length parameter is passed.",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "rned error: %v\", err)\n\t}\n\tif id1 == id2 {\n\t\tt.Fatalf(\"two Generate() calls produced the same ID: %s\", id1)\n\t}\n}\n\n// TestNewUsesDefaultAlphabet verifies that New() only produces characters from the default URL-safe alphabet.\nfunc TestNewUsesDefaultAlphabet(t *testing.T) {\n\tdefaultAlphabet := \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\tid, err := gonanoid.New()\n\tif err != nil"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "ge alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size must be greater than 0\")\n\t}\n\tif len(alphabet) == 0 || len(alphabet) > 255 {\n\t\treturn \"\", errors.New(\"nanoid: alphabet must be between 1 and 255 characters\")\n\t}\n\n\tmask := getMask(len(alphabet))\n\t// estimate bytes needed per step: size * 1.6 / mask bits\n\tstep := i"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\n// TestNewMultipleParamsError tests the default case in New() when more than one\n// length parameter is passed.\nfunc TestNewMultipleParamsError(t *testing.T) {\n\t_, err := gonanoid.New(10, 20)\n\tif err == nil {\n\t\tt.Error(\"expected error when passing multiple length parameters\")\n\t}\n}\n\n// T"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` checks `if len(l) > 1` in `New` and returns an error."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`New(0)` must succeed and return an empty string.",
+          "evidence": [
+            {
+              "path": "test_new_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestNewDefault(t *testing.T) {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tt.Fatalf(\"New() returned error: %v\", err)\n\t}\n\tif len(id) != 21 {\n\t\tt.Fatalf(\"expected length 21, got %d\", len(id))\n\t}\n}\n\nfunc TestNewCustomLength(t *testing.T) {\n\tid, err := gonanoid.New(10)\n\tif err != nil {"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "ge alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size must be greater than 0\")\n\t}\n\tif len(alphabet) == 0 || len(alphabet) > 255 {\n\t\treturn \"\", errors.New(\"nanoid: alphabet must be between 1 and 255 characters\")\n\t}\n\n\tmask := getMask(len(alphabet))\n\t// estimate bytes needed per step: size * 1.6 / mask bits\n\tstep := i"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "rned error: %v\", err)\n\t}\n\tif id1 == id2 {\n\t\tt.Fatalf(\"two Generate() calls produced the same ID: %s\", id1)\n\t}\n}\n\n// TestNewUsesDefaultAlphabet verifies that New() only produces characters from the default URL-safe alphabet.\nfunc TestNewUsesDefaultAlphabet(t *testing.T) {\n\tdefaultAlphabet := \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\tid, err := gonanoid.New()\n\tif err != nil"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` returns `\"\", nil` when `New` receives size `0`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`Must` and `MustGenerate` must panic when the underlying `New` or `Generate` would return an error.",
+          "evidence": [
+            {
+              "path": "test_mustgenerate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestMustGenerateValid(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"MustGenerate() panicked unexpectedly: %v\", r)\n\t\t}\n\t}()\n\tid := gonanoid.MustGenerate(\"abcdef\", 8)\n\tif len(id) != 8 {\n\t\tt.Fatalf(\"expected length 8, got %d\", len(id))\n\t}\n}\n\nfunc TestMustG"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "mask\n\t\t\tif idx < len(alphabet) {\n\t\t\t\tid[cursor] = alphabet[idx]\n\t\t\t\tcursor++\n\t\t\t}\n\t\t}\n\t}\n\treturn string(id), nil\n}\n\n// MustGenerate is the same as Generate but panics on error.\nfunc MustGenerate(alphabet string, size int) string {\n\tid, err := Generate(alphabet, size)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn id\n}\n\n// New generates secure URL-friendly unique ID.\n// Accepts optional parameter - leng"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "er(); r == nil {\n\t\t\tt.Fatal(\"expected Must(10, 20) to panic, but it did not\")\n\t\t}\n\t}()\n\tgonanoid.Must(10, 20)\n}\n\n// TestMustGeneratePanicsOnNegativeSize verifies that MustGenerate panics when size is negative.\nfunc TestMustGeneratePanicsOnNegativeSize(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Fatal(\"expected MustGenerate to panic with negative size, but it did not\")\n\t\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` makes both `Must` and `MustGenerate` panic when the underlying call returns an error."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Provides `AlphaNum`, `Alpha`, and `Numeric` predefined alphabets.",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "to panic with alphabet > 255, but it did not\")\n\t\t}\n\t}()\n\tgonanoid.MustGenerate(strings.Repeat(\"a\", 256), 10)\n}\n\n// TestAlphaNumConstant verifies the AlphaNum predefined alphabet contains expected characters.\nfunc TestAlphaNumConstant(t *testing.T) {\n\texpected := \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\"\n\tif gonanoid.AlphaNum != expected {\n\t\tt.Fatalf(\"AlphaNum = %q, want %q\""
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "or ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical characters.\n\tAlphaNum = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\"\n\n\t// Alpha is an alphabet of upper and lower case letters.\n\tAlpha = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaLowerNum is an"
+            },
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "import (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestGenerateValid(t *testing.T) {\n\talphabet := \"abcdefghijklmnopqrstuvwxyz\"\n\tid, err := gonanoid.Generate(alphabet, 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate() returned error: %v\", err)\n\t}\n\tif len(id) != 10 {\n\t\tt.Fatalf(\"expected length 10, got %d\", len(id))\n\t}\n\tfor _, c := range id {\n\t\tif !strings.ContainsRune(al"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` explicitly exports `AlphaNum`, `Alpha`, and `Numeric`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`New`/`Must` use a URL-safe default alphabet (64 characters: letters, digits, `_`, `-`).",
+          "evidence": [
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "rned error: %v\", err)\n\t}\n\tif id1 == id2 {\n\t\tt.Fatalf(\"two Generate() calls produced the same ID: %s\", id1)\n\t}\n}\n\n// TestNewUsesDefaultAlphabet verifies that New() only produces characters from the default URL-safe alphabet.\nfunc TestNewUsesDefaultAlphabet(t *testing.T) {\n\tdefaultAlphabet := \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\tid, err := gonanoid.New()\n\tif err != nil"
+            },
+            {
+              "path": "gonanoid.go",
+              "excerpt": "ge alphabet and ID size.\nfunc Generate(alphabet string, size int) (string, error) {\n\tif size <= 0 {\n\t\treturn \"\", errors.New(\"nanoid: size must be greater than 0\")\n\t}\n\tif len(alphabet) == 0 || len(alphabet) > 255 {\n\t\treturn \"\", errors.New(\"nanoid: alphabet must be between 1 and 255 characters\")\n\t}\n\n\tmask := getMask(len(alphabet))\n\t// estimate bytes needed per step: size * 1.6 / mask bits\n\tstep := i"
+            },
+            {
+              "path": "test_new_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestNewDefault(t *testing.T) {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tt.Fatalf(\"New() returned error: %v\", err)\n\t}\n\tif len(id) != 21 {\n\t\tt.Fatalf(\"expected length 21, got %d\", len(id))\n\t}\n}\n\nfunc TestNewCustomLength(t *testing.T) {\n\tid, err := gonanoid.New(10)\n\tif err != nil {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gonanoid.go` defines a 64-character URL-safe `defaultAlphabet` and `New`/`Must` route through it."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestGenerateValid(t *testing.T) {\n\talphabet := \"abcdefghijklmnopqrstuvwxyz\"\n\tid, err := gonanoid.Generate(alphabet, 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate() returned error: %v\", err)\n\t}\n\tif len(id) != 10 {\n\t\tt.Fatalf(\"expected length 10, got %d\", len(id))\n\t}\n\tfor _, c := range id"
+            },
+            {
+              "path": "test_mustgenerate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestMustGenerateValid(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"MustGenerate() panicked unexpectedly: %v\", r)\n\t\t}\n\t}()\n\tid := gonanoid.MustGenerate(\"abcdef\", 8)\n\tif len(id) != 8 {\n\t\tt.Fatalf(\"expected length 8, got %d\", len(id))\n\t}\n}\n\nfunc TestMustGener"
+            },
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)\n\n\tid, err = gonanoid.Generate(\"abcdef0123456789\", 16)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Hex ID:\", id)\n\n\tfmt.Println(\"Must ID:\", gonanoid.Must())\n\tfmt.Println(\"Numeric ID:\", gonanoid.MustGenerate(gonanoid.Numeric, 8))\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The project files are placed directly under the repository root (for example `repo/go.mod`, `repo/gonanoid.go`) with no extra wrapper directory."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/matoous/go-nanoid/v2\n\ngo 1.23"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository has a standard Go module layout with `repo/go.mod` and the package source at the module root."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_generate_test.go",
+              "excerpt": "th 10, got %d\", len(id))\n\t}\n\tfor _, c := range id {\n\t\tif !strings.ContainsRune(alphabet, c) {\n\t\t\tt.Fatalf(\"character %c not in alphabet\", c)\n\t\t}\n\t}\n}\n\nfunc TestGenerateEmptyAlphabet(t *testing.T) {\n\t_, err := gonanoid.Generate(\"\", 10)\n\tif err == nil {\n\t\tt.Fatal(\"expected error for empty alphabet, got nil\")\n\t}\n}\n\nfunc TestGenerateAlphabetTooLong(t *testing.T) {\n\tlongAlphabet := strings.Repeat(\"a\","
+            },
+            {
+              "path": "test_mustgenerate_test.go",
+              "excerpt": "r func() {\n\t\tif r := recover(); r == nil {\n\t\t\tt.Fatal(\"expected MustGenerate() to panic with empty alphabet, but it did not\")\n\t\t}\n\t}()\n\tgonanoid.MustGenerate(\"\", 10)\n}"
+            },
+            {
+              "path": "test_extended_coverage_test.go",
+              "excerpt": "error: %v\", err)\n\t}\n\tfor _, c := range id {\n\t\tif !strings.ContainsRune(defaultAlphabet, c) {\n\t\t\tt.Fatalf(\"character %c not in default alphabet\", c)\n\t\t}\n\t}\n}\n\n// TestMustWithCustomLength verifies that Must with a custom length does not panic and returns the correct length.\nfunc TestMustWithCustomLength(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"Must(10) panicked u"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes multiple generated test files such as `repo/test_generate_test.go`, `repo/test_new_test.go`, and others, which violates the requirement not to generate test files."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Ensure the module path includes the `v2` suffix and the package is imported as `gonanoid`.",
+          "evidence": [
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical charac"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "ove coverage.\nfunc TestGenerateWithUnicodeAlphabet(t *testing.T) {\n\t// Test Generate with unicode alphabet (covers more paths)\n\tid, err := gonanoid.Generate(\"こちんにабдежиклмнは你好喂שלום😯😪🥱😌😛äöüß\", 10)\n\tif err != nil {\n\t\tt.Fatalf(\"Generate with unicode alphabet error: %v\", err)\n\t}\n\tif len([]rune(id)) != 10 {\n\t\tt.Errorf(\"expected 10 runes, got %d\", len([]rune(id)))\n\t}\n}\n\nfunc TestMustGenerateWithCustomAl"
+            },
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "package main\n\nimport (\n\t\"fmt\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc main() {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Default ID:\", id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` includes the `v2` suffix, and `repo/gonanoid.go` plus `repo/examples/simple_example.go` use/import the package as `gonanoid`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "id := gonanoid.Must()",
+          "evidence": [
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical characters.\n\tA"
+            },
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "package main\n\nimport (\n\t\"fmt\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc main() {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Default ID:\", id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)\n\n\tid, err = gonanoid.Generate(\"abc"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\n// TestNewMultipleParamsError tests the default case in New() when more than one\n// length parameter is passed.\nfunc TestNewMultipleParamsError(t *testing.T) {\n\t_, err := gonanoid.New(10, 20)\n\tif e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/examples/simple_example.go` contains `fmt.Println(\"Must ID:\", gonanoid.Must())`, demonstrating `id := gonanoid.Must()` usage."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "id := gonanoid.MustGenerate(gonanoid.Numeric, 8)",
+          "evidence": [
+            {
+              "path": "gonanoid.go",
+              "excerpt": "package gonanoid\n\nimport (\n\t\"crypto/rand\"\n\t\"errors\"\n\t\"math\"\n)\n\nvar (\n\t// defaultAlphabet is the alphabet used for ID characters by default.\n\tdefaultAlphabet = \"_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\t// AlphaNum is an alphabet of alpha-numerical characters.\n\tA"
+            },
+            {
+              "path": "test_mustgenerate_test.go",
+              "excerpt": "package gonanoid_test\n\nimport (\n\t\"testing\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc TestMustGenerateValid(t *testing.T) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tt.Fatalf(\"MustGenerate() panicked unexpectedly: %v\", r)\n\t\t}\n\t}()\n\tid := gonanoid.MustGenerate(\"abcdef\","
+            },
+            {
+              "path": "examples/simple_example.go",
+              "excerpt": "package main\n\nimport (\n\t\"fmt\"\n\n\tgonanoid \"github.com/matoous/go-nanoid/v2\"\n)\n\nfunc main() {\n\tid, err := gonanoid.New()\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Default ID:\", id)\n\n\tid, err = gonanoid.New(10)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Size 10 ID:\", id)\n\n\tid, err = gonanoid.Generate(\"abc"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/examples/simple_example.go` contains `gonanoid.MustGenerate(gonanoid.Numeric, 8)`, matching the required usage."
+        }
+      ],
+      "feature_count": 20,
+      "constraint_count": 0,
+      "implemented_count": 19,
+      "partial_count": 0,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.95,
+      "constraint_coverage": 0.95,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.0,
+        "stack_alignment": 4.2,
+        "reference_alignment": 3.6
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "0",
+        "govet_exit": "0",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository matches the core product requirements: the module path is `github.com/matoous/go-nanoid/v2`, the package name is `gonanoid`, the required public API is present, predefined alphabets are exported, default and custom ID generation are implemented, and the validation and panic-on-error behaviors required by the prompt are present in `repo/gonanoid.go`. The example program also demonstrates the expected import path and panic variants.\n\n### Missing List\n\n- F017: test files were generated despite the explicit prohibition on generating test files.\n\n### Critical Constraint Misses\n\n- The repository includes test files even though the prompt explicitly said not to generate test files.",
+    "architecture_review": "### Stack Inference\n\n该仓库是一个标准 Go Modules 形态的库项目：根目录有 `go.mod`，核心实现集中在单个 `gonanoid.go` 中，包名为 `gonanoid`，另有 `examples/` 放置可执行示例。这与“Go library + go-mod”栈判断一致，没有 Web、持久化或多层服务结构，属于典型的小型工具库布局。\n\n### Scoring Mode\n\n本次按“架构质量”而不是功能正确性评分，因此重点看真实仓库中的目录组织、Go 模块布局、公开入口放置方式，以及这些内容是否与一个常见 Go 库项目的工程习惯一致。仓库体量很小并不自动扣分，但是否把库源码、示例、测试和模块定义组织得清晰协调，会直接影响结构评分。\n\n### Strengths\n\n- 模块路径 `github.com/matoous/go-nanoid/v2`、根包 `gonanoid`、单文件核心实现的组合很直接，构建入口和导入路径清晰。\n- 作为轻量级 Go 库，公开 API 都集中在根包，没有人为拆分出多余层级，库入口、构建方式和使用方式是协调的。\n- `examples/` 目录用于放置独立示例程序，符合 Go 生态中为库提供最小可运行样例的常见做法。\n\n### Issues\n\n- 仓库根目录同时包含实现文件、示例程序和多份测试文件，作为一个极小型 Go 库虽可工作，但结构偏扁平，缺少 README、文档注释配套文件或更清晰的包边界，长期维护时可发现性一般。\n- 产物明显包含多份 `*_test.go`，而原始需求明确要求“Do not generate test files”；这说明交付物边界没有严格遵守需求，也削弱了与参考要求的一致性。\n- `examples/simple_example.go` 作为独立示例存在是合理的，但仓库没有额外的文档入口来解释公开 API、默认 alphabet 与使用约束，导致入口协调更多依赖读源码和测试来理解。\n\n### Stack Mismatches\n\n- 对 Go 库而言，`go.mod`、根包源码、`examples/` 的组合基本符合常见习惯，但项目过度依赖根目录测试文件来补足说明，文档化层面弱于常见成熟 Go 库。\n- 如果严格对照题目生成要求，仓库不应包含测试文件；这一点更像任务执行偏差，而不是 Go 栈本身的最佳实践。\n\n### Reference Gaps\n\n- 参考要求只要求最小 Go 模块布局和必要源码，但当前仓库额外生成了测试文件，与“不要生成测试文件”的约束不一致。\n- 需求摘要强调的是 `AlphaNum`、`Alpha`、`Numeric` 等预定义 alphabet；仓库虽然提供了更多 alphabet 常量，这本身不算坏事，但属于超出最小需求的扩展，而不是架构加分项。"
+  },
+  "task": "go/go-nanoid/L1_go-nanoid",
+  "solver": "generated_outputs"
+}

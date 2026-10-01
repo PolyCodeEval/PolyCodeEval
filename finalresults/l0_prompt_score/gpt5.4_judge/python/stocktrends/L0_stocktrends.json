@@ -1,0 +1,30 @@
+{
+  "task": "python/stocktrends/L0_stocktrends",
+  "project": "python/stocktrends",
+  "language": "python",
+  "prompt_path": "datasets/python/stocktrends/tasks/L0_stocktrends/prompt.md",
+  "project_root": "datasets/python/stocktrends",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt覆盖了仓库核心能力与主要公开接口，明确包含Instrument、Renko、LineBreak、PnF及其关键可配置参数、输出列和典型使用流程，足以指导复现当前项目主体。缺失点在于没有提到真实实现中的get_bar_ohlc_data、Renko的chart_type/PRICE_MOVEMENT分支未实现现状，以及包导出面的细节，因此完整性略低于满分。"
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "核心输入输出和测试关注的API契约写得较清楚，所需列、返回DataFrame、参数含义和若干边界条件都已说明，黑盒实现方向明确。模糊处在于“normalize input column naming”表述偏泛，但真实实现并未做通用规范化；PnF的get_state仅写“Returns chart state”而未指出具体返回常量；Renko对period-close行为虽有提示，但chart_type行为边界没有完全说死。"
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "Prompt几乎直接给出了黑盒测试所需的导入路径、构造方式、可配置属性、返回类型、关键列、布尔列要求、参数变化导致行数变化、缺列与空表异常等，可据此实现可验证结果。唯一不足是个别断言级细节仍留有实现自由度，例如异常类型允许范围较宽、PnF状态值未枚举。"
+    },
+    "consistency": {
+      "score": 3.9,
+      "reason": "整体上与真实代码和黑盒测试较一致，类名、主要方法、参数和多数输出契约都对得上。但存在几处偏差：Prompt要求Instrument空DataFrame抛异常，而真实Instrument.__init__只校验列、不校验空表；Prompt声称可规范化列命名，而当前实现要求已存在小写open/high/low/close列；Prompt把PnF.roundit描述为按box_size取整，但真实方法签名带base参数且get_ohlc_data内部按box_size调用，表述上不完全贴合实现。"
+    }
+  },
+  "overall_score": 4.42,
+  "raw_response_file": "L0_stocktrends.raw.md"
+}

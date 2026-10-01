@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.89,
+  "stdout": "_____________\n\nself = <unit_tests.test_response_lexer.TestTokenSource testMethod=test_unterminated_strings>\n\n    def test_unterminated_strings(self):\n        message = \"No closing '\\\"'\"\n>       self.check_error([b'\"'], message)\n\ntests/unit_tests/test_response_lexer.py:31: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_lexer.py:94: in check_error\n    self.assertRaisesRegex(\nE   AssertionError: ValueError not raised by <lambda>\n______________________ TestParseResponse.test_bad_quoting ______________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_bad_quoting>\n\n    def test_bad_quoting(self):\n>       self._test_parse_error(b'\"abc next', \"\"\"No closing '\"'\"\"\")\n\ntests/unit_tests/test_response_parser.py:182: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:196: in _test_parse_error\n    self.assertRaisesRegex(ProtocolError, expected_msg, parse_response, to_parse)\nE   AssertionError: ProtocolError not raised by parse_response\n___________________ TestParseResponse.test_envelopey_quoted ____________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_envelopey_quoted>\n\n    def test_envelopey_quoted(self):\n>       self._test(\n            b'(UID 5 ENVELOPE (\"internal_date\" \"subject with \\\\\"quotes\\\\\"\" '\n            b'((\"name\" NIL \"address1\" \"domain1.com\")) '\n            b'((NIL NIL \"address2\" \"domain2.com\")) '\n            b'((\"name\" NIL \"address3\" \"domain3.com\")) '\n            b'((NIL NIL \"address4\" \"domain4.com\")) '\n            b'NIL NIL \"<reply-to-id>\" \"<msg_id>\"))',\n            (\n                b\"UID\",\n                5,\n                b\"ENVELOPE\",\n                (\n                    b\"internal_date\",\n                    b'subject with \"quotes\"',\n                    ((b\"name\", None, b\"address1\", b\"domain1.com\"),),\n                    ((None, None, b\"address2\", b\"domain2.com\"),),\n                    ((b\"name\", None, b\"address3\", b\"domain3.com\"),),\n                    ((None, None, b\"address4\", b\"domain4.com\"),),\n                    None,\n                    None,\n                    b\"<reply-to-id>\",\n                    b\"<msg_id>\",\n                ),\n            ),\n        )\n\ntests/unit_tests/test_response_parser.py:126: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:191: in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: ((b'U[50 chars]with \\\\\"quotes\\\\\"', ((b'name', None, b'address[204 chars]')),) != ((b'U[50 chars]with \"quotes\"', ((b'name', None, b'address1', [200 chars]')),)\nE   \nE   First differing element 0:\nE   (b'UI[49 chars]with \\\\\"quotes\\\\\"', ((b'name', None, b'address[202 chars]d>'))\nE   (b'UI[49 chars]with \"quotes\"', ((b'name', None, b'address1', [198 chars]d>'))\nE   \nE     ((b'UID',\nE       5,\nE       b'ENVELOPE',\nE       (b'internal_date',\nE   -    b'subject with \\\\\"quotes\\\\\"',\nE   ?                   --       --\nE   \nE   +    b'subject with \"quotes\"',\nE        ((b'name', None, b'address1', b'domain1.com'),),\nE        ((None, None, b'address2', b'domain2.com'),),\nE        ((b'name', None, b'address3', b'domain3.com'),),\nE        ((None, None, b'address4', b'domain4.com'),),\nE        None,\nE        None,\nE        b'<reply-to-id>',\nE        b'<msg_id>')),)\n____________________ TestParseResponse.test_quoted_specials ____________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_quoted_specials>\n\n    def test_quoted_specials(self):\n>       self._test(rb'\"\\\"foo bar\\\"\"', b'\"foo bar\"')\n\ntests/unit_tests/test_response_parser.py:162: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:191: in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: (b'\\\\\"foo bar\\\\\"',) != (b'\"foo bar\"',)\nE   \nE   First differing element 0:\nE   b'\\\\\"foo bar\\\\\"'\nE   b'\"foo bar\"'\nE   \nE   - (b'\\\\\"foo bar\\\\\"',)\nE   ?    --        --\nE   \nE   + (b'\"foo bar\"',)\n___________________________ TestGmailLabels.test_add ___________________________\n\nself = <unit_tests.test_store.TestGmailLabels testMethod=test_add>\n\n    def test_add(self):\n>       self.check(self.client.add_gmail_labels, b\"+X-GM-LABELS\")\n\ntests/unit_tests/test_store.py:99: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_store.py:105: in check\n    self._check(meth, expected_command)\ntests/unit_tests/test_store.py:126: in _check\n    self.assertEqual(\nE   AssertionError: {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']} != {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\nE   - {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']}\nE   ?                 --  --            --  --\nE   \nE   + {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n_________________________ TestGmailLabels.test_remove __________________________\n\nself = <unit_tests.test_store.TestGmailLabels testMethod=test_remove>\n\n    def test_remove(self):\n>       self.check(self.client.remove_gmail_labels, b\"-X-GM-LABELS\")\n\ntests/unit_tests/test_store.py:102: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_store.py:105: in check\n    self._check(meth, expected_command)\ntests/unit_tests/test_store.py:126: in _check\n    self.assertEqual(\nE   AssertionError: {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']} != {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\nE   - {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']}\nE   ?                 --  --            --  --\nE   \nE   + {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n___________________________ TestGmailLabels.test_set ___________________________\n\nself = <unit_tests.test_store.TestGmailLabels testMethod=test_set>\n\n    def test_set(self):\n>       self.check(self.client.set_gmail_labels, b\"X-GM-LABELS\")\n\ntests/unit_tests/test_store.py:96: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_store.py:105: in check\n    self._check(meth, expected_command)\ntests/unit_tests/test_store.py:126: in _check\n    self.assertEqual(\nE   AssertionError: {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']} != {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\nE   - {1: ['Łabel', 'f\\\\\"o\\\\\"o'], 2: ['f\\\\\"o\\\\\"o']}\nE   ?                 --  --            --  --\nE   \nE   + {1: ['Łabel', 'f\"o\"o'], 2: ['f\"o\"o']}\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials\nFAILED tests/unit_tests/test_response_lexer.py::TestTokenSource::test_escaping\nFAILED tests/unit_tests/test_response_lexer.py::TestTokenSource::test_unmatched_square_brackets\nFAILED tests/unit_tests/test_response_lexer.py::TestTokenSource::test_unterminated_strings\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_quoting\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_envelopey_quoted\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_quoted_specials\nFAILED tests/unit_tests/test_store.py::TestGmailLabels::test_add - AssertionE...\nFAILED tests/unit_tests/test_store.py::TestGmailLabels::test_remove - Asserti...\nFAILED tests/unit_tests/test_store.py::TestGmailLabels::test_set - AssertionE...\n======================== 10 failed, 277 passed in 2.40s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_response_lexer__read_until",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_lexer.py::TestTokenSource::test_escaping",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_lexer.py::TestTokenSource::test_unmatched_square_brackets",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_lexer.py::TestTokenSource::test_unterminated_strings",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_quoting",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_envelopey_quoted",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_quoted_specials",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 7,
+    "total": 7
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

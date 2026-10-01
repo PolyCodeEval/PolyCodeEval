@@ -1,0 +1,107 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.54,
+  "stdout": "marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_validate.py:158: Failed\n___________________ test_url_relative_only_invalid[../.../g] ___________________\n\ninvalid_url = '../.../g'\n\n    @pytest.mark.parametrize(\n        \"invalid_url\",\n        [\n            \"http//example.org\",\n            \"http://example.org\\n\",\n            \"suppliers.html\",\n            \"../icons/logo.gif\",\n            \"icons/logo.gif\",\n            \"../.../g\",\n            \"...\",\n            \"\\\\\",\n            \" \",\n            \"\",\n            \"http://example.org\",\n            \"http://123.45.67.8/\",\n            \"http://example.com/foo/bar/../baz\",\n            \"https://example.com/../icons/logo.gif\",\n            \"http://example.com/./icons/logo.gif\",\n            \"ftp://example.com/../../../../g\",\n            \"http://example.com/g?y/./x\",\n        ],\n    )\n    def test_url_relative_only_invalid(invalid_url):\n        validator = validate.URL(relative=True, absolute=False)\n>       with pytest.raises(ValidationError):\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_validate.py:158: Failed\n_____________________ test_url_relative_only_invalid[...] ______________________\n\ninvalid_url = '...'\n\n    @pytest.mark.parametrize(\n        \"invalid_url\",\n        [\n            \"http//example.org\",\n            \"http://example.org\\n\",\n            \"suppliers.html\",\n            \"../icons/logo.gif\",\n            \"icons/logo.gif\",\n            \"../.../g\",\n            \"...\",\n            \"\\\\\",\n            \" \",\n            \"\",\n            \"http://example.org\",\n            \"http://123.45.67.8/\",\n            \"http://example.com/foo/bar/../baz\",\n            \"https://example.com/../icons/logo.gif\",\n            \"http://example.com/./icons/logo.gif\",\n            \"ftp://example.com/../../../../g\",\n            \"http://example.com/g?y/./x\",\n        ],\n    )\n    def test_url_relative_only_invalid(invalid_url):\n        validator = validate.URL(relative=True, absolute=False)\n>       with pytest.raises(ValidationError):\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_validate.py:158: Failed\n______________________ test_url_relative_only_invalid[\\\\] ______________________\n\ninvalid_url = '\\\\'\n\n    @pytest.mark.parametrize(\n        \"invalid_url\",\n        [\n            \"http//example.org\",\n            \"http://example.org\\n\",\n            \"suppliers.html\",\n            \"../icons/logo.gif\",\n            \"icons/logo.gif\",\n            \"../.../g\",\n            \"...\",\n            \"\\\\\",\n            \" \",\n            \"\",\n            \"http://example.org\",\n            \"http://123.45.67.8/\",\n            \"http://example.com/foo/bar/../baz\",\n            \"https://example.com/../icons/logo.gif\",\n            \"http://example.com/./icons/logo.gif\",\n            \"ftp://example.com/../../../../g\",\n            \"http://example.com/g?y/./x\",\n        ],\n    )\n    def test_url_relative_only_invalid(invalid_url):\n        validator = validate.URL(relative=True, absolute=False)\n>       with pytest.raises(ValidationError):\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_validate.py:158: Failed\n_______________ test_url_dont_require_tld_valid[http://example.] _______________\n\nvalid_url = 'http://example.'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"http://example.org\",\n            \"http://123.45.67.8/\",\n            \"http://example\",\n            \"http://example.\",\n            \"http://example:80\",\n            \"http://user.name:pass.word@example\",\n            \"http://example/foo/bar\",\n        ],\n    )\n    def test_url_dont_require_tld_valid(valid_url):\n        validator = validate.URL(require_tld=False)\n>       assert validator(valid_url) == valid_url\n\ntests/unit_tests/test_validate.py:176: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'http://example.'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc/marshmallow/validate.py:223: ValidationError\n_____________ test_url_dont_require_tld_invalid[http://example\\n] ______________\n\ninvalid_url = 'http://example\\n'\n\n    @pytest.mark.parametrize(\n        \"invalid_url\",\n        [\n            \"http//example\",\n            \"http://example\\n\",\n            \"http://.example.org\",\n            \"http:///foo/bar\",\n            \"http:// /foo/bar\",\n            \"\",\n            None,\n        ],\n    )\n    def test_url_dont_require_tld_invalid(invalid_url):\n        validator = validate.URL(require_tld=False)\n>       with pytest.raises(ValidationError):\nE       Failed: DID NOT RAISE <class 'marshmallow.exceptions.ValidationError'>\n\ntests/unit_tests/test_validate.py:193: Failed\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://[192.168.1.1]:8329]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[http//example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[suppliers.html]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[../icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[../.../g]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[...] - Fa...\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[\\\\] - Fai...\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http//example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[suppliers.html]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[../icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[icons/logo.gif]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[../.../g]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[...]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_invalid[\\\\]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]\n======================= 24 failed, 1155 passed in 2.72s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_validate___regex_generator",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://[192.168.1.1]:8329]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[http//example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[suppliers.html]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[../icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[../.../g]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[http//example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[suppliers.html]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[../icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[icons/logo.gif]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[../.../g]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[...]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_invalid[\\\\]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 21,
+    "total": 21
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

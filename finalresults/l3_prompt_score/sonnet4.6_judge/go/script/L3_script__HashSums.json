@@ -1,0 +1,24 @@
+{
+  "task": "go/script/L3_script__HashSums",
+  "project": "go/script",
+  "language": "go",
+  "prompt_path": "datasets/go/script/tasks/L3_script__HashSums/prompt.md",
+  "task_json_path": "datasets/go/script/tasks/L3_script__HashSums/task.json",
+  "source_file_path": "datasets/go/script/src/script.go",
+  "target_symbol": "script.go::HashSums",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: reading lines as file paths, opening each file, copying contents into the hasher, skipping files that can't be opened or read, and emitting hex-encoded digest output per file. The pipeline/FilterScan pattern is implied correctly. One subtle but important detail is missed: the hasher is **not reset between files**, meaning it accumulates state across all files processed — each file's output is the hash of all content read so far, not just that file's content. The description's final bullet partially acknowledges this ('accumulated digest after reading each file') but frames it ambiguously rather than clearly stating the cross-file accumulation behavior, which is a meaningful implementation detail that would affect correctness if someone tried to implement this expecting per-file isolated hashes.",
+  "missing_functionality": [
+    "The hasher is never reset between files — each call to hasher.Sum(nil) reflects the cumulative hash of all files processed so far, not just the current file. This is a significant behavioral detail not clearly communicated."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'the hasher's current accumulated digest after reading each file' is ambiguous — it could be read as per-file isolation rather than cross-file accumulation. A reader might implement per-file hash resets, which would produce different output."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_script__HashSums.raw.md"
+}

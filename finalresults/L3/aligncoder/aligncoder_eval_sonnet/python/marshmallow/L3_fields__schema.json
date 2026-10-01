@@ -1,0 +1,79 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.01,
+  "stdout": "_regular': 'Regular String'}], 'str_dump_only': 'Dump Only', 'str_load_only': 'Load Only', 'str_regular': 'Regular String'}\n\n    def test_dump_only(self, schema, data):\n        result = schema.load(data, unknown=EXCLUDE)\n        assert \"str_dump_only\" not in result\n        assert \"str_load_only\" in result\n        assert \"str_regular\" in result\n        child = result[\"child\"][0]\n>       assert \"str_dump_only\" not in child\nE       AssertionError: assert 'str_dump_only' not in {'str_dump_only': 'Dump Only', 'str_load_only': 'Load Only', 'str_regular': 'Regular String'}\n\ntests/unit_tests/test_schema.py:1430: AssertionError\n___________________ test_nested_constructor_only_and_exclude ___________________\n\n    def test_nested_constructor_only_and_exclude():\n        class GrandChildSchema(Schema):\n            goo = fields.Raw()\n            gah = fields.Raw()\n            bah = fields.Raw()\n    \n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            flubb = fields.Nested(GrandChildSchema)\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(\n                ChildSchema, only=(\"foo\", \"flubb.goo\", \"flubb.gah\"), exclude=(\"flubb.goo\",)\n            )\n    \n        sch = ParentSchema(only=(\"bla\", \"blubb\"))\n        data = dict(bla=1, bli=2, blubb=dict(foo=3, bar=4, flubb=dict(goo=5, gah=6, bah=7)))\n>       result = sch.dump(data)\n\ntests/unit_tests/test_schema.py:1455: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\nsrc/marshmallow/fields.py:606: in _serialize\n    schema = self.schema\nsrc/marshmallow/fields.py:592: in schema\n    self._schema._init_fields()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ChildSchema(many=False)>\n\n    def _init_fields(self) -> None:\n        \"\"\"Update self.fields, self.load_fields, and self.dump_fields based on schema options.\n        This method is private API.\n        \"\"\"\n        if self.opts.fields:\n            available_field_names = self.set_class(self.opts.fields)\n        else:\n            available_field_names = self.set_class(self.declared_fields.keys())\n    \n        invalid_fields = self.set_class()\n    \n        if self.only is not None:\n            # Return only fields specified in only option\n            field_names: typing.AbstractSet[typing.Any] = self.set_class(self.only)\n    \n            invalid_fields |= field_names - available_field_names\n        else:\n            field_names = available_field_names\n    \n        # If \"exclude\" option or param is specified, remove those fields.\n        if self.exclude:\n            # Note that this isn't available_field_names, since we want to\n            # apply \"only\" for the actual calculation.\n            field_names = field_names - self.exclude\n            invalid_fields |= self.exclude - available_field_names\n    \n        if invalid_fields:\n            message = f\"Invalid fields for {self}: {invalid_fields}.\"\n>           raise ValueError(message)\nE           ValueError: Invalid fields for <ChildSchema(many=False)>: OrderedSet(['flubb.goo', 'flubb.gah']).\n\nsrc/marshmallow/schema.py:1011: ValueError\n_______ TestNestedSchema.test_nested_fields_must_be_passed_a_serializer ________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f2b7b092ef0>\nblog = <tests.base.Blog object at 0x7f2b7aa655d0>\n\n    def test_nested_fields_must_be_passed_a_serializer(self, blog):\n        class BadNestedFieldSchema(BlogSchema):\n            user = fields.Nested(fields.String)  # type: ignore[arg-type]\n    \n        with pytest.raises(ValueError):\n>           BadNestedFieldSchema().dump(blog)\n\ntests/unit_tests/test_schema.py:1962: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\nsrc/marshmallow/fields.py:606: in _serialize\n    schema = self.schema\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>\n\n    @property\n    def schema(self) -> Schema:\n        \"\"\"The nested Schema object.\"\"\"\n        if not self._schema:\n            nested = self.nested\n            if callable(nested) and not isinstance(nested, type):\n                nested = nested()\n            if isinstance(nested, dict):\n                from marshmallow.schema import Schema\n                nested = Schema.from_dict(nested)\n            if isinstance(nested, type):\n                nested = nested()\n            elif isinstance(nested, str):\n                nested = class_registry.get_class(nested)()\n            self._schema = nested\n            if self.only is not None:\n                self._schema.only = self.only\n                self._schema.fields = {}\n            if self.exclude:\n                self._schema.exclude = set(self.exclude) | set(self._schema.exclude)\n                self._schema.fields = {}\n            if self.many is not None:\n                self._schema.many = self.many\n            if self.unknown is not None:\n                self._schema.unknown = self.unknown\n>           if not self._schema.fields:\nE           AttributeError: 'String' object has no attribute 'fields'\n\nsrc/marshmallow/fields.py:591: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]\nFAILED tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]\nFAILED tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude\nFAILED tests/unit_tests/test_schema.py::TestDeeplyNestedLoadOnly::test_load_only\nFAILED tests/unit_tests/test_schema.py::TestDeeplyNestedLoadOnly::test_dump_only\nFAILED tests/unit_tests/test_schema.py::TestDeeplyNestedListLoadOnly::test_load_only\nFAILED tests/unit_tests/test_schema.py::TestDeeplyNestedListLoadOnly::test_dump_only\nFAILED tests/unit_tests/test_schema.py::test_nested_constructor_only_and_exclude\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_fields_must_be_passed_a_serializer\n======================= 15 failed, 1164 passed in 2.40s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__schema",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[load_only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDeeplyNestedLoadOnly::test_load_only",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDeeplyNestedLoadOnly::test_dump_only",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDeeplyNestedListLoadOnly::test_load_only",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestDeeplyNestedListLoadOnly::test_dump_only",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_constructor_only_and_exclude",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 14,
+    "total": 14
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

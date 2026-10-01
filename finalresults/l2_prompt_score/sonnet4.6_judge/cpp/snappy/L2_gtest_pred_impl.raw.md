@@ -1,0 +1,12 @@
+{
+  "score": 4.7,
+  "reason": "The file-level description accurately captures the purpose of the header — generic predicate assertion helpers for arities 1–5, AssertionResult-based reporting, and the PrintToString-based diagnostic format. Each function description correctly specifies the predicate invocation, the success path (return AssertionSuccess()), the failure path structure, the exact phrase `evaluates to false, where`, and the per-argument `evaluates to <PrintToString(vN)>` lines. One minor gap is that the descriptions don't explicitly call out the comma-space separator (`\", \"`) used between expression names in the predicate call text (e.g., `pred_text << \"(\" << e1 << \", \" << e2 << ...`), though the phrase \"comma-separated expression names\" in the file-level description and the Pred2 function description does hint at this. The descriptions also don't mention that the last argument line omits a trailing `\\n` (i.e., newlines appear between lines but not after the last one), which is a subtle but reproducible formatting detail. Overall the descriptions are accurate, well-structured, and complete enough to reconstruct all four functions correctly.",
+  "missing_functionality": [
+    "The descriptions do not explicitly specify that expression names in the predicate call text are separated by \", \" (comma-space) using individual stream insertions rather than a single format string — a detail needed to match the exact output.",
+    "No mention that the final per-argument evaluation line does not end with a trailing newline (newlines appear only between lines, not after the last one)."
+  ],
+  "incorrect_or_misleading_points": [
+    "The AssertPred2Helper description says 'start with pred_text(e1, e2) evaluates to false, where' but the actual implementation streams pred_text, then '(', then e1, then ', ', then e2, then ') evaluates to false, where' — the description elides the streaming structure, which could mislead a model into using a single format string instead of individual stream insertions."
+  ],
+  "complete_enough": true
+}

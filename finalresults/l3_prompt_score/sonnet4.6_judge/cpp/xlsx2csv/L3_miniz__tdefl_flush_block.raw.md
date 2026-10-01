@@ -1,0 +1,13 @@
+{
+  "score": 4.6,
+  "reason": "The description is remarkably thorough and accurate across all major behavioral paths. It correctly captures: the direct-vs-staged output buffer selection logic, the flush bookkeeping reset, the LZ flag byte finalization, the zlib header construction with compression-level derivation, the BFINAL bit, the save/restore state pattern for retrying encoding, the raw block condition (FORCE_ALL_RAW_BLOCKS + dict window check), the static-vs-dynamic coding decision threshold (48 bytes), the stored block format (type bits, alignment, LEN/NLEN), the dynamic-coding fallback to static on overflow, the TDEFL_FINISH byte-alignment and Adler-32 appending, the non-final flush empty stored block emission, the post-block state reset (Huffman counts, LZ buffer pointers, dict pos, total_lz_bytes, block_index), and the three output publishing paths (callback, staged copy with pending tracking, direct advance). One minor inaccuracy: the description says the non-final flush 'emits an empty stored block boundary' but the code actually emits a type=0 block header (3 bits: 0,0,0), byte-aligns, then writes LEN=0/NLEN=0xFFFF — the description is essentially correct but slightly imprecise about the 3-bit block type field vs just 'byte alignment'. The description also correctly notes the callback path updates consumed-input accounting. Overall this is an excellent, implementation-faithful description sufficient to re-implement the function.",
+  "missing_functionality": [
+    "The description does not explicitly mention that the output buffer end pointer is set to pOutput_buf + TDEFL_OUT_BUF_SIZE - 16 (leaving a 16-byte guard margin), which is a subtle but implementation-specific detail.",
+    "The description does not mention that when the callback path is used, it always passes d->m_output_buf (the internal staging buffer) rather than pOutput_buf_start, even if output was written directly — though in practice the callback path always uses the staging buffer."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the non-final flush 'emits an empty stored block boundary and byte-aligns' — the actual order is: emit 3-bit type=0 field first, then byte-align, then write LEN=0 and NLEN=0xFFFF. The description implies alignment comes before the block header, which is reversed.",
+    "The description says 'resets the LZ code/flag buffer pointers and flag-bit count' but does not clarify that m_pLZ_code_buf is reset to m_lz_code_buf+1 and m_pLZ_flags to m_lz_code_buf (same base), which is a specific structural detail relevant to implementation."
+  ],
+  "complete_enough": true
+}

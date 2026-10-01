@@ -1,0 +1,21 @@
+{
+  "project": "javascript/jest-core",
+  "scores": {
+    "completeness": {
+      "score": 4.1,
+      "reason": "Prompt准确覆盖了仓库的核心职责：测试发现、调度执行、reporter协同、watch/interactive 流程、global hook 与插件式扩展，并点名了 SearchSource、TestScheduler 等关键模块；同时给出了黑盒测试所需的 FailedTestsCache 契约。不足在于对 CLI 入口、ReporterDispatcher、若干无测试场景提示与辅助模块只做了高层概述，离完整复现当前仓库仍有一定信息缺口。"
+    },
+    "unambiguity": {
+      "score": 4.3,
+      "reason": "核心定位、主要模块分工、典型执行流程以及黑盒测试目标都描述得比较清楚，尤其 FailedTestsCache 的输入、输出和边界行为写得明确，可直接实现。歧义主要在于大范围 orchestration 能力仍停留在概念层，未细化具体导出面、交互模式行为细节和部分输出约束。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "Prompt明确给出了需要通过黑盒测试的具体类、方法签名与行为边界，足以支持实现可验证的核心能力；仓库中 blackbox_tests 也确实聚焦 FailedTestsCache。扣分点在于对其余高层 orchestration 能力缺少可操作的验收细则，因此除黑盒目标外，很多功能难以仅凭 prompt 进行严格验证。"
+    },
+    "consistency": {
+      "score": 4.4,
+      "reason": "Prompt对仓库的总体定位与真实实现基本一致：SearchSource 负责发现，TestScheduler 负责调度，watch/plugin/global hook 都是实际存在的模块；FailedTestsCache 的行为也与源码和测试相符。轻微问题是 public interface 和 package surface 写得偏宽泛，没有明确反映当前 index 导出较少这一现实，但不构成明显冲突。"
+    }
+  }
+}

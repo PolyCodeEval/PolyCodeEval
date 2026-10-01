@@ -1,0 +1,11 @@
+{
+  "score": 4.4,
+  "reason": "The description matches the core behavior well: it returns a wrapper holding the original template text and an execution function that builds a Go template with helper functions and executes it with provided data. The main mismatch is that it says parse errors are returned, while the implementation uses template.Must on Parse, which panics on parse failure instead of returning that error. Aside from that detail, it is sufficiently close and likely adequate for implementing the function.",
+  "missing_functionality": [
+    "The implementation creates the template with the fixed name \"top\" before registering functions and parsing."
+  ],
+  "incorrect_or_misleading_points": [
+    "It states that parsing errors are returned, but the implementation uses template.Must(t.Parse(text)), so parse failures panic rather than being returned as errors."
+  ],
+  "complete_enough": true
+}

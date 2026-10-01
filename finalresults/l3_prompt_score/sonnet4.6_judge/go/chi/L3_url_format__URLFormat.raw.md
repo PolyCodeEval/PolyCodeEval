@@ -1,0 +1,12 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: detecting a dot-extension in the URL path, storing it under URLFormatCtxKey, trimming the suffix from the routing path when a chi routing context is available, and falling back to the request URL path when no routing context is present. The note about empty string when no extension is found and the router parameter guidance are also correct. One subtle implementation detail is missed: the code only considers a dot a valid extension separator if it appears *after* the first character of the path (strings.Index > 0, not >= 0), and within the last path segment the dot must not be at position 0 (idx > 0 after the base offset). The description says 'after the last path segment separator' which is close but doesn't fully convey the guard that prevents a leading dot from being treated as an extension. Also, the RoutePath trimming only happens when rctx is non-nil, which the description captures correctly. Overall the description is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The guard that a dot at the very start of the path (strings.Index == 0) is ignored — only paths where the first dot appears after position 0 are processed.",
+    "Within the last segment, a dot at position 0 relative to the last slash (idx == 0) is also skipped, meaning hidden-file-style names like '/path/.hidden' produce no format."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the RoutePath is trimmed 'if routing context is available', but the code only updates RoutePath when rctx is non-nil AND a valid extension was found — the description conflates these two conditions slightly."
+  ],
+  "complete_enough": true
+}

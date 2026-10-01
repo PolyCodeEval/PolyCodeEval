@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.37,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py ..F..FFF..FF                           [ 41%]\ntests/unit_tests/scoring_test.py .............                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py ......                                   [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_matching_utils ______________________________\n\n    def test_matching_utils():\n        chr_map = {\n            'a': 'A',\n            'b': 'B',\n        }\n    \n        for string, map, result in [\n            ['a', chr_map, 'A'],\n            ['c', chr_map, 'c'],\n            ['ab', chr_map, 'AB'],\n            ['abc', chr_map, 'ABc'],\n            ['aa', chr_map, 'AA'],\n            ['abab', chr_map, 'ABAB'],\n            ['', chr_map, ''],\n            ['', {}, ''],\n            ['abc', {}, 'abc'],\n        ]:\n>           assert matching.translate(string, map) == result, \\\n                \"translates '%s' to '%s' with provided charmap\" % (string, result)\nE           AttributeError: module 'zxcvbn.matching' has no attribute 'translate'\n\ntests/unit_tests/matching_test.py:99: AttributeError\n______________________________ test_l33t_matching ______________________________\n\n    def test_l33t_matching():\n        test_table = {\n            'a': ['4', '@'],\n            'c': ['(', '{', '[', '<'],\n            'g': ['6', '9'],\n            'o': ['0'],\n        }\n        for pw, expected in [\n            ['', {}],\n            ['abcdefgo123578!#$&*)]}>', {}],\n            ['a', {}],\n            ['4', {'a': ['4']}],\n            ['4@', {'a': ['4', '@']}],\n            ['4({60', {'a': ['4'], 'c': ['(', '{'], 'g': ['6'], 'o': ['0']}],\n        ]:\n            msg = \"reduces l33t table to only the substitutions that a password might be employing\"\n            assert matching.relevant_l33t_subtable(pw, test_table) == expected, msg\n    \n        for table, subs in [\n            [{}, [{}]],\n            [{'a': ['@']}, [{'@': 'a'}]],\n            [{'a': ['@', '4']}, [{'@': 'a'}, {'4': 'a'}]],\n            [{'a': ['@', '4'], 'c': ['(']},\n             [{'@': 'a', '(': 'c'}, {'4': 'a', '(': 'c'}]],\n        ]:\n            msg = \"enumerates the different sets of l33t substitutions a password might be using\"\n            assert matching.enumerate_l33t_subs(table) == subs, msg\n    \n        def lm(pw):\n            return matching.l33t_match(pw, dicts, test_table)\n    \n        dicts = {\n            'words': {\n                'aac': 1,\n                'password': 3,\n                'paassword': 4,\n                'asdf0': 5,\n            },\n            'words2': {\n                'cgo': 1,\n            }\n        }\n>       assert lm('') == [], \"doesn't match ''\"\n\ntests/unit_tests/matching_test.py:252: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npw = ''\n\n    def lm(pw):\n>       return matching.l33t_match(pw, dicts, test_table)\nE       TypeError: l33t_match() takes from 1 to 2 positional arguments but 3 were given\n\ntests/unit_tests/matching_test.py:239: TypeError\n____________________________ test_spatial_matching _____________________________\n\n    def test_spatial_matching():\n        for password in ['', '/', 'qw', '*/']:\n            msg = \"doesn't match 1- and 2-character spatial patterns\"\n            assert matching.spatial_match(password) == [], msg\n    \n        # for testing, make a subgraph that contains a single keyboard\n        _graphs = {'qwerty': adjacency_graphs.ADJACENCY_GRAPHS['qwerty']}\n        pattern = '6tfGHJ'\n        matches = matching.spatial_match(\"rz!%s%%z\" % pattern, _graphs)\n        msg = \"matches against spatial patterns surrounded by non-spatial patterns\"\n>       check_matches(msg, matches, 'spatial', [pattern],\n                      [[3, 3 + len(pattern) - 1]],\n                      {\n                          'graph': ['qwerty'],\n                          'turns': [2],\n                          'shifted_count': [3],\n                      })\n\ntests/unit_tests/matching_test.py:310: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nprefix = 'matches against spatial patterns surrounded by non-spatial patterns'\nmatches = [{'pattern': 'spatial', 'i': 3, 'j': 8, 'token': '6tfGHJ', ...}, {'pattern': 'spatial', 'i': 5, 'j': 7, 'token': 'fGH', ...}]\npattern_names = ['spatial'], patterns = ['6tfGHJ'], ijs = [[3, 8]]\nprops = {'graph': ['qwerty'], 'turns': [2], 'shifted_count': [3]}\n\n    def check_matches(prefix, matches, pattern_names, patterns, ijs, props):\n        if isinstance(pattern_names, str):\n            # shortcut: if checking for a list of the same type of patterns,\n            # allow passing a string 'pat' instead of array ['pat', 'pat', ...]\n            pattern_names = [pattern_names] * len(patterns)\n    \n        is_equal_len_args = len(pattern_names) == len(patterns) == len(ijs)\n        for prop, lst in props.items():\n            # props is structured as: keys that points to list of values\n            if not is_equal_len_args or len(lst) != len(patterns):\n                raise Exception('unequal argument lists to check_matches')\n    \n        msg = \"%s: len(matches) == %s\" % (prefix, len(patterns))\n>       assert len(matches) == len(patterns), msg\nE       AssertionError: matches against spatial patterns surrounded by non-spatial patterns: len(matches) == 1\nE       assert 2 == 1\nE        +  where 2 = len([{'pattern': 'spatial', 'i': 3, 'j': 8, 'token': '6tfGHJ', ...}, {'pattern': 'spatial', 'i': 5, 'j': 7, 'token': 'fGH', ...}])\nE        +  and   1 = len(['6tfGHJ'])\n\ntests/unit_tests/matching_test.py:37: AssertionError\n____________________________ test_sequence_matching ____________________________\n\n    def test_sequence_matching():\n        for password in ['', 'a', '1']:\n            msg = \"doesn't match length-#{len(password)} sequences\"\n            assert matching.sequence_match(password) == [], msg\n    \n        matches = matching.sequence_match('abcbabc')\n        msg = \"matches overlapping patterns\"\n        check_matches(msg, matches, 'sequence', ['abc', 'cba', 'abc'],\n                      [[0, 2], [2, 4], [4, 6]],\n                      {'ascending': [True, False, True]})\n    \n        prefixes = ['!', '22']\n        suffixes = ['!', '22']\n        pattern = 'jihg'\n        for password, i, j in genpws(pattern, prefixes, suffixes):\n            matches = matching.sequence_match(password)\n            msg = 'matches embedded sequence patterns'\n            check_matches(msg, matches, 'sequence', [pattern], [[i, j]],\n                          {\n                              'sequence_name': ['lower'],\n                              'ascending': [False],\n                          })\n    \n        for [pattern, name, is_ascending] in [\n            ['ABC', 'upper', True],\n            ['CBA', 'upper', False],\n            ['PQR', 'upper', True],\n            ['RQP', 'upper', False],\n            ['XYZ', 'upper', True],\n            ['ZYX', 'upper', False],\n            ['abcd', 'lower', True],\n            ['dcba', 'lower', False],\n            ['jihg', 'lower', False],\n            ['wxyz', 'lower', True],\n            ['zxvt', 'lower', False],\n            ['0369', 'digits', True],\n            ['97531', 'digits', False],\n        ]:\n            matches = matching.sequence_match(pattern)\n            msg = \"matches '#{pattern}' as a '#{name}' sequence\"\n>           check_matches(msg, matches, 'sequence', [pattern],\n                          [[0, len(pattern) - 1]],\n                          {\n                              'sequence_name': [name],\n                              'ascending': [is_ascending],\n                          })\n\ntests/unit_tests/matching_test.py:386: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nprefix = \"matches '#{pattern}' as a '#{name}' sequence\", matches = []\npattern_names = ['sequence'], patterns = ['0369'], ijs = [[0, 3]]\nprops = {'sequence_name': ['digits'], 'ascending': [True]}\n\n    def check_matches(prefix, matches, pattern_names, patterns, ijs, props):\n        if isinstance(pattern_names, str):\n            # shortcut: if checking for a list of the same type of patterns,\n            # allow passing a string 'pat' instead of array ['pat', 'pat', ...]\n            pattern_names = [pattern_names] * len(patterns)\n    \n        is_equal_len_args = len(pattern_names) == len(patterns) == len(ijs)\n        for prop, lst in props.items():\n            # props is structured as: keys that points to list of values\n            if not is_equal_len_args or len(lst) != len(patterns):\n                raise Exception('unequal argument lists to check_matches')\n    \n        msg = \"%s: len(matches) == %s\" % (prefix, len(patterns))\n>       assert len(matches) == len(patterns), msg\nE       AssertionError: matches '#{pattern}' as a '#{name}' sequence: len(matches) == 1\nE       assert 0 == 1\nE        +  where 0 = len([])\nE        +  and   1 = len(['0369'])\n\ntests/unit_tests/matching_test.py:37: AssertionError\n______________________________ test_date_matching ______________________________\n\n    def test_date_matching():\n        for sep in ['', ' ', '-', '/', '\\\\', '_', '.']:\n            password = \"13%s2%s1921\" % (sep, sep)\n>           matches = matching.date_match(password)\n\ntests/unit_tests/matching_test.py:468: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = '13 2 1921'\n_ranked_dictionaries = {'passwords': {'123456': 1, 'password': 2, '12345678': 3, 'qwerty': 4, ...}, 'english_wikipedia': {'the': 1, 'of': 2, ...ricia': 2, 'linda': 3, 'barbara': 4, ...}, 'surnames': {'smith': 1, 'johnson': 2, 'williams': 3, 'jones': 4, ...}, ...}\n\n    def date_match(password, _ranked_dictionaries=RANKED_DICTIONARIES):\n        # a date is a length 4-8 string that can be split into day/month/year\n        maybe_date_no_separator = re.compile(r'^\\d{4,8}$')\n        maybe_date_with_separator = re.compile(\n            r'^(\\d{1,4})([\\s/\\_\\-\\.])(\\d{1,2})\\2(\\d{1,4})$'\n        )\n        matches = []\n        for i in range(len(password) - 3):\n            for j in range(i + 3, i + 8):\n                if j >= len(password):\n                    break\n                token = password[i:j + 1]\n                if not maybe_date_no_separator.match(token) and \\\n                        not maybe_date_with_separator.match(token):\n                    continue\n                candidates = []\n                date_splits = DATE_SPLITS.get(len(token), [])\n                for date_split in date_splits:\n                    k, l = date_split\n                    ints = [\n                        int(token[:k]),\n                        int(token[k:l]),\n>                       int(token[l:]),\n                    ]\nE                   ValueError: invalid literal for int() with base 10: ' 2 1'\n\nsrc/zxcvbn/matching.py:414: ValueError\n________________________________ test_omnimatch ________________________________\n\n    def test_omnimatch():\n        assert matching.omnimatch('') == [], \"doesn't match ''\"\n        password = 'r0sebudmaelstrom11/20/91aaaa'\n>       matches = matching.omnimatch(password)\n\ntests/unit_tests/matching_test.py:578: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:93: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'r0sebudmaelstrom11/20/91aaaa'\n_ranked_dictionaries = {'passwords': {'123456': 1, 'password': 2, '12345678': 3, 'qwerty': 4, ...}, 'english_wikipedia': {'the': 1, 'of': 2, ...ricia': 2, 'linda': 3, 'barbara': 4, ...}, 'surnames': {'smith': 1, 'johnson': 2, 'williams': 3, 'jones': 4, ...}, ...}\n\n    def date_match(password, _ranked_dictionaries=RANKED_DICTIONARIES):\n        # a date is a length 4-8 string that can be split into day/month/year\n        maybe_date_no_separator = re.compile(r'^\\d{4,8}$')\n        maybe_date_with_separator = re.compile(\n            r'^(\\d{1,4})([\\s/\\_\\-\\.])(\\d{1,2})\\2(\\d{1,4})$'\n        )\n        matches = []\n        for i in range(len(password) - 3):\n            for j in range(i + 3, i + 8):\n                if j >= len(password):\n                    break\n                token = password[i:j + 1]\n                if not maybe_date_no_separator.match(token) and \\\n                        not maybe_date_with_separator.match(token):\n                    continue\n                candidates = []\n                date_splits = DATE_SPLITS.get(len(token), [])\n                for date_split in date_splits:\n                    k, l = date_split\n                    ints = [\n                        int(token[:k]),\n>                       int(token[k:l]),\n                        int(token[l:]),\n                    ]\nE                   ValueError: invalid literal for int() with base 10: '1/'\n\nsrc/zxcvbn/matching.py:413: ValueError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_matching_utils - AttributeErro...\nFAILED tests/unit_tests/matching_test.py::test_l33t_matching - TypeError: l33...\nFAILED tests/unit_tests/matching_test.py::test_spatial_matching - AssertionEr...\nFAILED tests/unit_tests/matching_test.py::test_sequence_matching - AssertionE...\nFAILED tests/unit_tests/matching_test.py::test_date_matching - ValueError: in...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - ValueError: invali...\n========================= 6 failed, 28 passed in 0.22s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L2_matching",
+  "solver": "generated_outputs",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      }
+    ],
+    "passed": 28,
+    "failed": 6,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.8235,
+  "compile_score": 0.5,
+  "test_score": 0.4118,
+  "score": 0.9118
+}

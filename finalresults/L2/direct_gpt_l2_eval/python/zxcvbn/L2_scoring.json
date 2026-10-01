@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.41,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py ........F...                           [ 41%]\ntests/unit_tests/scoring_test.py ..F.F........                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py FFF..F                                   [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_repeat_matching _____________________________\n\n    def test_repeat_matching():\n        for password in ['', '#']:\n            msg = \"doesn't match length-%s repeat patterns\" % len(password)\n            assert matching.repeat_match(password) == [], msg\n    \n        # test single-character repeats\n        prefixes = ['@', 'y4@']\n        suffixes = ['u', 'u%7']\n        pattern = '&&&&&'\n        for password, i, j in genpws(pattern, prefixes, suffixes):\n            matches = matching.repeat_match(password)\n            msg = \"matches embedded repeat patterns\"\n            check_matches(msg, matches, 'repeat', [pattern], [[i, j]],\n                          {'base_token': ['&']})\n    \n        for length in [3, 12]:\n            for chr in ['a', 'Z', '4', '&']:\n                pattern = chr * (length + 1)\n                matches = matching.repeat_match(pattern)\n                msg = \"matches repeats with base character '%s'\" % chr\n                check_matches(msg, matches, 'repeat', [pattern],\n                              [[0, len(pattern) - 1]],\n                              {'base_token': [chr]})\n    \n        matches = matching.repeat_match('BBB1111aaaaa@@@@@@')\n        patterns = ['BBB', '1111', 'aaaaa', '@@@@@@']\n        msg = 'matches multiple adjacent repeats'\n        check_matches(msg, matches, 'repeat', patterns,\n                      [[0, 2], [3, 6], [7, 11], [12, 17]],\n                      {'base_token': ['B', '1', 'a', '@']})\n    \n        matches = matching.repeat_match('2818BBBbzsdf1111@*&@!aaaaaEUDA@@@@@@1729')\n        msg = 'matches multiple repeats with non-repeats in-between'\n        check_matches(msg, matches, 'repeat', patterns,\n                      [[4, 6], [12, 15], [21, 25], [30, 35]],\n                      {'base_token': ['B', '1', 'a', '@']})\n    \n        # test multi-character repeats\n        pattern = 'abab'\n        matches = matching.repeat_match(pattern)\n        msg = 'matches multi-character repeat pattern'\n        check_matches(msg, matches, 'repeat', [pattern], [[0, len(pattern) - 1]],\n                      {'base_token': ['ab']})\n    \n        pattern = 'aabaab'\n>       matches = matching.repeat_match(pattern)\n\ntests/unit_tests/matching_test.py:439: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:281: in repeat_match\n    base_analysis = most_guessable_match_sequence(\nsrc/zxcvbn/scoring.py:154: in most_guessable_match_sequence\n    update(m, 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 0, 'j': 1, 'token': 'aa', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n_________________________________ test_search __________________________________\n\n    def test_search():\n        def m(i, j, guesses):\n            return {\n                'i': i,\n                'j': j,\n                'guesses': guesses\n            }\n    \n        password = '0123456789'\n    \n        # for tests, set additive penalty to zero.\n        exclude_additive = True\n    \n        msg = \"returns one bruteforce match given an empty match sequence: %s\"\n        result = scoring.most_guessable_match_sequence(password, [])\n        assert len(result['sequence']) == 1, msg % \"len(result) == 1\"\n        m0 = result['sequence'][0]\n        assert m0['pattern'] == 'bruteforce', \\\n            msg % \"match['pattern'] == 'bruteforce'\"\n        assert m0['token'] == password, msg % (\"match['token'] == %s\" % password)\n        assert [m0['i'], m0['j']] == [0, 9], msg % (\n            \"i, j == %s, %s\" % (m0['i'], m0['j'])\n        )\n    \n        msg = \"returns match + bruteforce when match \" \\\n              \"covers a prefix of password: %s\"\n        m0 = m(0, 5, 1)\n        matches = [m0]\n>       result = scoring.most_guessable_match_sequence(password, matches,\n                                                       exclude_additive)\n\ntests/unit_tests/scoring_test.py:62: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/scoring.py:155: in most_guessable_match_sequence\n    bruteforce_update(k)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nk = 6\n\n    def bruteforce_update(k):\n        m = make_bruteforce_match(0, k)\n        update(m, 1)\n        for i in range(1, k + 1):\n            m = make_bruteforce_match(i, k)\n            for l, last_m in optimal['m'][i - 1].items():\n>               if last_m['pattern'] == 'bruteforce':\nE               KeyError: 'pattern'\n\nsrc/zxcvbn/scoring.py:133: KeyError\n_____________________________ test_repeat_guesses ______________________________\n\n    def test_repeat_guesses():\n        for [token, base_token, repeat_count] in [\n            ['aa', 'a', 2],\n            ['999', '9', 3],\n            ['$$$$', '$', 4],\n            ['abab', 'ab', 2],\n            ['batterystaplebatterystaplebatterystaple', 'batterystaple', 3]\n        ]:\n>           base_guesses = scoring.most_guessable_match_sequence(\n                base_token,\n                matching.omnimatch(base_token)\n            )['guesses']\n\ntests/unit_tests/scoring_test.py:163: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/scoring.py:152: in most_guessable_match_sequence\n    update(m, l + 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 2, 'j': 3, 'token': 'tt', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n___________________________ test_unicode_user_inputs ___________________________\n\n    def test_unicode_user_inputs():\n        # test Issue #12 -- don't raise a UnicodeError with unicode user_inputs or\n        # passwords.\n        input_ = u'Фамилия'\n        password = u'pÄssword junkiË'\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:18: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:28: in zxcvbn\n    result = scoring.most_guessable_match_sequence(password, matches)\nsrc/zxcvbn/scoring.py:152: in most_guessable_match_sequence\n    update(m, l + 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 2, 'j': 3, 'token': 'ss', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n___________________________ test_invalid_user_inputs ___________________________\n\n    def test_invalid_user_inputs():\n        # don't raise an error with non-string types for user_inputs\n        input_ = None\n        password = u'pÄssword junkiË'\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:26: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:28: in zxcvbn\n    result = scoring.most_guessable_match_sequence(password, matches)\nsrc/zxcvbn/scoring.py:152: in most_guessable_match_sequence\n    update(m, l + 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 2, 'j': 3, 'token': 'ss', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:28: in zxcvbn\n    result = scoring.most_guessable_match_sequence(password, matches)\nsrc/zxcvbn/scoring.py:154: in most_guessable_match_sequence\n    update(m, 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 0, 'j': 289, 'token': 'weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsj...iopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejioj', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffffb96afd60>\ncapsys = <_pytest.capture.CaptureFixture object at 0xffffb96ada50>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:28: in zxcvbn\n    result = scoring.most_guessable_match_sequence(password, matches)\nsrc/zxcvbn/scoring.py:152: in most_guessable_match_sequence\n    update(m, l + 1)\nsrc/zxcvbn/scoring.py:111: in update\n    estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:326: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nmatch = {'pattern': 'repeat', 'i': 2, 'j': 3, 'token': 'ss', ...}\n\n    def repeat_guesses(match):\n>       return match['base_guesses'] * match['repeat_count']\nE       TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'\n\nsrc/zxcvbn/scoring.py:249: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - TypeError: u...\nFAILED tests/unit_tests/scoring_test.py::test_search - KeyError: 'pattern'\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - TypeError: uns...\nFAILED tests/unit_tests/zxcvbn_test.py::test_unicode_user_inputs - TypeError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_invalid_user_inputs - TypeError:...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - TypeError: unsup...\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - TypeError: un...\n========================= 7 failed, 27 passed in 0.23s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L2_scoring",
+  "solver": "generated_outputs",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      }
+    ],
+    "passed": 27,
+    "failed": 7,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7941,
+  "compile_score": 0.5,
+  "test_score": 0.3971,
+  "score": 0.8971
+}

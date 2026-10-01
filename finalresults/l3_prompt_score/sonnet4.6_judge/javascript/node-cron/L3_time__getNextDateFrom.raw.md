@@ -1,0 +1,14 @@
+{
+  "score": 4.2,
+  "reason": "The description is thorough and captures the vast majority of the implementation accurately: input handling, UTC cloning, millisecond advancement, validity check, 8-year limit with diagnostic error, coarse-to-fine field matching with correct reset behavior, the strict-after guarantee, DST forward-jump rewinding, and DST backward-jump ambiguity handling. A few details are slightly off or missing: the millisecond advancement is gated on `!this.realDate` (the description says 'if the current object is configured to exclude sub-second precision', which is a reasonable paraphrase but omits the `realDate` flag name); the DST backward check also uses `twoHourTestDate` (date minus 2 hours) to detect the ambiguous window, which the description omits; and the description says the backward-jump check shifts to 'the earlier repeated hour or repeated half-hour occurrence' but doesn't mention the two-hour look-back used to detect the ambiguous condition. The description also doesn't mention that the validity check (`date.isValid`) happens *after* the millisecond adjustment, not before. These are secondary details and the description is complete enough to guide a solid implementation.",
+  "missing_functionality": [
+    "The millisecond-advancement behavior is conditional on `!this.realDate`; the description paraphrases this as 'configured to exclude sub-second precision' without naming the flag, which could cause an implementer to miss the flag entirely.",
+    "The DST backward-jump detection uses a two-hour look-back (`twoHourTestDate = date.minus({ hour: 2 })`) in addition to the one-hour look-back; the description omits the two-hour check.",
+    "The `date.isValid` check occurs after the millisecond/second adjustment, not immediately after conversion; the description implies it happens right after conversion."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'Rejects invalid start dates by throwing an error' without clarifying that validity is checked on the UTC working copy after the millisecond adjustment, not on the original input.",
+    "The description says the backward-jump ambiguity check shifts to 'the earlier repeated hour or repeated half-hour occurrence' but doesn't convey that the two-hour test (`twoHourTestDate.hour === hourTestDate.hour`) is what detects the ambiguous window for the full-hour case."
+  ],
+  "complete_enough": true
+}

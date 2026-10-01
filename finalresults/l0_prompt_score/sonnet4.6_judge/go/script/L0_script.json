@@ -1,0 +1,29 @@
+{
+  "task": "go/script/L0_script",
+  "project": "go/script",
+  "language": "go",
+  "prompt_path": "datasets/go/script/tasks/L0_script/prompt.md",
+  "project_root": "datasets/go/script",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "The prompt covers sources (NewPipe, File, Exec, Echo, Stdin, Get, Slice), filters (Match, MatchRegexp, Reject, RejectRegexp, First, Last, Column, JQ, Join, Replace, ReplaceRegexp, CountLines, String, Basename, Dirname, Freq, EncodeBase64, DecodeBase64, ExitStatus), and core sinks. Behavioral constraints cover First/Last edge cases, Column skipping short lines, Basename/Dirname behavior, Freq sorting, EncodeBase64, and JQ string quoting. Minor gap: the Slice source and some sinks (WriteFile, AppendFile, Bytes) are not described."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "First(n<=0) produces no output, First(n>total) returns all lines, Freq descending+alphabetical tie-breaking, Reject('') rejects all lines, Column skipping short lines — all precisely stated. JQ string output includes JSON quoting is mentioned. The error propagation through the chain is implied but not explicitly stated as a behavioral rule. EncodeBase64 using 'standard' base64 (not URL-safe) is specified."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests verify: Match/Reject case-sensitive filtering, MatchRegexp/RejectRegexp, First/Last, Column, Join, Replace/ReplaceRegexp, CountLines, Basename, Dirname, Freq, EncodeBase64/DecodeBase64, ExitStatus, chaining, error propagation. All of these behaviors are described in the prompt's Behavioral Constraints. Extended test covers Freq tie-breaking and ReplaceRegexp capture groups."
+    },
+    "consistency": {
+      "score": 5.0,
+      "reason": "No contradictions with the actual script source. Module path (github.com/bitfield/script) and API names are accurate. The described filter semantics for Match, First, Column, Freq, and JQ are consistent with the library's implementation."
+    }
+  },
+  "overall_score": 4.50
+}

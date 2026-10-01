@@ -1,0 +1,30 @@
+{
+  "task": "java/springboot-jwt-starter/L0_springboot-jwt-starter",
+  "project": "java/springboot-jwt-starter",
+  "language": "java",
+  "prompt_path": "datasets/java/springboot-jwt-starter/tasks/L0_springboot-jwt-starter/prompt.md",
+  "project_root": "datasets/java/springboot-jwt-starter",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "prompt 覆盖了项目核心能力：Spring Boot 入口、JWT 登录与刷新、基于角色的受保护接口、用户领域模型、服务/仓储分层，以及 TokenHelper 和安全过滤链等主要实现方向；还明确补充了黑盒测试最关键的 User 与 UserTokenState API/行为契约。主要不足是没有点出静态前端资源、application.yml/import.sql、change-password 端点、refresh 端点返回 accepted 空 token state 等次要但真实存在的实现细节。"
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "核心模块分工和典型流程表达清楚，尤其是 model 包下 User、Authority、UserTokenState 的方法签名与行为约束较明确，足以指导实现黑盒要求。歧义主要在于公开接口层面没有给出 UserController 的精确路径和方法，也未说明 /auth/refresh、/auth/change-password 的具体语义与状态码，安全配置中的 permitAll/ignored 静态资源细节也未被明确。"
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "prompt 显式列出了黑盒测试所需的包名、类名、构造器、getter/setter、副作用与边界行为，特别是 User.setPassword 的时间戳副作用、UserDetails 恒为 true、UserTokenState 使用 boxed Long 等，这些都能直接支撑黑盒验证。扣分点在于对控制器与安全链的可观察契约描述仍偏高层，没有把真实测试涉及的刷新 token 返回形态、角色受限路径和部分 HTTP 行为完整钉死。"
+    },
+    "consistency": {
+      "score": 4.4,
+      "reason": "prompt 与当前实现总体一致：项目确实是 JWT starter，包含 AuthenticationController、UserController、WebSecurityConfig、TokenHelper、UserService/Repository、User/Authority/UserTokenState 等，并采用角色保护和安全过滤链。轻微不一致或遗漏包括真实代码还有 change-password、refresh token、静态页面与具体安全忽略规则，且 prompt 将若干公开接口描述得更抽象，没有完全反映现有端点和配置细节。"
+    }
+  },
+  "overall_score": 4.3,
+  "raw_response_file": "L0_springboot-jwt-starter.raw.md"
+}

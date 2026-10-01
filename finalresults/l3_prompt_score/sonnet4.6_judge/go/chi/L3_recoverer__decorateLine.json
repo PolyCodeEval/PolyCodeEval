@@ -1,0 +1,24 @@
+{
+  "task": "go/chi/L3_recoverer__decorateLine",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_recoverer__decorateLine/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_recoverer__decorateLine/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/recoverer.go",
+  "target_symbol": "middleware/recoverer.go::decorateLine",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description accurately captures the overall structure and most branches of the function. It correctly identifies the TrimSpace normalization, the `.go:` and tab-prefix check delegating to decorateSourceLine, the `)` suffix check delegating to decorateFuncCallLine, and the fallback four-spaces formatting. However, there is one subtle but important logical issue: after TrimSpace, a line can never begin with a tab character (since TrimSpace removes leading whitespace including tabs). This means the third branch (`strings.HasPrefix(line, \"\\t\")`) is dead code — it can never be reached. The description presents this branch as a live, reachable code path, which is misleading. A reader implementing from this description might include that branch expecting it to fire, or might not notice the dead-code implication. The description is otherwise complete enough to implement the function correctly in practice, since the dead branch never executes.",
+  "missing_functionality": [
+    "The description does not note that after TrimSpace, the tab-prefix check in the third branch is unreachable dead code, which is a meaningful behavioral nuance."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description states 'if none of the earlier classifications matched but the line still begins with a tab' as a reachable case, but since TrimSpace is applied first, no line can begin with a tab at that point — this branch is dead code and will never execute."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_recoverer__decorateLine.raw.md"
+}

@@ -1,0 +1,26 @@
+{
+  "task": "cpp/snappy/L2_third_party__googletest__googletest__src__gtest-printers_cc",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L2_third_party__googletest__googletest__src__gtest-printers_cc/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L2_third_party__googletest__googletest__src__gtest-printers_cc/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-printers.cc",
+  "target_file": "third_party/googletest/googletest/src/gtest-printers.cc",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and function-level descriptions are highly accurate and closely match the actual implementation. All 10 hollowed functions are described with correct behavioral details: byte segment printing with alternating separators, the 132-byte threshold and 64-byte chunk logic, character literal escaping with the ToChar32 widening helper, string literal escaping with single/double quote special cases, PrintCharAndCodeTo with zero early-exit and hex-code suppression conditions, the manual 128-bit decimal conversion using long division with the exact constants, PrintCharsAsStringTo with hex-escape disambiguation logic, UniversalPrintCharArray with NUL-terminator stripping, ContainsUnprintableControlCodes with tab/newline/CR exceptions, and IsValidUTF8 with all the non-shortest form and surrogate checks. Minor gaps include: the PrintBytesInObjectToImpl description says 'count - 64' but the actual formula uses the kChunkSize constant (64) and the description correctly captures this; the PrintCharAndCodeTo description says 'between 1 and 9 inclusive' which matches `1 <= c && c <= 9` exactly. The descriptions are complete enough to reconstruct all functions faithfully.",
+  "missing_functionality": [
+    "PrintBytesInObjectToImpl: the description does not mention that the closing delimiter is '>' (angle bracket), only mentioning '<count>-byte object <...>>' implicitly — the exact closing '>' is present but the description uses '>>' which could be misread.",
+    "PrintCharsAsStringTo: the description does not explicitly state that the return value defaults to kAsIs and is only changed to kHexEscape (never back), which is a subtle but reconstructable detail.",
+    "IsValidUTF8: the description mentions checking (i + 1) <= length for 2-byte sequences but does not explicitly state the boundary check pattern used for 3-byte and 4-byte sequences (i + 2 and i + 3 respectively), though this is implied."
+  ],
+  "incorrect_or_misleading_points": [
+    "PrintBytesInObjectToImpl: the description says 'tail segment starting at a resume position rounded up to an even index: (count - 64 + 1) / 2 * 2' — this formula is correct but the description says 'rounded up to an even index' which is slightly misleading since it rounds up to an even offset from the start, not necessarily an even absolute index.",
+    "PrintCharAndCodeTo: the description says 'Append a hexadecimal code unless the decimal code is between 1 and 9 inclusive' — the actual condition is `1 <= c && c <= 9` using the raw char value, which for signed/unsigned chars could behave differently than 'decimal code between 1 and 9', though in practice this is equivalent for the common case."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_third_party__googletest__googletest__src__gtest-printers_cc.raw.md"
+}

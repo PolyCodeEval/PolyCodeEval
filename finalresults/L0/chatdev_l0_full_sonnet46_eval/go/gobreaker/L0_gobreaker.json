@@ -1,0 +1,700 @@
+{
+  "task": "go/gobreaker/L0_gobreaker",
+  "solver": "chatdev_sonnet46_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.47,
+  "stdout": "",
+  "stderr": "main.go:1:1: expected 'package', found H\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.35,
+    "Architecture": 3.57,
+    "Health": 3.5
+  },
+  "overall_score": 2.33,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "reaker.Settings{\n\t\tName: \"test-default-trip\",\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// 5 failures should not trip (> 5 required)\n\tfor i := 0; i < 5; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Fatalf(\"expected StateClosed after 5 failures with default settings, got %v\", cb.State())\n\t}\n\n\t// 6th failure should trip"
+            }
+          ],
+          "status": "partial",
+          "reason": "The required public API section is largely present in `repo/gobreaker.go` and `repo/v2/gobreaker.go`, but the section as a whole is not cleanly satisfied because the repository also contains a malformed `repo/main.go` file and extra generated tests."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/sony/gobreaker`; the `v2/` subdirectory uses module path `github.com/sony/gobreaker/v2` but its package name remains `gobreaker` (not `v2`)",
+          "evidence": [
+            {
+              "path": "v2\\redis\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2/redis\n\ngo 1.22.0\n\nrequire (\n\tgithub.com/alicebob/miniredis/v2 v2.33.0\n\tgithub.com/go-redsync/redsync/v4 v4.13.0\n\tgithub.com/redis/go-redis/v9 v9.7.3\n\tgithub.com/sony/gobreaker/v2 v2.0.0\n\tgithub.com/stretchr/testify v1.8.4\n)\n\nrequire (\n\tgithub.c"
+            },
+            {
+              "path": "v2\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2\n\ngo 1.22.0\n\ntoolchain go1.22.10\n\nrequire github.com/stretchr/testify v1.8.4\n\nrequire (\n\tgithub.com/davecgh/go-spew v1.1.1 // indirect\n\tgithub.com/pmezard/go-difflib v1.0.0 // indirect\n\tgopkg.in/yaml.v3 v3.0.1 // indirect\n)"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/sony/gobreaker\n\ngo 1.12\n\nrequire github.com/stretchr/testify v1.3.0"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/sony/gobreaker`, `repo/v2/go.mod` declares `module github.com/sony/gobreaker/v2`, and `repo/v2/gobreaker.go` declares `package gobreaker`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "root package exposing `NewCircuitBreaker(st)`, `NewTwoStepCircuitBreaker(st)`, `Settings`, `Counts`, `State`, and standard circuit-breaker errors such as `ErrOpenState` and `ErrTooManyRequests`",
+          "evidence": [
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestNewCircuitBreakerStartsClosed(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-breaker\",\n\t})\n\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Errorf(\""
+            },
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestOnStateChangeCallbackFires(t *testing.T) {\n\tvar transitions []gobreaker.State\n\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:    \"test-statechange\",\n\t\tTimeout:"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` exports `NewCircuitBreaker`, `NewTwoStepCircuitBreaker`, `Settings`, `Counts`, `State`, `ErrOpenState`, and `ErrTooManyRequests`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`State` constants exported from the root package: `StateClosed`, `StateHalfOpen`, `StateOpen`",
+          "evidence": [
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestOnStateChangeCallbackFires(t *testing.T) {\n\tvar transitions []gobreaker.State\n\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:    \"test-statechange\",\n\t\tTimeout: 1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "erface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(1500 * time.Millisecond)\n\n\tif cb.State() != gobreaker.StateHalfOpen {\n\t\tt.Fatalf(\"expected StateHalfOpen, got %v\", cb.State())\n\t}\n\n\t// Failure in half-open should transition back to open\n\tcb.Execute(func() (interface{}, error) {\n\t\treturn nil, dummyErr\n\t})\n\n\tif cb.State() != gobreaker.StateOpen {\n\t\tt.Errorf(\"expe"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "ening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStateClosed State = iota\n\t// StateHalfOpen allows limited requests to test if the dependency recovered.\n\tStateHalfOpen\n\t// StateOpen blocks all requests.\n\tStat"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` exports `StateClosed`, `StateHalfOpen`, and `StateOpen`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "constructed breaker instances should expose `State() State`, `Name() string`, `Counts() Counts`, and `Execute(...)`",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the Circuit"
+            },
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestOnStateChangeCallbackFires(t *testing.T) {\n\tvar transitions []gobreaker.State\n\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:    \"test-statechange\",\n\t\tTimeout: 1 * time.S"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` defines `Name()`, `State()`, `Counts()`, and `Execute(...)` on `CircuitBreaker`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "the two-step variant should expose `Allow() (done func(success bool), err error)` as the public completion flow",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "now.Add(cb.timeout)\n\tdefault:\n\t\tcb.expiry = zero\n\t}\n}\n// TwoStepCircuitBreaker is similar to CircuitBreaker but uses a two-step execution.\n// The caller must call Allow() and then the returned done function.\ntype TwoStepCircuitBreaker struct {\n\tcb *CircuitBreaker\n}\n// NewTwoStepCircuitBreaker creates a new TwoStepCircuitBreaker with the given Settings.\nfunc NewTwoStepCircuitBreaker(st Settings) *"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "cb.expiry = now.Add(cb.timeout)\n\tdefault:\n\t\tcb.expiry = zero\n\t}\n}\n// TwoStepCircuitBreaker is a circuit breaker using a two-step execution model.\ntype TwoStepCircuitBreaker struct {\n\tcb *CircuitBreaker[any]\n}\n// NewTwoStepCircuitBreaker creates a new TwoStepCircuitBreaker with the given Settings.\nfunc NewTwoStepCircuitBreaker(st Settings) *TwoStepCircuitBreaker {\n\treturn &TwoStepCircuitBreaker{"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "l {\n\t\t\treturn counts.ConsecutiveFailures > 1\n\t\t},\n\t})\n\n\t// Trip the breaker\n\tfor i := 0; i < 2; i++ {\n\t\tdone, _ := tscb.Allow()\n\t\tdone(false)\n\t}\n\n\tif tscb.State() != gobreaker.StateOpen {\n\t\tt.Fatalf(\"expected StateOpen, got %v\", tscb.State())\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(700 * time.Millisecond)\n\n\tif tscb.State() != gobreaker.StateHalfOpen {\n\t\tt.Fatalf(\"expected StateHalfOpen, got %v\", ts"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` defines `Allow() (done func(success bool), err error)` on `TwoStepCircuitBreaker`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "the `v2/` package subtree should preserve the generic surface, including `NewCircuitBreaker[T](Settings)` and `(*CircuitBreaker[T]).Execute(func() (T, error)) (T, error)`",
+          "evidence": [
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestNewCircuitBreakerStartsClosed(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-breaker\",\n\t})\n\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Errorf(\""
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "e Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStateClosed State"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/v2/gobreaker.go` defines `NewCircuitBreaker[T any](Settings)` and `(*CircuitBreaker[T]).Execute(func() (T, error)) (T, error)`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "files inside `v2/` must declare `package gobreaker`, not `package v2`** — the Go module major-version suffix (`/v2`) does not change the package name",
+          "evidence": [
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "implements the Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStat"
+            },
+            {
+              "path": "v2\\test_v2_gobreaker_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker/v2\"\n)\n\n// ===== NewCircuitBreaker =====\n\nfunc TestNewCircuitBreakerDefaultSettings(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker[string](gobreaker.Settings{\n\t\tName: \"test\",\n\t})\n\tif cb"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The visible `v2` source file `repo/v2/gobreaker.go` declares `package gobreaker`, not `package v2`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "a compatible `v2/` package subtree for the second API generation used by the repository tests",
+          "evidence": [
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "e Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStateClosed State"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of t"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestHalfOpenFailureTransitionsBackToOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTime"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository contains a `v2/` subtree with its own module file and generic circuit-breaker implementation used by `repo/v2/test_v2_gobreaker_test.go`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Circuit Breaker States",
+          "evidence": [
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestNewCircuitBreakerStartsClosed(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-breaker\",\n\t})\n\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Errorf(\"expected StateClosed, got %v\", cb.State())\n\t}\n}\n\nfunc TestNewCircuitBreakerName(t *testing.T) {\n\tcb"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the"
+            }
+          ],
+          "status": "implemented",
+          "reason": "State handling is implemented in both root and `v2` packages via `State`, exported constants, and transition logic."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Creating a Circuit Breaker",
+          "evidence": [
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestNewCircuitBreakerStartsClosed(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-breaker\",\n\t})\n\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Errorf(\"expected StateClosed, got %v\", cb.State())\n\t}\n}\n\nfunc TestNewCircuitBreakerName(t *testing.T) {\n\tcb"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern.\nIt wraps function calls and tracks successes/failures, automatically\nopening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "/*\nPackage gobreaker implements the Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Circuit breaker construction is implemented via `NewCircuitBreaker(...)` in both root and `v2` packages."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Settings",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "c.Requests = 0\n\tc.TotalSuccesses = 0\n\tc.TotalFailures = 0\n\tc.ConsecutiveSuccesses = 0\n\tc.ConsecutiveFailures = 0\n}\n// Settings configures a CircuitBreaker.\ntype Settings struct {\n\t// Name is the name of the CircuitBreaker.\n\tName string\n\t// MaxRequests is the maximum number of requests allowed in half-open state.\n\t// Default is 1.\n\tMaxRequests uint32\n\t// Interval is the cyclic period of the close"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "obreaker\"\n)\n\nfunc TestHalfOpenFailureTransitionsBackToOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTimeout:     1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 1\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// Trip the breaker\n\tfor i := 0; i < 2; i++ {"
+            },
+            {
+              "path": "test_execute_failure_test.go",
+              "excerpt": "com/sony/gobreaker\"\n)\n\nfunc TestExecuteFailureTriggersOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-failure\",\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 2\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// First 2 failures should not trip\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\tr"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` defines a `Settings` type with the required configuration fields and defaults."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Executing Requests",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "e int\nconst (\n\t// StateClosed is the normal operating state.\n\tStateClosed State = iota\n\t// StateHalfOpen allows limited requests to test if the dependency recovered.\n\tStateHalfOpen\n\t// StateOpen blocks all requests.\n\tStateOpen\n)\n// String returns a string representation of the State.\nfunc (s State) String() string {\n\tswitch s {\n\tcase StateClosed:\n\t\treturn \"closed\"\n\tcase StateHalfOpen:\n\t\treturn \"ha"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "ToOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTimeout:     1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 1\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// Trip the breaker\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn"
+            },
+            {
+              "path": "test_execute_failure_test.go",
+              "excerpt": "Open {\n\t\tt.Fatalf(\"expected StateOpen after real failures, got %v\", cb.State())\n\t}\n}\n\nfunc TestExecuteCountsReflectTotalRequests(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-total-counts\",\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 10 // won't trip\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// 3 successes\n\tfor"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` implements request execution through `Execute(...)`, including pre-checks, success/failure accounting, and state transitions."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Two-Step Variant",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "now.Add(cb.timeout)\n\tdefault:\n\t\tcb.expiry = zero\n\t}\n}\n// TwoStepCircuitBreaker is similar to CircuitBreaker but uses a two-step execution.\n// The caller must call Allow() and then the returned done function.\ntype TwoStepCircuitBreaker struct {\n\tcb *CircuitBreaker\n}\n// NewTwoStepCircuitBreaker creates a new TwoStepCircuitBreaker with the given Settings.\nfunc NewTwoStepCircuitBreaker(st Settings) *"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "cb.expiry = now.Add(cb.timeout)\n\tdefault:\n\t\tcb.expiry = zero\n\t}\n}\n// TwoStepCircuitBreaker is a circuit breaker using a two-step execution model.\ntype TwoStepCircuitBreaker struct {\n\tcb *CircuitBreaker[any]\n}\n// NewTwoStepCircuitBreaker creates a new TwoStepCircuitBreaker with the given Settings.\nfunc NewTwoStepCircuitBreaker(st Settings) *TwoStepCircuitBreaker {\n\treturn &TwoStepCircuitBreaker{"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` implements the two-step variant with `TwoStepCircuitBreaker` and `Allow()`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Counts",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "n:\n\t\treturn \"half-open\"\n\tcase StateOpen:\n\t\treturn \"open\"\n\tdefault:\n\t\treturn fmt.Sprintf(\"unknown state: %d\", s)\n\t}\n}\n// Counts holds the numbers of requests and their successes/failures.\ntype Counts struct {\n\tRequests             uint32\n\tTotalSuccesses       uint32\n\tTotalFailures        uint32\n\tConsecutiveSuccesses uint32\n\tConsecutiveFailures  uint32\n}\nfunc (c *Counts) onRequest() {\n\tc.Requests++"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "er.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTimeout:     1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 1\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// Trip the breaker\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(1500 *"
+            },
+            {
+              "path": "test_execute_failure_test.go",
+              "excerpt": "Open(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-failure\",\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 2\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// First 2 failures should not trip\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\tif cb.State() != gobreake"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gobreaker.go` defines `Counts` and updates it through request/success/failure hooks."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "If a panic occurs inside the function passed to `Execute`, the CircuitBreaker counts it as a failure and then re-panics with the same value.",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "request if the CircuitBreaker allows it.\n// It returns an error if the circuit is open or if the request fails.\n// If a panic occurs, it counts as a failure and re-panics.\nfunc (cb *CircuitBreaker) Execute(req func() (interface{}, error)) (interface{}, error) {\n\tgeneration, err := cb.beforeRequest()\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tvar (\n\t\tresult   interface{}\n\t\treqErr   error\n\t\tpanicked = t"
+            },
+            {
+              "path": "test_execute_success_test.go",
+              "excerpt": "t.Errorf(\"expected 3 consecutive successes, got %d\", counts.ConsecutiveSuccesses)\n\t}\n}\n\nfunc TestExecuteReturnsValueFromFunction(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-return-value\",\n\t})\n\n\tresult, err := cb.Execute(func() (interface{}, error) {\n\t\treturn 42, nil\n\t})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif result.(int) != 42 {\n\t\tt"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "t if the CircuitBreaker allows it.\n// Returns the result and error from the request, or circuit breaker errors.\n// If a panic occurs inside req, it counts as a failure and the panic is re-raised.\nfunc (cb *CircuitBreaker[T]) Execute(req func() (T, error)) (T, error) {\n\tgeneration, err := cb.beforeRequest()\n\tif err != nil {\n\t\tvar zero T\n\t\treturn zero, err\n\t}\n\tvar (\n\t\tresult   T\n\t\treqErr   error\n\t\tp"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Execute(...)` in both root and `v2` packages recovers panics, records failure via `afterRequest(..., false)`, and re-panics the recovered value."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Internal `Counts` are cleared whenever the breaker transitions to a new state (e.g. Open to HalfOpen).",
+          "evidence": [
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "of requests allowed in half-open state.\n\tMaxRequests uint32\n\t// Interval is the cyclic period in closed state to clear internal Counts.\n\tInterval time.Duration\n\t// Timeout is how long the open state lasts before transitioning to half-open.\n\tTimeout time.Duration\n\t// ReadyToTrip is called on each failure in closed state; returns true to open the circuit.\n\tReadyToTrip func(counts Counts) bool\n\t// O"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "n half-open state.\n\t// Default is 1.\n\tMaxRequests uint32\n\t// Interval is the cyclic period of the closed state to clear internal Counts.\n\t// If zero, no interval clearing is performed.\n\tInterval time.Duration\n\t// Timeout is how long the open state lasts before transitioning to half-open.\n\t// Default is 60 seconds.\n\tTimeout time.Duration\n\t// ReadyToTrip is called in closed state on each failure. Re"
+            },
+            {
+              "path": "test_newcircuitbreaker_test.go",
+              "excerpt": "Fatalf(\"expected StateOpen after 6 failures with default settings, got %v\", cb.State())\n\t}\n}\n\nfunc TestNewCircuitBreakerCountsStartAtZero(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-zero-counts\",\n\t})\n\n\tcounts := cb.Counts()\n\tif counts.Requests != 0 {\n\t\tt.Errorf(\"expected 0 requests, got %d\", counts.Requests)\n\t}\n\tif counts.TotalSuccesses != 0 {\n\t\tt.Errorf(\"e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "State transitions call `setState(...)`, which calls `toNewGeneration(...)`; that method clears `counts`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "When `Interval` is set and the breaker is in the closed state, internal `Counts` are automatically cleared after each interval period elapses (checked on the next request).",
+          "evidence": [
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "ker.\n\tName string\n\t// MaxRequests is the maximum number of requests allowed in half-open state.\n\tMaxRequests uint32\n\t// Interval is the cyclic period in closed state to clear internal Counts.\n\tInterval time.Duration\n\t// Timeout is how long the open state lasts before transitioning to half-open.\n\tTimeout time.Duration\n\t// ReadyToTrip is called on each failure in closed state; returns true to open t"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "// MaxRequests is the maximum number of requests allowed in half-open state.\n\t// Default is 1.\n\tMaxRequests uint32\n\t// Interval is the cyclic period of the closed state to clear internal Counts.\n\t// If zero, no interval clearing is performed.\n\tInterval time.Duration\n\t// Timeout is how long the open state lasts before transitioning to half-open.\n\t// Default is 60 seconds.\n\tTimeout time.Duration\n\t/"
+            },
+            {
+              "path": "v2\\test_v2_gobreaker_test.go",
+              "excerpt": ":= []string{}\n\tcb := gobreaker.NewCircuitBreaker[int](gobreaker.Settings{\n\t\tName:        \"custom\",\n\t\tMaxRequests: 3,\n\t\tInterval:    10 * time.Second,\n\t\tTimeout:     5 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures >= 2\n\t\t},\n\t\tOnStateChange: func(name string, from, to gobreaker.State) {\n\t\t\tstateChanges = append(stateChanges, to.String())\n\t\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "In closed state, `currentState(...)` checks `expiry` and calls `toNewGeneration(...)` after the interval elapses, which clears counts on the next request/state check."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "A failure during the half-open state immediately transitions the breaker back to the open state.",
+          "evidence": [
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "atechange\",\n\t\tTimeout: 1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 2\n\t\t},\n\t\tOnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {\n\t\t\ttransitions = append(transitions, to)\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// Trip the breaker: Closed -> Open\n\tfor i := 0; i < 3; i++ {\n\t\tcb.Execute(func() (interface{}, er"
+            },
+            {
+              "path": "v2\\test_v2_gobreaker_test.go",
+              "excerpt": "Second,\n\t\tTimeout:     5 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures >= 2\n\t\t},\n\t\tOnStateChange: func(name string, from, to gobreaker.State) {\n\t\t\tstateChanges = append(stateChanges, to.String())\n\t\t},\n\t})\n\n\tif cb.Name() != \"custom\" {\n\t\tt.Errorf(\"expected name 'custom', got '%s'\", cb.Name())\n\t}\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.E"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "default:\n\t\treturn fmt.Sprintf(\"unknown state: %d\", s)\n\t}\n}\n// Counts holds the numbers of requests and their successes/failures.\ntype Counts struct {\n\tRequests             uint32\n\tTotalSuccesses       uint32\n\tTotalFailures        uint32\n\tConsecutiveSuccesses uint32\n\tConsecutiveFailures  uint32\n}\nfunc (c *Counts) onRequest() {\n\tc.Requests++\n}\nfunc (c *Counts) onSuccess() {\n\tc.TotalSuccesses++\n\tc.C"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`onFailure(...)` transitions directly from `StateHalfOpen` to `StateOpen` in both root and `v2` implementations."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "In half-open state, after `MaxRequests` have been issued, further calls return `ErrTooManyRequests`.",
+          "evidence": [
+            {
+              "path": "gobreaker.go",
+              "excerpt": "State.\nfunc (s State) String() string {\n\tswitch s {\n\tcase StateClosed:\n\t\treturn \"closed\"\n\tcase StateHalfOpen:\n\t\treturn \"half-open\"\n\tcase StateOpen:\n\t\treturn \"open\"\n\tdefault:\n\t\treturn fmt.Sprintf(\"unknown state: %d\", s)\n\t}\n}\n// Counts holds the numbers of requests and their successes/failures.\ntype Counts struct {\n\tRequests             uint32\n\tTotalSuccesses       uint32\n\tTotalFailures        uint3"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "aker\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(1500 * time.Millisecond)\n\n\tif cb.State() != gobreaker.StateHalfOpen {\n\t\tt.Fatalf(\"expected StateHalfOpen, got %v\", cb.State())\n\t}\n\n\t// Failure in half-open should transition back to open\n\tcb.Execute(func() (interface{}, error) {\n\t\treturn nil, dummyErr\n\t})"
+            },
+            {
+              "path": "test_halfopen_test.go",
+              "excerpt": "aker\n\tfor i := 0; i < 3; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(1500 * time.Millisecond)\n\n\t// MaxRequests is 2: use a channel to hold 2 concurrent requests in half-open\n\t// Simpler approach: send 2 successful requests (which don't trip back to open)\n\t// then the 3rd should be rejected\n\tfor i := 0; i < 2; i++ {\n\t\t_, err :"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`beforeRequest(...)` returns `ErrTooManyRequests` when in `StateHalfOpen` and `counts.Requests >= maxRequests`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`State.String()` returns `\"closed\"`, `\"half-open\"`, `\"open\"`, or `\"unknown state: N\"` for undefined state values.",
+          "evidence": [
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestOnStateChangeCallbackFires(t *testing.T) {\n\tvar transitions []gobreaker.State\n\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:    \"test-statechange\",\n\t\tTimeout: 1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "ening the circuit when failures exceed a threshold.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStateClosed State = iota\n\t// StateHalfOpen allows limited requests to test if the dependency recovered.\n\tStateHalfOpen\n\t// StateOpen blocks all requests.\n\tStat"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "erface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\n\t// Wait for half-open\n\ttime.Sleep(1500 * time.Millisecond)\n\n\tif cb.State() != gobreaker.StateHalfOpen {\n\t\tt.Fatalf(\"expected StateHalfOpen, got %v\", cb.State())\n\t}\n\n\t// Failure in half-open should transition back to open\n\tcb.Execute(func() (interface{}, error) {\n\t\treturn nil, dummyErr\n\t})\n\n\tif cb.State() != gobreaker.StateOpen {\n\t\tt.Errorf(\"expe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`State.String()` returns `closed`, `half-open`, `open`, and falls back to `fmt.Sprintf(\"unknown state: %d\", s)`."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "The `TwoStepCircuitBreaker` exposes `Name() string`, `State() State`, and `Counts() Counts` that delegate to its internal `CircuitBreaker`.",
+          "evidence": [
+            {
+              "path": "test_statechange_test.go",
+              "excerpt": "lbackFires(t *testing.T) {\n\tvar transitions []gobreaker.State\n\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:    \"test-statechange\",\n\t\tTimeout: 1 * time.Second,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn counts.ConsecutiveFailures > 2\n\t\t},\n\t\tOnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {\n\t\t\ttransitions = append(transitions, to)\n\t\t},"
+            },
+            {
+              "path": "gobreaker.go",
+              "excerpt": "piry = now.Add(cb.interval)\n\t\t}\n\tcase StateOpen:\n\t\tcb.expiry = now.Add(cb.timeout)\n\tdefault:\n\t\tcb.expiry = zero\n\t}\n}\n// TwoStepCircuitBreaker is similar to CircuitBreaker but uses a two-step execution.\n// The caller must call Allow() and then the returned done function.\ntype TwoStepCircuitBreaker struct {\n\tcb *CircuitBreaker\n}\n// NewTwoStepCircuitBreaker creates a new TwoStepCircuitBreaker with th"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "en after failure in half-open, got %v\", cb.State())\n\t}\n}\n\nfunc TestErrTooManyRequestsInHalfOpen(t *testing.T) {\n\t// Use TwoStepCircuitBreaker to hold requests open and exhaust MaxRequests\n\ttscb := gobreaker.NewTwoStepCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-too-many\",\n\t\tMaxRequests: 2,\n\t\tTimeout:     500 * time.Millisecond,\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\tretu"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`TwoStepCircuitBreaker` exposes `Name()`, `State()`, and `Counts()` delegating to its inner breaker."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_sonnet46_go生成\\\\go\\\\gobreaker\\\\L0_gobreaker\",\n  \"files_collected\": 8,\n  \"duration_seconds\": 510.39\n}"
+            },
+            {
+              "path": "v2\\gobreaker.go",
+              "excerpt": "implements the Circuit Breaker pattern with generics support.\nThis is the v2 API with type-safe generic Execute method.\nFiles inside v2/ declare package gobreaker (not package v2) per Go module conventions.\n*/\npackage gobreaker\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n// State represents the state of the CircuitBreaker.\ntype State int\nconst (\n\t// StateClosed is the normal operating state.\n\tStat"
+            }
+          ],
+          "status": "unclear",
+          "reason": "This requirement is about how files should be generated relative to the project root during answer construction; that cannot be conclusively verified from the checked-in repository contents alone."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/sony/gobreaker\n\ngo 1.12\n\nrequire github.com/stretchr/testify v1.3.0"
+            },
+            {
+              "path": "v2\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2\n\ngo 1.22.0\n\ntoolchain go1.22.10\n\nrequire github.com/stretchr/testify v1.8.4\n\nrequire (\n\tgithub.com/davecgh/go-spew v1.1.1 // indirect\n\tgithub.com/pmezard/go-difflib v1.0.0 // indirect\n\tgopkg.in/yaml.v3 v3.0.1 // indirect\n)"
+            },
+            {
+              "path": "v2\\redis\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2/redis\n\ngo 1.22.0\n\nrequire (\n\tgithub.com/alicebob/miniredis/v2 v2.33.0\n\tgithub.com/go-redsync/redsync/v4 v4.13.0\n\tgithub.com/redis/go-redis/v9 v9.7.3\n\tgithub.com/sony/gobreaker/v2 v2.0.0\n\tgithub.com/stretchr/testify v1.8.4\n)\n\nrequire (\n\tgithub.c"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repository includes `go.mod` and required package directories, but `repo/main.go` is malformed content rather than valid Go source, so the module layout is not fully clean/standard."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "v2\\test_v2_gobreaker_test.go",
+              "excerpt": "(func() (string, error) {\n\t\treturn \"\", errors.New(\"fail\")\n\t})\n\tif cb.State() != gobreaker.StateOpen {\n\t\tt.Skip(\"circuit not open, skipping half-open test\")\n\t}\n\n\t// Wait for timeout to transition to half-open\n\ttime.Sleep(100 * time.Millisecond)\n\n\t// Next request should be allowed (half-open state)\n\t_, err := cb.Execute(func() (string, error) {\n\t\treturn \"ok\", nil\n\t})\n\t// Either succeeds (half-open →"
+            },
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestHalfOpenFailureTransitionsBackToOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTimeout:     1 * time."
+            },
+            {
+              "path": "test_execute_failure_test.go",
+              "excerpt": "bool {\n\t\t\treturn counts.ConsecutiveFailures > 2\n\t\t},\n\t})\n\n\tdummyErr := errors.New(\"fail\")\n\n\t// First 2 failures should not trip\n\tfor i := 0; i < 2; i++ {\n\t\tcb.Execute(func() (interface{}, error) {\n\t\t\treturn nil, dummyErr\n\t\t})\n\t}\n\tif cb.State() != gobreaker.StateClosed {\n\t\tt.Fatalf(\"expected StateClosed after 2 failures, got %v\", cb.State())\n\t}\n\n\t// 3rd failure should trip (ConsecutiveFailures > 2"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes multiple generated test files such as `repo/test_newcircuitbreaker_test.go` and `repo/v2/test_v2_gobreaker_test.go`, which directly violates the instruction not to generate test files."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Ensure the repository contains the root package and the `v2/` package subtree expected by the tests.",
+          "evidence": [
+            {
+              "path": "test_edge_cases_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestHalfOpenFailureTransitionsBackToOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName:        \"test-halfopen-fail\",\n\t\tMaxRequests: 1,\n\t\tTime"
+            },
+            {
+              "path": "test_execute_failure_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestExecuteFailureTriggersOpen(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-failure\",\n\t\tReadyToTrip: func(counts gobreaker.Counts) bool {\n\t\t\treturn"
+            },
+            {
+              "path": "test_execute_success_test.go",
+              "excerpt": "package gobreaker_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/sony/gobreaker\"\n)\n\nfunc TestExecuteSuccessKeepsClosed(t *testing.T) {\n\tcb := gobreaker.NewCircuitBreaker(gobreaker.Settings{\n\t\tName: \"test-success\",\n\t})\n\n\tfor i := 0; i < 5; i++ {\n\t\tresult, err := cb.Execute(func() (interf"
+            }
+          ],
+          "status": "partial",
+          "reason": "The root package files and `v2/` subtree are present, but the malformed root `repo/main.go` means the root package is not fully in the expected consumable shape for tests."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "The `v2/` subtree should include its own `go.mod` declaring module path `github.com/sony/gobreaker/v2`.",
+          "evidence": [
+            {
+              "path": "v2\\redis\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2/redis\n\ngo 1.22.0\n\nrequire (\n\tgithub.com/alicebob/miniredis/v2 v2.33.0\n\tgithub.com/go-redsync/redsync/v4 v4.13.0\n\tgithub.com/redis/go-redis/v9 v9.7.3\n\tgithub.com/sony/gobreaker/v2 v2.0.0\n\tgithub.com/stretchr/testify v1.8.4\n)\n\nrequire (\n\tgithub.com/alicebob/gopher-json v0.0.0-20"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/sony/gobreaker\n\ngo 1.12\n\nrequire github.com/stretchr/testify v1.3.0"
+            },
+            {
+              "path": "v2\\go.mod",
+              "excerpt": "module github.com/sony/gobreaker/v2\n\ngo 1.22.0\n\ntoolchain go1.22.10\n\nrequire github.com/stretchr/testify v1.8.4\n\nrequire (\n\tgithub.com/davecgh/go-spew v1.1.1 // indirect\n\tgithub.com/pmezard/go-difflib v1.0.0 // indirect\n\tgopkg.in/yaml.v3 v3.0.1 // indirect\n)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/v2/go.mod` exists and declares `module github.com/sony/gobreaker/v2`."
+        }
+      ],
+      "feature_count": 27,
+      "constraint_count": 0,
+      "implemented_count": 22,
+      "partial_count": 3,
+      "missing_count": 1,
+      "unclear_count": 1,
+      "feature_coverage": 0.8704,
+      "constraint_coverage": 0.8704,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 181720,
+        "completion_tokens": 6101,
+        "total_tokens": 187821
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "redis",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.4,
+        "stack_alignment": 3.8,
+        "reference_alignment": 3.5
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 84138,
+        "completion_tokens": 1894,
+        "total_tokens": 86032
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 2,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "2",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe core circuit-breaker implementation is present in both the root package and the generic `v2/` subtree. The repository clearly implements the requested public API, state machine, counts tracking, panic handling, half-open behavior, state-string formatting, and separate `v2/go.mod` with `package gobreaker`.\n\n### Missing List\n\n- Do not generate test files: violated because the repository contains multiple `_test.go` files.\n- Project/module shape is only partial because `repo/main.go` is malformed rather than valid Go source.\n- The generation-format requirement about producing files relative to the project root cannot be confirmed from repository contents alone.\n\n### Critical Constraint Misses\n\n- The repository includes generated `_test.go` files even though the prompt explicitly says not to generate test files.\n- `repo/main.go` is malformed and contains a filesystem path instead of Go source, which likely breaks the root module/package shape.",
+    "architecture_review": "### Stack Inference\n\n该仓库本质上是一个 Go `go.mod` 库项目，主包与 `v2/` 子模块分别承载非泛型和泛型两代 circuit breaker API，主体风格应当是轻量、可导入的 library，而不是可执行程序或带基础设施依赖的服务。真实结构中虽然保留了这种“双模块库”主线，但被无效入口文件、评测测试和额外 Redis 子模块稀释了库项目应有的简洁性。\n\n### Scoring Mode\n\n本次评分依据工作区中的真实仓库结构进行架构评估，重点看目录组织、模块边界、构建入口和是否符合 Go 库项目习惯，而不是看功能测试是否通过。这里的核心判断是：该仓库确实提供了根模块与 `v2/` 子模块两个主要 API 面，但整体仓库形态混入了无效入口文件、评测测试文件和一个悬空的 `v2/redis` 子模块，导致工程结构清晰度和构建协调性都明显下滑。\n\n### Strengths\n\n- 根模块与 `v2/` 子模块都存在，说明作者至少理解了 Go major version 通过子目录独立 `go.mod` 暴露的基本组织方式。\n- 核心实现集中在 `gobreaker.go` 与 `v2/gobreaker.go`，主库代码路径短，API 表面容易定位。\n- `v2/` 下保持 `package gobreaker`，这点与 Go 版本后缀模块的常见约定一致。\n\n### Issues\n\n- 仓库根目录同时放置库包文件 `gobreaker.go` 与一个无效的 `main.go`；`main.go` 内容只是本地路径字符串，不是合法 Go 源码，这会直接破坏作为库模块的构建一致性，也让入口组织显得失控。\n- 项目要求明确是生成库代码且“不生成测试文件”，但仓库根目录和 `v2/` 下塞入了大量 `*_test.go`，说明交付物边界没有收敛，仓库结构更像评测工位而不是清晰的库仓库。\n- `v2/redis/go.mod` 引入了额外的第三层子模块，但仓库内没有对应实现代码；从结构上看这是悬空模块，增加了模块复杂度，却没有形成可理解的分层或子包能力。\n- 根模块 `go.mod` 使用 `go 1.12`，而 `v2/go.mod` 和 `v2/redis/go.mod` 使用 Go 1.22 生态；同一仓库跨模块基线差异过大，缺少清晰的兼容策略，属于不协调的构建布局。\n- 根目录缺少常见的库项目说明性结构，比如示例、文档或明确的子包边界；当前几乎所有逻辑都堆在单文件中，虽然小项目可接受，但结合多模块布局后显得组织失衡。\n\n### Stack Mismatches\n\n- 对于 Go 库项目，根目录通常不应混入一个无法编译的 `main.go`；这与 Go 的包约定和模块构建习惯不符。\n- 对于这种小型基础库，额外拆出 `v2/redis` 子模块但不提供实现文件，不符合 Go 生态中常见的按包能力演进的组织方式。\n- 虽然 `v2/` 独立模块本身符合 Go major version 习惯，但与根模块截然不同的 Go 版本基线和依赖规模并不协调。\n\n### Reference Gaps\n\n- 原始需求要求“Do not generate test files”，但仓库实际包含多份测试文件，和目标交付形态不一致。\n- 原始需求只要求标准 Go 模块布局以及 `v2/` 子树；实际仓库额外出现 `main.go` 与 `v2/redis` 子模块，这些都不是需求中需要的项目形状。\n- 需求摘要中的栈推断提到 `persistence: redis`，但主需求并未要求任何 Redis 持久化能力；仓库里的 `v2/redis/go.mod` 更像无依据扩展，而非参考对齐。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 265858,
+    "completion_tokens": 7995,
+    "total_tokens": 273853,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 181720,
+        "completion_tokens": 6101,
+        "total_tokens": 187821
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 84138,
+        "completion_tokens": 1894,
+        "total_tokens": 86032
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "gobreaker",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.35,
+  "architecture_score": 3.57,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

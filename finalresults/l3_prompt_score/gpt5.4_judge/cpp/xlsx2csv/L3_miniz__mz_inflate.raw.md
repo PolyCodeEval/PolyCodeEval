@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly covers argument/flush validation, zlib-header parsing flag setup, persistent state handling, first-call `MZ_FINISH` single-shot behavior, dictionary-buffer draining and copying, the main streaming loop, finish-mode restrictions across calls, and the return-code mapping. It is also detailed enough to support a faithful implementation. The only minor gaps are a few low-level specifics, such as exactly when `m_last_status` is forced to `TINFL_STATUS_FAILED` after an incomplete first-call finish path, and that the `NEEDS_MORE_INPUT` -> `MZ_BUF_ERROR` check depends on `avail_in` being zero on entry rather than simply on the current loop state.",
+  "missing_functionality": [
+    "Does not explicitly mention that in the first-call `MZ_FINISH` fast path, an incomplete decode sets internal `m_last_status` to `TINFL_STATUS_FAILED` before returning `MZ_BUF_ERROR`.",
+    "Does not spell out that the `MZ_BUF_ERROR` case for `TINFL_STATUS_NEEDS_MORE_INPUT` is gated by `orig_avail_in == 0` at function entry."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.88,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 34 items\n\ntests/unit_tests/adjacency_graphs_test.py .                              [  2%]\ntests/unit_tests/frequency_lists_test.py .                               [  5%]\ntests/unit_tests/matching_test.py .....F..F..F                           [ 41%]\ntests/unit_tests/scoring_test.py ....F........                           [ 79%]\ntests/unit_tests/time_estimates_test.py .                                [ 82%]\ntests/unit_tests/zxcvbn_test.py ......                                   [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_l33t_matching ______________________________\n\n    def test_l33t_matching():\n        test_table = {\n            'a': ['4', '@'],\n            'c': ['(', '{', '[', '<'],\n            'g': ['6', '9'],\n            'o': ['0'],\n        }\n        for pw, expected in [\n            ['', {}],\n            ['abcdefgo123578!#$&*)]}>', {}],\n            ['a', {}],\n            ['4', {'a': ['4']}],\n            ['4@', {'a': ['4', '@']}],\n            ['4({60', {'a': ['4'], 'c': ['(', '{'], 'g': ['6'], 'o': ['0']}],\n        ]:\n            msg = \"reduces l33t table to only the substitutions that a password might be employing\"\n            assert matching.relevant_l33t_subtable(pw, test_table) == expected, msg\n    \n        for table, subs in [\n            [{}, [{}]],\n            [{'a': ['@']}, [{'@': 'a'}]],\n            [{'a': ['@', '4']}, [{'@': 'a'}, {'4': 'a'}]],\n            [{'a': ['@', '4'], 'c': ['(']},\n             [{'@': 'a', '(': 'c'}, {'4': 'a', '(': 'c'}]],\n        ]:\n            msg = \"enumerates the different sets of l33t substitutions a password might be using\"\n>           assert matching.enumerate_l33t_subs(table) == subs, msg\n\ntests/unit_tests/matching_test.py:236: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:190: in enumerate_l33t_subs\n    subs = helper(keys, subs)\nsrc/zxcvbn/matching.py:187: in helper\n    subs = dedup(next_subs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsubs = [[['@', 'a']]]\n\n    def dedup(subs):\n        deduped = []\n        seen = set()\n        for sub in subs:\n            canonical = tuple(sorted(sub))\n>           if canonical not in seen:\nE           TypeError: unhashable type: 'list'\n\nsrc/zxcvbn/matching.py:157: TypeError\n_____________________________ test_repeat_matching _____________________________\n\n    def test_repeat_matching():\n        for password in ['', '#']:\n            msg = \"doesn't match length-%s repeat patterns\" % len(password)\n            assert matching.repeat_match(password) == [], msg\n    \n        # test single-character repeats\n        prefixes = ['@', 'y4@']\n        suffixes = ['u', 'u%7']\n        pattern = '&&&&&'\n        for password, i, j in genpws(pattern, prefixes, suffixes):\n            matches = matching.repeat_match(password)\n            msg = \"matches embedded repeat patterns\"\n            check_matches(msg, matches, 'repeat', [pattern], [[i, j]],\n                          {'base_token': ['&']})\n    \n        for length in [3, 12]:\n            for chr in ['a', 'Z', '4', '&']:\n                pattern = chr * (length + 1)\n>               matches = matching.repeat_match(pattern)\n\ntests/unit_tests/matching_test.py:412: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:280: in repeat_match\n    omnimatch(base_token)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:216: in l33t_match\n    for sub in enumerate_l33t_subs(\nsrc/zxcvbn/matching.py:190: in enumerate_l33t_subs\n    subs = helper(keys, subs)\nsrc/zxcvbn/matching.py:187: in helper\n    subs = dedup(next_subs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsubs = [[['4', 'a']]]\n\n    def dedup(subs):\n        deduped = []\n        seen = set()\n        for sub in subs:\n            canonical = tuple(sorted(sub))\n>           if canonical not in seen:\nE           TypeError: unhashable type: 'list'\n\nsrc/zxcvbn/matching.py:157: TypeError\n________________________________ test_omnimatch ________________________________\n\n    def test_omnimatch():\n        assert matching.omnimatch('') == [], \"doesn't match ''\"\n        password = 'r0sebudmaelstrom11/20/91aaaa'\n>       matches = matching.omnimatch(password)\n\ntests/unit_tests/matching_test.py:578: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:216: in l33t_match\n    for sub in enumerate_l33t_subs(\nsrc/zxcvbn/matching.py:190: in enumerate_l33t_subs\n    subs = helper(keys, subs)\nsrc/zxcvbn/matching.py:187: in helper\n    subs = dedup(next_subs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsubs = [[['9', 'g']]]\n\n    def dedup(subs):\n        deduped = []\n        seen = set()\n        for sub in subs:\n            canonical = tuple(sorted(sub))\n>           if canonical not in seen:\nE           TypeError: unhashable type: 'list'\n\nsrc/zxcvbn/matching.py:157: TypeError\n_____________________________ test_repeat_guesses ______________________________\n\n    def test_repeat_guesses():\n        for [token, base_token, repeat_count] in [\n            ['aa', 'a', 2],\n            ['999', '9', 3],\n            ['$$$$', '$', 4],\n            ['abab', 'ab', 2],\n            ['batterystaplebatterystaplebatterystaple', 'batterystaple', 3]\n        ]:\n            base_guesses = scoring.most_guessable_match_sequence(\n                base_token,\n>               matching.omnimatch(base_token)\n            )['guesses']\n\ntests/unit_tests/scoring_test.py:165: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:216: in l33t_match\n    for sub in enumerate_l33t_subs(\nsrc/zxcvbn/matching.py:190: in enumerate_l33t_subs\n    subs = helper(keys, subs)\nsrc/zxcvbn/matching.py:187: in helper\n    subs = dedup(next_subs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsubs = [[['9', 'g']]]\n\n    def dedup(subs):\n        deduped = []\n        seen = set()\n        for sub in subs:\n            canonical = tuple(sorted(sub))\n>           if canonical not in seen:\nE           TypeError: unhashable type: 'list'\n\nsrc/zxcvbn/matching.py:157: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_l33t_matching - TypeError: unh...\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - TypeError: u...\nFAILED tests/unit_tests/matching_test.py::test_omnimatch - TypeError: unhasha...\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - TypeError: unh...\n========================= 4 failed, 30 passed in 0.61s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_matching__dedup",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      }
+    ],
+    "passed": 30,
+    "failed": 4,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.8824,
+  "compile_score": 0.5,
+  "test_score": 0.4412,
+  "score": 0.9412
+}

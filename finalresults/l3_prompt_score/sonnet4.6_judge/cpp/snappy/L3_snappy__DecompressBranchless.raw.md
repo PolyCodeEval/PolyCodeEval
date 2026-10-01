@@ -1,0 +1,16 @@
+{
+  "score": 4.2,
+  "reason": "The description is thorough and captures the core mechanics accurately: the entry condition check, the unrolled inner loop, the deferred-copy mechanism, the exceptional-case break conditions (long literals, copy-4, insufficient slack), the delta<0 handling for literals vs copies, the pattern-extension path for short-offset copies, and the final deferred flush on exit. The return semantics are correctly described. A few secondary details are missing or slightly imprecise: the description doesn't mention the `ip++`/`ip--` bookkeeping trick (ip is pre-incremented before the loop and decremented at exit), the `SNAPPY_PREFETCH(ip + 128)` prefetch hint, the platform-specific code paths (ARM vs x86 tag advancement and Load16 vs Load32), or the `op_limit_min_slop -= kSlopBytes` adjustment at the top. The description also says the loop is 'unrolled' but doesn't clarify it's a fixed 2-iteration inner for-loop inside a do-while. These are secondary implementation details rather than behavioral gaps, so the description remains largely accurate and complete enough for implementation purposes.",
+  "missing_functionality": [
+    "The ip++/ip-- bookkeeping: ip is incremented before entering the loop body and decremented at the exit label, which affects where ip points on return.",
+    "The op_limit_min_slop -= kSlopBytes adjustment at function entry (the effective output limit is tightened by kSlopBytes before the guard check).",
+    "The SNAPPY_PREFETCH(ip + 128) prefetch issued at the top of each outer loop iteration.",
+    "Platform-specific tag advancement (AdvanceToNextTagARMOptimized vs AdvanceToNextTagX86Optimized) and the Load16 vs Load32 difference on ARM vs x86.",
+    "The inner loop is a fixed for(i=0;i<2;i++) inside a do-while, not just a generic 'unrolled loop' — the exact unroll factor of 2 matters for the slack calculations."
+  ],
+  "incorrect_or_misleading_points": [
+    "Bullet 7 says 'For literals, the artificial offset used by the fast-path tables may cause this condition near the beginning of a block; that case is still accepted and treated as a literal.' This is correct but slightly misleading: the code checks tag_type != 0 and breaks if it's a copy, then defers the literal copy from old_ip — the description implies the literal is handled normally, which is accurate but the mechanism (DeferMemCopy from old_ip) is not mentioned.",
+    "Bullet 8 says 'If that copy cannot be performed or would reference before the start of the output, the function stops at the current tag instead of partially decoding it.' The check is delta < 0 OR Copy64BytesWithPatternExtension returns false — both conditions are covered, but the description conflates them slightly."
+  ],
+  "complete_enough": true
+}

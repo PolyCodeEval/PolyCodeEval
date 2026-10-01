@@ -1,0 +1,27 @@
+{
+  "task": "cpp/snappy/L2_third_party__googletest__googletest__src__gtest-port_cc",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L2_third_party__googletest__googletest__src__gtest-port_cc/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L2_third_party__googletest__googletest__src__gtest-port_cc/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-port.cc",
+  "target_file": "third_party/googletest/googletest/src/gtest-port.cc",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and function-level responsibilities are highly accurate and closely match the actual implementation. Nearly every function's behavior, branching logic, platform guards, and key API calls are correctly described. The descriptions cover all 30 hollowed functions including platform-specific `GetThreadCount` variants, Windows threading/mutex helpers, POSIX and simple regex support, stream capture, file reading, and environment-variable parsing. Minor gaps include: the Fuchsia `GetThreadCount` implementation (using `zx_object_get_info`) is not described at all in the function responsibilities; the `ReadEntireFile` description omits the `fseek(file, 0, SEEK_SET)` reset before reading; and the `CapturedStream` constructor description slightly undersells the `mkstemp` const_cast detail and the iOS path-separator trailing-slash logic. The `Int32FromGTestEnv` description says the default-value message prints `<default_value>` but the actual code formats it via `Message()`. These are minor omissions that would not prevent reconstruction. Overall the descriptions are thorough, accurate, and complete enough to reconstruct the file.",
+  "missing_functionality": [
+    "Fuchsia GetThreadCount implementation (zx_object_get_info with ZX_INFO_PROCESS_THREADS) is entirely absent from the function responsibilities list.",
+    "ReadEntireFile description omits the fseek(file, 0, SEEK_SET) call to reset to the beginning before reading.",
+    "CapturedStream constructor description does not mention the const_cast needed for mkstemp on the std::string data pointer.",
+    "Int32FromGTestEnv: the printed default-value message uses Message() formatting, not a plain string substitution as implied."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description of `static HANDLE CreateThread` says 'on failure, delete the allocated param object and still return the null handle after the check path' — the actual code calls GTEST_CHECK_ which aborts, so the delete-on-failure path is effectively dead code; the description implies it is a normal code path.",
+    "The `RE::Init` (simple regex) description says 'appending `$` if the original regex is empty or does not already end with `$`' which is accurate, but also says 'prepending `^` if the original regex does not already start with it' — the implementation does exactly this, so no inaccuracy, but the description omits that `full_pattern_` pointer is set before the buffer pointer is advanced, which is a subtle but reconstructable detail."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_third_party__googletest__googletest__src__gtest-port_cc.raw.md"
+}

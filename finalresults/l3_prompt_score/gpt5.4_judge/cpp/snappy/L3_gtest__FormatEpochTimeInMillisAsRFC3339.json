@@ -1,0 +1,29 @@
+{
+  "task": "cpp/snappy/L3_gtest__FormatEpochTimeInMillisAsRFC3339",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__FormatEpochTimeInMillisAsRFC3339/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__FormatEpochTimeInMillisAsRFC3339/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest.cc::FormatEpochTimeInMillisAsRFC3339",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.6,
+  "reason": "The description captures the main purpose correctly: it takes an epoch timestamp in milliseconds and returns an RFC3339-style formatted string, with no visible side effects. However, it omits several implementation-important details: the function converts using local time via PortableLocaltime, truncates milliseconds to whole seconds, returns an empty string on conversion failure, and always appends \"Z\" despite using local time. Because these details affect a faithful implementation, the description is only partially complete.",
+  "missing_functionality": [
+    "Uses PortableLocaltime to convert the epoch value to a broken-down local time structure",
+    "Drops the millisecond portion by dividing by 1000 and formatting only whole seconds",
+    "Returns an empty string if PortableLocaltime fails",
+    "Formats exactly as YYYY-MM-DDThh:mm:ssZ with zero-padded 2-digit month/day/hour/minute/second fields"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says no explicit timezone rules are visible, but the implementation does have a concrete timezone-related behavior: it uses local time conversion and appends \"Z\"",
+    "It says error handling cannot be inferred, but the implementation explicitly returns an empty string on failure",
+    "It suggests the output is RFC3339 generally, while the implementation is a restricted second-precision form with no fractional seconds"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_gtest__FormatEpochTimeInMillisAsRFC3339.raw.md"
+}

@@ -1,0 +1,22 @@
+{
+  "task": "go/go-cache/L3_cache__newCacheWithJanitor",
+  "project": "go/go-cache",
+  "language": "go",
+  "prompt_path": "datasets/go/go-cache/tasks/L3_cache__newCacheWithJanitor/prompt.md",
+  "task_json_path": "datasets/go/go-cache/tasks/L3_cache__newCacheWithJanitor/task.json",
+  "source_file_path": "datasets/go/go-cache/src/cache.go",
+  "target_symbol": "cache.go::newCacheWithJanitor",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.5,
+  "reason": "The description accurately captures both major behaviors: constructing the cache via a delegate call with default expiration and preloaded items, and conditionally starting a background janitor with a finalizer tied to the returned `Cache` wrapper. The key implementation detail — that the inner `*cache` and outer `*Cache` are separate objects specifically so the janitor goroutine doesn't prevent GC of the returned value — is not mentioned, but this is an internal memory-management subtlety rather than observable behavior. The description is complete enough to reproduce the function's logic faithfully.",
+  "missing_functionality": [
+    "The description does not mention the two-level struct separation (`*cache` vs `*Cache`) and the rationale that this prevents the janitor goroutine from keeping the returned `Cache` alive, which is the core trick enabling correct GC behavior."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_cache__newCacheWithJanitor.raw.md"
+}

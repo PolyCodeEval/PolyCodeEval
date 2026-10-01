@@ -1,0 +1,26 @@
+{
+  "task": "go/chi/L3_strip__RedirectSlashes",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_strip__RedirectSlashes/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_strip__RedirectSlashes/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/strip.go",
+  "target_symbol": "middleware/strip.go::RedirectSlashes",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.1,
+  "reason": "The description captures the main purpose and control flow correctly: this middleware wraps an http.Handler, redirects requests with a trailing slash instead of continuing routing, and is documented as incompatible with http.FileServer. It also correctly implies that non-trailing-slash paths are unaffected. However, it omits several implementation-relevant details: the function uses chi.RouteContext(r.Context()).RoutePath when available instead of always using r.URL.Path, preserves the raw query string on redirects, normalizes backslashes to forward slashes for safety, collapses repeated leading/trailing slashes to a single leading slash, and uses an explicit 301 status code. Those omissions make it not quite complete enough for a faithful reimplementation.",
+  "missing_functionality": [
+    "Uses chi.RouteContext(r.Context()).RoutePath when present and non-empty, otherwise falls back to r.URL.Path",
+    "Preserves r.URL.RawQuery in the redirect target",
+    "Normalizes backslashes to forward slashes before redirecting",
+    "Collapses leading/trailing slashes and forces a single leading slash in the redirect target",
+    "Uses HTTP 301 for the redirect"
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": false,
+  "raw_response_file": "L3_strip__RedirectSlashes.raw.md"
+}

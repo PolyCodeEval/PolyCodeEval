@@ -1,0 +1,21 @@
+{
+  "project": "zxcvbn",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt 覆盖 zxcvbn 密码强度评估的核心：zxcvbn() 返回结构（score/guesses/crack_times/sequence）、反馈消息（suggestions/warning）、匹配器（dictionary/spatial/repeat/sequence 等）。覆盖密码分析核心。"
+    },
+    "unambiguity": {
+      "score": 3.8,
+      "reason": "zxcvbn() 返回结构（score 0-4、序列分析、时间估算）描述较清晰。但匹配器的优先级和具体评分算法细节未展开，可能影响精确复现。"
+    },
+    "testability": {
+      "score": 3.7,
+      "reason": "测试需求覆盖基本密码评分、反馈消息生成。但因评分依赖复杂字典和频率数据，纯黑盒测试可能无法精确验证所有内部评分细节。"
+    },
+    "consistency": {
+      "score": 2.9,
+      "reason": "返回结构（score/guesses/sequence/feedback）与真实 zxcvbn 库一致。但真实的 zxcvbn 依赖庞大的频率字典和邻接表（约 20MB JSON 数据），prompt 中未充分描述这些数据依赖，可能导致实现偏差。"
+    }
+  }
+}

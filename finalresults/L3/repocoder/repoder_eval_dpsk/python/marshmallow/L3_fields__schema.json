@@ -1,0 +1,59 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.15,
+  "stdout": "\n\n    @pytest.mark.parametrize(\n        (\"param\", \"expected_attribute\", \"expected_dump\"),\n        (\n            (\"only\", {\"name\"}, {\"children\": [{\"name\": \"Lily\"}]}),\n            (\"exclude\", {\"name\", \"surname\", \"age\"}, {\"children\": [{}]}),\n        ),\n    )\n    def test_list_nested_lambda_only_and_exclude_merged_with_nested(\n        self, param, expected_attribute, expected_dump\n    ):\n        class Child(Schema):\n            name = fields.String()\n            surname = fields.String()\n            age = fields.Integer()\n    \n        class Family(Schema):\n            children = fields.List(\n                fields.Nested(lambda: Child(**{param: (\"name\", \"surname\")}))  # type: ignore[arg-type]\n            )\n    \n        schema = Family(**{param: [\"children.name\", \"children.age\"]})  # type: ignore[arg-type]\n        children_field = schema.fields[\"children\"]\n        assert isinstance(children_field, fields.List)\n        assert isinstance(children_field.inner, fields.Nested)\n>       assert getattr(children_field.inner.schema, param) == expected_attribute\nE       AssertionError: assert OrderedSet(['...', 'surname']) == {'age', 'name', 'surname'}\nE         \nE         Use -v to get more diff\n\ntests/unit_tests/test_fields.py:481: AssertionError\n______________ test_nested_many_should_override_schema_many_case1 ______________\n\n    def test_nested_many_should_override_schema_many_case1():\n        class BookSchema(Schema):\n            id = fields.Int()\n            title = fields.String()\n    \n        class UserSchema(Schema):\n            id = fields.Int()\n            name = fields.String()\n            books = fields.Nested(BookSchema(), many=True)\n    \n        books = [{\"id\": 1, \"title\": \"First book\"}, {\"id\": 2, \"title\": \"Second book\"}]\n        user = {\"id\": 1, \"name\": \"Peter\", \"books\": books}\n    \n>       assert cast(\"fields.Nested\", UserSchema().fields[\"books\"]).schema.many\nE       AssertionError: assert False\nE        +  where False = <BookSchema(many=False)>.many\nE        +    where <BookSchema(many=False)> = <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>.schema\nE        +      where <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})> = cast('fields.Nested', <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>)\n\ntests/unit_tests/test_schema.py:1028: AssertionError\n______________ test_nested_many_should_override_schema_many_case2 ______________\n\n    def test_nested_many_should_override_schema_many_case2():\n        class BookSchema(Schema):\n            id = fields.Int()\n            title = fields.String()\n    \n        class UserSchema(Schema):\n            id = fields.Int()\n            name = fields.String()\n            book = fields.Nested(BookSchema(many=True), many=False)\n    \n        book = {\"id\": 1, \"title\": \"First book\"}\n        user = {\"id\": 1, \"name\": \"Peter\", \"book\": book}\n    \n>       assert not cast(\"fields.Nested\", UserSchema().fields[\"book\"]).schema.many\nE       AssertionError: assert not True\nE        +  where True = <BookSchema(many=True)>.many\nE        +    where <BookSchema(many=True)> = <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>.schema\nE        +      where <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})> = cast('fields.Nested', <fields.Nested(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dum...or required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'type': 'Invalid type.'})>)\n\ntests/unit_tests/test_schema.py:1050: AssertionError\n__________________________ test_nested_instance_only ___________________________\n\n    def test_nested_instance_only():\n        class ArtistSchema(Schema):\n            first = fields.Str()\n            last = fields.Str()\n    \n        class AlbumSchema(Schema):\n            title = fields.Str()\n            artist = fields.Nested(ArtistSchema(), only=(\"last\",))\n    \n        schema = AlbumSchema()\n        album = {\"title\": \"Hunky Dory\", \"artist\": {\"last\": \"Bowie\"}}\n        loaded = schema.load(album)\n        assert loaded == album\n        full_album = {\"title\": \"Hunky Dory\", \"artist\": {\"first\": \"David\", \"last\": \"Bowie\"}}\n>       assert schema.dump(full_album) == album\nE       AssertionError: assert {'artist': {'... 'Hunky Dory'} == {'artist': {'... 'Hunky Dory'}\nE         \nE         Omitting 1 identical items, use -vv to show\nE         Differing items:\nE         {'artist': {'first': 'David', 'last': 'Bowie'}} != {'artist': {'last': 'Bowie'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1073: AssertionError\n_________________________ test_nested_instance_exclude _________________________\n\n    def test_nested_instance_exclude():\n        class ArtistSchema(Schema):\n            first = fields.Str()\n            last = fields.Str()\n    \n        class AlbumSchema(Schema):\n            title = fields.Str()\n            artist = fields.Nested(ArtistSchema(), exclude=(\"first\",))\n    \n        schema = AlbumSchema()\n        album = {\"title\": \"Hunky Dory\", \"artist\": {\"last\": \"Bowie\"}}\n        loaded = schema.load(album)\n        assert loaded == album\n        full_album = {\"title\": \"Hunky Dory\", \"artist\": {\"first\": \"David\", \"last\": \"Bowie\"}}\n>       assert schema.dump(full_album) == album\nE       AssertionError: assert {'artist': {'... 'Hunky Dory'} == {'artist': {'... 'Hunky Dory'}\nE         \nE         Omitting 1 identical items, use -vv to show\nE         Differing items:\nE         {'artist': {'first': 'David', 'last': 'Bowie'}} != {'artist': {'last': 'Bowie'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1090: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[only-fields_list0]\nFAILED tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[exclude-fields_list1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_schema.py::test_nested_many_should_override_schema_many_case1\nFAILED tests/unit_tests/test_schema.py::test_nested_many_should_override_schema_many_case2\nFAILED tests/unit_tests/test_schema.py::test_nested_instance_only - Assertion...\nFAILED tests/unit_tests/test_schema.py::test_nested_instance_exclude - Assert...\n======================= 11 failed, 1168 passed in 3.40s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__schema",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[only-fields_list0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[exclude-fields_list1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_multiple_dumps",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[only-expected_attribute0-expected_dump0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_many_should_override_schema_many_case1",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_many_should_override_schema_many_case2",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 9,
+    "total": 9
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

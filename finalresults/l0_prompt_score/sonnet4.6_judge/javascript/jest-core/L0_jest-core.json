@@ -1,0 +1,29 @@
+{
+  "task": "javascript/jest-core/L0_jest-core",
+  "project": "javascript/jest-core",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/jest-core/tasks/L0_jest-core/prompt.md",
+  "project_root": "datasets/javascript/jest-core",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers FailedTestsCache (setTestResults, filterTests, testExecError edge case, empty array edge case), ReporterDispatcher (all 9 methods, fallback onTestResult/onTestStart, coverage/console clearing, getErrors/hasErrors semantics, registration order), SnapshotInteractiveMode (constructor, run, abort, restart, put key mappings, isActive, getSkippedNum). SearchSource and TestScheduler mentioned as modules. jest-test-utils-shim.js requirement included. Minor gap: SnapshotInteractiveMode pipe.write behavior not detailed."
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "FailedTestsCache filtering logic is explicitly stated (testExecError causes inclusion even with numFailingTests:0, empty results => no tests pass filter). ReporterDispatcher fallback methods, coverage/console clearing, getErrors filtering of non-falsy values — all explicit. SnapshotInteractiveMode key mappings (q/ESCAPE->abort, u->update, s->skip+rotate, r->restart) are clear. Minor ambiguity: onConfigChange callback signature in SnapshotInteractiveMode (null vs assertion, boolean) inferred from constraints but not given as a type signature."
+    },
+    "testability": {
+      "score": 4.4,
+      "reason": "The blackbox tests test exactly: FailedTestsCache setTestResults/filterTests/testExecError edge case, ReporterDispatcher register/unregister/onRunStart/onTestFileResult(fallback)/onTestFileStart(fallback)/getErrors/hasErrors/ordering, SnapshotInteractiveMode run/abort/restart/put. All are documented in the prompt. The jest-test-utils-shim requirement is included which is critical for test execution."
+    },
+    "consistency": {
+      "score": 4.3,
+      "reason": "No conflicts. FailedTestsCache behavior statements match test assertions. ReporterDispatcher fallback chain (onTestFileResult->onTestResult, onTestFileStart->onTestStart) is correctly documented. SnapshotInteractiveMode abort() sets isActive to false and skippedNum to 0 and calls callback with null — matches test. One note: the abort callback call with (null, false) is not explicitly stated in the prompt but can be inferred from the 'notifies config callback that no assertion is pending' language."
+    }
+  },
+  "overall_score": 4.35
+}

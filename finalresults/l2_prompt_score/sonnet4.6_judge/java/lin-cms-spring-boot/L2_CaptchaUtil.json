@@ -1,0 +1,23 @@
+{
+  "task": "java/lin-cms-spring-boot/L2_CaptchaUtil",
+  "project": "java/lin-cms-spring-boot",
+  "language": "java",
+  "prompt_path": "datasets/java/lin-cms-spring-boot/tasks/L2_CaptchaUtil/prompt.md",
+  "task_json_path": "datasets/java/lin-cms-spring-boot/tasks/L2_CaptchaUtil/task.json",
+  "source_file_path": "datasets/java/lin-cms-spring-boot/src/main/java/io/github/talelin/latticy/common/util/CaptchaUtil.java",
+  "target_file": "io/github/talelin/latticy/common/util/CaptchaUtil.java",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description accurately captures the two main responsibilities: captcha image generation (PNG encoded as Base64) and AES/CBC/PKCS5Padding encryption/decryption helpers. All six hollowed function descriptions closely match the actual implementation. The `getRandomColor` description correctly specifies the clamping logic and the three different range reductions (16, 14, 12). The `drawString` description correctly captures the rotation formula, the jitter ranges, the draw coordinates, and the undo steps. The `getBufferedImage` description correctly describes the image type, background fill, interference line count via `RANDOM.nextInt(5)`, per-character rendering, and disposal. The `getRandomCodeBase64`, `aesEncode`, and `aesDecode` descriptions are precise and complete. One minor gap: `drawString` describes the rotation anchor as 'the character's approximate slot center' but the actual anchor uses `WIDTH * 0.8 / RANDOM_STR_NUM * i` (not simply `WIDTH / RANDOM_STR_NUM * i`), which is a subtle but reconstructable detail that the description omits. Overall the descriptions are thorough enough to reconstruct the file faithfully.",
+  "missing_functionality": [
+    "The drawString rotation anchor x-coordinate uses `WIDTH * 0.8 / RANDOM_STR_NUM * i` in the actual code, but the description only says 'the character's approximate slot center' without specifying the 0.8 scaling factor, which could lead to a slightly different anchor being used during reconstruction."
+  ],
+  "incorrect_or_misleading_points": [
+    "The drawString description says 'Apply a small translation jitter before drawing: horizontal shift is a random integer in [0,3)' — this is correct, but the vertical jitter description 'computed as ± random int in [0,4) + 4' could be read as always adding 4 after the sign flip, which matches the implementation `(RANDOM.nextBoolean() ? -1 : 1) * RANDOM.nextInt(4) + 4`. However, the precedence is ambiguous in prose: it could be interpreted as `±(nextInt(4) + 4)` rather than `(±nextInt(4)) + 4`. The actual code does `(sign) * nextInt(4) + 4`, meaning the +4 is always positive regardless of sign, which is a subtle distinction the description does not make fully clear."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_CaptchaUtil.raw.md"
+}

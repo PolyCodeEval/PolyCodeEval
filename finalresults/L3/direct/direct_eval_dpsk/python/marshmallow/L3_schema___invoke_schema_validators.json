@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.27,
+  "stdout": "NameError\n______________ test_load_processors_receive_unknown[include-init] ______________\n\nusage_location = 'init', unknown_val = 'include'\n\n    @pytest.mark.parametrize(\"usage_location\", [\"meta\", \"init\", \"load\"])\n    @pytest.mark.parametrize(\"unknown_val\", (EXCLUDE, INCLUDE))\n    def test_load_processors_receive_unknown(usage_location, unknown_val):\n        class ExampleSchema(Schema):\n            foo = fields.Int()\n    \n            @validates_schema\n            def check_unknown_validates(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n    \n            @pre_load\n            def check_unknown_pre(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n                return data\n    \n            @post_load\n            def check_unknown_post(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n                return data\n    \n        if usage_location == \"meta\":\n    \n            class ExampleSchemaChild(ExampleSchema):\n                class Meta:\n                    unknown = unknown_val\n    \n            ExampleSchemaChild().load({\"foo\": 42})\n        if usage_location == \"init\":\n>           ExampleSchema(unknown=unknown_val).load({\"foo\": 42})\n\ntests/unit_tests/test_decorators.py:962: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:906: in _do_load\n    self._invoke_schema_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ExampleSchema(many=False)>\nerror_store = <marshmallow.error_store.ErrorStore object at 0x7fd9686bc5b0>\npass_collection = True, data = {'foo': 42}, original_data = {'foo': 42}\nmany = False, partial = None, field_errors = False, unknown = 'include'\n\n    def _invoke_schema_validators(\n        self,\n        *,\n        error_store: ErrorStore,\n        pass_collection: bool,\n        data,\n        original_data,\n        many: bool,\n        partial: bool | types.StrSequenceOrSet | None,\n        field_errors: bool = False,\n        unknown: types.UnknownOption | None,\n    ):\n        for attr_name, many, kwargs in self._hooks[VALIDATES_SCHEMA]:\n            validator = getattr(self, attr_name)\n            pass_original = kwargs.get('pass_original', False)\n            self._run_validator(\n                validator_func=validator,\n>               output=output,\n                original_data=original_data,\n                error_store=error_store,\n                many=many,\n                partial=partial,\n                unknown=unknown,\n                pass_original=pass_original,\n                index=None,\n            )\nE           NameError: name 'output' is not defined\n\nsrc/marshmallow/schema.py:1192: NameError\n______________ test_load_processors_receive_unknown[include-load] ______________\n\nusage_location = 'load', unknown_val = 'include'\n\n    @pytest.mark.parametrize(\"usage_location\", [\"meta\", \"init\", \"load\"])\n    @pytest.mark.parametrize(\"unknown_val\", (EXCLUDE, INCLUDE))\n    def test_load_processors_receive_unknown(usage_location, unknown_val):\n        class ExampleSchema(Schema):\n            foo = fields.Int()\n    \n            @validates_schema\n            def check_unknown_validates(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n    \n            @pre_load\n            def check_unknown_pre(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n                return data\n    \n            @post_load\n            def check_unknown_post(self, data, unknown, **kwargs):\n                assert unknown == unknown_val\n                return data\n    \n        if usage_location == \"meta\":\n    \n            class ExampleSchemaChild(ExampleSchema):\n                class Meta:\n                    unknown = unknown_val\n    \n            ExampleSchemaChild().load({\"foo\": 42})\n        if usage_location == \"init\":\n            ExampleSchema(unknown=unknown_val).load({\"foo\": 42})\n        else:\n>           ExampleSchema().load({\"foo\": 42}, unknown=unknown_val)\n\ntests/unit_tests/test_decorators.py:964: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:906: in _do_load\n    self._invoke_schema_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ExampleSchema(many=False)>\nerror_store = <marshmallow.error_store.ErrorStore object at 0x7fd96844a410>\npass_collection = True, data = {'foo': 42}, original_data = {'foo': 42}\nmany = False, partial = None, field_errors = False, unknown = 'include'\n\n    def _invoke_schema_validators(\n        self,\n        *,\n        error_store: ErrorStore,\n        pass_collection: bool,\n        data,\n        original_data,\n        many: bool,\n        partial: bool | types.StrSequenceOrSet | None,\n        field_errors: bool = False,\n        unknown: types.UnknownOption | None,\n    ):\n        for attr_name, many, kwargs in self._hooks[VALIDATES_SCHEMA]:\n            validator = getattr(self, attr_name)\n            pass_original = kwargs.get('pass_original', False)\n            self._run_validator(\n                validator_func=validator,\n>               output=output,\n                original_data=original_data,\n                error_store=error_store,\n                many=many,\n                partial=partial,\n                unknown=unknown,\n                pass_original=pass_original,\n                index=None,\n            )\nE           NameError: name 'output' is not defined\n\nsrc/marshmallow/schema.py:1192: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]\nFAILED tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-load]\n======================= 19 failed, 1160 passed in 5.84s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_schema_validators",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-init]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[exclude-load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-meta]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_load_processors_receive_unknown[include-init]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 18,
+    "total": 18
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

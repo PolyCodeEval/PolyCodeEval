@@ -1,0 +1,14 @@
+{
+  "score": 4.2,
+  "reason": "The description matches the implementation well on the main behavior: it reconstructs a GJSON path from a Result by walking backward through the original JSON, returns empty string when the Result cannot be safely matched or the path is ambiguous, emits dot-notation with escaped keys, and returns \"@this\" only for root-level results when modifiers are enabled. It is slightly more abstract than the actual code and omits some concrete implementation details about how object keys and array indexes are recovered by reverse scanning, but it does not materially contradict the implementation.",
+  "missing_functionality": [
+    "It does not explicitly mention that the function verifies `t.Raw` is exactly present at `t.Index` in the provided JSON before attempting path recovery.",
+    "It does not clearly state that array indexes are reconstructed by counting commas while reverse-scanning to the containing `[`, and object keys are recovered from the preceding quoted key before a `:`.",
+    "It does not mention some specific failure cases used by the implementation, such as encountering `{` or an unexpected `:` while reverse-scanning, which are treated as evidence that the Result was likely an object key rather than a value."
+  ],
+  "incorrect_or_misleading_points": [
+    "The wording about unsupported origins such as multipath, modifier, or nested query is somewhat broader and source-oriented than the implementation, which does not detect those constructs directly here but instead fails when path reconstruction is not possible.",
+    "Saying the path is returned only when the Result comes from a 'simple single-value path' is directionally correct but not literally enforced by inspecting the original query; the function infers recoverability purely from `Result` position/raw text and JSON structure."
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,25 @@
+{
+  "task": "javascript/babel-parser/L3_index__flowParsePrimaryType",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__flowParsePrimaryType/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__flowParsePrimaryType/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::flowParsePrimaryType",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description is highly accurate and thorough. It correctly covers all major branches: object types (both regular and exact with correct flag descriptions), tuple types with noAnonFunctionType relaxation, generic function types with type parameters, parenthesized/grouped types with the dual-interpretation logic, all literal types (string, boolean, number, bigint, negative literals), special Flow types (void, null, this, existential *), typeof, keyword-as-identifier fallback, and interface/identifier-based types. The state save/restore for noAnonFunctionType is explicitly mentioned. The error-throwing behavior for unrecognized tokens and invalid minus operands is also covered. Minor gaps: the description doesn't mention that the parenthesized case sets `node.typeParameters = null` on the resulting FunctionTypeAnnotation (unlike the generic function type case which sets it from parsed type parameters), and the exact heuristic for determining `isGroupedType` (checking lookahead for token 13/comma or token 10/colon to distinguish function params from grouped types) is described at a high level but the specific lookahead logic for `this` keyword (token 74) is not called out. These are secondary implementation details that don't affect overall correctness of the description.",
+  "missing_functionality": [
+    "The parenthesized function type case sets `node.typeParameters = null` explicitly; this distinction from the generic function type case (which sets it from parsed type parameters) is not mentioned.",
+    "The specific lookahead heuristic for determining isGroupedType — checking that the next token is not a comma (13) or colon (10) — is described only vaguely; the role of the `this` keyword token (74) in that check is not mentioned."
+  ],
+  "incorrect_or_misleading_points": [
+    "No materially incorrect claims found. The description is accurate throughout."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__flowParsePrimaryType.raw.md"
+}

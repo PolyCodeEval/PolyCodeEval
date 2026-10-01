@@ -1,0 +1,14 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the overall structure and logic of `VerifyMatchMatrix`: the early return for empty matrix, the ExactMatch size check with conditional listener output, the per-element/per-matcher coverage scan, and the separate Superset/Subset failure reporting with combined diagnostics. The core behavior is well represented and would support a reasonable implementation. One notable omission is the detail about the `outer_sep` mechanism — specifically that when both Superset and Subset failures exist, the Subset section is prefixed with `\"\\nand \"` before its own separator, and that `outer_sep` is reset to `\"\"` after the first unmatched element is reported. The description says the diagnostic text \"combines both categories\" but doesn't capture this precise formatting detail. Also, the description doesn't mention that in the Superset block, the listener output includes the matcher's description via `DescribeTo`, while in the Subset block it uses the pre-computed `element_printouts` string — a distinction that matters for implementation. These are secondary formatting details, not core logic errors, so the score remains relatively high.",
+  "missing_functionality": [
+    "The `outer_sep` mechanism: when both Superset and Subset failures occur, the Subset section is prefixed with '\\nand ' before its header, and outer_sep is reset to '' after the first unmatched element is emitted.",
+    "Superset failure output calls `matcher_describers_[mi]->DescribeTo(listener->stream())` to describe each unmatched matcher — the description doesn't mention this detail.",
+    "The early-return condition requires BOTH LhsSize and RhsSize to be 0, not just one of them being empty."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'If both sides are empty' which is correct, but could be misread as either side being empty rather than both simultaneously.",
+    "The description says the combined diagnostic 'combines both categories of failures in a single explanation' — this is vague and doesn't convey the specific '\\nand ' separator mechanism used."
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,9 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly covers storing the callback/user/flags, deriving both probe limits and greedy parsing from flags, resetting nearly all compressor state, reinitializing the LZ/output buffer pointers and flag byte, conditionally clearing hash and dictionary state depending on the nondeterministic flag, zeroing both Huffman count tables, resetting Adler-32 to 1, and returning `TDEFL_STATUS_OKAY`. It is also sufficiently specific to support reimplementation. The only minor issue is that it says the max-probe parameters are derived from the low 12 bits of `flags` without explicitly noting that the second probe value uses those bits after a right shift by 2, though this is a small omission rather than a real mismatch.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [
+    "The description slightly abstracts the exact formula for `m_max_probes[1]`, which is computed from `(flags & 0xFFF) >> 2` rather than directly from the same low-12-bit value in the same way as `m_max_probes[0]`."
+  ],
+  "complete_enough": true
+}

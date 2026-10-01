@@ -1,0 +1,26 @@
+{
+  "task": "go/go-env/L3_env__doParseField",
+  "project": "go/go-env",
+  "language": "go",
+  "prompt_path": "datasets/go/go-env/tasks/L3_env__doParseField/prompt.md",
+  "task_json_path": "datasets/go/go-env/tasks/L3_env__doParseField/task.json",
+  "source_file_path": "datasets/go/go-env/src/env.go",
+  "target_symbol": "env.go::doParseField",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the overall flow and most key behaviors: settability check, early return for non-settable fields, recursive handling of non-nil pointer-to-struct and anonymous/unnamed addressable struct fields, parameter parsing, ignored-field skipping, processField callback invocation, Init-based nil pointer allocation, and post-init recursive parsing for struct fields and slices of structs. The prefix scoping via `optionsWithEnvPrefix` is correctly noted throughout. The main gap is that the description conflates `parseInternal` and `doParse` — the early-exit recursive calls for non-nil pointer-to-struct and anonymous struct use `parseInternal`, while the post-init struct recursion uses `doParse`. This distinction matters for implementation. Also, the description says 'anonymous/unnamed struct value' but the code checks `refField.Type().Name() == \"\"` which is the unnamed type check, not strictly the anonymous field check — a minor but real nuance. The description is otherwise complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The early-exit recursive calls use `parseInternal` (not `doParse`), while the post-init struct recursion uses `doParse` — this distinction is not captured in the description.",
+    "The unnamed struct check (`Type().Name() == \"\"`) is subtly different from an anonymous/embedded field check; the description conflates these concepts."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing the first two recursive cases as 'nested object parsed recursively' without distinguishing `parseInternal` vs `doParse` could lead an implementer to use the wrong function.",
+    "The phrase 'anonymous/unnamed struct value' is slightly misleading — the code checks for an unnamed type (empty type name), not specifically an anonymous (embedded) field."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_env__doParseField.raw.md"
+}

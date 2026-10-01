@@ -1,0 +1,10 @@
+{
+  "score": 4.6,
+  "reason": "The description matches the implementation closely: it says the function builds and returns a chi router, registers collection routes for GET / and POST /, includes the unusual PUT / mapped to delete, and defines the /{id} subroute with GET, PUT, and DELETE handlers. It is accurate on the main behavior and sufficiently detailed to reproduce the routing structure. It misses only minor implementation details such as explicitly creating a new router with chi.NewRouter and that the item-level handlers are registered as \"/\" within a nested Route(\"/{id}\") block rather than directly as /{id}.",
+  "missing_functionality": [
+    "Does not mention that the router is created with chi.NewRouter().",
+    "Does not mention that the item routes are defined via a nested Route(\"/{id}\") block with trailing / handlers."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

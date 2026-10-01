@@ -1,0 +1,14 @@
+{
+  "score": 4.4,
+  "reason": "The description is accurate and thorough, covering all major behavioral paths: the MAYBE_REFILL mechanism, the branchless fast path via DecompressBranchless, literal tag decoding (short and long forms, cross-chunk boundary handling), copy tag decoding (COPY_4_BYTE_OFFSET and the lookup-table-based forms), preloaded input optimization, and all exit conditions. The description correctly identifies that the fast path is conditional on the writer exposing its backing buffer. Minor gaps include: the description doesn't mention that after TryFastAppend succeeds, MAYBE_REFILL is intentionally skipped (the preload is set directly); it doesn't capture the specific optimization where after a short copy tag the preload is shifted rather than reloaded; and it doesn't mention that the branchless path is attempted at the top of every loop iteration (not just opportunistically). These are secondary implementation details that don't undermine the overall accuracy or implementability of the description.",
+  "missing_functionality": [
+    "After TryFastAppend succeeds, MAYBE_REFILL is intentionally omitted and preload is set directly from *ip — the description doesn't mention this specific fast-path continuation behavior.",
+    "After a short copy tag (non-COPY_4_BYTE_OFFSET), the preload register is shifted right by (c & 3)*8 bits to reuse the already-loaded bytes, avoiding a reload — this optimization is not described.",
+    "The branchless DecompressBranchless fast path is attempted at the top of every loop iteration (not just when conditions are favorable), gated only on whether GetBase returns non-null."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the fast path 'may consume multiple tags and advance both input and output, after which normal tag-by-tag decoding resumes' — this is accurate but slightly understates that it's attempted unconditionally each iteration when the writer supports it.",
+    "The description says the fast path is invoked 'opportunistically' which implies it's selectively triggered, but it's actually attempted at the start of every loop iteration."
+  ],
+  "complete_enough": true
+}

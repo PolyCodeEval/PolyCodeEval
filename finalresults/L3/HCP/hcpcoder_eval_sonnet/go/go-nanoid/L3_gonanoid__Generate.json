@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.76,
+  "stdout": "FAIL\tgithub.com/matoous/go-nanoid/v2 [build failed]\nFAIL\tgithub.com/matoous/go-nanoid/v2/examples [build failed]\nFAIL\n",
+  "stderr": "# github.com/matoous/go-nanoid/v2\n./gonanoid.go:59:7: syntax error: unexpected literal `go\n    // Generate is a low-level function to change alphabet and ID size.\n    ` at end of statement\n./gonanoid.go:63:7: string not terminated\n./gonanoid.go:63:7: syntax error: unexpected literal `go\n    \trunes := []rune(alphabet)\n    \talphabetSize := len(runes)\n    \tif alphabetSize == 0 || alphabetSize > 255 {\n    \t\treturn \"\", errors.New(\"alphabet must not be empty and contain no more than 255 chars\")\n    \t}\n    \tif size <= 0 {\n    \t\treturn \"\", errors.New(\"size must be positive integer\")\n    \t}\n\n    \tmask := getMask(alphabetSize)\n    \t// estimate how many random bytes we need: each byte gives us one character attempt\n    \t// we need roughly size * log(alphabetSize) / log(mask+1) bytes on average\n    \tstep := int(math.Ceil(1.6 * float64(mask*size) / float64(alphabetSize)))\n\n    \tid := make([]rune, size)\n    \tgenerated := 0\n    \tfor generated < size {\n    \t\trandomBytes := make([]byte, step)\n    \t\t_, err := rand.Read(randomBytes)\n    \t\tif err != nil {\n    \t\t\treturn \"\", err\n    \t\t}\n    \t\tfor _, b := range randomBytes {\n    \t\t\tidx := int(b) & mask\n    \t\t\tif idx < alphabetSize {\n    \t\t\t\tid[generated] = runes[idx]\n    \t\t\t\tgenerated++\n    \t\t\t\tif generated == size {\n    \t\t\t\t\tbreak\n    \t\t\t\t}\n    \t\t\t}\n    \t\t}\n    \t}\n    \treturn string(id), nil\n}\n\n// MustGenerate is the same as Generate but panics on error.\nfunc MustGenerate(alphabet string, size int) string {\n\tid, err := Generate(alphabet, size)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn id\n}\n\n// New generates secure URL-friendly unique ID.\n// Accepts optional parameter - length of the ID to be generated (21 by default).\nfunc New(l ...int) (string, error) {\n\tvar size int\n\tswitch {\n\tcase len(l) == 0:\n\t\tsize = defaultSize\n\tcase len(l) == 1:\n\t\tsize = l[0]\n\t\tif size < 0 {\n\t\t\treturn \"\", errors.New(\"negative id length\")\n\t\t}\n\tdefault:\n\t\treturn \"\", errors.New(\"unexpected parameter\")\n\t}\n\tbytes := make([]byte, size)\n\t_, err := rand.Read(bytes)\n\tif err != nil {\n\t\treturn \"\", err\n\t}\n\tid := make([]rune, size)\n\tfor i := 0; i < size; i++ {\n\t\tid[i] = []rune(defaultAlphabet)[bytes[i]&63]\n\t}\n\treturn string(id[:size]), nil\n}\n\n// Must is the same as New but panics on error.\nfunc Must(l ...int) string {\n\tid, err := New(l...)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn id\n}\n at end of statement\n",
+  "task": "go/go-nanoid/L3_gonanoid__Generate",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

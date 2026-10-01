@@ -1,0 +1,27 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.46,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 287 items\n\ntests/unit_tests/test_auth.py ...                                        [  1%]\ntests/unit_tests/test_config.py ............                             [  5%]\ntests/unit_tests/test_datetime_util.py ........                          [  8%]\ntests/unit_tests/test_enable.py .....                                    [  9%]\ntests/unit_tests/test_fixed_offset.py ......                             [ 11%]\ntests/unit_tests/test_folder_status.py ...                               [ 12%]\ntests/unit_tests/test_imap_utf7.py ...                                   [ 13%]\ntests/unit_tests/test_imapclient.py ..............................F..... [ 26%]\n.......................................F.                                [ 40%]\ntests/unit_tests/test_init.py .......                                    [ 43%]\ntests/unit_tests/test_remaining_tasks.py ........                        [ 45%]\ntests/unit_tests/test_response_lexer.py ..............                   [ 50%]\ntests/unit_tests/test_response_parser.py ............................... [ 61%]\n........................                                                 [ 70%]\ntests/unit_tests/test_search.py ....................                     [ 77%]\ntests/unit_tests/test_sort.py ....                                       [ 78%]\ntests/unit_tests/test_starttls.py ....                                   [ 79%]\ntests/unit_tests/test_store.py .........                                 [ 82%]\ntests/unit_tests/test_thread.py ....                                     [ 84%]\ntests/unit_tests/test_util_functions.py ................................ [ 95%]\n........                                                                 [ 98%]\ntests/unit_tests/test_version.py .....                                   [100%]\n\n=================================== FAILURES ===================================\n______________ TestIdleAndNoop.test_consume_until_tagged_response ______________\n\nself = <unit_tests.test_imapclient.TestIdleAndNoop testMethod=test_consume_until_tagged_response>\n\n    def test_consume_until_tagged_response(self):\n        client = self.client\n        client._imap.tagged_commands = {sentinel.tag: None}\n    \n        counter = itertools.count()\n    \n        def fake_get_response():\n            count = next(counter)\n            if count == 0:\n                return b\"* 99 EXISTS\"\n            client._imap.tagged_commands[sentinel.tag] = (\"OK\", [b\"Idle done\"])\n    \n        client._imap._get_response = fake_get_response\n    \n>       text, responses = client._consume_until_tagged_response(sentinel.tag, b\"IDLE\")\n\ntests/unit_tests/test_imapclient.py:734: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f1b5aaad4e0>\ntag = sentinel.tag, command = b'IDLE'\n\n    def _consume_until_tagged_response(self, tag, command):\n>       return tuple.__new__(cls, (personal, other, shared))\nE       NameError: name 'cls' is not defined\n\nsrc/imapclient/imapclient.py:1637: NameError\n___________ TestProtocolError.test_tagged_response_with_parse_error ____________\n\nself = <unit_tests.test_imapclient.TestProtocolError testMethod=test_tagged_response_with_parse_error>\n\n    def test_tagged_response_with_parse_error(self):\n        client = self.client\n        client._imap.tagged_commands = {sentinel.tag: None}\n        client._imap._get_response = lambda: b\"NOT-A-STAR 99 EXISTS\"\n    \n        with self.assertRaises(ProtocolError):\n>           client._consume_until_tagged_response(sentinel.tag, b\"IDLE\")\n\ntests/unit_tests/test_imapclient.py:1104: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    def _consume_until_tagged_response(self, tag, command):\n>       return tuple.__new__(cls, (personal, other, shared))\nE       NameError: name 'cls' is not defined\n\nsrc/imapclient/imapclient.py:1637: NameError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestIdleAndNoop::test_consume_until_tagged_response\nFAILED tests/unit_tests/test_imapclient.py::TestProtocolError::test_tagged_response_with_parse_error\n======================== 2 failed, 285 passed in 1.02s =========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient___consume_until_tagged_response",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestIdleAndNoop::test_consume_until_tagged_response",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 1,
+    "total": 1
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

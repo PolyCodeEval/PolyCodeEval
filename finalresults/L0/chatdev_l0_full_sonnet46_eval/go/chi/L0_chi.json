@@ -1,0 +1,1073 @@
+{
+  "task": "go/chi/L0_chi",
+  "solver": "chatdev_sonnet46_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.57,
+  "stdout": "",
+  "stderr": "main.go:1:1: expected 'package', found '.'\nmiddleware/middleware.go:1:1: expected 'package', found middleware\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.55,
+    "Architecture": 2.27,
+    "Health": 3.5
+  },
+  "overall_score": 2.06,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "Remain fully compatible with `net/http` — no custom context types required.",
+          "evidence": [
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== context.go: URLParam with no route context =====\n\nfunc TestURLParamNoRouteContext(t *testing.T) {\n\treq := httptest.NewRequest(\"GET\", \"/test\", nil)"
+            },
+            {
+              "path": "context.go",
+              "excerpt": "package chi\nimport \"context\"\n// contextKey is the key type for values stored in context.\ntype contextKey struct{}\n// RouteCtxKey is the context key for the chi routing context.\nvar RouteCtxKey = &contextKey{}\n// RouteParams stores URL parameter key/value pairs.\ntype RouteParams struct {\n\tKeys, Value"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"strings\"\n\t\"sync\"\n)\n// Mux is an HTTP request multiplexer implementing Router.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.Handl"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`chi.Router`/`Mux` are built on `net/http` types and routing context is stored in standard `context.Context`, with helpers like `URLParam(r *http.Request, ...)` in `repo/chi.go` and request handling in `repo/mux.go`."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "test_middleware_test.go",
+              "excerpt": "r) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-Auth\", \"required\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t}).Get(\"/private\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"private\"))\n\t})\n\n\t// Test public route does not have middleware header\n\treq := httptest.NewRequest(\"GET\", \"/public\", nil)\n\trec := httptest.NewRecorder()\n\tr."
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount("
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "al)\n\t}\n}\n\n// ===== middleware.go: contextKey.String() =====\n\nfunc TestMiddlewareContextKeyString(t *testing.T) {\n\t// LogEntryCtxKey is a *contextKey, printing it triggers String()\n\ts := fmt.Sprintf(\"%v\", middleware.LogEntryCtxKey)\n\tif !strings.Contains(s, \"LogEntry\") {\n\t\tt.Errorf(\"expected LogEntry in key string, got %q\", s)\n\t}\n}\n\n// ===== context.go: contextKey.String() =====\n\nfunc TestContextKey"
+            }
+          ],
+          "status": "partial",
+          "reason": "Most required public entry points exist in `repo/chi.go`/`repo/mux.go`, but the `middleware` package is malformed/truncated and missing many required exports, so the full public surface is only partially present."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "Go module path: `github.com/go-chi/chi/v5`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/go-chi/chi/v5\n\n// Chi supports the four most recent major versions of Go.\n// See https://github.com/go-chi/chi/issues/963.\ngo 1.23"
+            },
+            {
+              "path": "requirements.txt",
+              "excerpt": "module github.com/go-chi/chi/v5\n\ngo 1.23"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "nc TestNewRouteContextReset(t *testing.T) {\n\trctx := chi.NewRouteContext()\n\trctx.URLParams.Add(\"key\", \"val\")\n\trctx.RoutePath = \"/test\"\n\trctx.RouteMethod = \"GET\"\n\trctx.RoutePatterns = append(rctx.RoutePatterns, \"/test\")\n\n\trctx."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/go-chi/chi/v5`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "public router APIs under package `chi`, including `NewRouter()`, `Router`, `Mux`, `URLParam`, `RouteContext`, and `NewRouteContext()`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount("
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "kage chi\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"strings\"\n\t\"sync\"\n)\n// Mux is an HTTP request multiplexer implementing Router.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "rect', got %q\", rec.Body.String())\n\t}\n}\n\n// ===== Walk =====\n\nfunc TestWalkVisitsAllRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Post(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Get(\"/posts\", func(w http.ResponseWriter, r *http.Request) {})\n\n\tvisited := make(map[string]bool)\n\terr := chi.Walk(r, func(method strin"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/chi.go`, `repo/mux.go`, and `repo/context.go` define `NewRouter`, `Router`, exported `Mux`, `URLParam`, `RouteContext`, and `NewRouteContext`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "middleware support under `github.com/go-chi/chi/v5/middleware`",
+          "evidence": [
+            {
+              "path": "test_uncovered_middleware_test.go",
+              "excerpt": "\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== BasicAuth =====\n\nfunc TestBasicAuthAllowsValidCredentials(t *testing.T) {\n\tcreds := map[string]string{\"admin\": \"secret\"}\n\tr := chi.NewRouter()\n\tr.Use(middleware.BasicAuth(\"test realm\", creds))\n\tr.Get(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw."
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "(\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== context.go: URLParam with no route context =====\n\nfunc TestURLParamNoRouteContext(t *testing.T) {\n\treq := httptest.NewRequest(\"GET\", \"/test\", nil)\n\tval := chi.URLParam(req, \"id\")\n\tif val != \"\" {\n\t\tt.Errorf(\"expected empty string, got %q\", val)\n\t}\n}\n\nfunc T"
+            },
+            {
+              "path": "test_middleware_test.go",
+              "excerpt": "ckage chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestUseAppliesMiddleware(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-Custom\", \"applied\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t})\n\tr.Get(\"/test\", func(w http.ResponseWr"
+            }
+          ],
+          "status": "partial",
+          "reason": "There is a `repo/middleware/` package with `package middleware`, but the file is malformed/truncated and does not provide complete middleware support."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`Router` should preserve route/middleware methods shaped like:",
+          "evidence": [
+            {
+              "path": "mux.go",
+              "excerpt": "kage chi\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"strings\"\n\t\"sync\"\n)\n// Mux is an HTTP request multiplexer implementing Router.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex"
+            },
+            {
+              "path": "Makefile",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs\n```"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Rout"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The `Router` interface in `repo/chi.go` includes the listed route and middleware methods with the required shapes."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "`Get(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "n string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h ht"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "od(\"CONNECT\", p, h) }\nfunc (mx *Mux) Delete(p string, h http.HandlerFunc)  { mx.Method(\"DELETE\", p, h) }\nfunc (mx *Mux) Get(p string, h http.HandlerFunc)     { mx.Method(\"GET\", p, h) }\nfunc (mx *Mux) Head(p string, h http.HandlerFunc)    { mx.Method(\"HEAD\", p, h) }\nfunc (mx *Mux) Options(p string, h http.HandlerFunc) { mx.Method(\"OPTIONS\", p, h) }\nfunc (mx *Mux) Patch(p string, h http.HandlerFunc)"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "onseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"end\"))\n\t})\n\n\th := chain.Handler(endpoint)\n\treq := httptest.NewRequest(\"GET\", \"/\", nil)\n\trec := httptest.NewRecorder()\n\th.ServeHTTP(rec, req)\n\n\tif rec.Header().Get(\"X-MW1\") != \"yes\" {\n\t\tt.Errorf(\"expected X-MW1 header, got %q\", rec.Header().Get(\"X-MW1\"))\n\t}\n\tif rec.Header().Get(\"X-MW2\") != \"yes\" {\n\t\tt.Errorf(\"expected X-MW2 header, got %q\", rec.Heade"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Get(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`Post(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "rn string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection.\ntype Routes interface {\n\tRoutes() []Route"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "hod(\"OPTIONS\", p, h) }\nfunc (mx *Mux) Patch(p string, h http.HandlerFunc)   { mx.Method(\"PATCH\", p, h) }\nfunc (mx *Mux) Post(p string, h http.HandlerFunc)    { mx.Method(\"POST\", p, h) }\nfunc (mx *Mux) Put(p string, h http.HandlerFunc)     { mx.Method(\"PUT\", p, h) }\nfunc (mx *Mux) Trace(p string, h http.HandlerFunc)   { mx.Method(\"TRACE\", p, h) }\n// Routes returns the list of registered routes.\nfun"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "itsAllRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Post(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Get(\"/posts\", func(w http.ResponseWriter, r *http.Request) {})\n\n\tvisited := make(map[string]bool)\n\terr := chi.Walk(r, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Post(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`Put(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "ttern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection.\ntype Routes interface {\n\tRoutes() []Route\n\tMiddlewares() Middlewares\n\tMatch(rctx *Con"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "Method(\"PATCH\", p, h) }\nfunc (mx *Mux) Post(p string, h http.HandlerFunc)    { mx.Method(\"POST\", p, h) }\nfunc (mx *Mux) Put(p string, h http.HandlerFunc)     { mx.Method(\"PUT\", p, h) }\nfunc (mx *Mux) Trace(p string, h http.HandlerFunc)   { mx.Method(\"TRACE\", p, h) }\n// Routes returns the list of registered routes.\nfunc (mx *Mux) Routes() []Route {\n\tmx.routesMu.RLock()\n\tdefer mx.routesMu.RUnlock()"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "seWriter, r *http.Request) {\n\t\tw.Write([]byte(\"any:\" + r.Method))\n\t})\n\n\tfor _, method := range []string{\"GET\", \"POST\", \"PUT\", \"DELETE\"} {\n\t\treq := httptest.NewRequest(method, \"/any\", nil)\n\t\trec := httptest.NewRecorder()\n\t\tr.ServeHTTP(rec, req)\n\n\t\texpected := \"any:\" + method\n\t\tif rec.Body.String() != expected {\n\t\t\tt.Errorf(\"method %s: expected %q, got %q\", method, expected, rec.Body.String())\n\t\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Put(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`Patch(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "ern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection."
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "u sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {\n\treturn &Mux{tree: newRadixTree()}\n}\n// ServeHTTP dispatches the request to the matching handler.\nfunc (mx *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {\n\tmx.handlerMu.RLock()\n\th := mx.handler\n\tmx.handlerMu.RUnlock()\n\tif h == nil {\n\t\th = mx.buildHandler()\n\t}\n\th.ServeHTTP(w, r)\n}\nfunc (mx *Mux) buildHandler() http.Handler"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "x, \"GET\", \"/unknown\") {\n\t\tt.Error(\"expected Match to return false for unregistered route\")\n\t}\n}\n\nfunc TestMuxFindReturnsPattern(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users/{id}\", func(w http.ResponseWriter, r *http.Request) {})\n\n\trctx := chi.NewRouteContext()\n\tpattern := r.Find(rctx, \"GET\", \"/users/42\")\n\tif pattern != \"/users/{id}\" {\n\t\tt.Errorf(\"expected '/users/{id}', got %q\", pattern)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Patch(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "`Delete(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": ", h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h h"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "AllowedHandler = h }\nfunc (mx *Mux) Connect(p string, h http.HandlerFunc) { mx.Method(\"CONNECT\", p, h) }\nfunc (mx *Mux) Delete(p string, h http.HandlerFunc)  { mx.Method(\"DELETE\", p, h) }\nfunc (mx *Mux) Get(p string, h http.HandlerFunc)     { mx.Method(\"GET\", p, h) }\nfunc (mx *Mux) Head(p string, h http.HandlerFunc)    { mx.Method(\"HEAD\", p, h) }\nfunc (mx *Mux) Options(p string, h http.HandlerFunc"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "users/{id}\", func(w http.ResponseWriter, r *http.Request) {})\n\n\trctx := chi.NewRouteContext()\n\tpattern := r.Find(rctx, \"DELETE\", \"/users/42\")\n\tif pattern != \"\" {\n\t\tt.Errorf(\"expected empty string, got %q\", pattern)\n\t}\n}\n\n// ===== Mux.Routes and Mux.Middlewares =====\n\nfunc TestMuxRoutesReturnsRegisteredRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/a\", func(w http.ResponseWriter, r *http.Req"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Delete(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`Head(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "ttern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerF"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "Method(\"DELETE\", p, h) }\nfunc (mx *Mux) Get(p string, h http.HandlerFunc)     { mx.Method(\"GET\", p, h) }\nfunc (mx *Mux) Head(p string, h http.HandlerFunc)    { mx.Method(\"HEAD\", p, h) }\nfunc (mx *Mux) Options(p string, h http.HandlerFunc) { mx.Method(\"OPTIONS\", p, h) }\nfunc (mx *Mux) Patch(p string, h http.HandlerFunc)   { mx.Method(\"PATCH\", p, h) }\nfunc (mx *Mux) Post(p string, h http.HandlerFunc"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": ":= func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-MW1\", \"yes\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t}\n\tmw2 := func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-MW2\", \"yes\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t}\n\n\tchain := chi.Chain(mw1, mw2)\n\te"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Head(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`Options(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "x.Method(\"GET\", p, h) }\nfunc (mx *Mux) Head(p string, h http.HandlerFunc)    { mx.Method(\"HEAD\", p, h) }\nfunc (mx *Mux) Options(p string, h http.HandlerFunc) { mx.Method(\"OPTIONS\", p, h) }\nfunc (mx *Mux) Patch(p string, h http.HandlerFunc)   { mx.Method(\"PATCH\", p, h) }\nfunc (mx *Mux) Post(p string, h http.HandlerFunc)    { mx.Method(\"POST\", p, h) }\nfunc (mx *Mux) Put(p string, h http.HandlerFunc)"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "x, \"GET\", \"/unknown\") {\n\t\tt.Error(\"expected Match to return false for unregistered route\")\n\t}\n}\n\nfunc TestMuxFindReturnsPattern(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users/{id}\", func(w http.ResponseWriter, r *http.Request) {})\n\n\trctx := chi.NewRouteContext()\n\tpattern := r.Find(rctx, \"GET\", \"/users/42\")\n\tif pattern != \"/users/{id}\" {\n\t\tt.Errorf(\"expected '/users/{id}', got %q\", pattern)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Options(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`Use(middlewares ...func(http.Handler) http.Handler)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFun"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "r *http.Request) {\n\t\thttp.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)\n\t})\n}\n// Use appends middlewares to the mux's middleware stack.\nfunc (mx *Mux) Use(middlewares ...func(http.Handler) http.Handler) {\n\tmx.middlewares = append(mx.middlewares, middlewares...)\n\tmx.handlerMu.Lock()\n\tmx.handler = nil\n\tmx.handlerMu.Unlock()\n}\n// With creates a new inline router"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "c.Body.String())\n\t}\n}\n\n// ===== Walk =====\n\nfunc TestWalkVisitsAllRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Post(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Get(\"/posts\", func(w http.ResponseWriter, r *http.Request) {})\n\n\tvisited := make(map[string]bool)\n\terr := chi.Walk(r, func(method string, route string, h"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Use(middlewares ...func(http.Handler) http.Handler)` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`With(middlewares ...func(http.Handler) http.Handler) Router`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFunc(pa"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "nc\"\n)\n// Mux is an HTTP request multiplexer implementing Router.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux cre"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "_test\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\n// ===== Chain / Middlewares.Handler / Middlewares.HandlerFunc =====\n\nfunc TestChainReturnsMiddlewares(t *testing.T) {\n\tmw1 := func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-MW1\", \"yes\")\n\t\t\tnext.ServeHTTP(w, r)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`With(middlewares ...func(http.Handler) http.Handler) Router` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`Group(fn func(Router)) Router`",
+          "evidence": [
+            {
+              "path": "test_route_group_test.go",
+              "excerpt": "Body.String() != \"admin settings\" {\n\t\tt.Errorf(\"expected 'admin settings', got '%s'\", rec.Body.String())\n\t}\n}\n\nfunc TestGroupForGrouping(t *testing.T) {\n\tr := chi.NewRouter()\n\n\tr.Group(func(r chi.Router) {\n\t\tr.Use(func(next http.Handler) http.Handler {\n\t\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\t\tw.Header().Set(\"X-Group\", \"yes\")\n\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t})\n\t\t})"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "utes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFunc(pattern string, h http.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "mx,\n\t}\n\tcopy(im.middlewares, mx.middlewares)\n\tcopy(im.middlewares[len(mx.middlewares):], middlewares)\n\treturn im\n}\n// Group creates a new inline router with an optional route group.\nfunc (mx *Mux) Group(fn func(Router)) Router {\n\tim := mx.With()\n\tif fn != nil {\n\t\tfn(im)\n\t}\n\treturn im\n}\n// Route mounts a sub-router at pattern.\nfunc (mx *Mux) Route(pattern string, fn func(Router)) Router {\n\tsubRou"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Group(fn func(Router)) Router` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`Route(pattern string, fn func(Router)) Router`",
+          "evidence": [
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestGetRoute(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/hello\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\tw.Write([]byte(\"hello world\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/hello\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec, req)"
+            },
+            {
+              "path": "test_route_group_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestRouteNestedRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Route(\"/admin\", func(r chi.Router) {\n\t\tr.Get(\"/dashboard\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Write([]byte(\"admin dashboard\"))\n\t\t})\n\t\tr.Get(\"/settings\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Rout"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Route(pattern string, fn func(Router)) Router` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`Mount(pattern string, h http.Handler)`",
+          "evidence": [
+            {
+              "path": "test_mount_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestMountSubRouter(t *testing.T) {\n\tr := chi.NewRouter()\n\n\tsub := chi.NewRouter()\n\tsub.Get(\"/info\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"sub info\"))\n\t})\n\n\tr.Mount(\"/api\", sub)\n\n\treq := httptest.NewRequest(\"GET\", \"/api/info\", nil)\n\trec := httptest.NewRecord"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": ".func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFunc(pattern string, h http.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDele"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "roup.\nfunc (mx *Mux) Group(fn func(Router)) Router {\n\tim := mx.With()\n\tif fn != nil {\n\t\tfn(im)\n\t}\n\treturn im\n}\n// Route mounts a sub-router at pattern.\nfunc (mx *Mux) Route(pattern string, fn func(Router)) Router {\n\tsubRouter := NewMux()\n\tif fn != nil {\n\t\tfn(subRouter)\n\t}\n\tmx.Mount(pattern, subRouter)\n\treturn subRouter\n}\n// Mount attaches another handler at the given pattern.\nfunc (mx *Mux) Mount("
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Mount(pattern string, h http.Handler)` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`NotFound(h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "test_notfound_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestNotFoundHandler(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.NotFound(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusNotFound)\n\t\tw.Write([]byte(\"custom not found\"))\n\t})\n\tr.Get(\"/exists\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"found"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "attern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection.\ntype Routes interface {\n\tRoutes() []Route\n\tMiddlewares() Middlewares\n\tMatch(rctx *Context, method, path string) bool\n\tFind(rctx *Context, method, path string) string\n}\n/"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "uter.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {\n\treturn &Mux{tree: new"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`NotFound(h http.HandlerFunc)` exists on `Router` in `repo/chi.go` and is implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "`MethodNotAllowed(h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "unc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection.\ntype Routes interface {\n\tRoutes() []Route\n\tMiddlewares() Middlewares\n\tMatch(rctx *Context, method, path string) bool\n\tFind(rctx *Context, method, path string) string\n}\n// Route holds a registered rou"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "*radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {\n\treturn &Mux{tree: newRadixTree()}\n}\n// ServeHTTP dispatches the"
+            },
+            {
+              "path": "middleware\\middleware.go",
+              "excerpt": "middleware/middleware.go\n```go\n'''\nPackage middleware provides common HTTP middleware for chi routers.\n'''\npackage middleware\nimport (\n\t\"bufio\"\n\t\"compress/gzip\"\n\t\"context\"\n\t\"encoding/base64\"\n\t\"fmt\"\n\t\"io\"\n\t\"log\"\n\t\"net\"\n\t\"net/http\"\n\t\"net/http/pprof\"\n\t\"runtime/debug\"\n\t\"strings\"\n\t\"sync\"\n\t\"time\"\n)\n// New wraps a plain http.Handler as a middleware functi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`MethodNotAllowed(h http.HandlerFunc)` exists on `Router` in `repo/chi.go` and is implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "helper signatures should remain shaped like `URLParam(r *http.Request, key string) string`, `URLParamFromCtx(ctx context.Context, key string) string`, `RouteContext(ctx context.Context) *Context`, and `NewRouteContext() *Context`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "ontext.\nfunc RouteContext(ctx context.Context) *Context {\n\tval, _ := ctx.Value(RouteCtxKey).(*Context)\n\treturn val\n}\n// URLParam returns the URL parameter from the request's routing context.\nfunc URLParam(r *http.Request, key string) string {\n\treturn URLParamFromCtx(r.Context(), key)\n}\n// URLParamFromCtx returns the URL parameter from a context.\nfunc URLParamFromCtx(ctx context.Context, key string"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "=== NewRouteContext and Reset =====\n\nfunc TestNewRouteContextReset(t *testing.T) {\n\trctx := chi.NewRouteContext()\n\trctx.URLParams.Add(\"key\", \"val\")\n\trctx.RoutePath = \"/test\"\n\trctx.RouteMethod = \"GET\"\n\trctx.RoutePatterns = append(rctx.RoutePatterns, \"/test\")\n\n\trctx."
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "test\"\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== context.go: URLParam with no route context =====\n\nfunc TestURLParamNoRouteContext(t *testing.T) {\n\treq := httptest.NewRequest(\"GET\", \"/test\", nil)\n\tval := chi.URLParam(req, \"id\")\n\tif val != \"\" {\n\t\tt.Errorf(\"expected empty string, got %q\", val)\n\t}\n}\n\nfunc TestURLParamFromCtxNoRouteContext(t *"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/chi.go` provides `URLParam`, `URLParamFromCtx`, and `RouteContext`; `repo/context.go` provides `NewRouteContext`, all with the required signatures."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`Router` must also include:",
+          "evidence": [
+            {
+              "path": "test_notfound_test.go",
+              "excerpt": "\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestNotFoundHandler(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.NotFound(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusNotFound)\n\t\tw.Write([]byte(\"custom not found\"))\n\t})\n\tr.Get(\"/exists\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"found\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \""
+            },
+            {
+              "path": "Makefile",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs\n```"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Rout"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The additional `Router` methods (`Connect`, `Trace`, `Handle`, `HandleFunc`, `Method`, `MethodFunc`) are present in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`Connect(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "p.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(pattern string, h http.HandlerFunc)\n\tPost(pattern string,"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "stom 405 handler.\nfunc (mx *Mux) MethodNotAllowed(h http.HandlerFunc) { mx.methodNotAllowedHandler = h }\nfunc (mx *Mux) Connect(p string, h http.HandlerFunc) { mx.Method(\"CONNECT\", p, h) }\nfunc (mx *Mux) Delete(p string, h http.HandlerFunc)  { mx.Method(\"DELETE\", p, h) }\nfunc (mx *Mux) Get(p string, h http.HandlerFunc)     { mx.Method(\"GET\", p, h) }\nfunc (mx *Mux) Head(p string, h http.HandlerFunc"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "rec.Body.String() != \"method-func\" {\n\t\tt.Errorf(\"expected 'method-func', got %q\", rec.Body.String())\n\t}\n}\n\n// ===== Mux.Connect and Mux.Trace =====\n\nfunc TestConnectRoute(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Connect(\"/tunnel\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"connected\"))\n\t})\n\n\treq := httptest.NewRequest(\"CONNECT\", \"/tunnel\", nil)\n\trec := httptest.NewRecorder()"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Connect(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`Trace(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "pattern string, h http.HandlerFunc)\n\tPost(pattern string, h http.HandlerFunc)\n\tPut(pattern string, h http.HandlerFunc)\n\tTrace(pattern string, h http.HandlerFunc)\n\tNotFound(h http.HandlerFunc)\n\tMethodNotAllowed(h http.HandlerFunc)\n}\n// Routes interface for route inspection.\ntype Routes interface {\n\tRoutes() []Route\n\tMiddlewares() Middlewares\n\tMatch(rctx *Context, method, path string) bool\n\tFind(rct"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "x.Method(\"POST\", p, h) }\nfunc (mx *Mux) Put(p string, h http.HandlerFunc)     { mx.Method(\"PUT\", p, h) }\nfunc (mx *Mux) Trace(p string, h http.HandlerFunc)   { mx.Method(\"TRACE\", p, h) }\n// Routes returns the list of registered routes.\nfunc (mx *Mux) Routes() []Route {\n\tmx.routesMu.RLock()\n\tdefer mx.routesMu.RUnlock()\n\treturn mx.routes\n}\n// Middlewares returns the current middleware stack.\nfunc (m"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": ") != \"method-func\" {\n\t\tt.Errorf(\"expected 'method-func', got %q\", rec.Body.String())\n\t}\n}\n\n// ===== Mux.Connect and Mux.Trace =====\n\nfunc TestConnectRoute(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Connect(\"/tunnel\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"connected\"))\n\t})\n\n\treq := httptest.NewRequest(\"CONNECT\", \"/tunnel\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Trace(pattern string, h http.HandlerFunc)` is declared on `Router` in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`Handle(pattern string, h http.Handler)` — if `pattern` contains a space (e.g. `\"GET /path\"`), it registers only the specified method",
+          "evidence": [
+            {
+              "path": "mux.go",
+              "excerpt": "iplexer implementing Router.\ntype Mux struct {\n\ttree                    *radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "mport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Ha"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "t (\n\t\"context\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\n// ===== Chain / Middlewares.Handler / Middlewares.HandlerFunc =====\n\nfunc TestChainReturnsMiddlewares(t *testing.T) {\n\tmw1 := func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-MW1\", \"yes\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t}\n\tmw2"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/mux.go` implements `Handle(pattern, h)` and explicitly special-cases patterns containing a space by splitting into method and path."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "`HandleFunc(pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFunc(pattern string, h http.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "ts := strings.SplitN(pattern, \" \", 2)\n\t\tmx.Method(parts[0], parts[1], h)\n\t\treturn\n\t}\n\tmx.register(\"*\", pattern, h)\n}\n// HandleFunc registers an http.HandlerFunc for the given pattern.\nfunc (mx *Mux) HandleFunc(pattern string, h http.HandlerFunc) {\n\tmx.Handle(pattern, h)\n}\n// Method registers a handler for a specific HTTP method and pattern.\nfunc (mx *Mux) Method(method, pattern string, h http.Hand"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "ddlewares()\n\tif len(mws) != 1 {\n\t\tt.Errorf(\"expected 1 middleware, got %d\", len(mws))\n\t}\n}\n\n// ===== Mux.Handle and Mux.HandleFunc (match any method) =====\n\nfunc TestHandleMatchesAnyMethod(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.HandleFunc(\"/any\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"any:\" + r.Method))\n\t})\n\n\tfor _, method := range []string{\"GET\", \"POST\", \"PUT\", \"DELETE"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`HandleFunc(pattern string, h http.HandlerFunc)` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "`Method(method, pattern string, h http.Handler)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "attern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tHandleFunc(pattern string, h http.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOpti"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "*radixTree\n\tmiddlewares             []func(http.Handler) http.Handler\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {\n\treturn &Mux{tree: newRadixTree()}\n}\n// ServeHTTP dispatches the"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "(\"/posts\", func(w http.ResponseWriter, r *http.Request) {})\n\n\tvisited := make(map[string]bool)\n\terr := chi.Walk(r, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {\n\t\tvisited[method+\" \"+route] = true\n\t\treturn nil\n\t})\n\tif err != nil {\n\t\tt.Fatalf(\"Walk returned error: %v\", err)\n\t}\n\n\tif !visited[\"GET /users\"] {\n\t\tt.Error(\"expected Walk to"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Method(method, pattern string, h http.Handler)` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "`MethodFunc(method, pattern string, h http.HandlerFunc)`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "tring, h http.Handler)\n\tHandleFunc(pattern string, h http.HandlerFunc)\n\tMethod(method, pattern string, h http.Handler)\n\tMethodFunc(method, pattern string, h http.HandlerFunc)\n\tConnect(pattern string, h http.HandlerFunc)\n\tDelete(pattern string, h http.HandlerFunc)\n\tGet(pattern string, h http.HandlerFunc)\n\tHead(pattern string, h http.HandlerFunc)\n\tOptions(pattern string, h http.HandlerFunc)\n\tPatch(p"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "func (mx *Mux) Method(method, pattern string, h http.Handler) {\n\tmx.register(strings.ToUpper(method), pattern, h)\n}\n// MethodFunc registers an http.HandlerFunc for a specific method and pattern.\nfunc (mx *Mux) MethodFunc(method, pattern string, h http.HandlerFunc) {\n\tmx.Method(method, pattern, h)\n}\nfunc (mx *Mux) register(method, pattern string, h http.Handler) {\n\tif pattern == \"\" || pattern[0] !"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "t.Errorf(\"method %s: expected %q, got %q\", method, expected, rec.Body.String())\n\t\t}\n\t}\n}\n\n// ===== Mux.Method and Mux.MethodFunc =====\n\nfunc TestMethodFuncRegistersCustomMethod(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.MethodFunc(\"GET\", \"/method-test\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"method-func\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/method-test\", nil)\n\trec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`MethodFunc(method, pattern string, h http.HandlerFunc)` is declared in `repo/chi.go` and implemented in `repo/mux.go`."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "`Routes` interface must include `Routes() []Route`, `Middlewares() Middlewares`, `Match(rctx *Context, method, path string) bool`, and `Find(rctx *Context, method, path string) string`",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Router)) Router\n\tMount(pattern string, h http.Handler)\n\tHandle(pattern string, h http.Handler)\n\tH"
+            },
+            {
+              "path": "mux.go",
+              "excerpt": "er\n\tnotFoundHandler         http.HandlerFunc\n\tmethodNotAllowedHandler http.HandlerFunc\n\tinline    bool\n\tparent    *Mux\n\troutes    []Route\n\troutesMu  sync.RWMutex\n\thandler   http.Handler\n\thandlerMu sync.RWMutex\n}\n// NewMux creates a new Mux.\nfunc NewMux() *Mux {\n\treturn &Mux{tree: newRadixTree()}\n}\n// ServeHTTP dispatches the request to the matching handler.\nfunc (mx *Mux) ServeHTTP(w http.Response"
+            },
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "req)\n\tif rec.Code != http.StatusBadRequest {\n\t\tt.Errorf(\"expected status 400, got %d\", rec.Code)\n\t}\n}\n\nfunc TestMultipleRoutesOnSameRouter(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/a\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"route-a\"))\n\t})\n\tr.Get(\"/b\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"route-b\"))\n\t})\n\tr.Post(\"/c\", func(w http.ResponseWri"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The `Routes` interface in `repo/chi.go` includes `Routes`, `Middlewares`, `Match`, and `Find` with the required signatures."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "`Chain(middlewares ...func(http.Handler) http.Handler) Middlewares` builds a middleware chain; `Middlewares.Handler(h http.Handler) http.Handler` and `Middlewares.HandlerFunc(h http.HandlerFunc) http.Handler` compose the chain with an endpoint",
+          "evidence": [
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "kage chi_test\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\n// ===== Chain / Middlewares.Handler / Middlewares.HandlerFunc =====\n\nfunc TestChainReturnsMiddlewares(t *testing.T) {\n\tmw1 := func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-MW1\", \"yes\")\n\t\t\tnext.ServeHTT"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "return nil\n}\n// Middlewares is a slice of middleware functions.\ntype Middlewares []func(http.Handler) http.Handler\n// Chain creates a Middlewares from the provided middleware functions.\nfunc Chain(middlewares ...func(http.Handler) http.Handler) Middlewares {\n\treturn Middlewares(middlewares)\n}\n// Handler wraps h with all middlewares in the chain.\nfunc (mws Middlewares) Handler(h http.Handler) htt"
+            },
+            {
+              "path": "middleware\\middleware.go",
+              "excerpt": "http\"\n\t\"net/http/pprof\"\n\t\"runtime/debug\"\n\t\"strings\"\n\t\"sync\"\n\t\"time\"\n)\n// New wraps a plain http.Handler as a middleware function.\nfunc New(h http.Handler) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\treturn h\n\t}\n}\n// Logger logs the start and end of each request.\nfunc Logger(next http.Handler) http.Handler {\n\treturn http.HandlerFunc(func(w http.ResponseWr"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/chi.go` defines `Chain(...) Middlewares`, plus `Middlewares.Handler` and `Middlewares.HandlerFunc`."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "`Walk(r Routes, walkFn WalkFunc) error` traverses all routes calling `walkFn` with method, pattern, handler, and middlewares",
+          "evidence": [
+            {
+              "path": "chi.go",
+              "excerpt": "lds a registered route.\ntype Route struct {\n\tPattern   string\n\tHandlers  map[string]http.Handler\n\tSubRoutes Routes\n}\n// WalkFunc is the type of function called by Walk.\ntype WalkFunc func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error\n// Walk traverses all registered routes in r, calling walkFn for each.\nfunc Walk(r Routes, walkFn WalkFunc)"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "ec, req)\n\n\tif rec.Body.String() != \"direct\" {\n\t\tt.Errorf(\"expected 'direct', got %q\", rec.Body.String())\n\t}\n}\n\n// ===== Walk =====\n\nfunc TestWalkVisitsAllRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Post(\"/users\", func(w http.ResponseWriter, r *http.Request) {})\n\tr.Get(\"/posts\", func(w http.ResponseWriter, r *http.Request) {})"
+            },
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "req)\n\tif rec.Code != http.StatusBadRequest {\n\t\tt.Errorf(\"expected status 400, got %d\", rec.Code)\n\t}\n}\n\nfunc TestMultipleRoutesOnSameRouter(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/a\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"route-a\"))\n\t})\n\tr.Get(\"/b\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"route-b\"))\n\t})\n\tr.Post(\"/c\", func(w http.ResponseWri"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/chi.go` defines `Walk(r Routes, walkFn WalkFunc) error` and traverses `Routes()`/`SubRoutes` while passing method, pattern, handler, and middleware stack."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "`Context` must expose `Reset()`, `RoutePattern() string`, `URLParam(key string) string`, `URLParams RouteParams`, `RoutePath string`, `RouteMethod string`, and `RoutePatterns []string`; a nil `*Context` returns `\"\"` from `RoutePattern()`",
+          "evidence": [
+            {
+              "path": "context.go",
+              "excerpt": "package chi\nimport \"context\"\n// contextKey is the key type for values stored in context.\ntype contextKey struct{}\n// RouteCtxKey is the context key for the chi routing context.\nvar RouteCtxKey = &contextKey{}\n// RouteParams stores URL parameter key/value pairs.\ntype RouteParams struct {\n\tKeys, Value"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\n// ===== Chain / Middlewares.Handler / Middlewares.HandlerFunc =====\n\nfunc TestChainReturnsMiddlewares(t *testing.T) {\n\tmw1 := func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(fun"
+            },
+            {
+              "path": "tree.go",
+              "excerpt": "n(b)\n\t}\n\tfor i := 0; i < max; i++ {\n\t\tif a[i] != b[i] {\n\t\t\treturn i\n\t\t}\n\t}\n\treturn max\n}\nfunc (t *radixTree) find(rctx *Context, method, path string) http.Handler {\n\tif t.root == nil {\n\t\treturn nil\n\t}\n\treturn t.root.find(rctx, method, path)\n}\nfunc (n *node) find(rctx *Context, method, path string) http.Handler {\n\tsearch := path\n\tfor {\n\t\tif n == nil {\n\t\t\treturn nil\n\t\t}\n\t\tif len(search) == 0 {\n\t\t\tre"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/context.go` exposes `Reset`, `RoutePattern`, `URLParam`, `URLParams`, `RoutePath`, `RouteMethod`, and `RoutePatterns`, and `RoutePattern()` returns `\"\"` for a nil receiver."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "commonly used middleware constructors/helpers should remain package-level exports from `middleware`, including names such as `BasicAuth`, `CleanPath`, `Heartbeat`, `Maybe`, `NoCache`, `RedirectSlashes`, `RealIP`, `GetHead`, `AllowContentType`, `AllowContentEncoding`, `SetHeader`, `Profiler`, `Compress`, `RequestSize`, and `Timeout`",
+          "evidence": [
+            {
+              "path": "middleware\\middleware.go",
+              "excerpt": "middleware/middleware.go\n```go\n'''\nPackage middleware provides common HTTP middleware for chi routers.\n'''\npackage middleware\nimport (\n\t\"bufio\"\n\t\"compress/gzip\"\n\t\"context\"\n\t\"encoding/base64\"\n\t\"fmt\"\n\t\"io\"\n\t\"log\"\n\t\"net\"\n\t\"net/http\"\n\t\"net/http/pprof\"\n\t\"runtime/debug\"\n\t\"strings\"\n\t\"sy"
+            },
+            {
+              "path": "test_middleware_test.go",
+              "excerpt": "ckage chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestUseAppliesMiddleware(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-Custom\", \"applied\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t})\n\tr.Get(\"/test\", func(w http.ResponseWr"
+            },
+            {
+              "path": "test_uncovered_middleware_test.go",
+              "excerpt": "\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== BasicAuth =====\n\nfunc TestBasicAuthAllowsValidCredentials(t *testing.T) {\n\tcreds := map[string]string{\"admin\": \"secret\"}\n\tr := chi.NewRouter()\n\tr.Use(middleware.BasicAuth(\"test realm\", creds))\n\tr.Get(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw."
+            }
+          ],
+          "status": "missing",
+          "reason": "`repo/middleware/middleware.go` only clearly contains `New`, `Logger`, `Recoverer`, `BasicAuth`, and a truncated `CleanPath`; exports such as `Heartbeat`, `Maybe`, `NoCache`, `RedirectSlashes`, `RealIP`, `GetHead`, `AllowContentType`, `AllowContentEncoding`, `SetHeader`, `Profiler`, `Compress`, `RequestSize`, and `Timeout` are not present."
+        },
+        {
+          "id": "F034",
+          "type": "feature",
+          "text": "`New(h http.Handler) func(next http.Handler) http.Handler` — wraps a plain `http.Handler` as a middleware function",
+          "evidence": [
+            {
+              "path": "middleware\\middleware.go",
+              "excerpt": "oding/base64\"\n\t\"fmt\"\n\t\"io\"\n\t\"log\"\n\t\"net\"\n\t\"net/http\"\n\t\"net/http/pprof\"\n\t\"runtime/debug\"\n\t\"strings\"\n\t\"sync\"\n\t\"time\"\n)\n// New wraps a plain http.Handler as a middleware function.\nfunc New(h http.Handler) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\treturn h\n\t}\n}\n// Logger logs the start and end of each request.\nfunc Logger(next http.Handler) http.Handler {"
+            },
+            {
+              "path": "test_middleware_test.go",
+              "excerpt": "\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestUseAppliesMiddleware(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-Custom\", \"applied\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t})\n\tr.Get(\"/test\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]"
+            },
+            {
+              "path": "test_uncovered_middleware_test.go",
+              "excerpt": "====\n\nfunc TestBasicAuthAllowsValidCredentials(t *testing.T) {\n\tcreds := map[string]string{\"admin\": \"secret\"}\n\tr := chi.NewRouter()\n\tr.Use(middleware.BasicAuth(\"test realm\", creds))\n\tr.Get(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"ok\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/\", nil)\n\treq.Header.Set(\"Authorization\", \"Basic \"+base64.StdEncoding.EncodeToString([]byte(\"a"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/middleware/middleware.go` defines `func New(h http.Handler) func(next http.Handler) http.Handler`."
+        },
+        {
+          "id": "F035",
+          "type": "feature",
+          "text": "Router Creation",
+          "evidence": [
+            {
+              "path": "Makefile",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs\n```"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "package chi\nimport (\n\t\"context\"\n\t\"net/http\"\n)\n// Router defines the public interface for chi's router.\ntype Router interface {\n\thttp.Handler\n\tRoutes\n\tUse(middlewares ...func(http.Handler) http.Handler)\n\tWith(middlewares ...func(http.Handler) http.Handler) Router\n\tGroup(fn func(Router)) Router\n\tRoute(pattern string, fn func(Rout"
+            },
+            {
+              "path": "main.go",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Router creation is provided by `NewRouter()` in `repo/chi.go` and `NewMux()` in `repo/mux.go`."
+        },
+        {
+          "id": "F036",
+          "type": "feature",
+          "text": "Route Registration",
+          "evidence": [
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestGetRoute(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/hello\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\tw.Write([]byte(\"hello world\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/hello\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec, req)"
+            },
+            {
+              "path": "test_route_group_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestRouteNestedRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Route(\"/admin\", func(r chi.Router) {\n\t\tr.Get(\"/dashboard\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Write([]byte(\"admin dashboard\"))\n\t\t})\n\t\tr.Get(\"/settings\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw"
+            },
+            {
+              "path": "Makefile",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs\n```"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Route registration APIs are implemented in `repo/mux.go` via `Handle`, `Method`, and the verb helpers."
+        },
+        {
+          "id": "F037",
+          "type": "feature",
+          "text": "URL Patterns",
+          "evidence": [
+            {
+              "path": "test_url_params_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestURLParam(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users/{id}\", func(w http.ResponseWriter, r *http.Request) {\n\t\tid := chi.URLParam(r, \"id\")\n\t\tw.Write([]byte(\"user:\" + id))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/users/42\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP("
+            },
+            {
+              "path": "context.go",
+              "excerpt": "{}\n// RouteCtxKey is the context key for the chi routing context.\nvar RouteCtxKey = &contextKey{}\n// RouteParams stores URL parameter key/value pairs.\ntype RouteParams struct {\n\tKeys, Values []string\n}\n// Add adds a key/value pair to the route params.\nfunc (r *RouteParams) Add(key, value string) {\n\tr.Keys = append(r.Keys, key)\n\tr.Values = append(r.Values, value)\n}\n// Context is the routing context"
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "=== NewRouteContext and Reset =====\n\nfunc TestNewRouteContextReset(t *testing.T) {\n\trctx := chi.NewRouteContext()\n\trctx.URLParams.Add(\"key\", \"val\")\n\trctx.RoutePath = \"/test\"\n\trctx.RouteMethod = \"GET\"\n\trctx.RoutePatterns = append(rctx.RoutePatterns, \"/test\")\n\n\trctx."
+            }
+          ],
+          "status": "partial",
+          "reason": "The router supports static routes, params (`{id}`), and catch-all (`*`) in `repo/tree.go`, but regexp-pattern nodes are inserted and never matched, so URL pattern support is incomplete."
+        },
+        {
+          "id": "F038",
+          "type": "feature",
+          "text": "Middleware",
+          "evidence": [
+            {
+              "path": "middleware\\middleware.go",
+              "excerpt": "middleware/middleware.go\n```go\n'''\nPackage middleware provides common HTTP middleware for chi routers.\n'''\npackage middleware\nimport (\n\t\"bufio\"\n\t\"compress/gzip\"\n\t\"context\"\n\t\"encoding/base64\"\n\t\"fmt\"\n\t\"io\"\n\t\"log\"\n\t\"net\"\n\t\"net/http\"\n\t\"net/http/pprof\"\n\t\"runtime/debug\"\n\t\"strings\"\n\t\"sy"
+            },
+            {
+              "path": "test_middleware_test.go",
+              "excerpt": "ckage chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestUseAppliesMiddleware(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(func(next http.Handler) http.Handler {\n\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Header().Set(\"X-Custom\", \"applied\")\n\t\t\tnext.ServeHTTP(w, r)\n\t\t})\n\t})\n\tr.Get(\"/test\", func(w http.ResponseWr"
+            },
+            {
+              "path": "test_uncovered_middleware_test.go",
+              "excerpt": "\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\t\"time\"\n\n\t\"github.com/go-chi/chi/v5\"\n\t\"github.com/go-chi/chi/v5/middleware\"\n)\n\n// ===== BasicAuth =====\n\nfunc TestBasicAuthAllowsValidCredentials(t *testing.T) {\n\tcreds := map[string]string{\"admin\": \"secret\"}\n\tr := chi.NewRouter()\n\tr.Use(middleware.BasicAuth(\"test realm\", creds))\n\tr.Get(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw."
+            }
+          ],
+          "status": "implemented",
+          "reason": "Middleware composition is implemented through `Use`, `With`, `Group`, `Chain`, and request wrapping logic in `repo/mux.go` and `repo/chi.go`."
+        },
+        {
+          "id": "F039",
+          "type": "feature",
+          "text": "Route Groups",
+          "evidence": [
+            {
+              "path": "test_route_group_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestRouteNestedRoutes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Route(\"/admin\", func(r chi.Router) {\n\t\tr.Get(\"/dashboard\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw.Write([]byte(\"admin dashboard\"))\n\t\t})\n\t\tr.Get(\"/settings\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\tw"
+            },
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestGetRoute(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/hello\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\tw.Write([]byte(\"hello world\"))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/hello\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec, req)"
+            },
+            {
+              "path": "Makefile",
+              "excerpt": "ho \"**********************************************************\"\n.PHONY: test\ntest:\n\tgo clean -testcache && $(MAKE) test-router && $(MAKE) test-middleware\n.PHONY: test-router\ntest-router:\n\tgo test -race -v .\n.PHONY: test-middleware\ntest-middleware:\n\tgo test -race -v ./middleware\n.PHONY: docs\ndocs:\n\tnpx docsify-cli serve ./docs\n```"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Route grouping is implemented via `Group` and `Route` in `repo/mux.go`."
+        },
+        {
+          "id": "F040",
+          "type": "feature",
+          "text": "URL Parameters",
+          "evidence": [
+            {
+              "path": "test_url_params_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestURLParam(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/users/{id}\", func(w http.ResponseWriter, r *http.Request) {\n\t\tid := chi.URLParam(r, \"id\")\n\t\tw.Write([]byte(\"user:\" + id))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/users/42\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP("
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "ontext.\nfunc RouteContext(ctx context.Context) *Context {\n\tval, _ := ctx.Value(RouteCtxKey).(*Context)\n\treturn val\n}\n// URLParam returns the URL parameter from the request's routing context.\nfunc URLParam(r *http.Request, key string) string {\n\treturn URLParamFromCtx(r.Context(), key)\n}\n// URLParamFromCtx returns the URL parameter from a context.\nfunc URLParamFromCtx(ctx context.Context, key string"
+            },
+            {
+              "path": "context.go",
+              "excerpt": "{}\n// RouteCtxKey is the context key for the chi routing context.\nvar RouteCtxKey = &contextKey{}\n// RouteParams stores URL parameter key/value pairs.\ntype RouteParams struct {\n\tKeys, Values []string\n}\n// Add adds a key/value pair to the route params.\nfunc (r *RouteParams) Add(key, value string) {\n\tr.Keys = append(r.Keys, key)\n\tr.Values = append(r.Values, value)\n}\n// Context is the routing context"
+            }
+          ],
+          "status": "implemented",
+          "reason": "URL parameter capture and lookup are implemented in `repo/tree.go`, `repo/context.go`, and helper functions in `repo/chi.go`."
+        },
+        {
+          "id": "F041",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "hi\\\\L0_chi\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_sonnet46_go生成\\\\go\\\\chi\\\\L0_chi\",\n  \"files_collected\": 9,\n  \"duration_seconds\": 452.52\n}"
+            },
+            {
+              "path": "test_mount_test.go",
+              "excerpt": "().Get(\"X-Sub-Middleware\") != \"\" {\n\t\tt.Error(\"expected no X-Sub-Middleware header on main route\")\n\t}\n}\n\nfunc TestMountAtRoot(t *testing.T) {\n\tr := chi.NewRouter()\n\n\tsub := chi.NewRouter()\n\tsub.Get(\"/health\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"healthy\"))\n\t})\n\tsub.Get(\"/ready\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"ready\"))\n\t})\n\n\tr.Mount(\"/\","
+            },
+            {
+              "path": "test_url_params_test.go",
+              "excerpt": "', got '%s'\", rec.Body.String())\n\t}\n}\n\nfunc TestURLParamWithSpecialChars(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/files/{filename}\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfilename := chi.URLParam(r, \"filename\")\n\t\tw.Write([]byte(\"file:\" + filename))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/files/my-file_v2.0\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec, req)\n\n\tif rec.Bod"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The generated project files are placed relative to the repo root and include root-level module files and package directories."
+        },
+        {
+          "id": "F042",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/go-chi/chi/v5\n\n// Chi supports the four most recent major versions of Go.\n// See https://github.com/go-chi/chi/issues/963.\ngo 1.23"
+            },
+            {
+              "path": "requirements.txt",
+              "excerpt": "module github.com/go-chi/chi/v5\n\ngo 1.23"
+            },
+            {
+              "path": "chi.go",
+              "excerpt": "ice of middleware functions.\ntype Middlewares []func(http.Handler) http.Handler\n// Chain creates a Middlewares from the provided middleware functions.\nfunc Chain(middlewares ...func(http.Handler) http.Handler) Middlewares {\n\treturn Middlewares(middlewares)\n}\n// Handler wraps h with all middlewares in the chain.\nfunc (mws Middlewares) Handler(h http.Handler) http.Handler {\n\treturn &chainHandler{end"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo has a normal Go module root with `go.mod` and package directories including `middleware/`."
+        },
+        {
+          "id": "F043",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_notfound_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\nfunc TestNotFoundHandler(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.NotFound(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusNotFound)\n\t\tw.Write([]byte(\"custom not found\"))\n\t})\n\tr.Get(\"/exists\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(\"found"
+            },
+            {
+              "path": "test_basic_routes_test.go",
+              "excerpt": "quest(\"POST\", \"/only-get\", nil)\n\trec := httptest.NewRecorder()\n\tr.ServeHTTP(rec, req)\n\n\tif rec.Code != http.StatusMethodNotAllowed {\n\t\tt.Errorf(\"expected status 405, got %d\", rec.Code)\n\t}\n}\n\nfunc TestHandlerReceivesRequestHeaders(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Get(\"/echo-header\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(r.Header.Get(\"X-Custom-Input\")))\n\t})\n\n\treq :="
+            },
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "package chi_test\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/go-chi/chi/v5\"\n)\n\n// ===== Chain / Middlewares.Handler / Middlewares.HandlerFunc =====\n\nfunc TestChainReturnsMiddlewares(t *testing.T) {\n\tmw1 := func(next http.Handler) http.Handler {\n\t\treturn htt"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository contains multiple generated test files such as `repo/test_basic_routes_test.go`, `repo/test_mount_test.go`, and others, which directly violates the requirement not to generate tests."
+        },
+        {
+          "id": "F044",
+          "type": "feature",
+          "text": "Ensure the module path and package layout match `github.com/go-chi/chi/v5`, including the `middleware/` package.",
+          "evidence": [
+            {
+              "path": "test_chain_and_walk_test.go",
+              "excerpt": "nc TestNewRouteContextReset(t *testing.T) {\n\trctx := chi.NewRouteContext()\n\trctx.URLParams.Add(\"key\", \"val\")\n\trctx.RoutePath = \"/test\"\n\trctx.RouteMethod = \"GET\"\n\trctx.RoutePatterns = append(rctx.RoutePatterns, \"/test\")\n\n\trctx."
+            },
+            {
+              "path": "test_uncovered_middleware_test.go",
+              "excerpt": "P(rec, req)\n\n\tif rec.Code != http.StatusUnauthorized {\n\t\tt.Errorf(\"expected 401, got %d\", rec.Code)\n\t}\n}\n\n// ===== CleanPath =====\n\nfunc TestCleanPathNormalizesDoubleSlashes(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(middleware.CleanPath)\n\tr.Get(\"/users/{id}\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Write([]byte(chi.URLParam(r, \"id\")))\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/users//"
+            },
+            {
+              "path": "test_coverage_boost_test.go",
+              "excerpt": "ecorder()\n\tr.ServeHTTP(w, req)\n\tif !called {\n\t\tt.Error(\"expected middleware handler to be called\")\n\t}\n}\n\n// ===== clean_path.go: RawPath branch =====\n\nfunc TestCleanPathWithRawPath(t *testing.T) {\n\tr := chi.NewRouter()\n\tr.Use(middleware.CleanPath)\n\tr.Get(\"/foo/bar\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t})\n\n\treq := httptest.NewRequest(\"GET\", \"/foo%2Fbar\", n"
+            }
+          ],
+          "status": "partial",
+          "reason": "The module path matches and a `middleware/` directory exists, but the `middleware` package file is malformed/truncated, so the required package layout is only partially satisfied in usable form."
+        }
+      ],
+      "feature_count": 44,
+      "constraint_count": 0,
+      "implemented_count": 38,
+      "partial_count": 4,
+      "missing_count": 2,
+      "unclear_count": 0,
+      "feature_coverage": 0.9091,
+      "constraint_coverage": 0.9091,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 500828,
+        "completion_tokens": 8664,
+        "total_tokens": 509492
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "chi",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.3,
+        "stack_alignment": 2.1,
+        "reference_alignment": 2.4
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 140907,
+        "completion_tokens": 2408,
+        "total_tokens": 143315
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 3,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 4,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "2",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository does implement a substantial portion of the core router surface under package `chi`: module path, `Router`/`Mux`, verb methods, `Handle`/`Method` variants, route groups, mounting, route context helpers, middleware chaining primitives, and URL parameter extraction are all present in the visible source. The basic project shape with `go.mod` and a `middleware/` directory is also present.\n\n### Missing List\n\n- The standard exported middleware set requested in the prompt is largely absent; only a few functions are visible and the middleware file is truncated.\n- The output violates the instruction not to generate test files.\n- URL pattern support is incomplete because regexp route nodes are defined but not matched in `repo/tree.go`.\n\n### Critical Constraint Misses\n\n- Generated test files are present even though the prompt explicitly says not to generate test files (`repo/test_*.go`).\n- `repo/middleware/middleware.go` is malformed/truncated and includes non-Go prose/markdown lines, so the required `middleware` package is not cleanly delivered as project source.\n- `repo/main.go` contains Makefile content instead of Go source, indicating an invalid extra file in the module root.",
+    "architecture_review": "### Stack Inference\n\n该仓库的目标栈很明确，是一个基于 `go.mod` 的 Go 库项目，试图复刻 `github.com/go-chi/chi/v5` 的公共 API，并把路由核心放在根包、把中间件放在 `middleware/` 子包中。这种高层分层方向本身符合 Go HTTP 路由库的常见组织方式，也和 `chi` 的生态形态基本一致。\n\n### Scoring Mode\n\n本次评分按架构模式评估，重点看真实仓库是否形成清晰的 Go 库项目结构、是否符合 `chi` 路由库的常见分层方式、以及构建入口与源码组织是否彼此协调。评分不按“文件多”给高分，而是看这些文件是否处于正确位置、承担合理职责、并共同构成可维护的工程骨架。\n\n### Strengths\n\n- 核心源码至少按职责做了初步拆分：路由接口在 `chi.go`，上下文在 `context.go`，路由器在 `mux.go`，匹配树在 `tree.go`，中间件在 `middleware/`。\n- 模块路径 `github.com/go-chi/chi/v5` 和 `middleware/` 子包位置与需求摘要基本对齐，说明作者理解了目标库的主要包边界。\n- 从文件命名上看，路由匹配、上下文、middleware 等概念边界是可识别的，不是完全无结构地堆在单文件里。\n\n### Issues\n\n- `repo/main.go` is not a Go entrypoint at all; it contains Makefile text, so the repository's top-level build/entry layout is internally contradictory and breaks normal Go package expectations for a library module.\n- The root includes generated test files even though the prompt explicitly said not to generate tests, and they dominate the repository shape instead of supporting a clean library-focused module layout.\n- `repo/requirements.txt` is a Python ecosystem filename but contains Go module metadata duplicated from `go.mod`; this is a strong structural smell and does not match Go project conventions.\n- `repo/Makefile` and `repo/middleware/middleware.go` appear to contain prose/markdown-style wrappers rather than clean source/build files, indicating artifact leakage from generation rather than a coherent source tree.\n- For a Go library, unrelated agent metadata like `repo/manifest.json` is mixed into the deliverable root with no architectural role, which weakens separation between product source and generation metadata.\n- Build, source, and package boundaries are not coordinated: the project claims to be `github.com/go-chi/chi/v5`, but the repository root contains invalid non-Go content in `.go` files and duplicated config, so the module structure is not reliably consumable as a standard Go package.\n\n### Stack Mismatches\n\n- 这是一个 Go library 任务，但仓库混入了 `requirements.txt` 这类非 Go 约定文件名，偏离了 Go 模块项目惯例。\n- `main.go` 按 Go 习惯应是可编译的 `package main` 入口或根包源码，但实际承载的是 Makefile 内容，和语言栈约定直接冲突。\n- 仓库目标是纯库实现，但附带多份测试与代理生成元数据，交付形态更像评测残留目录，而不是面向使用者的 Go 模块源码。\n\n### Reference Gaps\n\n- 需求要求“不要生成测试文件”，但仓库包含多份 `*_test.go`，与目标交付形态明显不符。\n- 需求要求标准 Go module 布局；仓库虽然有 `go.mod` 和 `middleware/` 包，但又混入 `requirements.txt`、生成元数据和非 Go 内容的 `main.go`，未达到标准布局的一致性。\n- 需求面向 `chi` 风格库实现；仓库确实尝试拆分为 `chi.go`、`mux.go`、`context.go`、`tree.go`、`middleware/`，但交付物层面被无关和错误类型文件削弱了整体架构质量。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 641735,
+    "completion_tokens": 11072,
+    "total_tokens": 652807,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 500828,
+        "completion_tokens": 8664,
+        "total_tokens": 509492
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 140907,
+        "completion_tokens": 2408,
+        "total_tokens": 143315
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "chi",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.55,
+  "architecture_score": 2.27,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

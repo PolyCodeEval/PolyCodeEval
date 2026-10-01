@@ -1,0 +1,26 @@
+{
+  "task": "javascript/babel-parser/L3_index__checkExpressionErrors",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__checkExpressionErrors/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__checkExpressionErrors/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::checkExpressionErrors",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly states the early `false` return for a falsy error record, the set of inspected recorded locations, the boolean behavior when `andThrow` is falsy, and the throw/report order when `andThrow` is truthy. It also correctly notes that optional-parameter syntax is handled specially. The only small gap is that the implementation uses `this.unexpected(optionalParametersLoc)` rather than a named parser error like the others, and when `andThrow` is truthy the function may simply finish with `undefined` if no locations are set rather than explicitly guaranteeing only throwing behavior.",
+  "missing_functionality": [
+    "It does not explicitly mention that the optional-parameters case uses `this.unexpected(...)` instead of `this.raise(...)` with a specific error constant.",
+    "It does not explicitly note that with `andThrow` truthy and no recorded locations, the function just returns `undefined` after doing nothing."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying it 'throws the corresponding parse error(s)' is slightly imprecise for `optionalParametersLoc`, which is handled via `unexpected(...)` rather than a corresponding named error constant.",
+    "Saying it 'does not return a boolean' when `andThrow` is truthy is broadly fine, but the implementation does not guarantee a throw; it can also simply complete with `undefined` if no error locations are present."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__checkExpressionErrors.raw.md"
+}

@@ -1,0 +1,11 @@
+{
+  "score": 4.6,
+  "reason": "The description accurately captures all core behaviors: the validity checks (offset zero or exceeding current size, len exceeding remaining expected output), the byte-by-byte overlapping self-copy semantics, reading from block-backed storage using absolute source position, and the partial-failure handling with op_ptr_ preservation. The explanation of the 'offset - 1u' trick as catching both zero and out-of-range offsets is correctly described. The only minor gap is that the description doesn't mention the block indexing arithmetic (`blocks_[src >> kBlockLog][src & (kBlockSize - 1)]`) explicitly, but that is an implementation detail rather than a behavioral requirement. The description is complete enough to implement the function correctly.",
+  "missing_functionality": [
+    "Does not mention the specific block indexing arithmetic used to locate source bytes across scattered blocks (bit-shift and bitmask into the blocks_ array), though this is an implementation detail rather than a behavioral gap."
+  ],
+  "incorrect_or_misleading_points": [
+    "No materially incorrect points found."
+  ],
+  "complete_enough": true
+}

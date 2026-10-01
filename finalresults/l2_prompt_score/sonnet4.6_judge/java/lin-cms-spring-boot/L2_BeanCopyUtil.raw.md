@@ -1,0 +1,13 @@
+{
+  "score": 4.2,
+  "reason": "The file-level and function-level descriptions are largely accurate and match the implementation well. The three hollowed functions are described with enough detail to reconstruct their logic: null-property detection via getter reflection, list copying with optional callback, and stream-based collection conversion with reflective instantiation. Minor gaps exist: the `copyNonNullProperties` description mentions `ReflectionUtils` for getter inspection but the actual implementation uses `ReflectionUtils.getDeclaredMethods` (a stream-based approach), while the description implies iterating declared methods without explicitly mentioning the stream/map/filter pipeline — though this is implied. The description also says 'removes the get prefix and lowercases the first character' but the actual code does `method.getName().substring(3)` then passes to `StringUtils.firstToLowerCase`, which matches. One inaccuracy: the description says 'filters out non-getter/null mapping results' suggesting a two-step filter, but the implementation uses a single `Objects::nonNull` filter on the stream result — the non-getter case returns null too, so it works, but the description is slightly misleading about the mechanism. The `covertObject` description correctly captures the stream, reflective constructor, callback, and exception-logging behavior. Overall the descriptions are complete enough to guide reconstruction.",
+  "missing_functionality": [
+    "The description does not explicitly mention that `copyNonNullProperties` uses a stream pipeline (Arrays.stream + map + filter + toArray) rather than a simple loop with a list accumulator.",
+    "The description does not clarify that the `substring(3)` approach (not removing 'get' by string replacement) is used before passing to `firstToLowerCase`."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'filters out non-getter/null mapping results' implying two separate filter conditions, but the implementation uses a single Objects::nonNull filter — non-getter methods return null from the map step and are filtered the same way as null-valued getters.",
+    "The file-level description mentions 'getter inspection for null-property detection' alongside 'ReflectionUtils' but does not clarify that ReflectionUtils.getDeclaredMethods is the specific API used, which is a non-obvious choice over source.getClass().getDeclaredMethods()."
+  ],
+  "complete_enough": true
+}

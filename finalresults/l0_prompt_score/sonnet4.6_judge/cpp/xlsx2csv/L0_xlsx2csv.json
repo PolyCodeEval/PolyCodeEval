@@ -1,0 +1,29 @@
+{
+  "task": "cpp/xlsx2csv/L0_xlsx2csv",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L0_xlsx2csv/prompt.md",
+  "project_root": "datasets/cpp/xlsx2csv",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers the namespace (my_xlsx::xlsx_reader), all utility functions (string_to_idx, string_to_row_column, strip) with exact semantics, the shared string sentinel (index 0 = empty string), the get_shared_string out-of-bounds behavior, write_to_csv, file layout including miniz.h/miniz.c bundling, tinyxml2.cpp embedding, and all required header/source paths. The case-insensitivity of string_to_idx and the 4-char column name limit for string_to_idx are specified."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "The string_to_idx function behavior is precisely described: case-insensitive, returns 0 for empty string / non-letters / >3 chars. strip() trims ASCII space/tab/newline only. The shared string index-0 sentinel is explicit. The miniz.h export macro inline definition is given verbatim. The miniz.c constraint (no external satellite headers) is stated."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "All test utility functions (string_to_idx, string_to_row_column, strip) have fully specified semantics matching the blackbox tests: single/multi-letter columns, lowercase input, invalid input returning 0, strip of spaces/tabs/newlines, cell reference parsing. The test for AAAA -> 0 (>3 chars) and '1' -> 0 (non-letter) are explicitly stated in the prompt."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "Verified against test_utils.cpp which uses `using namespace my_xlsx::xlsx_reader` and calls string_to_idx, string_to_row_column, strip — exactly as specified. The test for AAAA->0 and '1'->0 match the prompt constraint. The structured binding test (auto [row, col] = string_to_row_column) implies pair return type as specified."
+    }
+  },
+  "overall_score": 4.50
+}

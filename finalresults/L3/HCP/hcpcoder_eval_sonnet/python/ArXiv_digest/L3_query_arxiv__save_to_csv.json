@@ -1,0 +1,203 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 8.9,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\ncollected 45 items\n\ntests/unit_tests/test_check_date.py ...                                  [  6%]\ntests/unit_tests/test_construct_query_url.py ......................      [ 55%]\ntests/unit_tests/test_fetch_data.py .                                    [ 57%]\ntests/unit_tests/test_get_args.py ....                                   [ 66%]\ntests/unit_tests/test_main.py ..                                         [ 71%]\ntests/unit_tests/test_print_results.py ..                                [ 75%]\ntests/unit_tests/test_process_entries.py ....                            [ 84%]\ntests/unit_tests/test_save_to_csv.py FFFF                                [ 93%]\ntests/acceptance_tests/test_query_arxiv.py ...                           [100%]\n\n=================================== FAILURES ===================================\n____________________________ test_no_papers_to_save ____________________________\n\ncapfd = <_pytest.capture.CaptureFixture object at 0x7fdbbef54e50>\n\n    def test_no_papers_to_save(capfd):\n        save_to_csv([], 'some_path/some_file.csv')\n        captured = capfd.readouterr()  # Capture the print statement\n>       assert captured.out == \"No papers to save.\\n\"\nE       AssertionError: assert 'No papers to save\\n' == 'No papers to save.\\n'\nE         \nE         - No papers to save.\nE         ?                  -\nE         + No papers to save\n\ntests/unit_tests/test_save_to_csv.py:8: AssertionError\n____________________________ test_directory_created ____________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-6/test_directory_created0')\n\n    def test_directory_created(tmpdir):\n        file_name = f\"{tmpdir}/some_directory/some_file.csv\"\n>       save_to_csv([{'id': \"1\", 'name': 'Test Paper'}], file_name)\n\ntests/unit_tests/test_save_to_csv.py:12: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/query_arxiv.py:51: in save_to_csv\n    writer.writerows(papers)\n/usr/lib/python3.10/csv.py:157: in writerows\n    return self.writer.writerows(map(self._dict_to_list, rowdicts))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <csv.DictWriter object at 0x7fdbbef87c70>\nrowdict = {'id': '1', 'name': 'Test Paper'}\n\n    def _dict_to_list(self, rowdict):\n        if self.extrasaction == \"raise\":\n            wrong_fields = rowdict.keys() - self.fieldnames\n            if wrong_fields:\n>               raise ValueError(\"dict contains fields not in fieldnames: \"\n                                 + \", \".join([repr(x) for x in wrong_fields]))\nE               ValueError: dict contains fields not in fieldnames: 'name', 'id'\n\n/usr/lib/python3.10/csv.py:149: ValueError\n______________________________ test_file_written _______________________________\n\ntmpdir = local('/tmp/pytest-of-root/pytest-6/test_file_written0')\n\n    def test_file_written(tmpdir):\n        file_name = f\"{tmpdir}/some_file.csv\"\n        papers = [{'id': \"1\", 'name': 'Test Paper'}, {'id': \"2\", 'name': 'Another Test Paper'}]\n>       save_to_csv(papers, file_name)\n\ntests/unit_tests/test_save_to_csv.py:18: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/query_arxiv.py:51: in save_to_csv\n    writer.writerows(papers)\n/usr/lib/python3.10/csv.py:157: in writerows\n    return self.writer.writerows(map(self._dict_to_list, rowdicts))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <csv.DictWriter object at 0x7fdbbef423e0>\nrowdict = {'id': '1', 'name': 'Test Paper'}\n\n    def _dict_to_list(self, rowdict):\n        if self.extrasaction == \"raise\":\n            wrong_fields = rowdict.keys() - self.fieldnames\n            if wrong_fields:\n>               raise ValueError(\"dict contains fields not in fieldnames: \"\n                                 + \", \".join([repr(x) for x in wrong_fields]))\nE               ValueError: dict contains fields not in fieldnames: 'name', 'id'\n\n/usr/lib/python3.10/csv.py:149: ValueError\n______________________________ test_no_directory _______________________________\n\n    def test_no_directory():\n        file_name = \"some_file.csv\"\n        paper = [{'id': \"1\", 'name': 'Test Paper'}]\n>       save_to_csv(paper, file_name)\n\ntests/unit_tests/test_save_to_csv.py:31: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/query_arxiv.py:51: in save_to_csv\n    writer.writerows(papers)\n/usr/lib/python3.10/csv.py:157: in writerows\n    return self.writer.writerows(map(self._dict_to_list, rowdicts))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <csv.DictWriter object at 0x7fdbbef872e0>\nrowdict = {'id': '1', 'name': 'Test Paper'}\n\n    def _dict_to_list(self, rowdict):\n        if self.extrasaction == \"raise\":\n            wrong_fields = rowdict.keys() - self.fieldnames\n            if wrong_fields:\n>               raise ValueError(\"dict contains fields not in fieldnames: \"\n                                 + \", \".join([repr(x) for x in wrong_fields]))\nE               ValueError: dict contains fields not in fieldnames: 'name', 'id'\n\n/usr/lib/python3.10/csv.py:149: ValueError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_save_to_csv.py::test_no_papers_to_save - Asserti...\nFAILED tests/unit_tests/test_save_to_csv.py::test_directory_created - ValueEr...\nFAILED tests/unit_tests/test_save_to_csv.py::test_file_written - ValueError: ...\nFAILED tests/unit_tests/test_save_to_csv.py::test_no_directory - ValueError: ...\n========================= 4 failed, 41 passed in 8.20s =========================\n",
+  "stderr": "",
+  "task": "python/ArXiv_digest/L3_query_arxiv__save_to_csv",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "test_32",
+        "passed": true
+      },
+      {
+        "name": "test_33",
+        "passed": true
+      },
+      {
+        "name": "test_34",
+        "passed": true
+      },
+      {
+        "name": "test_35",
+        "passed": true
+      },
+      {
+        "name": "test_36",
+        "passed": true
+      },
+      {
+        "name": "test_37",
+        "passed": true
+      },
+      {
+        "name": "test_38",
+        "passed": true
+      },
+      {
+        "name": "test_39",
+        "passed": true
+      },
+      {
+        "name": "test_40",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      }
+    ],
+    "passed": 41,
+    "failed": 4,
+    "total": 45
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9111,
+  "compile_score": 0.5,
+  "test_score": 0.4556,
+  "score": 0.9556
+}

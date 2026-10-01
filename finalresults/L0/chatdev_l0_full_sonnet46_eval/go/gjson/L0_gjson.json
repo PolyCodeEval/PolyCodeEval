@@ -1,0 +1,590 @@
+{
+  "task": "go/gjson/L0_gjson",
+  "solver": "chatdev_sonnet46_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.53,
+  "stdout": "",
+  "stderr": "go: downloading github.com/tidwall/match v1.1.1\nmain.go:1:1: expected 'package', found github\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.35,
+    "Architecture": 3.23,
+    "Health": 3.5
+  },
+  "overall_score": 2.25,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "The required public entry points section is largely present in `repo/gjson.go`: module path is set, core functions are exposed, `Result.Type` and required methods exist, and `AddModifier` has the required signature."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/tidwall/gjson`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/tidwall/gjson\n\ngo 1.12\n\nrequire (\n\tgithub.com/tidwall/match v1.1.1\n\tgithub.com/tidwall/pretty v1.2.0\n)"
+            },
+            {
+              "path": "test_exists_test.go",
+              "excerpt": "\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestExistsPresentPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.first\")\n\tif !result.Exists() {\n\t\tt.Error(\"expected Exists() to be true for present path\")\n\t}\n}\n\nfunc TestExistsMissingPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.middle\")\n\tif result.Exists() {\n\t\tt"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "ype, got %v\", result.Type)\n\t}\n}\n\nfunc TestGetStringWithSpecialChars(t *testing.T) {\n\tjson := `{\"msg\":\"hello \\\"world\\\"\",\"path\":\"C:\\\\Users\\\\test\"}`\n\tresult := gjson.Get(json, \"msg\")\n\tif result.String() != `hello \"world\"` {\n\t\tt.Errorf(\"expected 'hello \\\"world\\\"', got '%s'\", result.String())\n\t}\n\n\tresult = gjson.Get(json, \"path\")\n\tif result.String() != `C:\\Users\\test` {\n\t\tt.Errorf(\"expected 'C:\\\\Users\\"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/tidwall/gjson`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package `gjson` exposing `Get(json, path string) Result`, `GetMany(json string, paths ...string) []Result`, `Parse(json string) Result`, and `Valid(json string) bool`",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "package gjson\nimport (\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             //"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSON = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result"
+            },
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.Str"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines package `gjson` and exposes `Get`, `GetMany`, `Parse`, and `Valid`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "byte-slice variants `GetBytes(json []byte, path string) Result` and `GetManyBytes(json []byte, paths ...string) []Result`",
+          "evidence": [
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.String())\n\t}\n\tresult = gjson.GetBytes(json, \"age\")\n\tif result.Int() != 30 {\n\t\tt.Erro"
+            },
+            {
+              "path": "gjson.go",
+              "excerpt": "package gjson\nimport (\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric v"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "{\n  \"agent\": \"chatdev\",\n  \"task\": \"go/gjson/L0_gjson\",\n  \"started_at\": \"2026-06-17T23:43:10.224521+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\go\\\\gjson\\\\tasks\\\\L0_gjson\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"CLAUDE_SONNET_4_6\",\n  \"token_usage\": {\n    \"prompt_token"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `GetBytes(json []byte, path string) Result` and `GetManyBytes(json []byte, paths ...string) []Result`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`Result` should expose a public `Type` field, with result type constants including `gjson.Number`, `gjson.True`, and `gjson.Null`",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "(\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric value\n\tString             // string value\n\tTrue               // true boolean\n\tJSON               // raw JSON object or array\n)\n// Re"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() != 47 {\n\t\tt.Errorf(\"expected 47, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetNestedKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"name.first\")\n\tif result.String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", result."
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "on.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `Result` with a public `Type` field and declares `Null`, `Number`, and `True` constants."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`Result` methods used by callers include `String()`, `Int()`, `Float()`, `Bool()`, `Exists()`, `IsObject()`, `IsArray()`, `Array() []Result`, and `Map() map[string]Result`",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "(\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric value\n\tString             // string value\n\tTrue               // true boolean\n\tJSON               // raw JSON object or array\n)\n// Re"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() != 47 {\n\t\tt.Errorf(\"expected 47, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetNestedKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"name.first\")\n\tif result.String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", result."
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "on.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` implements `String`, `Int`, `Float`, `Bool`, `Exists`, `IsObject`, `IsArray`, `Array`, and `Map` on `Result`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "modifier registration should preserve a signature shaped like `AddModifier(name string, fn func(json, arg string) string)`",
+          "evidence": [
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestAddModifierCustom(t *testing.T) {\n\tgjson.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.Str"
+            },
+            {
+              "path": "test_pretty_modifier_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\n// TestPrettyModifierWithIndent exercises cleanWS via the @pretty modifier\n// which calls cleanWS on the indent/prefix arguments.\nfunc TestPrettyModifierWithIndent(t *testing.T) {\n\tjson := `{\"name\":\"John\",\"age\":30,\"city\":\"New York\"}`\n\n\t// @pretty with indent argument — triggers cleanWS on the"
+            },
+            {
+              "path": "gjson.go",
+              "excerpt": "h++\n\t\t\t} else if c == close {\n\t\t\t\tdepth--\n\t\t\t\tif depth == 0 {\n\t\t\t\t\treturn i + 1\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\ti++\n\t}\n\treturn -1\n}\n// modifiers registry\nvar (\n\tmodMu     sync.RWMutex\n\tmodifiers = map[string]func(json, arg string) string{}\n)\n// AddModifier registers a custom modifier function\nfunc AddModifier(name string, fn func(json, arg string) string) {\n\tmodMu.Lock()\n\tmodifiers[name] = fn\n\tmodMu.Unlock()\n}\n/"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `AddModifier(name string, fn func(json, arg string) string)`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Basic Retrieval",
+          "evidence": [
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSON = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() != 47 {\n\t\tt.Errorf(\"expected 47, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetNestedKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"name.first\")\n\tif result.String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", result.String())\n\t}\n\n\tresult = gjson.Get(testJSON, \"name.last\")\n\tif result.String() != \"Pricha"
+            },
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.String())\n\t}\n\tresult = gjson.GetBytes(json, \"age\")\n\tif result.Int() != 30 {\n\t\tt.Errorf(\"expe"
+            },
+            {
+              "path": "test_pretty_modifier_test.go",
+              "excerpt": "tty:{\"indent\":\"\\t\"}`)\n\tif !result.Exists() {\n\t\tt.Fatal(\"expected @pretty result to exist\")\n\t}\n}\n\nfunc TestPrettyModifierBasic(t *testing.T) {\n\tjson := `{\"name\":\"Alice\",\"scores\":[1,2,3]}`\n\n\tresult := gjson.Get(json, \"@pretty\")\n\tif !result.Exists() {\n\t\tt.Fatal(\"expected @pretty result to exist\")\n\t}\n\tif result.String() == \"\" {\n\t\tt.Fatal(\"expected non-empty result\")\n\t}\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Basic retrieval is implemented via `Get` plus object-key and array-index traversal in `repo/gjson.go`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Path Syntax",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "Result)\n\tr.ForEach(func(k, v Result) bool {\n\t\tm[k.String()] = v\n\t\treturn true\n\t})\n\treturn m\n}\n// Get retrieves a nested path from this result\nfunc (r Result) Get(path string) Result {\n\treturn Get(r.Raw, path)\n}\n// ForEach iterates over object key-value pairs or array elements\nfunc (r Result) ForEach(iterator func(key, value Result) bool) {\n\tif r.Type != JSON || len(r.Raw) == 0 {\n\t\treturn\n\t}\n\tjson"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "{\n  \"agent\": \"chatdev\",\n  \"task\": \"go/gjson/L0_gjson\",\n  \"started_at\": \"2026-06-17T23:43:10.224521+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\go\\\\gjson\\\\tasks\\\\L0_gjson\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"CLAUDE_SONNET_4_6\",\n  \"token_usage\": {\n    \"prompt_tokens\": 127184,\n    \"completion_tokens\": 20093,\n    \"total_tokens\": 147277\n  },"
+            },
+            {
+              "path": "test_exists_test.go",
+              "excerpt": "\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestExistsPresentPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.first\")\n\tif !result.Exists() {\n\t\tt.Error(\"expected Exists() to be true for present path\")\n\t}\n}\n\nfunc TestExistsMissingPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.middle\")\n\tif result.Exists() {\n\t\tt"
+            }
+          ],
+          "status": "partial",
+          "reason": "`repo/gjson.go` supports nested paths, array indexes, simple wildcards, simple filters, and multipath queries, but the path feature set is incomplete relative to the prompt; for example `children.#.name` is not handled by the implementation."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Result Type",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "(\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric value\n\tString             // string value\n\tTrue               // true boolean\n\tJSON               // raw JSON object or array\n)\n// Re"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() != 47 {\n\t\tt.Errorf(\"expected 47, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetNestedKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"name.first\")\n\tif result.String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", result."
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "on.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines a `Type` enum and uses it throughout `Result`."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Validation and Parsing",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` implements `Parse`, `ParseBytes`, `Valid`, and `ValidBytes`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Custom Modifiers",
+          "evidence": [
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestAddModifierCustom(t *testing.T) {\n\tgjson.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())"
+            },
+            {
+              "path": "gjson.go",
+              "excerpt": "stry\nvar (\n\tmodMu     sync.RWMutex\n\tmodifiers = map[string]func(json, arg string) string{}\n)\n// AddModifier registers a custom modifier function\nfunc AddModifier(name string, fn func(json, arg string) string) {\n\tmodMu.Lock()\n\tmodifiers[name] = fn\n\tmodMu.Unlock()\n}\n// ModifierExists returns true if a modifier with the given name is registered\nfunc ModifierExists(name string, fn func(json, arg strin"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Custom modifiers are supported through the modifier registry, `AddModifier`, and `applyModifiers` in `repo/gjson.go`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Byte-slice variants: `GetBytes`, `GetManyBytes`, `ParseBytes`, and `ValidBytes` must behave identically to their string counterparts",
+          "evidence": [
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.String())\n\t}\n\tresult = gjson.GetBytes(json, \"age\")\n\tif result.Int() != 30 {\n\t\tt.Erro"
+            },
+            {
+              "path": "gjson.go",
+              "excerpt": "// Valid returns true if json is valid JSON\nfunc Valid(json string) bool {\n\t_, ok := validJSON(json, 0)\n\treturn ok\n}\n// ValidBytes returns true if json bytes are valid JSON"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` provides `GetBytes`, `GetManyBytes`, `ParseBytes`, and `ValidBytes`, each delegating to the string-based implementation."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`ForEachLine(json string, iterator func(line Result) bool)` parses concatenated top-level JSON values from a string, calling `iterator` for each one; iteration stops when `iterator` returns false or input is exhausted; an empty string yields zero iterations",
+          "evidence": [
+            {
+              "path": "test_foreachline_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestForEachLineMultipleObjects(t *testing.T) {\n\t// ForEachLine parses concatenated top-level JSON values\n\tjson := `{\"a\":1}{\"b\":2}{\"c\":3}`\n\tvar count int\n\tgjson.ForEachLine(json, func(line gjson.Result) bool {\n\t\tcount++\n\t\treturn true\n\t})\n\tif count != 3 {\n\t\tt.Errorf(\"expected 3 lines,"
+            },
+            {
+              "path": "gjson.go",
+              "excerpt": "package gjson\nimport (\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric v"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSON = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() !="
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `ForEachLine` and its loop behavior matches the stated contract: it parses consecutive top-level values, stops on `false`, and does nothing for empty input."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "`Result.ForEach(iterator func(key, value Result) bool)` iterates over object key-value pairs or array elements",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "(\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric value\n\tString             // string value\n\tTrue               // true boolean\n\tJSON               // raw JSON object or array\n)\n// Re"
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "on.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson."
+            },
+            {
+              "path": "test_foreachline_test.go",
+              "excerpt": "atenated top-level JSON values\n\tjson := `{\"a\":1}{\"b\":2}{\"c\":3}`\n\tvar count int\n\tgjson.ForEachLine(json, func(line gjson.Result) bool {\n\t\tcount++\n\t\treturn true\n\t})\n\tif count != 3 {\n\t\tt.Errorf(\"expected 3 lines, got %d\", count)\n\t}\n}\n\nfunc TestForEachLineStopEarly(t *testing.T) {\n\tjson := `{\"a\":1}{\"b\":2}{\"c\":3}`\n\tvar count int\n\tgjson.ForEachLine(json, func(line gjson.Result) bool {\n\t\tcount++\n\t\treturn"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `Result.ForEach(iterator func(key, value Result) bool)` for both objects and arrays."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`Result.Get(path string) Result` allows chaining path lookups on an already-parsed Result",
+          "evidence": [
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetSimpleKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"age\")\n\tif result.Int() != 47 {\n\t\tt.Errorf(\"expected 47, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetNestedKey(t *testing.T) {\n\tresult := gjson.Get(testJSON, \"name.first\")\n\tif result.String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", result."
+            },
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "g\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.String())\n\t}\n\tresult = gjson.GetBytes(json, \"age\")\n\tif result.Int() != 30 {\n\t\tt.Errorf(\"expected 30, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetBytesNestedPath(t"
+            },
+            {
+              "path": "test_get_array_test.go",
+              "excerpt": "Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetArrayElementByIndex(t *testing.T) {\n\tresult := gjson.Get(testJSONArray, \"children.0\")\n\tif result.String() != \"Sara\" {\n\t\tt.Errorf(\"expected 'Sara', got '%s'\", result.String())\n\t}\n\n\tresult = gjson.Get(testJSONArray, \"children.2\")\n\tif result.String() != \"Jack\" {\n\t\tt.Errorf(\"expected 'Jack', got '%s'\", result.String())"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `func (r Result) Get(path string) Result`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`Result.Value() interface{}` returns the Go native representation: `float64` for numbers, `string` for strings, `bool` for booleans, `nil` for null",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "(\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode/utf16\"\n\t\"unicode/utf8\"\n\t\"github.com/tidwall/match\"\n)\n// Type is the type of a Result value\ntype Type int\nconst (\n\tNull   Type = iota // null or non-existent\n\tFalse              // false boolean\n\tNumber             // numeric value\n\tString             // string value\n\tTrue               // true boolean\n\tJSON               // raw JSON object or array\n)\n// Re"
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "on.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson."
+            },
+            {
+              "path": "test_map_test.go",
+              "excerpt": "ub.com/tidwall/gjson\"\n)\n\nfunc TestMapOnObject(t *testing.T) {\n\tjson := `{\"name\":\"Janet\",\"age\":\"47\",\"city\":\"Portland\"}`\n\tresult := gjson.Parse(json)\n\tm := result.Map()\n\n\tif len(m) != 3 {\n\t\tt.Fatalf(\"expected 3 keys, got %d\", len(m))\n\t}\n\n\tif m[\"name\"].String() != \"Janet\" {\n\t\tt.Errorf(\"expected 'Janet', got '%s'\", m[\"name\"].String())\n\t}\n\tif m[\"age\"].String() != \"47\" {\n\t\tt.Errorf(\"expected '47', got '"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `Result.Value()` and returns `float64` for numbers, `string` for strings, `bool` for booleans, and `nil` for null."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`ModifierExists(name string, fn func(json, arg string) string) bool` returns true if a modifier with the given name has been registered",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "c AddModifier(name string, fn func(json, arg string) string) {\n\tmodMu.Lock()\n\tmodifiers[name] = fn\n\tmodMu.Unlock()\n}\n// ModifierExists returns true if a modifier with the given name is registered\nfunc ModifierExists(name string, fn func(json, arg string) string) bool {\n\tmodMu.RLock()\n\t_, ok := modifiers[name]\n\tmodMu.RUnlock()\n\treturn ok\n}\n// Valid returns true if json is valid JSON\nfunc Valid(json"
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson.ModifierExists(\"mymod\", nil) {\n\t\tt.Error(\"expected ModifierExists to return true for registered modifier\")\n\t}\n}\n\nfunc TestModifierExistsForUnregist"
+            },
+            {
+              "path": "test_getmany_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSONMany = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetManyReturnsMultipleResults(t *testing.T) {\n\tresults := gjson.GetMany(testJSONMany, \"name.first\", \"age\", \"active\")\n\tif len(results) != 3 {\n\t\tt.Fatalf(\"expected 3 resul"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` defines `ModifierExists(name string, fn func(json, arg string) string) bool` and checks the modifier registry."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Modifiers registered via `AddModifier` are invoked in path expressions using the `@name` syntax; a pipe `|` separates the preceding path from the modifier (e.g., `\"key|@mymod\"`)",
+          "evidence": [
+            {
+              "path": "gjson.go",
+              "excerpt": "h++\n\t\t\t} else if c == close {\n\t\t\t\tdepth--\n\t\t\t\tif depth == 0 {\n\t\t\t\t\treturn i + 1\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\ti++\n\t}\n\treturn -1\n}\n// modifiers registry\nvar (\n\tmodMu     sync.RWMutex\n\tmodifiers = map[string]func(json, arg string) string{}\n)\n// AddModifier registers a custom modifier function\nfunc AddModifier(name string, fn func(json, arg string) string) {\n\tmodMu.Lock()\n\tmodifiers[name] = fn\n\tmodMu.Unlock()\n}\n/"
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.String())\n\t}\n}\n\nfunc TestModifierExistsForRegistered(t *testing.T) {\n\tgjson.AddModifier(\"mymod\", func(json, arg string) string {\n\t\treturn json\n\t})\n\tif !gjson.ModifierExists(\"mymod\", nil) {\n\t\tt.Error(\"expected ModifierExists to return true for registered modifier\")\n\t}\n}\n\nfunc TestModifierExistsForUnregistered(t *testing.T"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "{\n  \"agent\": \"chatdev\",\n  \"task\": \"go/gjson/L0_gjson\",\n  \"started_at\": \"2026-06-17T23:43:10.224521+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\go\\\\gjson\\\\tasks\\\\L0_gjson\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"CLAUDE_SONNET_4_6\",\n  \"token_usage\": {\n    \"prompt_tokens\": 127184,\n    \"completion_tokens\": 20093,\n    \"total_tokens\": 147277\n  },"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/gjson.go` handles modifier syntax using `|@` in `Get` and resolves registered modifiers in `applyModifiers`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "_gjson\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_sonnet46_go生成\\\\go\\\\gjson\\\\L0_gjson\",\n  \"files_collected\": 4,\n  \"duration_seconds\": 478.44\n}"
+            }
+          ],
+          "status": "unclear",
+          "reason": "The repository is placed under the evaluation workspace, but the generation-time guarantee about emitting files relative to project root under `src/` cannot be verified from repository contents alone."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/tidwall/gjson\n\ngo 1.12\n\nrequire (\n\tgithub.com/tidwall/match v1.1.1\n\tgithub.com/tidwall/pretty v1.2.0\n)"
+            },
+            {
+              "path": "test_getmany_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSONMany = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetManyReturnsMultipleResults(t *testing.T) {\n\tresults := gjson.GetMany(testJSONMany, \"name.first\", \"age\", \"active\")\n\tif len(results) != 3 {\n\t\tt.Fatalf(\"expecte"
+            },
+            {
+              "path": "test_modifiers_foreach_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"strings\"\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestAddModifierCustom(t *testing.T) {\n\tgjson.AddModifier(\"upper\", func(json, arg string) string {\n\t\treturn strings.ToUpper(json)\n\t})\n\tjson := `{\"name\":\"alice\"}`\n\tresult := gjson.Get(json, \"name|@upper\")\n\tif result.String() != \"ALICE\" {\n\t\tt.Errorf(\"expected 'ALICE', got '%s'\", result.Str"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo has a standard module root with `repo/go.mod` and package source at the root."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_getmany_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nconst testJSONMany = `{\"name\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestGetManyReturnsMultipleResults(t *testing.T) {\n\tresults := gjson.GetMany(testJSONMany, \""
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "GetOnEmptyJSONObject(t *testing.T) {\n\tresult := gjson.Get(`{}`, \"key\")\n\tif result.Exists() {\n\t\tt.Error(\"expected key to not exist in empty object\")\n\t}\n\tif result.String() != \"\" {\n\t\tt.Errorf(\"expected empty string, got '%s'\", result.String())\n\t}\n}\n\nfunc TestGetNullValue(t *testing.T) {\n\tjson := `{\"value\":null}`\n\tresult := gjson.Get(json, \"value\")\n\tif result.Type != gjson.Null {\n\t\tt.Errorf(\"expected"
+            },
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "package gjson_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/tidwall/gjson\"\n)\n\nfunc TestGetBytesBasic(t *testing.T) {\n\tjson := []byte(`{\"name\":\"Alice\",\"age\":30}`)\n\tresult := gjson.GetBytes(json, \"name\")\n\tif result.String() != \"Alice\" {\n\t\tt.Errorf(\"expected 'Alice', got '%s'\", result.String())\n\t}\n\tres"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository contains many generated test files such as `repo/test_get_basic_test.go` and related `test_*.go` files, which directly violates the prompt constraint not to generate test files."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Ensure the module path is `github.com/tidwall/gjson` and the root package is importable as `gjson`.",
+          "evidence": [
+            {
+              "path": "test_exists_test.go",
+              "excerpt": "\":{\"first\":\"Janet\",\"last\":\"Prichard\"},\"age\":47,\"active\":true,\"children\":[\"Sara\",\"Alex\",\"Jack\"]}`\n\nfunc TestExistsPresentPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.first\")\n\tif !result.Exists() {\n\t\tt.Error(\"expected Exists() to be true for present path\")\n\t}\n}\n\nfunc TestExistsMissingPath(t *testing.T) {\n\tresult := gjson.Get(testJSONExists, \"name.middle\")\n\tif result.Exists() {\n\t\tt"
+            },
+            {
+              "path": "test_get_basic_test.go",
+              "excerpt": "ype, got %v\", result.Type)\n\t}\n}\n\nfunc TestGetStringWithSpecialChars(t *testing.T) {\n\tjson := `{\"msg\":\"hello \\\"world\\\"\",\"path\":\"C:\\\\Users\\\\test\"}`\n\tresult := gjson.Get(json, \"msg\")\n\tif result.String() != `hello \"world\"` {\n\t\tt.Errorf(\"expected 'hello \\\"world\\\"', got '%s'\", result.String())\n\t}\n\n\tresult = gjson.Get(json, \"path\")\n\tif result.String() != `C:\\Users\\test` {\n\t\tt.Errorf(\"expected 'C:\\\\Users\\"
+            },
+            {
+              "path": "test_getbytes_test.go",
+              "excerpt": "ytes(json, \"age\")\n\tif result.Int() != 30 {\n\t\tt.Errorf(\"expected 30, got %d\", result.Int())\n\t}\n}\n\nfunc TestGetBytesNestedPath(t *testing.T) {\n\tjson := []byte(`{\"person\":{\"first\":\"Bob\",\"last\":\"Jones\"}}`)\n\tresult := gjson.GetBytes(json, \"person.first\")\n\tif result.String() != \"Bob\" {\n\t\tt.Errorf(\"expected 'Bob', got '%s'\", result.String())\n\t}\n}\n\nfunc TestGetManyBytesMultiplePaths(t *testing.T) {\n\tjson"
+            }
+          ],
+          "status": "partial",
+          "reason": "The module path is correct, and `repo/gjson.go` uses package `gjson`, but the root is not clearly importable as-is because `repo/main.go` contains non-Go checksum text rather than valid package source."
+        }
+      ],
+      "feature_count": 23,
+      "constraint_count": 0,
+      "implemented_count": 19,
+      "partial_count": 2,
+      "missing_count": 1,
+      "unclear_count": 1,
+      "feature_coverage": 0.8696,
+      "constraint_coverage": 0.8696,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 128644,
+        "completion_tokens": 4436,
+        "total_tokens": 133080
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.0,
+        "stack_alignment": 3.6,
+        "reference_alignment": 3.1
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 146681,
+        "completion_tokens": 2430,
+        "total_tokens": 149111
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 6,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 1,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "2",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository does implement most of the requested public API in `repo/gjson.go`: `Get`, `GetMany`, `Parse`, `Valid`, byte-slice variants, `Result.Type`, conversion/accessor methods, `Result.ForEach`, `Result.Get`, `Result.Value`, `ForEachLine`, and modifier registration/lookup. The module path in `repo/go.mod` is also correct.\n\n### Missing List\n\n- The no-tests constraint is violated by the presence of many generated `test_*.go` files.\n- Path syntax support is only partial; the implementation does not clearly cover the full requested feature set.\n- `repo/main.go` is invalid and prevents confidently treating the root package as importable.\n\n### Critical Constraint Misses\n\n- The prompt explicitly forbids generating test files, but the repo includes multiple `test_*.go` files.\n- The root package is not cleanly importable as-is because `repo/main.go` is invalid Go source content.",
+    "architecture_review": "### Stack Inference\n\n仓库是典型的 Go 语言库项目，模块路径为 `github.com/tidwall/gjson`，使用 `go.mod` 管理依赖，根包为 `gjson`，没有前端或服务端框架特征。整体更像单包工具库而不是应用程序。\n\n### Scoring Mode\n\n这是一个以 architecture 为主的评估：重点看仓库结构是否清晰、Go module 组织是否合理、入口与分层是否协调，而不是代码是否通过测试或功能是否完全正确。因此评分主要反映工程形态与职责边界，不把文件数量或体量直接等同于质量。\n\n### Strengths\n\n- 模块路径正确，根包可直接作为 `gjson` 导入。\n- 核心对外 API 基本齐全，包含 `Get`、`GetMany`、`Parse`、`Valid`、字节切片版本以及 `Result` 的常用方法。\n- 单包实现对小型 JSON 工具库并非不可接受，代码路径短，定位入口相对直接。\n\n### Issues\n\n- 核心实现基本集中在单个 `gjson.go`，对这类库来说可接受，但路径解析、解析器、modifier、校验逻辑都耦合在一起，缺少清晰分层，后期维护成本偏高。\n- `main.go` 不是可执行入口，而是放了依赖校验和摘要内容，仓库语义不清晰，和标准 Go 工程习惯不一致。\n- 仓库包含大量 `test_*.go` 文件，和需求里“不要生成 test files”直接冲突，说明生成结果没有严格按任务边界收敛。\n- 公共 API 覆盖度看起来较高，但 `ModifierExists` 的签名虽被保留，参数并未实际使用，整体接口一致性略弱。\n\n### Stack Mismatches\n\n- `main.go` 命名与内容不匹配 Go 库常规习惯，容易被误认为可执行入口。\n- `go.mod` 版本较老（Go 1.12），而代码里使用的实现风格和依赖组织更像一次性生成的拼装结果，不像持续维护的成熟库结构。\n- 测试文件以 `test_*.go` 命名并直接放在根目录，虽然能被 `go test` 发现，但不符合常见的清晰工程组织习惯。\n\n### Reference Gaps\n\n- 需求明确要求不要生成测试文件，但仓库中实际存在多份测试文件。\n- 需求提到应提供标准 Go 模块布局与必要构建文件，但仓库里没有清晰的包分层，且 `main.go` 的内容不符合入口文件预期。\n- 需求强调高性能与最小分配、支持更完整的 path/modifier 语义；从结构上看这些能力被塞进单文件实现，缺少更适合复杂解析逻辑的模块拆分。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 275325,
+    "completion_tokens": 6866,
+    "total_tokens": 282191,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 128644,
+        "completion_tokens": 4436,
+        "total_tokens": 133080
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 146681,
+        "completion_tokens": 2430,
+        "total_tokens": 149111
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "gjson",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.35,
+  "architecture_score": 3.23,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

@@ -1,0 +1,21 @@
+{
+  "task": "go/chi/L2_route_headers",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L2_route_headers/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L2_route_headers/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/route_headers.go",
+  "target_file": "middleware/route_headers.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.8,
+  "reason": "The file-level description and all three function-level descriptions are highly accurate and closely match the actual implementation. The file description correctly identifies the header-based routing helper, single/multi-pattern registration, wildcard support, default fallback, and handler selection logic. Each function description captures the key behaviors: `RouteAny` correctly describes lowercase normalization, map initialization, pattern conversion via `NewPattern`, and chaining; `Handler` correctly describes the empty-router bypass, header value retrieval, lowercase normalization, first-match semantics, default route lookup, and nil middleware fallback; `IsMatch` correctly describes the MatchAny-first, MatchOne-fallback, and false-return logic. The only minor gap is that `Handler` skips the `'*'` key when iterating over header entries (since `r.Header.Get('*')` would return empty and be skipped), which is an implicit behavior not explicitly called out in the description, but this is a subtle implementation detail that a competent model could infer from the described logic.",
+  "missing_functionality": [
+    "The Handler description does not explicitly note that the '*' default route key is naturally skipped during the header-iteration loop because r.Header.Get('*') always returns empty, making the subsequent explicit default-route lookup necessary and correct."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L2_route_headers.raw.md"
+}

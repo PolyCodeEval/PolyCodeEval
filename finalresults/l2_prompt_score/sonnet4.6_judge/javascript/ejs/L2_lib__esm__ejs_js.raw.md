@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The file-level and function-level descriptions are highly accurate and closely match the actual implementation across all six hollowed functions. Every key behavioral detail is captured: `getIncludePath` correctly describes the absolute vs. relative path logic, the `options.root` array handling, the `options.views` fallback, and the conditional throw based on `options.includer`; `handleCache` correctly describes the `arguments.length > 1` check, BOM stripping, cache key usage, and error messages; `tryHandleCache` accurately describes the promise/callback branching and error handling; `includeFile` correctly describes the null-prototype shallow copy, the includer override logic, and the two `handleCache` call paths; `rethrow` accurately describes the line windowing (3 before/after), the ` >> ` marker, `err.path` assignment, and the message format; `Template` correctly describes all option normalization steps, the `legacyInclude` boolean coercion, the `_with`/strict interaction, and the `createRegex()` call. Minor omissions include: the `getIncludePath` description does not explicitly mention that the absolute path regex also matches Windows drive prefixes like `C:\\` (it says 'drive prefix' which is close but slightly vague), and the `Template` description does not mention that `openDelimiter`, `closeDelimiter`, and `delimiter` also fall back to `ejs.openDelimiter`/`ejs.closeDelimiter`/`ejs.delimiter` global overrides before the `_DEFAULT_*` constants. These are very minor gaps that would not prevent reconstruction.",
+  "missing_functionality": [
+    "Template constructor description omits that openDelimiter, closeDelimiter, and delimiter each check ejs-level global overrides (e.g., ejs.openDelimiter, ejs.closeDelimiter, ejs.delimiter) as an intermediate fallback between opts and the _DEFAULT_* constants.",
+    "getIncludePath description says 'drive prefix' but does not explicitly state the regex used is /^[A-Za-z]+:\\\\|^\\//, which also matches multi-character drive prefixes and is important for accurate reconstruction."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

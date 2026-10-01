@@ -1,0 +1,75 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.98,
+  "stdout": "ds.Int()\n            bar = fields.Int()\n    \n            @pre_load()\n            def pre_load_error1(self, item, **kwargs):\n                if item[\"foo\"] != 0:\n                    return item\n                errors = {\"foo\": [\"preloadmsg1\"], \"bar\": [\"preloadmsg2\", \"preloadmsg3\"]}\n                raise ValidationError(errors)\n    \n            @pre_load()\n            def pre_load_error2(self, item, **kwargs):\n                if item[\"foo\"] != 4:\n                    return item\n                raise ValidationError(\"preloadmsg1\", \"foo\")\n    \n            @pre_load()\n            def pre_load_error3(self, item, **kwargs):\n                if item[\"foo\"] != 8:\n                    return item\n                raise ValidationError(\"preloadmsg1\")\n    \n            @post_load()\n            def post_load_error1(self, item, **kwargs):\n                if item[\"foo\"] != 1:\n                    return item\n                errors = {\"foo\": [\"postloadmsg1\"], \"bar\": [\"postloadmsg2\", \"postloadmsg3\"]}\n                raise ValidationError(errors)\n    \n            @post_load()\n            def post_load_error2(self, item, **kwargs):\n                if item[\"foo\"] != 5:\n                    return item\n                raise ValidationError(\"postloadmsg1\", \"foo\")\n    \n        def make_item(foo, bar):\n            data = schema.load({\"foo\": foo, \"bar\": bar})\n            assert data is not None\n            return data\n    \n        schema = ExampleSchema()\n        with pytest.raises(ValidationError) as excinfo:\n            schema.load({\"foo\": 0, \"bar\": 1})\n        errors = excinfo.value.messages\n        assert \"foo\" in errors\n        assert len(errors[\"foo\"]) == 1\n        assert errors[\"foo\"][0] == \"preloadmsg1\"\n        assert \"bar\" in errors\n        assert len(errors[\"bar\"]) == 2\n        assert \"preloadmsg2\" in errors[\"bar\"]\n        assert \"preloadmsg3\" in errors[\"bar\"]\n        with pytest.raises(ValidationError) as excinfo:\n            schema.load({\"foo\": 1, \"bar\": 1})\n        errors = excinfo.value.messages\n        assert \"foo\" in errors\n        assert len(errors[\"foo\"]) == 1\n        assert errors[\"foo\"][0] == \"postloadmsg1\"\n        assert \"bar\" in errors\n        assert len(errors[\"bar\"]) == 2\n        assert \"postloadmsg2\" in errors[\"bar\"]\n        assert \"postloadmsg3\" in errors[\"bar\"]\n        with pytest.raises(ValidationError) as excinfo:\n            schema.load({\"foo\": 4, \"bar\": 1})\n        errors = excinfo.value.messages\n        assert len(errors) == 1\n>       assert \"foo\" in errors\nE       AssertionError: assert 'foo' in ['preloadmsg1']\n\ntests/unit_tests/test_decorators.py:792: AssertionError\n_________ test_decorator_error_handling_with_load_dict_error[pre_load] _________\n\ndecorator = <function pre_load at 0x7fba68a8b010>\n\n    @pytest.mark.parametrize(\"decorator\", [pre_load, post_load])\n    def test_decorator_error_handling_with_load_dict_error(decorator):\n        class ExampleSchema(Schema):\n            @decorator\n            def raise_value_error(self, item, **kwargs):\n                raise ValidationError({\"foo\": \"error\"}, \"nested_field\")\n    \n        schema = ExampleSchema()\n        with pytest.raises(ValidationError) as exc:\n            schema.load({})\n>       assert exc.value.messages == {\"nested_field\": {\"foo\": \"error\"}}\nE       AssertionError: assert {'foo': 'error'} == {'nested_fiel...oo': 'error'}}\nE         \nE         Left contains 1 more item:\nE         {'foo': 'error'}\nE         Right contains 1 more item:\nE         {'nested_field': {'foo': 'error'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:835: AssertionError\n________ test_decorator_error_handling_with_load_dict_error[post_load] _________\n\ndecorator = <function post_load at 0x7fba68a8b0a0>\n\n    @pytest.mark.parametrize(\"decorator\", [pre_load, post_load])\n    def test_decorator_error_handling_with_load_dict_error(decorator):\n        class ExampleSchema(Schema):\n            @decorator\n            def raise_value_error(self, item, **kwargs):\n                raise ValidationError({\"foo\": \"error\"}, \"nested_field\")\n    \n        schema = ExampleSchema()\n        with pytest.raises(ValidationError) as exc:\n            schema.load({})\n>       assert exc.value.messages == {\"nested_field\": {\"foo\": \"error\"}}\nE       AssertionError: assert {'foo': 'error'} == {'nested_fiel...oo': 'error'}}\nE         \nE         Left contains 1 more item:\nE         {'foo': 'error'}\nE         Right contains 1 more item:\nE         {'nested_field': {'foo': 'error'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:835: AssertionError\n_____ TestFieldValidation.test_handle_error_skips_missing_item_key_in_many _____\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7fba67e13d90>\n\n    def test_handle_error_skips_missing_item_key_in_many(self):\n        class ItemSchema(Schema):\n            value = fields.Int(required=True)\n    \n            @validates(\"value\")\n            def validate_value(self, value, **kwargs):\n                if value < 0:\n                    raise ValidationError(\"Must be positive.\")\n    \n        schema = ItemSchema(many=True)\n    \n        errors = schema.validate([{}, {\"value\": -1}])\n    \n        assert 0 in errors\n>       assert 1 in errors\nE       AssertionError: assert 1 in {0: {'value': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:1757: AssertionError\n_______________ TestFieldValidation.test_ignored_if_not_in_only ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7fba67e3ece0>\n\n    def test_ignored_if_not_in_only(self):\n        class MySchema(Schema):\n            a = fields.Raw()\n            b = fields.Raw()\n    \n            @validates(\"a\")\n            def validate_a(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_a\"})\n    \n            @validates(\"b\")\n            def validate_b(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_b\"})\n    \n        s = MySchema(only=(\"b\",))\n        errors = s.validate({\"b\": \"data\"})\n>       assert errors == {\"b\": {\"code\": \"invalid_b\"}}\nE       AssertionError: assert {} == {'b': {'code': 'invalid_b'}}\nE         \nE         Right contains 1 more item:\nE         {'b': {'code': 'invalid_b'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1815: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling - A...\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\n======================= 15 failed, 1164 passed in 5.11s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___do_load",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 13,
+    "total": 13
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

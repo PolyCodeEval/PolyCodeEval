@@ -1,0 +1,15 @@
+{
+  "score": 4.7,
+  "reason": "The file-level description and all ten function-level descriptions are highly accurate and closely match the actual implementation. The file description correctly characterizes the stubs, fatal-error behavior, and zlib wrapper design. Each function description captures the key logic paths: chunk tracking, stream reuse vs. fresh init, error propagation, buffer narrowing checks, and per-call delta reporting. Minor omissions include: GetContents uses a 4096-byte chunk buffer (not mentioned but not critical), ReadTestDataFile uses getenv('srcdir') specifically set by Automake (the description says 'srcdir environment variable' which is correct but omits the Automake context), and UncompressAtMostOrAll's warning log includes a snippet of the extra bytes (up to 20 chars) which the description doesn't mention. The CompressAtMostOrAll description correctly notes the avail_in convention but doesn't explicitly mention the assert before the Z_STREAM_END normalization. These are minor details that wouldn't prevent reconstruction. Overall the descriptions are thorough, accurate, and complete enough to reconstruct the file faithfully.",
+  "missing_functionality": [
+    "GetContents uses a fixed 4096-byte read buffer per chunk — not mentioned in the description",
+    "UncompressAtMostOrAll logs up to 20 bytes of the extra trailing data as a string snippet — the description omits this detail",
+    "CompressAtMostOrAll and UncompressAtMostOrAll both have an assert before normalizing Z_STREAM_END — not mentioned",
+    "ReadTestDataFile context note that srcdir is set by Automake is absent from the description"
+  ],
+  "incorrect_or_misleading_points": [
+    "UncompressInit description says 'log a warning' on inflateReset failure but doesn't clarify that UncompressErrorInit (not just teardown) is called, which also calls Reset() — the description says 'fully tear down/reset' which is close but slightly imprecise since it calls UncompressErrorInit rather than a separate sequence",
+    "CompressInit description says 'log a warning, destroy the existing stream with deflateEnd, and fall back to creating a fresh one' — the implementation does this but the description omits that comp_init_ is set to false before the fallback, which is handled implicitly by the described flow but could cause confusion"
+  ],
+  "complete_enough": true
+}

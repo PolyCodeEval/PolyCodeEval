@@ -1,0 +1,25 @@
+{
+  "task": "python/imapclient/L3_imapclient__idle_done",
+  "project": "python/imapclient",
+  "language": "python",
+  "prompt_path": "datasets/python/imapclient/tasks/L3_imapclient__idle_done/prompt.md",
+  "task_json_path": "datasets/python/imapclient/tasks/L3_imapclient__idle_done/task.json",
+  "source_file_path": "datasets/python/imapclient/src/imapclient/imapclient.py",
+  "target_symbol": "imapclient.py::idle_done",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the three core steps: sending the DONE terminator, emitting a debug log, and waiting for the tagged completion response via `_consume_until_tagged_response`. The return value description is correct. The only notable omission is that the function is decorated with `@require_capability('IDLE')`, meaning it will raise an error if the server does not advertise IDLE capability — this is a meaningful behavioral constraint not mentioned in the description. The order of operations is also slightly misstated: the debug log is emitted before sending `DONE\\r\\n`, but the description says 'sends... then emits a debug log', which reverses the actual order.",
+  "missing_functionality": [
+    "The function is decorated with @require_capability('IDLE'), which enforces that the server must have advertised IDLE capability before this method can be called — this precondition is not mentioned.",
+    "The debug log message is '< DONE' and is emitted before sending the DONE bytes, not after — the description implies the log comes after or alongside the send."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says the function 'sends the protocol terminator... then emits a debug log', but the implementation logs first (logger.debug) and then sends — the order is reversed."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_imapclient__idle_done.raw.md"
+}

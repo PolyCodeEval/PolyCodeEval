@@ -1,0 +1,12 @@
+{
+  "score": 4.6,
+  "reason": "The description is highly accurate and covers all major behaviors: fallback to `???`/line 1 when caller info is unavailable, tab indentation with extra tab for subsequent lines, color markers around the file/line prefix and comment, escaping the format string, splitting on newlines and trimming a trailing empty line, `$ARGS` substitution, appending an inline comment with ` // ` when available (also escaped), and terminating with a newline. One minor inaccuracy: the description says color wraps 'any appended comment' together with the file/line prefix in the same color markers, but the implementation uses `colorFile`/`colorNormal` for the prefix and a separate `colorComment`/`colorNormal` pair for the comment — two distinct color codes. Also, the description does not mention that `filepath.Base` is called on the path before the LastIndex truncation logic (though this is a secondary detail). These are small gaps that don't materially affect implementability.",
+  "missing_functionality": [
+    "The description does not mention that `filepath.Base(path)` is applied to the full path before the LastIndex-based truncation logic runs.",
+    "The description does not clarify that the `$ARGS` substitution uses the full `path` (not just the base file name) when calling `loadArguments`."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies the file/line prefix and the comment share the same color markers, but the implementation uses `colorFile` for the prefix and a distinct `colorComment` for the comment section."
+  ],
+  "complete_enough": true
+}

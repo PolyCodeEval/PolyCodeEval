@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  runner:
+    image: python:3.11-slim
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+      - pip-cache:/cache/pip
+      - npm-cache:/cache/npm
+      - gradle-cache:/cache/gradle
+    environment:
+      PYTHONUNBUFFERED: '1'
+      PIP_CACHE_DIR: /cache/pip
+      npm_config_cache: /cache/npm
+      GRADLE_USER_HOME: /cache/gradle
+    entrypoint: ["python", "docker/run_project.py"]
+
+volumes:
+  pip-cache:
+  npm-cache:
+  gradle-cache:

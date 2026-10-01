@@ -1,0 +1,26 @@
+{
+  "task": "go/go-cache/L2_sharded",
+  "project": "go/go-cache",
+  "language": "go",
+  "prompt_path": "datasets/go/go-cache/tasks/L2_sharded/prompt.md",
+  "task_json_path": "datasets/go/go-cache/tasks/L2_sharded/task.json",
+  "source_file_path": "datasets/go/go-cache/src/sharded.go",
+  "target_file": "sharded.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.2,
+  "reason": "The file-level and function-level descriptions are largely accurate and match the implementation well. The djb33 description correctly captures the seed+length initialization, the 4-byte unrolled loop, the switch-based tail handling with case 1 doing nothing, and the final shuffle. The Run method description matches the stop channel initialization, ticker, and select loop. The newShardedCache description accurately covers CSPRNG seeding with fallback, the warning message, and shard initialization. The unexportedNewSharded description correctly covers the zero-expiration normalization, shard construction, janitor startup, and finalizer registration. One notable inaccuracy: the djb33 description says 'case 2 handles 1 byte, case 3 handles 2 bytes, case 4 handles 3 bytes' implicitly, but the actual implementation for case 4 only processes 3 bytes (k[i], k[i+1], k[i+2]) — not 4 — which the description does not make explicit enough. Also, the description says the range for crypto/rand is '[0, math.MaxUint32)' which matches the code using big.NewInt(0).SetUint64(uint64(math.MaxUint32)) as the upper bound. The unexportedNewSharded description omits that the function returns SC (not sc) — i.e., it returns the wrapper even when cleanupInterval <= 0, which is implied but not stated. Overall the descriptions are complete enough to reconstruct the file with high fidelity.",
+  "missing_functionality": [
+    "The djb33 description does not explicitly state that case 4 processes only 3 bytes (k[i], k[i+1], k[i+2]), not 4 — this is a subtle but important detail for reconstruction.",
+    "The unexportedNewSharded description does not mention that the function always returns SC (the wrapper) in both the janitor and no-janitor branches.",
+    "The initial accumulator value `5381 + seed + l` is not mentioned in the djb33 description — only 'incorporating both the provided seed and the key length into the initial state' is stated, omitting the base constant 5381."
+  ],
+  "incorrect_or_misleading_points": [
+    "The djb33 description says 'case 1 doing nothing' which is correct, but the phrasing 'updates only the bytes covered by cases 2, 3, and 4' could mislead a reader into thinking case 4 processes 4 bytes when it actually processes only 3.",
+    "The newShardedCache description says the range is '[0, math.MaxUint32)' which is technically correct but slightly misleading since math.MaxUint32 is used as the exclusive upper bound via big.Int, meaning the actual max value is math.MaxUint32-1."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_sharded.raw.md"
+}

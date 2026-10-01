@@ -1,0 +1,14 @@
+{
+  "score": 4.7,
+  "reason": "The prompt matches the implementation very closely at both the file and function levels. It correctly captures the CLI’s overall purpose, template/context handling, comment-style formatting, and output suffix detection, and the four hollowed functions are described with enough operational detail to reproduce their implemented behavior. The only notable gaps are a few implementation-adjacent details elsewhere in the file that are mentioned only broadly in the file summary rather than concretely.",
+  "missing_functionality": [
+    "The file-level description does not explicitly mention the exact discovery mechanism for built-in licenses from template filenames in `TEMPLATES_DIR` or the default license constant `bsd3`.",
+    "The file-level description only broadly mentions output-path handling and does not spell out the `stdout` special case or the logic that appends `.<lang>` when an output file has no recognized suffix but a language was requested.",
+    "The prompt does not mention `valid_year`, although it is outside the hollowed functions and therefore less critical for reconstruction of the missing bodies."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `format_license` description says the per-line output is 'the per-line comment prefix followed by a space and then the original line'. In the implementation, the code always writes the configured prefix string and then an extra space separately; because some prefixes already include spacing (for example `' *'`), this can produce double-spacing relative to a normalized interpretation.",
+    "The file-level description says the command can 'write formatted license text to files', which is true overall, but it does not hint that even plain text output goes through `format_license` with the `'txt'` style, meaning opening and closing blank lines are still emitted."
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,37 @@
+{
+  "task": "cpp/tinyxml2/L3_tinyxml2__XMLUtil",
+  "project": "cpp/tinyxml2",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__XMLUtil/prompt.md",
+  "task_json_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__XMLUtil/task.json",
+  "source_file_path": "datasets/cpp/tinyxml2/src/tinyxml2.h",
+  "target_symbol": "tinyxml2.h::XMLUtil",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 2.8,
+  "reason": "The description accurately captures the behavior of the `IsWhiteSpace` static method — the UTF-8 continuation byte exclusion, the `unsigned char` cast, and the `isspace` delegation are all correctly described. However, the target is the entire `XMLUtil` class, not just `IsWhiteSpace`. The class contains a large number of other static methods: `SkipWhiteSpace` (two overloads), `IsNameStartChar`, `IsNameChar`, `IsPrefixHex`, `StringEqual`, `IsUTF8Continuation`, `ReadBOM`, `GetCharacterRef`, `ConvertUTF32ToUTF8`, a full suite of `ToStr`/`ToInt`/`ToBool`/etc. conversion functions, and `SetBoolSerialization`. None of these are mentioned. The description is essentially a description of one leaf method out of roughly 20+ members, making it far too incomplete to support reimplementing the class.",
+  "missing_functionality": [
+    "SkipWhiteSpace (const and non-const overloads) — advances a pointer past whitespace while optionally tracking line numbers",
+    "IsUTF8Continuation — checks if a byte has the high bit set",
+    "IsNameStartChar — checks if a character is valid as the start of an XML name",
+    "IsNameChar — checks if a character is valid anywhere in an XML name",
+    "IsPrefixHex — checks if a string (after skipping whitespace) starts with '0x' or '0X'",
+    "StringEqual — compares two strings up to an optional character limit using strncmp",
+    "ReadBOM — reads and detects a byte-order mark",
+    "GetCharacterRef — parses an XML character reference and returns its UTF-8 value",
+    "ConvertUTF32ToUTF8 — converts a UTF-32 code point to a UTF-8 byte sequence",
+    "ToStr overloads — converts int, unsigned, bool, float, double, int64_t, uint64_t to strings",
+    "ToInt, ToUnsigned, ToBool, ToFloat, ToDouble, ToInt64, ToUnsigned64 — parse strings to primitive types",
+    "SetBoolSerialization — configures the string representations used for boolean serialization",
+    "Private members writeBoolTrue and writeBoolFalse"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies it is describing the whole XMLUtil class/function, but it only covers IsWhiteSpace behavior",
+    "Referring to 'C locale classification' is slightly misleading — isspace behavior depends on the current locale, not strictly C locale, though the cast to unsigned char is correctly noted"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_tinyxml2__XMLUtil.raw.md"
+}

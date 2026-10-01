@@ -1,0 +1,21 @@
+{
+  "project": "mitt",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "prompt 覆盖了 mitt 的核心能力：创建 emitter、on/off/emit、wildcard、类型导出、黑盒测试所需的包导入与接口契约，足以复现仓库主体功能；但对源码与黑盒中实际存在的 `off(type)` 清空整类监听、`symbol` 事件类型支持、以及构建产物细节覆盖不完整。"
+    },
+    "unambiguity": {
+      "score": 4.6,
+      "reason": "核心 API、参数、返回值、事件分发语义、顺序和“当前 emit 中新增 handler 不生效”等关键行为描述清楚，黑盒实现目标明确；主要歧义点在于 `off` 前文只写了移除指定 handler，而测试契约和真实实现还支持省略 handler 清空该类型全部监听。"
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "prompt 直接给出了 `require('../../dist/mitt.js')` 的导入方式、Emitter 结构、逐项行为约束和关键 edge cases，足以支撑黑盒验证核心功能；仅对符号事件与部分实现侧能力的测试指引未显式写出。"
+    },
+    "consistency": {
+      "score": 4.4,
+      "reason": "大部分描述与真实源码实现一致，包括 Map 存储、同步调用、wildcard 参数、注册顺序和 emit 时复制 handler 列表；但 prompt 未体现源码和测试支持的 `symbol` 事件类型，以及 `off(type)` 无 handler 时清空全部监听这一真实行为，因此与当前实现存在轻微遗漏。"
+    }
+  }
+}

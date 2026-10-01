@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.99,
+  "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.10.12, pytest-9.1.0, pluggy-1.6.0\nrootdir: /workspace\ncollected 11 items\n\ntests/unit_tests/test_instrument.py .                                    [  9%]\ntests/unit_tests/test_pnf.py .....                                       [ 54%]\ntests/unit_tests/test_renko.py ...                                       [ 81%]\ntests/acceptance_tests/test_indicators.py .F                             [100%]\n\n=================================== FAILURES ===================================\n________________________________ test_linebreak ________________________________\n\n    def test_linebreak():\n        \"\"\"\n        Test the LineBreak indicator by comparing the close prices of the LineBreak chart\n        generated from the input data with the expected close prices.\n    \n        The LineBreak chart is generated using the line number of 3.\n    \n        Raises:\n            AssertionError: If the absolute difference between the close prices of\n            the generated LineBreak chart and the expected close prices is greater than\n            1e-12.\n        \"\"\"\n        df = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'HOOLI.csv')\n        lbdf = pd.read_csv(ACCEPTANCE_SAMPLES_DIR / 'hooli_linebreak_3.csv')\n        lb = LineBreak(df)\n        lb.line_number = 3\n        cdf = lb.get_ohlc_data()\n>       assert np.all(np.abs(cdf['close'] - lbdf['close']) <= 1e-12)\nE       AssertionError: assert np.False_\nE        +  where np.False_ = <function all at 0x7f8764711b70>(0        0.0\\n1        0.0\\n2        0.0\\n3        0.0\\n4     33.475\\n       ...  \\n71       NaN\\n72       NaN\\n73       NaN\\n74       NaN\\n75       NaN\\nName: close, Length: 76, dtype: object <= 1e-12)\nE        +    where <function all at 0x7f8764711b70> = np.all\nE        +    and   0        0.0\\n1        0.0\\n2        0.0\\n3        0.0\\n4     33.475\\n       ...  \\n71       NaN\\n72       NaN\\n73       NaN\\n74       NaN\\n75       NaN\\nName: close, Length: 76, dtype: object = <ufunc 'absolute'>((0      143.95\\n1     142.775\\n2     137.925\\n3      143.95\\n4     151.525\\n5     153.375\\n6     153.425\\n7       164.7\\n8     ... 202.275\\n12    202.825\\n13    205.425\\n14    207.775\\n15     211.85\\n16    212.375\\n17      225.2\\nName: close, dtype: object - 0     143.950\\n1     142.775\\n2     137.925\\n3     143.950\\n4     118.050\\n       ...   \\n71    187.950\\n72    189.325\\n73    204.850\\n74    205.200\\n75    207.700\\nName: close, Length: 76, dtype: float64))\nE        +      where <ufunc 'absolute'> = np.abs\n\ntests/acceptance_tests/test_indicators.py:44: AssertionError\n=============================== warnings summary ===============================\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_close\ntests/unit_tests/test_pnf.py::test_get_bar_ohlc_data_hl\n  /workspace/src/stocktrends/indicators.py:372: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`\n    df['trend_change'] = df['uptrend'].ne(df['uptrend'].shift().bfill()).astype(int)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/acceptance_tests/test_indicators.py::test_linebreak - AssertionE...\n=================== 1 failed, 10 passed, 2 warnings in 1.48s ===================\n",
+  "stderr": "",
+  "task": "python/stocktrends/L3_indicators__uptrend_reversal",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      }
+    ],
+    "passed": 10,
+    "failed": 1,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9091,
+  "compile_score": 0.5,
+  "test_score": 0.4545,
+  "score": 0.9545
+}

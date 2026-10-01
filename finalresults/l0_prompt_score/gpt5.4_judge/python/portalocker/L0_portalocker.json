@@ -1,0 +1,30 @@
+{
+  "task": "python/portalocker/L0_portalocker",
+  "project": "python/portalocker",
+  "language": "python",
+  "prompt_path": "datasets/python/portalocker/tasks/L0_portalocker/prompt.md",
+  "project_root": "datasets/python/portalocker",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt covers the repository's main value well: low-level file locking, exported helper classes, semaphore-style coordination, optional Redis locking, and the single-file packaging CLI. It also names the main modules and the key public API. Missing pieces are mostly secondary for L0 reconstruction, such as concrete semaphore constructor contracts, package metadata/version behavior, platform-specific locker variants, and some PID-file details."
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "Core interfaces used by the blackbox tests are mostly specified with clear names, signatures, and expected behaviors, especially for Lock, RLock, lock/unlock, open_atomic, LockFlags, and exceptions. Ambiguity remains around semaphore APIs, the exact CLI surface, Redis constructor details, and some behavioral edge cases like reentrancy/thread semantics and overwrite behavior for open_atomic."
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "The prompt is strong for blackbox-driven implementation because it explicitly lists the APIs and behaviors that the tests exercise, including constructor signatures, exception expectations, atomic-write visibility, and flag combinability. A solver could implement the tested surface directly from the prompt, with only limited inference needed for untargeted helpers."
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "Most prompt claims align with the real codebase: the package root re-exports the expected APIs, low-level locking is separated from helpers, Redis support lives in a dedicated optional module, and __main__ implements the combine utility. The main mismatches are that open_atomic in the real code only supports creating a new target file, and some real helper semantics such as PidFileLock and reentrancy details are more specific than the prompt states."
+    }
+  },
+  "overall_score": 4.35,
+  "raw_response_file": "L0_portalocker.raw.md"
+}

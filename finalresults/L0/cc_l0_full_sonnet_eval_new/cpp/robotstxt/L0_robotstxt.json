@@ -1,0 +1,415 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 345.37,
+  "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nlibgtest-dev is already the newest version (1.11.0-3).\nThe following NEW packages will be installed:\n  libabsl-dev libabsl20210324\n0 upgraded, 2 newly installed, 0 to remove and 16 not upgraded.\nNeed to get 1294 kB of archives.\nAfter this operation, 6951 kB of additional disk space will be used.\nGet:1 http://mirrors.aliyun.com/ubuntu-ports jammy-updates/main arm64 libabsl20210324 arm64 0~20210324.2-2ubuntu0.3 [377 kB]\nGet:2 http://mirrors.aliyun.com/ubuntu-ports jammy-updates/main arm64 libabsl-dev arm64 0~20210324.2-2ubuntu0.3 [918 kB]\nFetched 1294 kB in 9s (150 kB/s)\nSelecting previously unselected package libabsl20210324:arm64.\n(Reading database ... \n(Reading database ... 5%\n(Reading database ... 10%\n(Reading database ... 15%\n(Reading database ... 20%\n(Reading database ... 25%\n(Reading database ... 30%\n(Reading database ... 35%\n(Reading database ... 40%\n(Reading database ... 45%\n(Reading database ... 50%\n(Reading database ... 55%\n(Reading database ... 60%\n(Reading database ... 65%\n(Reading database ... 70%\n(Reading database ... 75%\n(Reading database ... 80%\n(Reading database ... 85%\n(Reading database ... 90%\n(Reading database ... 95%\n(Reading database ... 100%\n(Reading database ... 30709 files and directories currently installed.)\nPreparing to unpack .../libabsl20210324_0~20210324.2-2ubuntu0.3_arm64.deb ...\nUnpacking libabsl20210324:arm64 (0~20210324.2-2ubuntu0.3) ...\nSelecting previously unselected package libabsl-dev:arm64.\nPreparing to unpack .../libabsl-dev_0~20210324.2-2ubuntu0.3_arm64.deb ...\nUnpacking libabsl-dev:arm64 (0~20210324.2-2ubuntu0.3) ...\nSetting up libabsl20210324:arm64 (0~20210324.2-2ubuntu0.3) ...\nSetting up libabsl-dev:arm64 (0~20210324.2-2ubuntu0.3) ...\nProcessing triggers for libc-bin (2.35-0ubuntu3.13) ...\n",
+  "stderr": "debconf: delaying package configuration, since apt-utils is not installed\n/usr/bin/ld: /tmp/cchwe4QM.o: in function `googlebot::RobotsMatcher::ComputeMatch()':\nrobots.cc:(.text+0x1a9c): undefined reference to `googlebot::RobotsMatcher::MatchPattern(absl::debian2::string_view, absl::debian2::string_view)'\ncollect2: error: ld returned 1 exit status\n",
+  "inferred_commands": {
+    "install": "apt-get update -qq && apt-get install -y --no-install-recommends libabsl-dev libgtest-dev",
+    "test": "sh /workspace/blackbox_tests/run_tests.sh",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "apt-get update -qq && apt-get install -y --no-install-recommends libabsl-dev libgtest-dev",
+      "test": "sh /workspace/blackbox_tests/run_tests.sh",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.84,
+    "Architecture": 5.0,
+    "Health": 5.0
+  },
+  "overall_score": 2.96,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(robots CXX)\n\nset(CMAKE_CXX_STANDARD 17)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_POSITION_INDEPENDENT_CODE ON)\n\ninclude_directories(${CMAKE_CURRENT_SOURCE_DIR})\n\n# Locate abseil (installed system-wide or via find_package)\nfind_package(absl QUIE"
+            },
+            {
+              "path": "reporting_robots.cc",
+              "excerpt": "amespace googlebot {\n\n// A RobotsParseHandler adapter that delegates to RobotsParsingReporter.\nclass ReportingHandler : public RobotsParseHandler {\n public:\n  explicit ReportingHandler(RobotsParsingReporter* reporter)\n      : reporter_(reporter) {}\n\n  void HandleRobotsStart() override { reporter_->HandleRobotsStart(); }\n  void HandleRobotsEnd() override { reporter_->HandleRobotsEnd(); }\n  void Han"
+            },
+            {
+              "path": "reporting_robots.h",
+              "excerpt": "e;\n  bool is_typo;\n};\n\n// A RobotsParseHandler that collects statistics and parsed lines.\nclass RobotsParsingReporter : public RobotsParseHandler {\n public:\n  RobotsParsingReporter();\n  ~RobotsParsingReporter() override = default;\n\n  // Number of recognized directives (user-agent, allow, disallow, sitemap).\n  int valid_directives() const { return valid_directives_; }\n\n  // Number of directives tha"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库包含 `robots.h/.cc`、`reporting_robots.h/.cc`、CLI 和公开入口名；所要求的公共入口面基本可见。"
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "The library must expose functions or classes that:",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "Config QUIET)\n  if(PkgConfig_FOUND)\n    pkg_check_modules(ABSL absl_strings absl_base)\n  endif()\nendif()\n\n# Core robots library\nadd_library(robots SHARED robots.cc)\ntarget_include_directories(robots PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})\ntarget_link_libraries(robots PUBLIC\n  absl::strings\n  absl::base\n  absl::throw_delegate\n  absl::raw_logging_internal\n)\n\n# Static variant\nadd_library(robots-static ST"
+            }
+          ],
+          "status": "implemented",
+          "reason": "库公开了 `GetKeyType`、`ParseRobotsTxt`、`RobotsMatcher`、`RobotsParsingReporter` 等函数/类接口。"
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "accept robots.txt content,",
+          "evidence": [
+            {
+              "path": "robots.h",
+              "excerpt": "the License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#ifndef ROBOTS_H_\n#define ROBOTS_H_\n\n#include <string>\n#include <vector>\n\n#include \"absl/strings/string_view.h\"\n\nnamespace googlebot {\n\n// Key types found in robots.txt directives.\nenum class KeyType {\n  USER_AGENT,\n  ALLOW,\n  DISALLOW,\n  SITEMAP,\n  UNKNOWN,\n};\n\n// Returns the KeyType fo"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "// Command-line tool for testing robots.txt rules.\n// Usage: robots <robots.txt file> <url> [user-agent]\n//   or:  robots --report <robots.txt file>\n\n#include <cstdio>\n#include <cstdlib>\n#include <fstream>\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\n#include \"reporting_robots.h\"\n#"
+            },
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(robots CXX)\n\nset(CMAKE_CXX_STANDARD 17)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_POSITION_INDEPENDENT_CODE ON)\n\ninclude_directories(${CMAKE_CURRENT_SOURCE_DIR})\n\n# Locate abseil (installed system-wide or via find_package)\nfind_package(absl QUIET)\n\nif(NOT absl_FOUND)\n  # Try"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ParseRobotsTxt`、`OneAgentAllowedByRobots`、`AllowedByRobots` 都直接接收 robots.txt 内容字符串。"
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "accept user-agent and URL inputs,",
+          "evidence": [
+            {
+              "path": "robots.cc",
+              "excerpt": "* is_typo) {\n  if (is_typo) *is_typo = false;\n  AsciiStrToLower(&key);\n  absl::string_view k = Strip(key);\n\n  if (k == \"user-agent\") return KeyType::USER_AGENT;\n  if (k == \"allow\") return KeyType::ALLOW;\n  if (k == \"disallow\") return KeyType::DISALLOW;\n  if (k == \"sitemap\") return KeyType::SITEMAP;\n\n  // Common typos\n  struct Typo { const char* str; KeyType kt; };\n  static const Typo kTypos[] = {"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "seHandler* handler);\nvoid ParseRobotsTxt(const char* robots_body, RobotsParseHandler* handler);\n\n// Evaluates whether a user-agent is allowed to fetch a URL per robots.txt.\nclass RobotsMatcher : public RobotsParseHandler {\n public:\n  RobotsMatcher();\n  ~RobotsMatcher() override = default;\n\n  // Returns true if user_agent is allowed to fetch url per robots_body.\n  bool OneAgentAllowedByRobots(const"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "// Command-line tool for testing robots.txt rules.\n// Usage: robots <robots.txt file> <url> [user-agent]\n//   or:  robots --report <robots.txt file>\n\n#include <cstdio>\n#include <cstdlib>\n#include <fstream>\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\n#include \"reporting_robots.h\"\n#include \"robots.h\"\n\nstatic std::string ReadFile(const std::s"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`RobotsMatcher` 的公开方法接收 `user_agent` 和 `url` 参数，CLI 也从命令行读取这两个输入。"
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "return allow/disallow decisions in an observable way.",
+          "evidence": [
+            {
+              "path": "reporting_robots.h",
+              "excerpt": "default;\n\n  // Number of recognized directives (user-agent, allow, disallow, sitemap).\n  int valid_directives() const { return valid_directives_; }\n\n  // Number of directives that were not recognized (unknown).\n  int unused_directives() const { return unused_directives_; }\n\n  // Last line number seen during parsing.\n  int last_line_seen() const { return last_line_seen_; }\n\n  // All parsed lines in"
+            },
+            {
+              "path": "robots.cc",
+              "excerpt": "ast<unsigned char>(c)));\n  }\n}\n\nstd::string ToLower(absl::string_view s) {\n  std::string r(s);\n  AsciiStrToLower(&r);\n  return r;\n}\n\nabsl::string_view Strip(absl::string_view s) {\n  while (!s.empty() &&\n         absl::ascii_isspace(static_cast<unsigned char>(s.front()))) {\n    s.remove_prefix(1);\n  }\n  while (!s.empty() &&\n         absl::ascii_isspace(static_cast<unsigned char>(s.back()))) {\n    s"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "es found in robots.txt directives.\nenum class KeyType {\n  USER_AGENT,\n  ALLOW,\n  DISALLOW,\n  SITEMAP,\n  UNKNOWN,\n};\n\n// Returns the KeyType for the given key string.\n// Sets *is_typo to true if the key appears to be a common misspelling.\nKeyType GetKeyType(std::string key, bool* is_typo);\n\n// Abstract handler for robots.txt parse events.\nclass RobotsParseHandler {\n public:\n  virtual ~RobotsParseHa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`RobotsMatcher` 返回 `bool` 允许/拒绝结果，CLI 输出 `ALLOWED`/`DISALLOWED`，结果可观察。"
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "preserve public names such as `GetKeyType`, `ParseRobotsTxt`, `RobotsMatcher`, `RobotsParsingReporter`, `RobotsParsedLine`, and `KeyType`",
+          "evidence": [
+            {
+              "path": "reporting_robots.cc",
+              "excerpt": "amespace googlebot {\n\n// A RobotsParseHandler adapter that delegates to RobotsParsingReporter.\nclass ReportingHandler : public RobotsParseHandler {\n public:\n  explicit ReportingHandler(RobotsParsingReporter* reporter)\n      : reporter_(reporter) {}\n\n  void HandleRobotsStart() override { reporter_->HandleRobotsStart(); }\n  void HandleRobotsEnd() override { reporter_->HandleRobotsEnd(); }\n  void Han"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "tKeyType(std::string key, bool* is_typo);\n\n// Abstract handler for robots.txt parse events.\nclass RobotsParseHandler {\n public:\n  virtual ~RobotsParseHandler() = default;\n\n  virtual void HandleRobotsStart() = 0;\n  virtual void HandleRobotsEnd() = 0;\n  virtual void HandleUserAgent(int line_num, absl::string_view value) = 0;\n  virtual void HandleAllow(int line_num, absl::string_view value) = 0;\n  vi"
+            },
+            {
+              "path": "reporting_robots.h",
+              "excerpt": "e;\n  bool is_typo;\n};\n\n// A RobotsParseHandler that collects statistics and parsed lines.\nclass RobotsParsingReporter : public RobotsParseHandler {\n public:\n  RobotsParsingReporter();\n  ~RobotsParsingReporter() override = default;\n\n  // Number of recognized directives (user-agent, allow, disallow, sitemap).\n  int valid_directives() const { return valid_directives_; }\n\n  // Number of directives tha"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`GetKeyType`、`ParseRobotsTxt`、`RobotsMatcher`、`RobotsParsingReporter`、`RobotsParsedLine` 和 `KeyType` 这些公开名字都实际存在。"
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "The CLI executable must expose the same core behavior through command-line invocation.",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "obots-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})\ntarget_link_libraries(reporting_robots-static PUBLIC robots-static)\n\n# CLI executable\nadd_executable(robots-main robots_main.cc)\ntarget_link_libraries(robots-main PRIVATE reporting_robots robots)\nset_target_properties(robots-main PROPERTIES OUTPUT_NAME robots)\n\ninstall(TARGETS robots robots-static robots-main\n  LIBRARY DESTINATION lib\n  ARCHIVE DEST"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "// Command-line tool for testing robots.txt rules.\n// Usage: robots <robots.txt file> <url> [user-agent]\n//   or:  robots --report <robots.txt file>\n\n#include <cstdio>\n#include <cstdlib>\n#include <fstream>\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\n#"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`robots_main.cc` 提供命令行入口，支持匹配判断和 `--report` 报告模式，并在 CMake 中构建为可执行文件。"
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`robots.h` and `robots.cc` implement the core robots parser and matcher.",
+          "evidence": [
+            {
+              "path": "robots.cc",
+              "excerpt": "he License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#include \"robots.h\"\n\n#include <algorithm>\n#include <cctype>\n#include <cstring>\n#include <string>\n#include <vector>\n\n#include \"absl/strings/ascii.h\"\n#include \"absl/strings/string_view.h\"\n\nnamespace googlebot {\n\nnamespace {\n\nvoid AsciiStrToLower(std::string* s) {\n  for (char& c : *s) {\n    c"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "the License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#ifndef ROBOTS_H_\n#define ROBOTS_H_\n\n#include <string>\n#include <vector>\n\n#include \"absl/strings/string_view.h\"\n\nnamespace googlebot {\n\n// Key types found in robots.txt directives.\nenum class KeyType {\n  USER_AGENT,\n  ALLOW,\n  DISALLOW,\n  SITEMAP,\n  UNKNOWN,\n};\n\n// Returns the KeyType fo"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "// Command-line tool for testing robots.txt rules.\n// Usage: robots <robots.txt file> <url> [user-agent]\n//   or:  robots --report <robots.txt file>\n\n#include <cstdio>\n#include <cstdlib>\n#include <fstream>\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\n#include \"reporting_robots.h\"\n#"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`robots.h` 声明核心解析/匹配接口，`robots.cc` 实现解析、规则匹配和 `RobotsMatcher`。"
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`reporting_robots.h` and `reporting_robots.cc` provide the reporting-oriented wrapper surface used by the repository.",
+          "evidence": [
+            {
+              "path": "reporting_robots.cc",
+              "excerpt": "he License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#include \"reporting_robots.h\"\n\n#include \"robots.h\"\n\nnamespace googlebot {\n\n// A RobotsParseHandler adapter that delegates to RobotsParsingReporter.\nclass ReportingHandler : public RobotsParseHandler {\n public:\n  explicit ReportingHandler(RobotsParsingReporter* reporter)\n      : reporter_(r"
+            },
+            {
+              "path": "reporting_robots.h",
+              "excerpt": "the License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#ifndef REPORTING_ROBOTS_H_\n#define REPORTING_ROBOTS_H_\n\n#include <vector>\n\n#include \"robots.h\"\n\nnamespace googlebot {\n\n// Describes a single parsed line from a robots.txt file.\nstruct RobotsParsedLine {\n  enum RobotsTagName {\n    kUnknown   = 0,\n    kUserAgent = 1,\n    kAllow     = 2,"
+            },
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "_logging_internal\n)\nset_target_properties(robots-static PROPERTIES OUTPUT_NAME robots)\n\n# Reporting library\nadd_library(reporting_robots SHARED reporting_robots.cc)\ntarget_include_directories(reporting_robots PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})\ntarget_link_libraries(reporting_robots PUBLIC robots)\n\nadd_library(reporting_robots-static STATIC reporting_robots.cc)\ntarget_include_directories(reporting"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`reporting_robots.h/.cc` 定义并实现了 `RobotsParsingReporter` 和面向报告的 `ParseRobotsTxt` 包装接口。"
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Robots.txt Parsing",
+          "evidence": [
+            {
+              "path": "reporting_robots.cc",
+              "excerpt": ".\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#include \"reporting_robots.h\"\n\n#include \"robots.h\"\n\nnamespace googlebot {\n\n// A RobotsParseHandler adapter that delegates to RobotsParsingReporter.\nclass ReportingHandler : public RobotsParseHandler {\n public:\n  explicit ReportingHandler(RobotsParsingReporter* reporter)\n      : reporter_(reporter) {"
+            },
+            {
+              "path": "reporting_robots.h",
+              "excerpt": "se.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#ifndef REPORTING_ROBOTS_H_\n#define REPORTING_ROBOTS_H_\n\n#include <vector>\n\n#include \"robots.h\"\n\nnamespace googlebot {\n\n// Describes a single parsed line from a robots.txt file.\nstruct RobotsParsedLine {\n  enum RobotsTagName {\n    kUnknown   = 0,\n    kUserAgent = 1,\n    kAllow     = 2,\n    kDisall"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "// Command-line tool for testing robots.txt rules.\n// Usage: robots <robots.txt file> <url> [user-agent]\n//   or:  robots --report <robots.txt file>\n\n#include <cstdio>\n#include <cstdlib>\n#include <fstream>\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\n#include \"reporting_robots.h\"\n#"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库实现了 robots.txt 逐行解析、键识别和回调分发。"
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Matching",
+          "evidence": [
+            {
+              "path": "robots.cc",
+              "excerpt": "hor = (!pattern.empty() && pattern.back() == '$');\n  if (end_anchor) pattern.remove_suffix(1);\n\n  // Iterative wildcard matching.\n  size_t pi = 0, si = 0;\n  size_t star_pi = std::string::npos, star_si = std::string::npos;\n\n  while (si < path.size()) {\n    if (pi < pattern.size() && pattern[pi] == '*') {\n      star_pi = ++pi;\n      star_si = si;\n    } else if (pi < pattern.size() && pattern[pi] =="
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "t { return ever_seen_specific_agent_; }\n  bool disallow_ignore_global() const { return disallow_ignore_global_; }\n  int matching_line() const { return matching_line_; }\n\n  // RobotsParseHandler overrides.\n  void HandleRobotsStart() override;\n  void HandleRobotsEnd() override;\n  void HandleUserAgent(int line_num, absl::string_view value) override;\n  void HandleAllow(int line_num, absl::string_view"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "user_agent, url);\n  std::cout << (allowed ? \"ALLOWED\" : \"DISALLOWED\") << \"\\n\";\n  if (matcher.matching_line() >= 0) {\n    std::cout << \"Matching line: \" << matcher.matching_line() << \"\\n\";\n  }\n  return allowed ? 0 : 1;\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库实现了路径规则匹配、allow/disallow 决策和命中行号记录。"
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "CLI Utilities",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "obots-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})\ntarget_link_libraries(reporting_robots-static PUBLIC robots-static)\n\n# CLI executable\nadd_executable(robots-main robots_main.cc)\ntarget_link_libraries(robots-main PRIVATE reporting_robots robots)\nset_target_properties(robots-main PROPERTIES OUTPUT_NAME robots)\n\ninstall(TARGETS robots robots-static robots-main\n  LIBRARY DESTINATION lib\n  ARCHIVE DEST"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库包含 CLI 可执行目标 `robots`，可用于规则判断和解析报告。"
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "obots robots-static robots-main\n  LIBRARY DESTINATION lib\n  ARCHIVE DESTINATION lib\n  RUNTIME DESTINATION bin\n)\ninstall(FILES robots.h reporting_robots.h DESTINATION include)"
+            },
+            {
+              "path": "robots.cc",
+              "excerpt": "// When we encounter a new user-agent after rules, it starts a new group.\n  // If we had rules in the previous group, they belong to that group.\n  // A \"group\" is: one or more"
+            }
+          ],
+          "status": "implemented",
+          "reason": "交付文件都位于项目根下，无额外外层目录，符合“相对项目根生成文件”的形态要求。"
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Provide the required source files, header files, and any minimal build configuration needed to compile the project.",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "cmake_minimum_required(VERSION 3.10)\nproject(robots CXX)\n\nset(CMAKE_CXX_STANDARD 17)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_POSITION_INDEPENDENT_CODE ON)\n\ninclude_directories(${CMAKE_CURRENT_SOURCE_DIR})\n\n# Locate abseil (installed system-wide or via find_package)\nfind_package(absl QUIE"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "const char* user_agent,\n                                const char* url);\n\n  // Returns true if any of user_agents is allowed to fetch url per robots_body.\n  bool AllowedByRobots(const char* robots_body,\n                       const std::vector<std::string>* user_agents,\n                       const char* url);\n\n  // Returns true if user_agent is a valid non-empty token."
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库提供了要求的源文件、头文件和 `CMakeLists.txt` 构建配置。"
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "(${CMAKE_CURRENT_SOURCE_DIR})\n\n# Locate abseil (installed system-wide or via find_package)\nfind_package(absl QUIET)\n\nif(NOT absl_FOUND)\n  # Try pkg-config as fallback\n  find_package(PkgConfig QUIET)\n  if(PkgConfig_FOUND)\n    pkg_check_modules(ABSL absl_strings absl_base)\n  endif()\nendif()\n\n# Core robots library\nadd_library(robots SHARED robots.cc)\ntarget_include_directories(robots PUBLIC ${CMAKE_C"
+            },
+            {
+              "path": "robots.h",
+              "excerpt": "// Copyright 2024 Google LLC\n//\n// Licensed under the Apache License, Version 2.0 (the \"License\");\n// you may not use this file except in compliance with the License.\n// You may obtain a copy of the License at\n//\n//     https://www.apache.org/licenses/LICENSE-2.0\n\n#ifndef ROBOTS_H_\n#define ROBOTS_H_\n\n#include <string>\n#include <vector>\n\n#include \"absl/strings/string_view.h\"\n\nnamespace go"
+            },
+            {
+              "path": "robots_main.cc",
+              "excerpt": "::string ReadFile(const std::string& path) {\n  std::ifstream f(path);\n  if (!f.is_open()) {\n    std::cerr << \"Error: cannot open file '\" << path << \"'\\n\";\n    std::exit(1);\n  }\n  std::ostringstream ss;\n  ss << f.rdbuf();\n  return ss.str();\n}\n\nstatic void PrintUsage(const char* prog) {\n  std::cerr << \"Usage:\\n\"\n            << \"  \" << prog << \" <robots.txt> <url> [user-agent]\\n\"\n            << \"  \""
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库中未见测试文件、`blackbox_tests/` 或额外外层包装目录。"
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "the project depends on abseil; `CMakeLists.txt` or `Makefile` must link against `absl_strings`, `absl_base`, `absl_throw_delegate`, and `absl_raw_logging_internal`",
+          "evidence": [
+            {
+              "path": "CMakeLists.txt",
+              "excerpt": "ANDARD_REQUIRED ON)\nset(CMAKE_POSITION_INDEPENDENT_CODE ON)\n\ninclude_directories(${CMAKE_CURRENT_SOURCE_DIR})\n\n# Locate abseil (installed system-wide or via find_package)\nfind_package(absl QUIET)\n\nif(NOT absl_FOUND)\n  # Try pkg-config as fallback\n  find_package(PkgConfig QUIET)\n  if(PkgConfig_FOUND)\n    pkg_check_modules(ABSL absl_strings absl_base)\n  endif()\nendif()\n\n# Core robots library\nadd_lib"
+            },
+            {
+              "path": "robots.cc",
+              "excerpt": "signed char c) {\n  std::string r = \"%\";\n  r += kHex[c >> 4];\n  r += kHex[c & 0xF];\n  return r;\n}\n\n// Normalize a robots.txt path pattern.\nstd::string NormalizePath(absl::string_view path) {\n  std::string decoded = PercentDecode(path);\n  std::string r;\n  r.reserve(decoded.size() * 2);\n  for (size_t i = 0; i < decoded.size(); ++i) {\n    unsigned char c = static_cast<unsigned char>(decoded[i]);\n    i"
+            },
+            {
+              "path": "reporting_robots.cc",
+              "excerpt": ");\n  } else {\n    ++unused_directives_;\n    AddLine(line_num, RobotsParsedLine::kUnused, false);\n  }\n}\n\nvoid ParseRobotsTxt(const char* robots_body, RobotsParsingReporter* reporter) {\n  googlebot::ParseRobotsTxt(robots_body,\n                             static_cast<RobotsParseHandler*>(reporter));\n}\n\n}  // namespace googlebot"
+            }
+          ],
+          "status": "partial",
+          "reason": "`CMakeLists.txt` 确实链接了 Abseil，但使用的是 `absl::strings` / `absl::base` / `absl::throw_delegate` / `absl::raw_logging_internal` 目标名，而非要求中明确列出的 `absl_strings` / `absl_base` / `absl_throw_delegate` / `absl_raw_logging_internal`；`pkg_check_modules` 也只显式提到前两个。"
+        }
+      ],
+      "feature_count": 16,
+      "constraint_count": 0,
+      "implemented_count": 15,
+      "partial_count": 1,
+      "missing_count": 0,
+      "unclear_count": 0,
+      "feature_coverage": 0.9688,
+      "constraint_coverage": 0.9688,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "cpp",
+        "framework": "cpp",
+        "app_style": "library",
+        "build_system": "cmake",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 5.0,
+        "stack_alignment": 5.0,
+        "reference_alignment": 5.0
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\n仓库实际包含了要求的核心文件结构：`robots.h/.cc` 提供解析与匹配，`reporting_robots.h/.cc` 提供报告包装层，`robots_main.cc` 提供 CLI，`CMakeLists.txt` 提供最小构建配置。公开名称 `GetKeyType`、`ParseRobotsTxt`、`RobotsMatcher`、`RobotsParsingReporter`、`RobotsParsedLine`、`KeyType` 均可在仓库中直接找到，且解析、匹配、CLI 三项核心能力都有对应实现。\n\n### Missing List\n\n- F016 未严格满足：缺少对要求中那四个 Abseil 依赖名的显式链接声明。\n\n### Critical Constraint Misses\n\n- F016：构建脚本没有按要求明确链接 `absl_strings`、`absl_base`、`absl_throw_delegate`、`absl_raw_logging_internal` 这四个名字，当前主要使用的是相近但不同的 CMake target 名。",
+    "architecture_review": "### Stack Inference\n\n这是一个小型 C++17 库项目，使用 CMake 构建，核心由 `robots.h/.cc` 提供解析与匹配逻辑，`reporting_robots.h/.cc` 提供面向报告的包装接口，`robots_main.cc` 暴露命令行入口。整体定位与 `task.json` 的 `cpp` + `library` + `cmake` 推断一致。\n\n### Scoring Mode\n\n本次按架构评估模式打分，重点看真实仓库中的目录组织、CMake 目标关系、库与 CLI 的边界、以及这些选择是否符合常见 C++/CMake 工程习惯，而不是看功能是否大体可用或文件数量多少。\n\n### Strengths\n\n- 仓库结构非常直接，核心库、reporting 包装层、CLI 入口和构建文件一一对应，阅读成本低。\n- 分层意图基本清晰：`robots` 承担核心逻辑，`reporting_robots` 承担结果收集接口，`robots_main` 只做文件读取和命令行交互。\n- `CMakeLists.txt` 至少显式声明了核心依赖、静态/动态库目标和安装规则，说明构建入口不是缺失状态。\n\n### Issues\n\n- `CMakeLists.txt` mixes shared/static libraries and the CLI in one flat root without any `src/` vs `include/` separation or target namespace, which is workable for a tiny submission but weakens long-term maintainability and is below common C++ library layout conventions.\n- The build graph is not fully coherent: the pkg-config fallback populates `ABSL` variables but targets still link only against `absl::...` imported targets, so the advertised fallback path is structurally incomplete rather than a real alternative.\n- `reporting_robots.cc` introduces a `ReportingHandler` adapter that is never used; this adds an unnecessary layer and suggests the reporting wrapper boundary was not cleanly finalized.\n- The CLI target is renamed to output `robots`, which collides conceptually with the shared/static library name and makes the install surface less clear than typical CMake packaging for a reusable library plus tool.\n- Public headers and implementation files live at repository root with global `include_directories`, a pattern that works for generated toy projects but does not align well with normal reusable-library hygiene in CMake ecosystems.\n\n### Stack Mismatches\n\n- 对 C++/CMake 常见习惯而言，仓库缺少 `include/`、`src/`、导出 targets 或 package config 等更标准的库工程组织方式。\n- CMake 中既声明了 `find_package(absl)` 又尝试 `pkg-config`，但链接方式没有随 fallback 调整，说明构建脚本对该栈的依赖管理习惯掌握不完整。\n- CLI、共享库、静态库都集中在单个 `CMakeLists.txt` 和同级源码文件下，适合作业型最小实现，但不太像常见可维护 C++ 库仓库的结构。\n\n### Reference Gaps\n\n- 需求要求 `reporting_robots.h/.cc` 作为 reporting-oriented wrapper surface；仓库虽然提供了该层，但它本质上只是对同一解析回调接口做薄封装，架构上没有形成更清晰的独立模块边界。\n- 需求强调可复用库与命令行工具的协同；当前仓库满足了“有库也有 CLI”，但缺少更标准的安装/导出结构，例如命名空间化 targets、真正可复用的 package layout，因此与“可复用库”目标还有距离。\n- 需求只要求最小项目形态，因此扁平文件树并非直接违规；但从工程质量角度看，它也没有利用 C++ 项目常见的目录分层来提升可读性和可演进性。"
+  },
+  "task": "cpp/robotstxt/L0_robotstxt",
+  "solver": "generated_outputs"
+}

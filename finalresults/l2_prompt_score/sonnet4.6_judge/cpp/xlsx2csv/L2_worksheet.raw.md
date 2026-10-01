@@ -1,0 +1,11 @@
+{
+  "score": 4.7,
+  "reason": "The file-level and function-level descriptions are highly accurate and closely match the implementation. The file description correctly captures the core responsibilities: storing cell tuples, building a dense row/column lookup, exposing metadata, converting shared-string indices via the workbook, and serializing to CSV. Each function description maps precisely to the actual code: `get_cell` correctly describes the zero-to-one-based index translation, the bounds checks, and the workbook lookup; `load_cells` accurately describes clearing state, scanning for maxima, initializing the 1-based 2D table with a placeholder row at index 0, and populating from `_cells`; `to_csv` correctly describes the iteration bounds, `get_cell` usage, comma placement, and newline termination. One minor gap is that `load_cells` uses `reserve` + `emplace_back` rather than a direct resize/assignment, but the logical behavior described is equivalent. The descriptions are complete enough that a model could reconstruct all three functions faithfully.",
+  "missing_functionality": [
+    "The load_cells description does not mention the use of reserve() followed by emplace_back() to build row_info incrementally, which is a specific implementation detail that differs from a simple resize or assignment approach."
+  ],
+  "incorrect_or_misleading_points": [
+    "The load_cells description says 'leaving index 0 as an unused placeholder row', which is accurate, but does not clarify that the placeholder is an empty default-constructed vector (not a zero-sized or null entry), which could affect reconstruction fidelity slightly."
+  ],
+  "complete_enough": true
+}

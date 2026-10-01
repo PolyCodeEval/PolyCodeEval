@@ -1,0 +1,598 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.31,
+  "stdout": "\nup to date in 447ms\n\n21 packages are looking for funding\n  run `npm fund` for details\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.17.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0\nnpm notice To update run: npm install -g npm@11.17.0\nnpm notice\nnode:internal/modules/cjs/loader:1143\n  throw err;\n  ^\n\nError: Cannot find module '../lib/cli/options'\nRequire stack:\n- /workspace/src/node_modules/.bin/mocha\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1140:15)\n    at Module._load (node:internal/modules/cjs/loader:981:27)\n    at Module.require (node:internal/modules/cjs/loader:1231:19)\n    at require (node:internal/modules/helpers:177:18)\n    at Object.<anonymous> (/workspace/src/node_modules/.bin/mocha:13:23)\n    at Module._compile (node:internal/modules/cjs/loader:1364:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)\n    at Module.load (node:internal/modules/cjs/loader:1203:32)\n    at Module._load (node:internal/modules/cjs/loader:1019:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/workspace/src/node_modules/.bin/mocha' ]\n}\n\nNode.js v18.20.8\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && npm install && mkdir -p __blackbox__ && cp /workspace/blackbox_tests/*.test.js __blackbox__/",
+    "test": "cd /workspace/src && npx mocha --ui tdd __blackbox__/*.test.js",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && npm install && mkdir -p __blackbox__ && cp /workspace/blackbox_tests/*.test.js __blackbox__/",
+      "test": "cd /workspace/src && npx mocha --ui tdd __blackbox__/*.test.js",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.81,
+    "Architecture": 3.93,
+    "Health": 5.0
+  },
+  "overall_score": 2.69,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "source = template;\n  if (source == null) {\n    if (!filename) {\n      throw new Error('template source or filename is required');\n    }\n    source = readTemplateFile(filename);\n  }\n\n  cached = exports.compile(source, opts);\n  if (opts && opts.cache) {\n    exports.cache.set(filename, cached);\n  }\n  return cached;\n}\n\nfunction scanTemplateText(segment, state, compileOptions) {\n  var text = segment;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`lib/cjs/ejs.js` exports the required runtime entry points, including `compile`, `render`, `renderFile`, `clearCache`, `escapeXML`, `Template`, and `__express`."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "CommonJS runtime entry at `lib/cjs/ejs.js`",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "'use strict';\n\nvar fs = require('fs');\nvar path = require('path');\n\nvar DEFAULT_DELIMITER = '%';\nvar DEFAULT_OPEN_DELIMITER = '<';\nvar DEFAULT_CLOSE_DELIMITER = '>';\nvar DEFAULT_LOCALS_NAME = 'locals';\nvar RESERVED_SCOPE_NAMES = {\n  __append: true,\n  __output: true,\n  escapeFn: true,\n  include: true,\n  includeFile: true,\n  includeOpts: true,\n  shallowCopy: true,\n  createScope: true,\n  undefined: true,\n  NaN: true,\n  Infinity: true,\n  Math: true,\n  JSON: true,\n  Number: true,\n  String: true,\n  Boolean: true,\n  Array: true,\n  Object: true,\n  Date: true,\n  RegExp: true,\n  Error: true,\n  parseInt:"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"ejs\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Minimal EJS-compatible templating runtime\",\n  \"main\": \"./lib/cjs/ejs.js\",\n  \"exports\": {\n    \".\": \"./lib/cjs/ejs.js\",\n    \"./lib/cjs/ejs.js\": \"./lib/cjs/ejs.js\"\n  },\n  \"engines\": {\n    \"node\": \">=18\"\n  },\n  \"scripts\": {\n    \"test\": \"mocha --ui tdd __blackbox__/*.test.js\"\n  },\n  \"devDependencies\": {\n    \"mocha\": \""
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" and single-quote', () => {\n    assert.strictEqual(ejs.escapeXML('a & <b> \"c\" \\'d\\''), 'a &amp; &lt;b&gt; &#34;c&#34; &#39;d&#39;');\n  });\n\n  test('returns empty string for"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository contains `repo/lib/cjs/ejs.js`, and `package.json` points `main` and `exports` to that CommonJS file."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "public APIs `compile(str, opts)`, `render(str, data?, opts?)`, `renderFile(path, data, opts, cb)`, `clearCache()`, `escapeXML(str)`, and `Template`",
+          "evidence": [
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled func"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "test('%%> outputs literal %> in result', () => {\n    assert.strictEqual(ejs.render('%%>'), '%>');\n  });\n});\n\nsuite('ejs.compile - localsName option', () => {\n  test('localsName changes the locals object name', () => {\n    const fn = ejs.compile('<%= data.x %>', { localsName: 'data', _with: false });\n    assert.strictEqual(fn({ x: 7 }), '7');\n  });\n});\n\nsuite('ejs.compile - destructuredLocals optio"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "ert = require('assert');\n\nsuite('ejs.render - basic', () => {\n  test('renders plain text unchanged', () => {\n    assert.strictEqual(ejs.render('Hello World'), 'Hello World');\n  });\n\n  test('renders escaped output <%= %>', () => {\n    assert.strictEqual(ejs.render('<%= name %>', { name: 'Alice' }), 'Alice');\n  });\n\n  test('escapes HTML in <%= %>', () => {\n    assert.strictEqual(ejs.render('<%= html"
+            }
+          ],
+          "status": "implemented",
+          "reason": "All listed public APIs are defined and exported from `lib/cjs/ejs.js`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`compile(str, opts)` should return a callable render function, and `render(str, data?, opts?)` should return a rendered string",
+          "evidence": [
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled func"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "test('%%> outputs literal %> in result', () => {\n    assert.strictEqual(ejs.render('%%>'), '%>');\n  });\n});\n\nsuite('ejs.compile - localsName option', () => {\n  test('localsName changes the locals object name', () => {\n    const fn = ejs.compile('<%= data.x %>', { localsName: 'data', _with: false });\n    assert.strictEqual(fn({ x: 7 }), '7');\n  });\n});\n\nsuite('ejs.compile - destructuredLocals optio"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "turn ESCAPE_MAP[match];\n  });\n}\n\nfunction normalizeData(data) {\n  return data == null ? {} : data;\n}\n\nfunction normalizeCompileOptions(opts) {\n  var normalized = shallowCopy(opts || {});\n\n  normalized.delimiter = normalized.delimiter || DEFAULT_DELIMITER;\n  normalized.openDelimiter = normalized.openDelimiter || DEFAULT_OPEN_DELIMITER;\n  normalized.closeDelimiter = normalized.closeDelimiter || DEFA"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`compile()` returns `new Template(...).compile()`, and `render()` returns the rendered string from the compiled function."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "Express-compatible `__express` integration",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`lib/cjs/ejs.js` exports `__express = renderFile`, providing Express-compatible integration."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "commonly used option names such as `rmWhitespace`, `strict`, `_with`, `openDelimiter`, and `closeDelimiter`",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "CAPE_MAP[match];\n  });\n}\n\nfunction normalizeData(data) {\n  return data == null ? {} : data;\n}\n\nfunction normalizeCompileOptions(opts) {\n  var normalized = shallowCopy(opts || {});\n\n  normalized.delimiter = normalized.delimiter || DEFAULT_DELIMITER;\n  normalized.openDelimiter = normalized.openDelimiter || DEFAULT_OPEN_DELIMITER;\n  normalized.closeDelimiter = normalized.closeDelimiter || DEFAULT_CLO"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "eral %> in result', () => {\n    assert.strictEqual(ejs.render('%%>'), '%>');\n  });\n});\n\nsuite('ejs.compile - localsName option', () => {\n  test('localsName changes the locals object name', () => {\n    const fn = ejs.compile('<%= data.x %>', { localsName: 'data', _with: false });\n    assert.strictEqual(fn({ x: 7 }), '7');\n  });\n});\n\nsuite('ejs.compile - destructuredLocals option', () => {\n  test('d"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled function rend"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The runtime reads and uses `rmWhitespace`, `strict`, `_with`, `openDelimiter`, and `closeDelimiter` in option normalization and compilation."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "these APIs should remain module-level exports from the runtime module",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Minimal EJS-compatible templating runtime\",\n  \"main\": \"./lib/cjs/ejs.js\",\n  \"exports\": {\n    \".\": \"./lib/cjs/ejs.js\",\n    \"./lib/cjs/ejs.js\": \"./lib/cjs/ejs.js\"\n  },\n  \"engines\": {\n    \"node\": \">=18\"\n  },\n  \"scripts\": {\n    \"test\": \"mocha --ui tdd __blackbox__/*.test.js\"\n  },\n  \"devDependencies\": {\n    \"mocha\": \"^10.2.0\"\n  }\n}"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "pts && opts.cache) {\n    if (!filename) {\n      throw new Error('cache option requires a filename');\n    }\n    cached = exports.cache.get(filename);\n    if (cached) {\n      return cached;\n    }\n  }\n\n  source = template;\n  if (source == null) {\n    if (!filename) {\n      throw new Error('template source or filename is required');\n    }\n    source = readTemplateFile(filename);\n  }\n\n  cached = export"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "Dependencies\": {\n        \"mocha\": \"^10.2.0\"\n      },\n      \"engines\": {\n        \"node\": \">=18\"\n      }\n    },\n    \"node_modules/ansi-colors\": {\n      \"version\": \"4.1.3\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"engines\": {\n        \"node\": \">=6\"\n      }\n    },\n    \"node_modules/ansi-regex\": {\n      \"version\": \"5.0.1\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"engines\": {\n        \"n"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The APIs are exported at module level via `exports.*` from `lib/cjs/ejs.js`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "Template Syntax",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * EJS - advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" and single-qu"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "openDelimiter: '$', closeDelimiter: '$' });\n    assert.strictEqual(typeof fn, 'function');\n  });\n\n  test('compile empty template', () => {\n    assert.strictEqual(ejs.compile('')(), '');\n  });\n\n  test('compile with control flow', () => {\n    const fn = ejs.compile('<% if (x) { %>yes<% } else { %>no<% } %>');\n    assert.strictEqual(fn({ x: true }), 'yes');\n    assert.strictEqual(fn({ x: false }), 'n"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "trictEqual(ejs.render('<%= a %> + <%= b %> = <%= a + b %>', { a: 1, b: 2 }), '1 + 2 = 3');\n  });\n\n  test('renders empty template', () => {\n    assert.strictEqual(ejs.render(''), '');\n  });\n\n  test('renders number variable', () => {\n    assert.strictEqual(ejs.render('<%= n %>', { n: 42 }), '42');\n  });\n\n  test('renders boolean variable', () => {\n    assert.strictEqual(ejs.render('<%= b %>', { b: tr"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The parser/compiler handles EJS tags for escaped output, raw output, code blocks, comments, delimiter changes, and whitespace controls."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Compilation",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Compilation is implemented through `Template.prototype.compile`, `buildFunctionSource`, and the public `compile()` API."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Includes",
+          "evidence": [
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": ";\n  });\n\n  test('escapes < and >', () => {\n    const result = ejs.render('<%= s %>', { s: '<>' });\n    assert.ok(result.includes('&lt;'));\n    assert.ok(result.includes('&gt;'));\n  });\n\n  test('escapes double quotes', () => {\n    const result = ejs.render('<%= s %>', { s: '\"quoted\"' });\n    assert.ok(result.includes('quoted'));\n    assert.ok(!result.includes('\"quoted\"'));\n  });\n\n  test('raw output"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Compiled templates receive an `include()` helper backed by `includeFile()`, filename resolution, and file loading."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Caching",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Caching is implemented through `handleCache()` and the exported `cache` object with direct mutation methods."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Express Integration",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "Express integration is present through `renderFile`, `__express`, and handling of Express-style `settings.views` / `view cache`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`escapeXML(markup)` returns `''` when `markup` is `undefined` or `null`. It escapes `&`, `<`, `>`, `\"`, and `'` to their HTML entity equivalents (`&amp;`, `&lt;`, `&gt;`, and numeric entities for quotes).",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * EJS - advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" an"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "(/\"/g, '\\\\\"');\n}\n\nfunction escapeRegExp(str) {\n  return String(str).replace(/[|\\\\{}()[\\]^$+*?.]/g, '\\\\$&');\n}\n\nfunction escapeXML(markup) {\n  if (markup === undefined || markup === null) {\n    return '';\n  }\n  return String(markup).replace(ESCAPE_REGEXP, function replace(match) {\n    return ESCAPE_MAP[match];\n  });\n}\n\nfunction normalizeData(data) {\n  return data == null ? {} : data;\n}\n\nfunction no"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "nst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled function renders with data', () => {\n    assert.strictEqual(ejs.compile('<%= name %>')({ name: 'Bob' }), 'Bob');\n  });\n\n  test('compiled function can be called"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`escapeXML()` returns `''` for `undefined`/`null` and escapes `&`, `<`, `>`, `\"`, and `'` using the expected entity map."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "`render(template, null)` and `render(template)` (omitting data) do not throw; they treat data as an empty object.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "n no special chars', () => {\n    assert.strictEqual(ejs.escapeXML('hello world'), 'hello world');\n  });\n});\n\nsuite('ejs.render - null / undefined data', () => {\n  test('render with null data does not throw', () => {\n    assert.doesNotThrow(() => ejs.render('plain text', null));\n  });\n\n  test('render with null data returns plain text', () => {\n    assert.strictEqual(ejs.render('hello', null), 'hell"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled function renders with data', () => {\n    assert.strictEqual(ejs.compile('<%= name %>')({ name: 'Bob' }), 'Bob');\n  });\n\n  test('compiled function can be called multiple times', () => {\n    const fn = ejs.compile('<%= n %>');\n    assert.strictEqual(fn({ n: 1 }), '1');\n    assert.strictEqua"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "/**\n * EJS - render: basic output, control flow, special chars\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.render - basic', () => {\n  test('renders plain text unchanged', () => {\n    assert.strictEqual(ejs.render('Hello World'), 'Hello World');"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`normalizeData()` converts `null` or omitted data to `{}`, and both `render()` and compiled templates use it."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "The `delimiter` option (default `%`) can be changed to any single character (e.g. `?`), causing `<%…%>` to be treated as literal text when a different delimiter is active.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * EJS - advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" and single-quote', () => {"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "assert.strictEqual(fn({ n: 2 }), '2');\n    assert.strictEqual(fn({ n: 3 }), '3');\n  });\n\n  test('compile with custom delimiter option accepted', () => {\n    const fn = ejs.compile('${ x }$', { openDelimiter: '$', closeDelimiter: '$' });\n    assert.strictEqual(typeof fn, 'function');\n  });\n\n  test('compile empty template', () => {\n    assert.strictEqual(ejs.compile('')(), '');\n  });\n\n  test('com"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "'use strict';\n\nvar fs = require('fs');\nvar path = require('path');\n\nvar DEFAULT_DELIMITER = '%';\nvar DEFAULT_OPEN_DELIMITER = '<';\nvar DEFAULT_CLOSE_DELIMITER = '>';\nvar DEFAULT_LOCALS_NAME = 'locals';\nvar RESERVED_SCOPE_NAMES = {\n  __append: true,\n  __output: true,\n  escapeFn: true,\n  include: true,\n  includeFile: true,\n  includeOpts: true,\n  shallowCopy: t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`delimiter` is normalized and used in token regex generation, so alternate delimiters work and default `<% %>` becomes literal when another delimiter is active."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "The `openDelimiter` (default `<`) and `closeDelimiter` (default `>`) options can be changed to alternate bracket characters.",
+          "evidence": [
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "), '3');\n  });\n\n  test('compile with custom delimiter option accepted', () => {\n    const fn = ejs.compile('${ x }$', { openDelimiter: '$', closeDelimiter: '$' });\n    assert.strictEqual(typeof fn, 'function');\n  });\n\n  test('compile empty template', () => {\n    assert.strictEqual(ejs.compile('')(), '');\n  });\n\n  test('compile with control flow', () => {\n    const fn = ejs.compile('<% if (x) { %>y"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "normalized = shallowCopy(opts || {});\n\n  normalized.delimiter = normalized.delimiter || DEFAULT_DELIMITER;\n  normalized.openDelimiter = normalized.openDelimiter || DEFAULT_OPEN_DELIMITER;\n  normalized.closeDelimiter = normalized.closeDelimiter || DEFAULT_CLOSE_DELIMITER;\n  normalized.localsName = normalized.localsName || DEFAULT_LOCALS_NAME;\n\n  if (!Array.isArray(normalized.destructuredLocals)) {"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "r('<?= name ?>', { name: 'Alice' }, { delimiter: '?' });\n    assert.strictEqual(result, 'Alice');\n  });\n\n  test('custom openDelimiter and closeDelimiter render plain text', () => {\n    const result = ejs.render('[%= x %]', { x: 'hi' }, { openDelimiter: '[', closeDelimiter: ']' });\n    assert.strictEqual(result, 'hi');\n  });\n\n  test('custom delimiter suppresses default <% %> as literal text', () =>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`openDelimiter` and `closeDelimiter` are normalized and used by the parser regex/token handling."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`-%>` trims the immediately-following newline from the output (newline slurp / truncate mode).",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "sert.strictEqual(result, '<%= x %>');\n  });\n});\n\nsuite('ejs.render - whitespace / newline control', () => {\n  test('-%> trims trailing newline after tag', () => {\n    const result = ejs.render('<% const x = 1; -%>\\n<%= x %>');\n    assert.strictEqual(result, '1');\n  });\n\n  test('<%_ slurps leading whitespace before tag', () => {\n    const result = ejs.render('   <%_ const y = 2; _%>\\n<%= y %>');"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": ";\n    assert.strictEqual(fn({ x: false }), 'no');\n  });\n});\n\nsuite('ejs.render - options', () => {\n  test('rmWhitespace trims surrounding whitespace', () => {\n    const result = ejs.render('  <%= x %>  ', { x: 'hi' }, { rmWhitespace: true });\n    assert.strictEqual(result.trim(), 'hi');\n  });\n\n  test('strict mode throws on undefined variable', () => {\n    assert.throws(() => ejs.render('<%= undecl"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "return cached;\n}\n\nfunction scanTemplateText(segment, state, compileOptions) {\n  var text = segment;\n\n  if (state.pendingNewlineTrim) {\n    text = text.replace(/^\\r?\\n/, '');\n    state.pendingNewlineTrim = false;\n  }\n\n  if (state.pendingWhitespaceTrimLeft) {\n    text = text.replace(/^[ \\t]*/, '');\n    state.pendingWhitespaceTrimLeft = false;\n  }\n\n  if (text) {\n    if (compileOptions.rmWhitespace) {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`processToken()` sets `pendingNewlineTrim` for `-%>` and `scanTemplateText()` removes the immediately following newline."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "`<%_` and `_%>` slurp surrounding spaces and tabs (whitespace slurp mode).",
+          "evidence": [
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "assert.strictEqual(fn({ x: false }), 'no');\n  });\n});\n\nsuite('ejs.render - options', () => {\n  test('rmWhitespace trims surrounding whitespace', () => {\n    const result = ejs.render('  <%= x %>  ', { x: 'hi' }, { rmWhitespace: true });\n    assert.strictEqual(result.trim(), 'hi');\n  });\n\n  test('strict mode throws on undefined variable', () => {\n    assert.throws(() => ejs.render('<%= undeclared %"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "const result = ejs.render('<% const x = 1; -%>\\n<%= x %>');\n    assert.strictEqual(result, '1');\n  });\n\n  test('<%_ slurps leading whitespace before tag', () => {\n    const result = ejs.render('   <%_ const y = 2; _%>\\n<%= y %>');\n    assert.strictEqual(result, '2');\n  });\n\n  test('rmWhitespace collapses multi-line whitespace', () => {\n    const result = ejs.render('  \\n  hello  \\n  ', {}, { r"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "dingNewlineTrim) {\n    text = text.replace(/^\\r?\\n/, '');\n    state.pendingNewlineTrim = false;\n  }\n\n  if (state.pendingWhitespaceTrimLeft) {\n    text = text.replace(/^[ \\t]*/, '');\n    state.pendingWhitespaceTrimLeft = false;\n  }\n\n  if (text) {\n    if (compileOptions.rmWhitespace) {\n      text = text.replace(/[ \\t]+\\n/g, '\\n');\n    }\n    state.source += '__append(\"' + escapeForJS(text) + '\");\\n';"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`processToken()` and `scanTemplateText()` implement whitespace slurping for `<%_` and `_%>` via `pendingWhitespaceTrimLeft`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`<%%` outputs a literal `<%` and `%%>` outputs a literal `%>` in the rendered result.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "});\n    assert.strictEqual(result, 'hello');\n  });\n});\n\nsuite('ejs.render - literal tag escaping', () => {\n  test('<%% outputs literal <% in result', () => {\n    assert.strictEqual(ejs.render('<%%'), '<%');\n  });\n\n  test('%%> outputs literal %> in result', () => {\n    assert.strictEqual(ejs.render('%%>'), '%>');\n  });\n});\n\nsuite('ejs.compile - localsName option', () => {\n  test('localsName change"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "});\n});\n\nsuite('ejs.render - options', () => {\n  test('rmWhitespace trims surrounding whitespace', () => {\n    const result = ejs.render('  <%= x %>  ', { x: 'hi' }, { rmWhitespace: true });\n    assert.strictEqual(result.trim(), 'hi');\n  });\n\n  test('strict mode throws on undefined variable', () => {\n    assert.throws(() => ejs.render('<%= undeclared %>', {}, { strict: true }));\n  });\n\n  test('"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "rt.strictEqual(ejs.render('<%= s %>', { s: 'a & b' }), 'a &amp; b');\n  });\n\n  test('escapes < and >', () => {\n    const result = ejs.render('<%= s %>', { s: '<>' });\n    assert.ok(result.includes('&lt;'));\n    assert.ok(result.includes('&gt;'));\n  });\n\n  test('escapes double quotes', () => {\n    const result = ejs.render('<%= s %>', { s: '\"quoted\"' });\n    assert.ok(result.includes('quoted'));"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`processToken()` explicitly maps `<%%` to literal `<%` and `%%>` to literal `%>` output."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "The `localsName` option renames the locals object inside the template (default `locals`); pair with `_with: false` to access via the named object.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "- advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" and single-quote', () => {\n    assert.strictEqual(ejs.escapeXML('a & <b> \"c\" \\'d\\''), 'a &amp; &lt;b&gt; &"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "EFAULT_OPEN_DELIMITER;\n  normalized.closeDelimiter = normalized.closeDelimiter || DEFAULT_CLOSE_DELIMITER;\n  normalized.localsName = normalized.localsName || DEFAULT_LOCALS_NAME;\n\n  if (!Array.isArray(normalized.destructuredLocals)) {\n    normalized.destructuredLocals = [];\n  }\n  if (normalized._with === undefined) {\n    normalized._with = true;\n  }\n\n  return normalized;\n}\n\nfunction resolveFilenam"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compiled function rend"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`localsName` is normalized, passed as the compiled function's locals parameter, and works with `_with: false`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "The `destructuredLocals` option (an array of identifier strings) declares named variables that are extracted from the locals object at the top of the template function, usable without `with`.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "PI: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test('escapes & < > \" and single-quote', () => {\n    assert.strictEqual(ejs.escapeXML('a & <b> \"c\" \\'d\\''), 'a &amp; &lt;b&gt; &#34;c&#34; &"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "OSE_DELIMITER;\n  normalized.localsName = normalized.localsName || DEFAULT_LOCALS_NAME;\n\n  if (!Array.isArray(normalized.destructuredLocals)) {\n    normalized.destructuredLocals = [];\n  }\n  if (normalized._with === undefined) {\n    normalized._with = true;\n  }\n\n  return normalized;\n}\n\nfunction resolveFilename(filename, opts) {\n  var views = opts && opts.views;\n  var root = opts && opts.root;\n  var"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "() => {\n    assert.strictEqual(ejs.render('<% for (let i = 0; i < 3; i++) { %><%= i %><% } %>'), '012');\n  });\n\n  test('array forEach iteration', () => {\n    const tmpl = '<% items.forEach(item => { %><%= item %>,<% }); %>';\n    assert.strictEqual(ejs.render(tmpl, { items: ['a', 'b', 'c'] }), 'a,b,c,');\n  });\n\n  test('nested conditionals - both true', () => {\n    const tmpl = '<% if (a) { %><% if"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`buildFunctionSource()` emits variable declarations from `destructuredLocals` at the top of the template function."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`ejs.Template` is a public constructor. Instances expose a `compile()` method that returns a callable render function.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * EJS - advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compile"
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "root = opts && opts.root;\n  var filePath = filename;\n  var i;\n\n  if (path.extname(filePath) === '') {\n    filePath += '.ejs';\n  }\n\n  if (path.isAbsolute(filePath)) {\n    return filePath;\n  }\n\n  if (opts && opts.filename) {\n    return path.resolve(path.dirname(opts.filename), filePath);\n  }\n\n  if (Array.isArray(views)) {\n    for (i = 0; i < views.length; i += 1) {\n      var candidate = path.resolve"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`Template` is a public constructor export, and `Template.prototype.compile()` returns a callable render function."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`ejs.cache` exposes `set(key, val)`, `get(key)`, `remove(key)`, and `reset()` methods for direct cache manipulation. `reset()` clears all entries so subsequent `get` calls return `undefined`.",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "root = opts && opts.root;\n  var filePath = filename;\n  var i;\n\n  if (path.extname(filePath) === '') {\n    filePath += '.ejs';\n  }\n\n  if (path.isAbsolute(filePath)) {\n    return filePath;\n  }\n\n  if (opts && opts.filename) {\n    return path.resolve(path.dirname(opts.filename), filePath);\n  }\n\n  if (Array.isArray(views)) {\n    for (i = 0; i < views.length; i += 1) {\n      var candidate = path.resolve"
+            },
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "/**\n * EJS - advanced API: escapeXML, Template, custom delimiters, whitespace control,\n *       literal tags, null/undefined data, localsName, destructuredLocals, cache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.escapeXML', () => {\n  test"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "/**\n * EJS - compile, options, clearCache\n */\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.compile', () => {\n  test('compile returns a function', () => {\n    assert.strictEqual(typeof ejs.compile('<%= x %>'), 'function');\n  });\n\n  test('compile"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ejs.cache` is an instance of `SimpleCache` exposing `set`, `get`, `remove`, and `reset`, and `reset()` clears stored entries."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "oot, filePath);\n  }\n\n  return path.resolve(filePath);\n}\n\nfunction readTemplateFile(filename) {\n  return stripBOM(fs.readFileSync(filename, 'utf8'));\n}\n\nfunction includeFile(filename, data, opts) {\n  var includeOptions = shallowCopy(opts || {});\n  includeOptions.filename = resolveFilename(filename, includeOptions);\n  return handleCache(includeOptions)(data);\n}\n\nfunction handleCache(opts, template)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The delivered files are rooted directly under the project root, including `package.json` and `lib/cjs/ejs.js`."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "\",\n      \"version\": \"1.0.0\",\n      \"devDependencies\": {\n        \"mocha\": \"^10.2.0\"\n      },\n      \"engines\": {\n        \"node\": \">=18\"\n      }\n    },\n    \"node_modules/ansi-colors\": {\n      \"version\": \"4.1.3\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"engines\": {\n        \"node\": \">=6\"\n      }\n    },\n    \"node_modules/ansi-regex\": {\n      \"version\": \"5.0.1\",\n      \"dev\": true,\n      \"license"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"ejs\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Minimal EJS-compatible templating runtime\",\n  \"main\": \"./lib/cjs/ejs.js\",\n  \"exports\": {\n    \".\": \"./lib/cjs/ejs.js\",\n    \"./lib/cjs/ejs.js\": \"./lib/cjs/ejs.js\"\n  },\n  \"engines\": {\n    \"node\": \">=18\"\n  },\n  \"scripts\": {\n    \"test\": \"mocha --ui tdd __blackbox__/*.test.js\"\n  },\n  \""
+            },
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "E_DELIMITER;\n  normalized.localsName = normalized.localsName || DEFAULT_LOCALS_NAME;\n\n  if (!Array.isArray(normalized.destructuredLocals)) {\n    normalized.destructuredLocals = [];\n  }\n  if (normalized._with === undefined) {\n    normalized._with = true;\n  }\n\n  return normalized;\n}\n\nfunction resolveFilename(filename, opts) {\n  var views = opts && opts.views;\n  var root = opts && opts.root;\n  var fi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repo includes a minimal Node package structure with `package.json`, `package-lock.json`, and the runtime output file."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "__blackbox__/advanced.test.js",
+              "excerpt": "ld'), 'hello world');\n  });\n});\n\nsuite('ejs.render - null / undefined data', () => {\n  test('render with null data does not throw', () => {\n    assert.doesNotThrow(() => ejs.render('plain text', null));\n  });\n\n  test('render with null data returns plain text', () => {\n    assert.strictEqual(ejs.render('hello', null), 'hello');\n  });\n\n  test('render with undefined data (omitted) renders plain text'"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "trictEqual(ejs.render('<%= x %>', { x: 99 }), '99');\n  });\n});\n\nsuite('ejs.clearCache', () => {\n  test('clearCache does not throw', () => {\n    assert.doesNotThrow(() => ejs.clearCache());\n  });\n\n  test('clearCache can be called multiple times', () => {\n    assert.doesNotThrow(() => {\n      ejs.clearCache();\n      ejs.clearCache();\n    });\n  });\n});"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "*/\nconst ejs = require('../lib/cjs/ejs.js');\nconst assert = require('assert');\n\nsuite('ejs.render - basic', () => {\n  test('renders plain text unchanged', () => {\n    assert.strictEqual(ejs.render('Hello World'), 'Hello World');\n  });\n\n  test('renders escaped output <%= %>', () => {\n    assert.strictEqual(ejs.render('<%= name %>', { name: 'Alice' }), 'Alice');\n  });\n\n  test('escapes HTML in <%="
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes generated test files under `__blackbox__/`, which violates the instruction not to generate test files."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Ensure the project can produce or expose the runtime module at `lib/cjs/ejs.js`, since the tests import that exact path.",
+          "evidence": [
+            {
+              "path": "lib/cjs/ejs.js",
+              "excerpt": "ame(opts.filename), filePath);\n  }\n\n  if (Array.isArray(views)) {\n    for (i = 0; i < views.length; i += 1) {\n      var candidate = path.resolve(views[i], filePath);\n      if (fs.existsSync(candidate)) {\n        return candidate;\n      }\n    }\n  }\n\n  if (root) {\n    return path.resolve(root, filePath);\n  }\n\n  return path.resolve(filePath);\n}\n\nfunction readTemplateFile(filename) {\n  return stripBOM"
+            },
+            {
+              "path": "__blackbox__/compile.test.js",
+              "excerpt": "', () => {\n    assert.strictEqual(ejs.compile('<%= name %>')({ name: 'Bob' }), 'Bob');\n  });\n\n  test('compiled function can be called multiple times', () => {\n    const fn = ejs.compile('<%= n %>');\n    assert.strictEqual(fn({ n: 1 }), '1');\n    assert.strictEqual(fn({ n: 2 }), '2');\n    assert.strictEqual(fn({ n: 3 }), '3');\n  });\n\n  test('compile with custom delimiter option accepted', () => {"
+            },
+            {
+              "path": "__blackbox__/render.test.js",
+              "excerpt": "% %>', () => {\n    assert.strictEqual(ejs.render('<% const x = 1 + 1; %><%= x %>'), '2');\n  });\n\n  test('comment <%# %> produces no output', () => {\n    assert.strictEqual(ejs.render('before<%# comment %>after'), 'beforeafter');\n  });\n\n  test('renders with multiple variables', () => {\n    assert.strictEqual(ejs.render('<%= a %> + <%= b %> = <%= a + b %>', { a: 1, b: 2 }), '1 + 2 = 3');\n  });\n\n  te"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The exact runtime module path `lib/cjs/ejs.js` exists in the repository and is also exposed via `package.json`."
+        }
+      ],
+      "feature_count": 27,
+      "constraint_count": 0,
+      "implemented_count": 26,
+      "partial_count": 0,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.963,
+      "constraint_coverage": 0.963,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "javascript",
+        "app_style": "library",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 3.8,
+        "stack_alignment": 4.1,
+        "reference_alignment": 3.9
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 0,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "0",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository substantially implements the requested EJS-like runtime: the CommonJS entry point exists at `lib/cjs/ejs.js`, the required public APIs are exported at module level, compilation/rendering/inclusion/caching behavior is present, and the additional delimiter, whitespace, locals, cache, and Express-related behaviors are implemented in the runtime code.\n\n### Missing List\n\n- Requirement F026 is not satisfied because the repository contains generated test files in `__blackbox__/`.\n\n### Critical Constraint Misses\n\n- Generated test files are present under `__blackbox__/`, violating the requirement to not generate test files.",
+    "architecture_review": "### Stack Inference\n\n该仓库是一个典型的 **JavaScript + npm + CommonJS** 小型运行时库，而不是应用型项目。入口由 `package.json` 的 `main`/`exports` 直接指向 `lib/cjs/ejs.js`，没有前端资源、服务端应用骨架或持久化层；整体定位与题目要求的模板引擎运行时基本一致。\n\n### Scoring Mode\n\n本次评分侧重**架构质量**而不是功能通过率。我主要依据真实仓库中的目录组织、入口设计、职责分层、与 JavaScript/npm 库项目的常见组织方式来判断，而不会因为文件少就直接给高分，也不会因为能跑测试就默认架构合理。\n\n### Strengths\n\n- 入口设计直接且明确：`package.json` 与 `exports` 对齐到 `lib/cjs/ejs.js`，满足题目要求的固定 CommonJS 入口。\n- 作为小型模板引擎库，运行时依赖极少，仅使用 Node 内建模块，发布面简单，安装和执行路径清晰。\n- 公共 API 都集中从模块顶层导出，`compile`、`render`、`renderFile`、`Template`、缓存与 Express 适配的暴露方式符合该类库的使用习惯。\n\n### Issues\n\n- 核心实现几乎全部堆在单个运行时文件 `lib/cjs/ejs.js` 中，词法扫描、模板编译、文件解析、缓存、Express 适配全部耦合在一起；对这种库来说可以运行，但分层弱，后续扩展或定位缺陷时成本偏高。\n- 仓库实际包含 `__blackbox__/` 测试目录，而原始要求明确写了“Do not generate test files”；这不一定影响运行，但说明最终项目形态和参考要求并不完全一致。\n- 项目没有 `src/` 到 `lib/` 的生成链路，也没有构建脚本；当前更像手写产物直接落在发布目录。对于极简库可以接受，但入口、源码层、分发层没有区分，工程化完整度一般。\n- `package.json` 只暴露 CommonJS 单入口，缺少常见库项目里的元信息与发布辅助配置（如 files、lint/build 流程、README 指向等）；作为最小实现足够，但不算成熟的 npm 库结构。\n\n### Stack Mismatches\n\n- 对于 npm 库，常见做法是区分源码目录与发布目录，或至少把解析器、缓存、文件渲染等拆分模块；当前实现更偏“单文件脚本式库”，与常见可维护库结构相比偏简陋。\n- 题目要求的是从零生成的最小项目源码，但实际仓库同时包含黑盒测试资产，这更像评测工作目录而不是纯净的交付仓库。\n\n### Reference Gaps\n\n- 参考要求提到“Generate the complete project source code from scratch”且“Do not generate test files”，但实际仓库保留了测试文件，和目标交付形态存在偏差。\n- 参考要求强调“Provide a minimal Node.js package structure, including any build configuration needed for the project outputs”；仓库虽然有 `package.json`，但没有任何从源码到 `lib/cjs` 的构建或输出组织说明。\n- 参考文本说明评测时文件会放在 `src/` 下，而当前仓库直接把实现放在 `lib/cjs/ejs.js`，能满足入口要求，但没有体现源码层与产物层的结构对应关系。"
+  },
+  "task": "javascript/ejs/L0_ejs",
+  "solver": "generated_outputs"
+}

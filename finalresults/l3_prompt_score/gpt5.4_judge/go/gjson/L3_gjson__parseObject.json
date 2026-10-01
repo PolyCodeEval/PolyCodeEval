@@ -1,0 +1,27 @@
+{
+  "task": "go/gjson/L3_gjson__parseObject",
+  "project": "go/gjson",
+  "language": "go",
+  "prompt_path": "datasets/go/gjson/tasks/L3_gjson__parseObject/prompt.md",
+  "task_json_path": "datasets/go/gjson/tasks/L3_gjson__parseObject/task.json",
+  "source_file_path": "datasets/go/gjson/src/gjson.go",
+  "target_symbol": "gjson.go::parseObject",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.4,
+  "reason": "The description matches the implementation well on the core behavior: it parses object keys, supports wildcard and exact key matching, handles escaped keys, propagates pipe state, descends recursively into nested objects/arrays for remaining path segments, and fills the parse context with typed results for matched values. It also correctly notes that unmatched object/array values are skipped as blobs and that the function returns an index plus a success flag. The main gaps are some implementation-specific details around how literals are typed and parsed, and the description is a bit more general than the code in a few places, but overall it is close and mostly sufficient.",
+  "missing_functionality": [
+    "It does not mention the specific handling of null-like literals: 'null' is parsed via parseLiteral but does not set an explicit Type in this function, unlike true/false.",
+    "It omits that number parsing also accepts nonstandard numeric starters handled by this code such as '+', 'i', 'I', and 'N'.",
+    "It does not mention that object keys are scanned by a custom inner loop that may return false on malformed/incomplete quoted keys."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying it returns the position immediately after the parsed object/value is slightly too broad: on success after recursive descent it returns whatever index the nested parser returns, and on various failures it may return the current index rather than a clean end-of-value position.",
+    "The phrase 'populates the parse context with the decoded value and type for strings, objects/arrays, literals, and numbers as appropriate' is a bit imprecise because for objects/arrays it stores only Raw and Type=JSON, and for literals it only explicitly sets Type for true/false, not for null."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gjson__parseObject.raw.md"
+}

@@ -1,0 +1,21 @@
+{
+  "project": "base64pp",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt covers the library purpose, core encode/decode capabilities, public API, expected layout, build files, and key edge cases well enough to reproduce the repository's main functionality. It omits some real-project details such as install/pkg-config behavior, export-header generation, optional docs/tests wiring, and the exact top-level src directory layout, but those are secondary relative to the repository's core Base64 library behavior."
+    },
+    "unambiguity": {
+      "score": 4.6,
+      "reason": "The required interfaces, namespace, include path, accepted alphabet, padding rules, invalid-input behavior, and representative input/output examples are stated clearly. Decode failure semantics are explicit via nullopt, and several malformed-input classes are spelled out. Remaining ambiguity is mostly around exact file placement versus the repository's real src-root layout and the precise header signatures for string-based overloads."
+    },
+    "testability": {
+      "score": 4.9,
+      "reason": "The prompt is highly testable because it specifies concrete API contracts, observable return types, deterministic failure cases, padding rules, known vectors, unpadded decode behavior, and a full-byte roundtrip requirement. These requirements map directly onto the blackbox tests with only minor room left for interpretation."
+    },
+    "consistency": {
+      "score": 4.2,
+      "reason": "The prompt is strongly aligned with the implemented repository behavior: namespace, encode/decode semantics, unpadded decode acceptance, and nullopt on invalid input all match the real code and tests. The main inconsistencies are that the prompt describes paths without the real src root and specifies string-based signatures using std::string references, while the actual public header uses std::string_view for encode_str and decode."
+    }
+  }
+}

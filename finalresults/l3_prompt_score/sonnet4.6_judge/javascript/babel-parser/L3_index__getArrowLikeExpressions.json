@@ -1,0 +1,23 @@
+{
+  "task": "javascript/babel-parser/L3_index__getArrowLikeExpressions",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__getArrowLikeExpressions/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__getArrowLikeExpressions/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::getArrowLikeExpressions",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description accurately captures all major behaviors: stack-based traversal through conditional expression branches and arrow function bodies, the distinction between immediately-finalized arrows (those with typeParameters or lacking returnType) versus accumulated ones, the disallowInvalid branching logic, and the partition-based return for the false case. The condition for immediate finalization is correctly stated as 'has type parameters OR lacks a return type', matching `node.typeParameters || !node.returnType`. The partition predicate is correctly described. The only minor gap is that the description doesn't explicitly mention the traversal starts from a stack initialized with the input node itself, and doesn't clarify that the traversal also pushes the arrow body regardless of whether the arrow was immediately finalized or accumulated — both of which are present in the implementation. These are secondary details that don't materially affect implementability.",
+  "missing_functionality": [
+    "Does not explicitly state that node.body is pushed onto the stack for every expression-bodied arrow function, including those that are immediately finalized via finishArrowValidation (not just the accumulated ones).",
+    "Does not mention that the traversal is stack-based (iterative DFS) starting from a single-element stack containing the input node."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__getArrowLikeExpressions.raw.md"
+}

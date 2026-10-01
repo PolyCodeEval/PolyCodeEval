@@ -1,0 +1,13 @@
+{
+  "score": 4.7,
+  "reason": "The description is exceptionally thorough and accurate. It correctly captures the coroutine-based resumable design, the in/out parameter semantics for sizes, the power-of-two validation and BAD_PARAM path, zlib header parsing with all the specific checks (CM=8, FCHECK, no preset dict, window size vs buffer), all three block types with type-3 rejection, stored block LEN/NLEN validation, fixed and dynamic Huffman table construction including the dezigzag permutation and over-subscription check, back-reference expansion with overlap semantics, wrapping vs non-wrapping history modes, all suspension return codes, the byte-realignment and lookahead pushback on completion, the 4-byte Adler-32 trailer read, and the Adler-32 update/comparison logic. The only minor omissions are: (1) the fast-path optimization that decodes two literal symbols per iteration when sufficient input/output space is available (the inner double-decode loop), and (2) the MINIZ_USE_UNALIGNED_LOADS_AND_STORES 8-byte bulk copy optimization for back-references. These are implementation-level performance details rather than behavioral differences, so they don't significantly affect correctness of a reimplementation.",
+  "missing_functionality": [
+    "The fast-path inner loop that decodes two consecutive literal/length symbols per iteration when at least 4 bytes of input and 2 bytes of output space are available (the double-symbol decode optimization).",
+    "The MINIZ_USE_UNALIGNED_LOADS_AND_STORES conditional 8-byte-at-a-time bulk copy path for back-references when counter >= 9 and counter <= dist."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'any zero distance' causes failure in non-wrapping mode, but the actual condition is (dist == 0 || dist > dist_from_out_buf_start || dist_from_out_buf_start == 0) — the zero-distance check is accurate, but 'dist_from_out_buf_start == 0' (no output produced yet) is a separate condition not explicitly called out.",
+    "The description says the zlib header check rejects 'preset dictionaries' (FDICT bit), which is correct, but it also implicitly rejects any FCHECK failure and CM != 8 — the description does mention these, so this is not really incorrect, just noting the description is accurate here."
+  ],
+  "complete_enough": true
+}

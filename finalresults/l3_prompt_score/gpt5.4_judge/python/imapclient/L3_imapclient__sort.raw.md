@@ -1,0 +1,9 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly covers the inputs, normalization of sort criteria, charset conversion, reuse of search-criteria normalization, execution of the SORT command, and parsing of the returned message IDs into integers with an empty list when no IDs are returned. The only notable omission is that the actual function is decorated with a capability requirement for SORT support, but that is peripheral to the core function body. Overall, the description is accurate and sufficiently complete to reimplement the function.",
+  "missing_functionality": [
+    "The function is guarded by a require_capability(\"SORT\") decorator, so it requires the server to advertise SORT capability before execution."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

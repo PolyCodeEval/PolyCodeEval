@@ -1,0 +1,30 @@
+{
+  "task": "java/image-similarity/L0_image-similarity",
+  "project": "java/image-similarity",
+  "language": "java",
+  "prompt_path": "datasets/java/image-similarity/tasks/L0_image-similarity/prompt.md",
+  "project_root": "datasets/java/image-similarity",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt 覆盖了仓库核心能力：pHash 与 histogram 两类图像相似度算法、`Main` 驱动的批处理 CLI、文件与 URL 输入，以及关键类拆分。它还给出了黑盒测试所需的主要公开接口和行为阈值，足以指导复现当前项目的主体实现。扣分点在于没有说明真实 CLI 输出格式是 `boolean + 两个路径` 的制表符分隔行，也未提到命令字实际是单字符 `h` 或默认走 pHash、输入文件按空格分隔每行两项等关键运行细节。"
+    },
+    "unambiguity": {
+      "score": 3.9,
+      "reason": "核心接口定义相对清楚，`ImageHistogram.match(File, File)` 与 `ImagePHash.distance(File, File)` 的返回类型、取值范围和判定阈值都明确，足以支撑主要算法实现。歧义主要在 CLI：prompt 仅写 `<mode>` 和 “command/mode selector”，未说明合法取值与默认分支；输出文件说记录结果，但没有明确每行具体格式；输入行是“image pairs or comparison instructions”也比真实实现更宽泛，而源码实际上只接受每行两个路径。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "Prompt 直接列出了黑盒测试关注的公开构造器、方法签名和可验证行为，包括同图比较、相似图阈值、对称性、非负性与自定义构造器场景，因此对通过核心黑盒测试非常有帮助。相比源码，尚未把 CLI 的错误处理、命令字细节和输出文本格式精确固定下来，所以对完整端到端测试支撑略有欠缺，但对主要可测能力已经足够。"
+    },
+    "consistency": {
+      "score": 4.2,
+      "reason": "Prompt 与现有实现总体一致：确实存在 `ImagePHash`、`ImageHistogram`、`Main` 三个核心类，支持本地文件，也通过重载方法支持 URL；`match` 和 `distance` 的核心行为与阈值要求与源码表现方向一致。主要不一致或偏差在于 prompt 将 mode 选择描述得较抽象，像是多模式命令体系，而真实 `Main` 只把 `h` 作为 histogram，其余值都走 pHash；同时 prompt 没明确真实 CLI 输出契约，因此和实现存在轻微落差。"
+    }
+  },
+  "overall_score": 4.33,
+  "raw_response_file": "L0_image-similarity.raw.md"
+}

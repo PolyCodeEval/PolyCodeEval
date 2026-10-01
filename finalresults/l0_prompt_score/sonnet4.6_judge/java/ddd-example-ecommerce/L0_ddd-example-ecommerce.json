@@ -1,0 +1,29 @@
+{
+  "task": "java/ddd-example-ecommerce/L0_ddd-example-ecommerce",
+  "project": "java/ddd-example-ecommerce",
+  "language": "java",
+  "prompt_path": "datasets/java/ddd-example-ecommerce/tasks/L0_ddd-example-ecommerce/prompt.md",
+  "project_root": "datasets/java/ddd-example-ecommerce",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers Amount and InStock fully including constructors, add/subtract/compareTo/equals/hashCode, ZERO constant, InStock add/remove/hasEnough/needsYet/isSoldOut, immutability, null rejection, and the needsYet edge case (returns ZERO when stock >= requested). The broader DDD e-commerce application is mentioned but the tested units are Amount and InStock which are completely specified."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Key contracts are precise: Amount(negative) throws, subtract below zero throws, Amount.ZERO constant, InStock.needsYet returns Amount.ZERO when stock >= requested. The InStock source code confirms needsYet uses compareTo == 1 (strictly greater than). The prompt says 'strictly greater or equal' which matches the tests (equal also returns ZERO). Very clear."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests cover Amount constructor validation, add/subtract immutability, compareTo, equals/hashCode, InStock operations, null rejections, chain operations, needsYet edge cases, and isSoldOut. All are derivable from the prompt's example usage and behavioral descriptions."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "No conflicts with the actual InStock implementation. The InStock source uses Amount.subtract which delegates rejection to Amount, consistent with the prompt. The needsYet comparison (compareTo == 1 for strictly greater) is consistent with the 'strictly greater or equal returns ZERO' spec. Null rejections propagate correctly via add/subtract."
+    }
+  },
+  "overall_score": 4.50
+}

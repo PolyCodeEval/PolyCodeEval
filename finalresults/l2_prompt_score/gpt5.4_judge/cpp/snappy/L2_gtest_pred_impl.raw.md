@@ -1,0 +1,13 @@
+{
+  "score": 4.8,
+  "reason": "The prompt matches the implementation very closely. The file-level description correctly identifies that this header provides generic predicate assertion support for arities 1 through 5 and that the boolean-predicate helpers return AssertionSuccess on pass and construct AssertionFailure diagnostics using predicate text, argument expressions, and ::testing::PrintToString values on failure. The function-level descriptions for AssertPred2Helper through AssertPred5Helper accurately capture the control flow, argument ordering, and exact diagnostic structure needed to reconstruct the hollowed implementations. The only notable gap is that the prompt does not explicitly mention the surrounding macro definitions and that only helper bodies 2-5 are hollowed while arity-1 already exists, but this does not materially hinder reconstructing the missing code.",
+  "missing_functionality": [
+    "The file-level description does not explicitly mention the central GTEST_ASSERT_ reduction macro or the concrete GTEST_PREDn_/GTEST_PRED_FORMATn_ macro definitions, though they are present in the file.",
+    "It does not state that the helper templates are simple inline template definitions in a header, but that is minor and inferable from context."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement that the header defines support for predicate arities 1 through 5 is broader than the hollowed region being evaluated, since only AssertPred2Helper through AssertPred5Helper are missing; however, it still correctly describes the full file.",
+    "The file-level wording could imply both EXPECT_PREDn/ASSERT_PREDn and EXPECT_PRED_FORMATn/ASSERT_PRED_FORMATn are equally implemented by the described AssertionResult-based bool helpers, whereas the helper bodies specifically serve the bool-returning PREDn path and the FORMAT variants call user-supplied formatter predicates directly."
+  ],
+  "complete_enough": true
+}

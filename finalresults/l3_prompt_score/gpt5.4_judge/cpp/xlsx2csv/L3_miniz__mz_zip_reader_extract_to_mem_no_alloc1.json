@@ -1,0 +1,33 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::mz_zip_reader_extract_to_mem_no_alloc1",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 3.7,
+  "reason": "The description captures the main purpose correctly: extracting a ZIP entry by index into a caller-provided buffer and reporting success/failure without requiring an output allocation. It also reasonably notes destination buffer sizing and general extraction failures. However, it omits several important implemented behaviors: the actual signature includes `flags`, `user_read_buf_size`, and an optional precomputed file stat pointer; the function can return raw compressed data when `MZ_ZIP_FLAG_COMPRESSED_DATA` is set; it supports both stored and deflated entries, rejects encrypted/patch entries and unsupported methods, validates the local header and archive bounds, treats directories/zero-length files as success, verifies CRC for uncompressed output, and may allocate a temporary read buffer itself when no archive memory mapping or user read buffer is available. Because these are substantive behaviors, the description is not complete enough to reliably reimplement the function.",
+  "missing_functionality": [
+    "The full parameter list is missing important arguments: `flags`, `user_read_buf_size`, and optional `const mz_zip_archive_file_stat *st`.",
+    "Supports a mode where `flags & MZ_ZIP_FLAG_COMPRESSED_DATA` causes extraction of compressed bytes instead of decompressed output.",
+    "Handles both stored entries and deflated entries; rejects unsupported compression methods when decompression is requested.",
+    "Rejects encrypted/strong-encrypted/patch-compressed entries with an unsupported-encryption error.",
+    "Treats directories and zero-length files as immediate success.",
+    "Reads and validates the local file header signature and checks archive bounds before extraction.",
+    "Performs CRC32 validation for non-compressed-data extraction when CRC checks are enabled.",
+    "Checks that decompressed output size exactly matches the expected uncompressed size.",
+    "Can use archive memory directly, a caller-provided read buffer, or allocate a temporary read buffer internally if needed."
+  ],
+  "incorrect_or_misleading_points": [
+    "Calling it the “no_alloc” variant is somewhat misleading as a behavioral summary, because while it does not allocate the output buffer, it may still allocate an internal temporary read buffer if neither in-memory archive access nor `user_read_buf` is available.",
+    "The description implies reliance on a caller-supplied scratch buffer, but the implementation allows `pUser_read_buf` to be null and falls back to internal allocation."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_miniz__mz_zip_reader_extract_to_mem_no_alloc1.raw.md"
+}

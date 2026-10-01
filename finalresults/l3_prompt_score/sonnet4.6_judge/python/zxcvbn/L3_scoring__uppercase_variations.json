@@ -1,0 +1,25 @@
+{
+  "task": "python/zxcvbn/L3_scoring__uppercase_variations",
+  "project": "python/zxcvbn",
+  "language": "python",
+  "prompt_path": "datasets/python/zxcvbn/tasks/L3_scoring__uppercase_variations/prompt.md",
+  "task_json_path": "datasets/python/zxcvbn/tasks/L3_scoring__uppercase_variations/task.json",
+  "source_file_path": "datasets/python/zxcvbn/src/zxcvbn/scoring.py",
+  "target_symbol": "scoring.py::uppercase_variations",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the three-stage logic: return 1 for all-lowercase, return 2 for simple patterns (all-upper, start-upper, end-upper), and sum combinations for mixed-case. The combination formula description is slightly off — the implementation sums nCk(U+L, i) for i in 1..min(U,L), not 'ways to choose any case-pattern with between 1 and min(U,L) letters selected to vary' which could be misread as nCk(total, i) over a different domain. The description also omits the specific regex definitions (START_UPPER matches exactly one leading capital, END_UPPER matches exactly one trailing capital, ALL_UPPER allows no lowercase) which matter for correct boundary behavior. The dual lowercase check (ALL_LOWER regex OR word.lower()==word) is mentioned but slightly vague. Overall the description is accurate enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The exact regex semantics are not specified: START_UPPER requires exactly one leading uppercase with no other uppercase letters, END_UPPER requires exactly one trailing uppercase, ALL_UPPER allows no lowercase at all — these boundary conditions affect which words return 2 vs the combination sum.",
+    "The dual lowercase check uses both ALL_LOWER regex (no A-Z characters) and word.lower()==word (handles non-ASCII cased characters); the description only vaguely references 'the function's lowercase checks' without clarifying both conditions."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'number of ways to choose any case-pattern with between 1 and min(U,L) letters selected to vary' which is ambiguous — the actual formula is sum of nCk(U+L, i) for i from 1 to min(U,L), where U+L is the total of uppercase plus lowercase letters (not total token length, which could include digits/symbols)."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_scoring__uppercase_variations.raw.md"
+}

@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_snappy-stubs-internal__Store64",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_snappy-stubs-internal__Store64/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_snappy-stubs-internal__Store64/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/snappy-stubs-internal.h",
+  "target_symbol": "snappy-stubs-internal.h::Store64",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: storing a 64-bit value into memory with endianness-aware handling. It correctly identifies that big-endian systems use explicit byte-by-byte storage and little-endian systems use the native approach. However, it slightly mischaracterizes the big-endian path — the byte order used (LSB first, i.e., buffer[0] = value & 0xFF) is actually little-endian byte order written explicitly, not 'big-endian byte order'. The description says the value is stored 'correctly in memory across endianness' which is vague but not wrong. The little-endian path uses memcpy rather than a direct assignment, which is an implementation detail the description omits but is not critical for functional understanding. Overall the description is sufficient to implement the function correctly.",
+  "missing_functionality": [
+    "Does not mention that the little-endian path uses std::memcpy rather than a direct pointer assignment",
+    "Does not clarify that the big-endian explicit byte-by-byte path stores bytes in little-endian order (LSB at buffer[0]), which is the key insight of the implementation"
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'store the value in explicit byte-by-byte order on big-endian systems so that the same numeric value is represented correctly' is ambiguous — it could imply big-endian byte order is used on big-endian systems, but the implementation actually writes bytes in little-endian order (LSB first) on big-endian systems to ensure consistent memory layout"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_snappy-stubs-internal__Store64.raw.md"
+}

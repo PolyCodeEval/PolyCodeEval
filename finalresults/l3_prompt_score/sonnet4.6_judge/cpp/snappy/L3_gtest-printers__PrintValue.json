@@ -1,0 +1,26 @@
+{
+  "task": "cpp/snappy/L3_gtest-printers__PrintValue",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-printers__PrintValue/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-printers__PrintValue/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/include/gtest/gtest-printers.h",
+  "target_symbol": "third_party/googletest/googletest/include/gtest/gtest-printers.h::PrintValue",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.8,
+  "reason": "The description captures the overall structure well: brace-delimited output, 32-element cap with ellipsis, trailing space before closing brace for non-empty containers, and use of UniversalPrint. However, it contains one misleading detail about spacing: it says 'a space after the comma only before the first 32 printed elements', which misrepresents the actual logic. In reality, every element (including the first) gets a leading space printed unconditionally before it, and the comma is printed before elements 2 through 32+. The description's phrasing conflates the comma-separation logic with the leading-space logic in a confusing way. The core behavior is mostly right but the element-spacing description is imprecise enough to cause implementation errors.",
+  "missing_functionality": [
+    "The description does not clarify that the leading space is printed for every element unconditionally (before the element, not after the comma), while the comma is only printed between elements (i.e., when count > 0).",
+    "The description does not mention that the ellipsis check happens after printing the comma but before printing the next element's leading space, meaning the 33rd iteration triggers the break."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase 'a space after the comma only before the first 32 printed elements' is misleading — every element gets a leading space, and the comma is printed before elements 2 onward; the space is not conditional on being within the first 32.",
+    "The description implies the space follows the comma, but in the implementation the space is always printed before each element independently of the comma."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-printers__PrintValue.raw.md"
+}

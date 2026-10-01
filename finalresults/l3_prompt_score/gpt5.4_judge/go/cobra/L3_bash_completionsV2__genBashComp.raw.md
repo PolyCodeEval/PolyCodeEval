@@ -1,0 +1,11 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly identifies that this Go function emits a Bash completion V2 script template, chooses between the normal and no-description completion request subcommand based on `includeDesc`, preserves alias support by invoking `${words[0]}`, truncates words to the cursor position, appends an empty argument when completing after a space, parses a trailing colon-delimited directive, handles debug/init fallback helpers, applies directive bits for error/nospace/nofile/keep-order, supports file extension and directory filtering, separates active help from completions, handles menu/insert vs standard completion behavior, formats descriptions, adjusts for `:` and `=` word breaks, reprints the command line when needed, and registers the final completion function with `complete`. This is detailed enough to implement the function with only minor risk of missing small shell-level specifics.",
+  "missing_functionality": [
+    "The description does not explicitly mention the special preprocessing of `cur` for `-flag=value` cases, where the part before `=` is stripped before matching completions.",
+    "It does not explicitly mention that active-help lines with an empty payload are ignored after stripping the marker.",
+    "It does not mention that when there are no descriptions at all, multiple standard completions are intentionally left unescaped for display while a single one is re-escaped for insertion."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

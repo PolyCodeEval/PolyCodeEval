@@ -1,0 +1,24 @@
+{
+  "task": "cpp/jsoncpp/L3_json_writer__valueToQuotedStringN",
+  "project": "cpp/jsoncpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/jsoncpp/tasks/L3_json_writer__valueToQuotedStringN/prompt.md",
+  "task_json_path": "datasets/cpp/jsoncpp/tasks/L3_json_writer__valueToQuotedStringN/task.json",
+  "source_file_path": "datasets/cpp/jsoncpp/src/lib_json/json_writer.cpp",
+  "target_symbol": "json_writer.cpp::valueToQuotedStringN",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation closely and captures the main control flow, escaping rules, null handling, and the two `emitUTF8` modes accurately. It correctly notes that non-null results are quoted, that common JSON escapes are handled explicitly, that `/` is not escaped, and that non-ASCII behavior differs depending on whether UTF-8 emission is enabled. The only meaningful gap is that the fast path says it uses the specified length, but the implementation returns `String(\"\\\"\") + value + \"\\\"\"`, which relies on null-terminated input and does not obviously limit itself to `length`. That subtlety matters for exact implementability, but overall the description is still strong and mostly complete.",
+  "missing_functionality": [
+    "The description does not mention the implementation's fast path builds the quoted result with `String(\"\\\"\") + value + \"\\\"\"`, which depends on `value` being null-terminated rather than explicitly respecting `length`."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying the function returns the quoted form of the given byte sequence over the specified length is slightly misleading in the no-escaping fast path, because the implementation concatenates `value` as a C string instead of using `length` explicitly."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_json_writer__valueToQuotedStringN.raw.md"
+}

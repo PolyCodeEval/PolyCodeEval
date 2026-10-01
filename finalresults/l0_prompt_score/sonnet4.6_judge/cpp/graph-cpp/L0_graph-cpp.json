@@ -1,0 +1,29 @@
+{
+  "task": "cpp/graph-cpp/L0_graph-cpp",
+  "project": "cpp/graph-cpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/graph-cpp/tasks/L0_graph-cpp/prompt.md",
+  "project_root": "datasets/cpp/graph-cpp",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers Queue, Stack, AdjacencyListGraph, AdjacencyMatrixGraph, Arc struct, all key methods (push/pop/front/top, setVexes/setArcs/locateVex/bfs/dfs_noRes), file layout, and CLI program. Error-throwing behavior for empty containers is specified. The indexing difference between list (0-based) and matrix (1-based) locateVex is noted. The only minor gap is that the prompt doesn't specify the exact exception type (std::out_of_range is implied by 'reports an error')."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "The 0-based vs 1-based distinction for locateVex is specified. Arc field order is explicit. Constructor shape (vexNum, arcNum, isDirected) is given. However, 'reports an error when called on an empty queue/stack' is not specific about throw type — the tests use EXPECT_THROW(..., std::out_of_range), which a developer might miss. The BFS/DFS disconnected component visiting guarantee is stated but the starting-vertex selection policy is not specified."
+    },
+    "testability": {
+      "score": 4.0,
+      "reason": "Queue and Stack tests (FIFO order, throw on empty) are directly derivable. Graph traversal tests (BFS/DFS linear/star) are straightforward to derive. The AdjacencyListGraph setVexes throw behavior for too many vertices is testable, as it's now specified in the prompt. Minor: the prompt says 'reports an error' but doesn't say std::out_of_range, which is what the tests check."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "Checked actual al_graph.hpp — constructor matches (vexNum, arcNum, isDirected), locateVex returns 0-based index, bfs() and dfs_noRes() return vector<VertexType>, setVexes/setArcs signatures match. Queue uses pop() returning value. No conflicts. The Arc struct with {src, dest, weight} matches brace-initialization usage in tests."
+    }
+  },
+  "overall_score": 4.25
+}

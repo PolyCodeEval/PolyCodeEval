@@ -1,0 +1,7 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly covers the four branches: empty element handling for commas, spread parsing with parenthesized-item normalization, partial-application argument placeholder handling with plugin enforcement and conditional erroring, and the default path through `parseMaybeAssignAllowInOrVoidPattern` with the close token, error tracker, and parenthesized-item callback. It is also specific enough that someone could implement the function with only minor uncertainty about exact token identities and helper semantics.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

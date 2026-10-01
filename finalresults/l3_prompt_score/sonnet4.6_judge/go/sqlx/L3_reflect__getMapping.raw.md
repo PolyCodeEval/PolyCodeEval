@@ -1,0 +1,13 @@
+{
+  "score": 4.2,
+  "reason": "The description is thorough and captures nearly all the important behaviors: BFS traversal, deref of input type, root node + flat index, embedded struct handling, recursion into struct-typed fields, cycle detection via ancestor chain, path construction, skipping `-` names, metadata captured in FieldInfo, and the final StructMap with Paths/Names lookup logic. One notable inaccuracy is in the path-override logic: the description says 'keep the first one unless a later field is embedded, in which case the embedded field overrides' — but the actual code keeps the first entry unless the *existing* entry (`fld`) is embedded, meaning a non-embedded field can override an embedded one, not the other way around. There is also a subtle detail about anonymous fields with a tag: when an anonymous field has a tag, the path prefix (`pp`) used for its children is updated to `fi.Path` rather than the parent's `pp` — this nuance is missing from the description. The description also doesn't mention that `fi.Index` is set twice for struct-typed non-anonymous fields (once in the else-if branch and once unconditionally after), though this is an implementation artifact. Overall the description is complete enough to guide a correct implementation with only minor gaps.",
+  "missing_functionality": [
+    "When an anonymous field has a non-empty tag, the path prefix passed to its children is set to fi.Path (not the parent's pp); this tag-based pp override for embedded fields is not mentioned.",
+    "The fi.Index assignment happens unconditionally after the if/else-if block, overwriting the value set inside the anonymous branch — this double-assignment detail is absent.",
+    "The description does not mention that the cycle-detection check compares tq.fi.Field.Type against ancestor Field.Type (i.e., it checks the current queue item's own field type against its parent chain, not the child fields being iterated)."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description states 'keep the first one unless a later field is embedded, in which case the embedded field overrides the existing path entry.' The actual logic is the opposite: a new field overrides the existing path entry only when the *existing* (already stored) field is embedded — meaning a non-embedded field can displace an embedded one, not the other way around."
+  ],
+  "complete_enough": true
+}

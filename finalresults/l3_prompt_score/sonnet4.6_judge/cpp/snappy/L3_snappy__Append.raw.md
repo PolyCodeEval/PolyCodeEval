@@ -1,0 +1,7 @@
+{
+  "score": 4.8,
+  "reason": "The description accurately captures all three key behaviors: the fast path memcpy when space is available, the slow path delegation via SlowAppend when space is insufficient, and the op_ptr_ synchronization pattern in both directions around the slow path. The terminology 'internal output limit' and 'internal output pointer' correctly maps to op_limit_ and op_ptr_ respectively. The description is complete enough to implement the function faithfully.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

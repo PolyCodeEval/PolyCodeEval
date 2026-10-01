@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_snappy-test__CompressAtMostOrAll",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_snappy-test__CompressAtMostOrAll/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_snappy-test__CompressAtMostOrAll/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/snappy-test.cc",
+  "target_symbol": "snappy-test.cc::CompressAtMostOrAll",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description matches the implementation closely and covers the main control flow: initialization via the existing compression stream setup, a single deflate call with the provided flush mode, updating `*sourceLen` to remaining input and `*destLen` to bytes produced in this chunk, converting `Z_STREAM_END` to `Z_OK`, returning `Z_BUF_ERROR` when output space is exhausted, and resetting error state only for unexpected zlib errors. It is also accurate about the special case where `Z_STREAM_END` occurs with remaining input being treated as `Z_BUF_ERROR`. The only notable gap is that it slightly overgeneralizes the intended incremental flush modes and does not explicitly mention that `CompressInit` may fail and be returned immediately, though that is a minor omission.",
+  "missing_functionality": [
+    "Does not explicitly mention the immediate early return if `CompressInit(dest, destLen, source, sourceLen)` fails.",
+    "Does not state that the first-chunk handling in this function only flips `first_chunk_` to false and performs no other setup here."
+  ],
+  "incorrect_or_misleading_points": [
+    "It says the function is intended to support an incremental flush mode such as `Z_SYNC_FLUSH`/`Z_FULL_FLUSH`, but the implementation comments specifically mention `Z_SYNC_FLUSH` for incremental compression while the signature comment says `Z_FULL_FLUSH or Z_FINISH`; the description is a bit broader than the implementation's documented intent."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_snappy-test__CompressAtMostOrAll.raw.md"
+}

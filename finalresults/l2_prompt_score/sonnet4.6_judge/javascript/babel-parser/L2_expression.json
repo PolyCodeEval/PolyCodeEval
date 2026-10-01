@@ -1,0 +1,26 @@
+{
+  "task": "javascript/babel-parser/L2_expression",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L2_expression/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L2_expression/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/parser/expression.ts",
+  "target_file": "parser/expression.ts",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The file-level description and function-level responsibilities are highly accurate and closely match the actual implementation. The file description correctly identifies the recursive-descent expression parser covering the full JS expression grammar, AST node construction, operator precedence, plugin-gated behavior, and proposal-specific syntax. Nearly every hollowed function is described with precise detail: the yield/await special-casing in `parseMaybeAssign`, the private-name enforcement in `parseExprOp`, the F#/Hack pipeline dispatch in `parseExprOpRightExpr`, the optional-chaining stop logic in `parseSubscript`, the async-arrow cover grammar in `parseCoverCallAndAsyncArrowHead`, the `import(...)` arity/spread validation in `finishCallExpression`, the `wrapParenthesis` non-wrapper mode, the tagged/untagged template escape handling, the accessor method path in `parseObjectMethod`, the private-key deferred-vs-immediate error in `parsePropertyName`'s switch, the `parseImportCall` trailing-comma and extra-argument recovery, and the `void` pattern lookahead in `parseMaybeAssignAllowInOrVoidPattern`. Minor gaps include: the `getExpression` description mentions `resetLocData()` but the actual call is `resetLocData()` without the `expr.locData =` assignment being fully spelled out (minor); the `parseBind` description says it rejects `Import` and `ImportExpression` but the implementation checks `callee.type === 'Super' || (isImport && callee.type === 'ImportExpression') || callee.type === 'Import'` — the description omits the `isImport` guard nuance; the `parseCoverCallAndAsyncArrowHead` description says optional calls parse arguments without placeholder/trailing-comma bookkeeping but doesn't mention that `optionalChainMember` (not `optional`) is used for the `finishCallExpression` call. These are small precision gaps that would not prevent reconstruction.",
+  "missing_functionality": [
+    "parseBind: the description omits that the `isImport` flag is captured before calling `parseNoCallExpr()` and is used to gate the `ImportExpression` rejection check, making the guard logic slightly imprecise.",
+    "parseCoverCallAndAsyncArrowHead: the description says `finishCallExpression` is called with the `optional` flag, but the implementation passes `optionalChainMember` (not `optional`) to `finishCallExpression`.",
+    "getExpression: the description says 'attach/reset packed location data via resetLocData()' but does not mention that the result is assigned to `expr.locData`, which is a concrete detail needed for reconstruction."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `if (node.callee.type === 'Import')` function description says 'zero arguments or more than two raise ImportCallArity' — the implementation checks `length === 0 || length > 2`, which matches, but the description frames it as 'exactly one or two arguments' which is correct; no real inaccuracy here.",
+    "The `parseMaybeAssign` description mentions clearing `voidPatternLoc` when its index is within the assignment span, which matches the implementation exactly — no issue, but the description is unusually precise and correct."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_expression.raw.md"
+}

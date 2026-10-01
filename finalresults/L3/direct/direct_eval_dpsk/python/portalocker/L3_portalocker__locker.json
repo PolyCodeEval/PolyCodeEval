@@ -1,0 +1,79 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 12.81,
+  "stdout": "Flags.NON_BLOCKING)\n            and timeout is not None\n        ):\n            warnings.warn(\n                'timeout has no effect in blocking mode',\n                stacklevel=1,\n            )\n    \n        # If we already have a filehandle, return it\n        fh = self.fh\n        if fh:\n            # Due to type invariance we need to cast the type\n            return typing.cast(typing.IO[typing.AnyStr], fh)\n    \n        # Get a new filehandler\n        fh = self._get_fh()\n    \n        def try_close() -> None:  # pragma: no cover\n            # Silently try to close the handle if possible, ignore all issues\n            if fh is not None:\n                with contextlib.suppress(Exception):\n                    fh.close()\n    \n        exception = None\n        # Try till the timeout has passed\n        for _ in self._timeout_generator(timeout, check_interval):\n            exception = None\n            try:\n                # Try to lock\n>               fh = self._get_lock(fh)\n\nsrc/portalocker/utils.py:290: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:354: in _get_lock\n    portalocker.lock(fh, self.flags)\nsrc/portalocker/portalocker.py:432: in lock\n    _posix_locker_instance.lock(file, flags)\nsrc/portalocker/portalocker.py:389: in lock\n    self.locker(fd, flags)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.portalocker.PosixLocker object at 0x7f40e094c160>\n\n    @property\n    def locker(self) -> Callable[[Union[int, types.HasFileno], int], Any]:\n        override = getattr(self, '_locker_override', None)\n        if override is not None:\n            return override\n>       return self._default_locker\nE       AttributeError: 'PosixLocker' object has no attribute '_default_locker'\n\nsrc/portalocker/portalocker.py:360: AttributeError\n\nThe above exception was the direct cause of the following exception:\n\ntmpdir = local('/tmp/pytest-of-root/pytest-3/test_with_timeout0')\n\n    def test_with_timeout(tmpdir):\n        \"\"\"\n        Test that AlreadyLocked is raised when a file is locked with a timeout.\n        \"\"\"\n        tmpfile = tmpdir.join('test_with_timeout.lock')\n        # Open the file 2 times\n        with pytest.raises(portalocker.AlreadyLocked):  # noqa: SIM117\n>           with portalocker.Lock(tmpfile, timeout=0.1) as fh:\n\ntests/unit_tests/test_timeout_behaviour.py:13: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/portalocker/utils.py:322: in __enter__\n    return self.acquire()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <portalocker.utils.Lock object at 0x7f40dfaaabf0>, timeout = None\ncheck_interval = None, fail_when_locked = False\n\n    def acquire(\n        self,\n        timeout: float | None = None,\n        check_interval: float | None = None,\n        fail_when_locked: bool | None = None,\n    ) -> typing.IO[typing.AnyStr]:\n        \"\"\"Acquire the locked filehandle\"\"\"\n    \n        fail_when_locked = coalesce(fail_when_locked, self.fail_when_locked)\n    \n        if (\n            not (self.flags & constants.LockFlags.NON_BLOCKING)\n            and timeout is not None\n        ):\n            warnings.warn(\n                'timeout has no effect in blocking mode',\n                stacklevel=1,\n            )\n    \n        # If we already have a filehandle, return it\n        fh = self.fh\n        if fh:\n            # Due to type invariance we need to cast the type\n            return typing.cast(typing.IO[typing.AnyStr], fh)\n    \n        # Get a new filehandler\n        fh = self._get_fh()\n    \n        def try_close() -> None:  # pragma: no cover\n            # Silently try to close the handle if possible, ignore all issues\n            if fh is not None:\n                with contextlib.suppress(Exception):\n                    fh.close()\n    \n        exception = None\n        # Try till the timeout has passed\n        for _ in self._timeout_generator(timeout, check_interval):\n            exception = None\n            try:\n                # Try to lock\n                fh = self._get_lock(fh)\n                break\n            except exceptions.LockException as exc:\n                # Python will automatically remove the variable from memory\n                # unless you save it in a different location\n                exception = exc\n    \n                # We already tried to the get the lock\n                # If fail_when_locked is True, stop trying\n                if fail_when_locked:\n                    try_close()\n                    raise exceptions.AlreadyLocked(exception) from exc\n            except Exception as exc:\n                # Something went wrong with the locking mechanism.\n                # Wrap in a LockException and re-raise:\n                try_close()\n>               raise exceptions.LockException(exc) from exc\nE               portalocker.exceptions.LockException: 'PosixLocker' object has no attribute '_default_locker'\n\nsrc/portalocker/utils.py:306: LockException\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_core_locking.py::test_exceptions - AttributeErro...\nFAILED tests/unit_tests/test_core_locking.py::test_simple - AttributeError: '...\nFAILED tests/unit_tests/test_core_locking.py::test_truncate - portalocker.exc...\nFAILED tests/unit_tests/test_core_locking.py::test_class - portalocker.except...\nFAILED tests/unit_tests/test_core_locking.py::test_acquire_release - portaloc...\nFAILED tests/unit_tests/test_lock_flags.py::test_exclusive - AttributeError: ...\nFAILED tests/unit_tests/test_lock_flags.py::test_shared - AttributeError: 'Po...\nFAILED tests/unit_tests/test_lock_flags.py::test_blocking_timeout[flock] - po...\nFAILED tests/unit_tests/test_lock_flags.py::test_blocking_timeout[lockf] - po...\nFAILED tests/unit_tests/test_mechanisms.py::test_lock_fileno[flock] - Attribu...\nFAILED tests/unit_tests/test_mechanisms.py::test_lock_fileno[lockf] - Attribu...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[flock] - po...\nFAILED tests/unit_tests/test_mechanisms.py::test_locker_mechanism[lockf] - po...\nFAILED tests/unit_tests/test_multiprocess.py::test_shared_processes[True] - p...\nFAILED tests/unit_tests/test_multiprocess.py::test_shared_processes[False] - ...\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_acquire_writes_pid\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_success\nFAILED tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked\nFAILED tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries\nFAILED tests/unit_tests/test_portalocker_posix.py::test_posix_lock_raises_lock_exception_on_unexpected_oserror\nFAILED tests/unit_tests/test_portalocker_posix.py::test_posix_lock_raises_lock_exception_on_eof\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release_count\nFAILED tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0] - p...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-None] - p...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0] - port...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0-0.001] - ...\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]\nFAILED tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]\nFAILED tests/unit_tests/test_temporary_file_lock.py::test_temporary_file_lock\nFAILED tests/unit_tests/test_timeout_behaviour.py::test_with_timeout - portal...\n================= 34 failed, 59 passed, 1 deselected in 12.26s =================\n",
+  "stderr": "",
+  "task": "python/portalocker/L3_portalocker__locker",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_acquire_writes_pid",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_success",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_pidfilelock_context_manager_already_locked",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_pidfilelock.py::test_multiple_context_manager_entries",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_portalocker_posix.py::test_posix_lock_raises_lock_exception_on_unexpected_oserror",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_portalocker_posix.py::test_posix_lock_raises_lock_exception_on_eof",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release_count",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_rlock_behaviour.py::test_rlock_acquire_release",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[None-0.001]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_semaphore.py::test_bounded_semaphore[0.0005-0.001]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_temporary_file_lock.py::test_temporary_file_lock",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 14,
+    "total": 14
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,29 @@
+{
+  "task": "cpp/jsoncpp/L2_json_reader",
+  "project": "cpp/jsoncpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/jsoncpp/tasks/L2_json_reader/prompt.md",
+  "task_json_path": "datasets/cpp/jsoncpp/tasks/L2_json_reader/task.json",
+  "source_file_path": "datasets/cpp/jsoncpp/src/lib_json/json_reader.cpp",
+  "target_file": "json_reader.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The description matches the implementation very closely at both file and function level and covers nearly all behavior needed to reconstruct the file: legacy `Reader`, internal `OurReader`, builder settings, parsing flow, tokenization, comments, offsets, errors, number/string/unicode decoding, recovery, and stream parsing are all described with strong fidelity. It also correctly calls out important divergences between `Reader` and `OurReader`, including BOM skipping, extra-content rejection, special floats, trailing commas, duplicate-key rejection, and comment-placement differences. The remaining issues are small but matter for exact reconstruction: a few bounds/details are slightly misstated, and several helper/wrapper functions present in the file are not described.",
+  "missing_functionality": [
+    "The file description omits the small but real `Features` implementation (`Features::Features`, `Features::all`, `Features::strictMode`) used by the legacy reader API.",
+    "The overloads `Reader::parse(const std::string&, ...)` and `Reader::parse(std::istream&, ...)` are not described, even though they are implemented in this file and important for full-file reconstruction.",
+    "The legacy compatibility alias `Reader::getFormatedErrorMessages()` is not mentioned.",
+    "Small utility methods like `containsNewLine`, `skipSpaces`, `readTokenSkippingComments`, `currentValue`, and `getNextChar` are not documented individually, though some are inferable from larger function descriptions."
+  ],
+  "incorrect_or_misleading_points": [
+    "For `Reader::parse`, saying it 'does not reject extra trailing non-comment tokens' is true, but slightly incomplete because it still reads one trailing token and ignores it unless strict-root fails; this is not harmful, just subtly phrased.",
+    "For `Reader::pushError(const Value&, const String&, const Value&)`, the description says validation uses the extra value's start offset, but the implementation validates `extra.getOffsetLimit()` and stores `begin_ + extra.getOffsetStart()` as `extra_`.",
+    "For `Reader::decodeNumber`, the description says it emits a signed or unsigned integral value 'depending on sign and range'; in the legacy implementation positive values up to `maxInt` become signed, otherwise unsigned, which is a narrower detail than implied.",
+    "For `decodeString` in `OurReader`, the description is accurate about interior decoding but does not note that the implementation still checks for `c == '\"'` while scanning decoded contents even for single-quoted tokens; it works because token bounds exclude the outer quotes, but exact code reconstruction would need this quirk."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_json_reader.raw.md"
+}

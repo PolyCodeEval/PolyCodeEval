@@ -1,0 +1,25 @@
+{
+  "task": "javascript/babel-parser/L3_index__updateContext",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__updateContext/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__updateContext/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/plugins/jsx/index.ts",
+  "target_symbol": "plugins/jsx/index.ts::updateContext",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures all four major branches of the function: slash-after-jsxTagStart reinterpretation, jsxTagStart push, jsxTagEnd pop/restore logic, and the fallback tokenComesBeforeExpression path. The core semantics are correct and complete enough to implement the function. However, the jsxTagEnd branch description is slightly imprecise: it says 'close an existing opening/closing JSX tag context' but doesn't clearly specify that the closing condition for j_oTag requires prevType === tt.slash (self-closing tag), and the description of 'restore the ability to start JSX based on the surrounding context' correctly implies checking the new top of the context stack against j_expr. The description of the else branch within jsxTagEnd ('reset the context to expression mode') correctly maps to setContext(tc.j_expr). Overall the description is accurate and sufficiently detailed for implementation.",
+  "missing_functionality": [
+    "The jsxTagEnd branch description does not explicitly state that the j_oTag closing condition requires prevType === tt.slash (i.e., a self-closing tag like <foo/>), which is a specific and non-obvious implementation detail.",
+    "The splice(-2, 2, tc.j_cTag) operation in the slash+jsxTagStart branch — replacing the last two context entries with a single closing-tag context — is not described; the description only says 'reinterpret as closing-tag context' without mentioning the removal of two entries."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'close an existing opening/closing JSX tag context' for the jsxTagEnd pop path, which is slightly ambiguous — it could imply either type is closed under any condition, whereas the implementation only pops j_oTag when prevType is slash, and always pops j_cTag."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__updateContext.raw.md"
+}

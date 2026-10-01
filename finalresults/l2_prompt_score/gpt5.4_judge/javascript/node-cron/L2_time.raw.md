@@ -1,0 +1,17 @@
+{
+  "score": 4.4,
+  "reason": "The description matches the implementation very closely at both file and function level. It correctly covers the constructor modes, timezone/UTC-offset validation, parsing pipeline, serialization helpers, the main next-date search algorithm, standard 5-field vs 6-field cron handling, and the DST forward/backward adjustments. It is also detailed enough to capture most error cases and internal representation choices. The main issues are a few implementation-specific details that are misstated or omitted, especially around `_hasAll` bounds semantics and some subtle `getNextDateFrom` behaviors.",
+  "missing_functionality": [
+    "The description does not mention the private `_getWeekDay` helper that normalizes Luxon weekday 7 to cron weekday 0, even though it is used by the matching algorithm.",
+    "The `getNextDateFrom` description omits that when no explicit timezone argument is supplied, the zone fallback specifically uses `start.zone.zoneName ?? start.zone.fixed`.",
+    "The `getNextDateFrom` description does not explicitly mention that the 8-year failure message uses `date.offset` as the reported UTC offset and `this.source.toString()` in the debug string.",
+    "The `sendAt` description does not state that the multi-occurrence branch mutates the working `date` by repeatedly feeding each returned occurrence back into `getNextDateFrom`."
+  ],
+  "incorrect_or_misleading_points": [
+    "The `_hasAll` description says to return true only if all expected values are present, but the implementation iterates `for (let i = low, n = high; i < n; i++)`, which excludes the upper bound for all units. This differs from the described inclusive interpretation and is especially important because it reflects actual implementation behavior.",
+    "The `getNextDateFrom` description says unrestricted month/day/hour/minute/second sets are detected using object key counts generally, but the implementation hardcodes the expected counts inline as 12, 31, 24, 60, 60 rather than using `_hasAll` or generic constraint-derived logic.",
+    "The constructor description says Luxon `DateTime` input is accepted by checking `source` is a Luxon `DateTime`, but the implementation uses `source instanceof DateTime`, which is a concrete implementation detail and not a generic Luxon-like acceptance test.",
+    "The file-level wording about honoring a fixed UTC offset inside the core scheduling algorithm is slightly misleading because UTC offset handling is applied in `sendAt`, while `getNextDateFrom` itself operates on a start `DateTime` and optional zone."
+  ],
+  "complete_enough": true
+}

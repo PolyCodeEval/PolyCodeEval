@@ -1,0 +1,14 @@
+{
+  "score": 4.6,
+  "reason": "The description is remarkably thorough and accurate, covering nearly every behavioral aspect of the implementation: input validation, ZIP64 auto-promotion, data descriptor emission logic, UTF-8/ASCII flag handling, directory entry handling, alignment padding, pre-allocation strategy, local header writing with placeholder fields, stored vs. deflated path, data descriptor format selection (32-bit vs. 64-bit), central directory registration, and return value semantics. One subtle inaccuracy is in bullet 3, which states 'A nonzero uncompressed size is rejected unless the data is marked as already compressed' — the implementation actually rejects a nonzero `uncomp_size` parameter only when `MZ_ZIP_FLAG_COMPRESSED_DATA` is not set, which is a caller-supplied pre-compressed size hint, not the computed uncompressed size. The description also slightly mischaracterizes the data descriptor trigger condition: the implementation sets `MZ_ZIP_LDH_BIT_FLAG_HAS_LOCATOR` when `uncomp_size` is nonzero OR when `buf_size` is nonzero and data is not pre-compressed, but the description says it emits a descriptor 'whenever size information cannot be placed directly in the local header under this API's rules', which is a reasonable abstraction but not fully precise. The ZIP64 extra data condition in the local header (only when sizes/offsets >= MZ_UINT32_MAX, not merely when zip64 mode is active) is correctly captured. These are minor imprecisions in an otherwise excellent description.",
+  "missing_functionality": [
+    "The description does not mention that the data descriptor is only written when `uncomp_size` is nonzero (after all processing), not whenever the HAS_LOCATOR bit is set — the bit can be set without a descriptor being written if uncomp_size ends up zero.",
+    "The description does not explicitly mention that ZIP64 extra data in the local header is only emitted when sizes or offsets actually reach MZ_UINT32_MAX (not just when zip64 mode is active), which is a meaningful distinction.",
+    "The description does not mention that after writing the data, the compressor is freed before the data descriptor and central directory steps."
+  ],
+  "incorrect_or_misleading_points": [
+    "Bullet 3 states 'A nonzero uncompressed size is rejected unless the data is marked as already compressed' — this refers specifically to the caller-supplied `uncomp_size` parameter being nonzero without the COMPRESSED_DATA flag, not to the computed uncompressed size, which could be misleading.",
+    "Bullet 13 says the data descriptor is appended 'when the entry has a nonzero uncompressed size' which is accurate for the implementation, but earlier bullet 4 implies the descriptor is emitted whenever the HAS_LOCATOR bit is set, creating a slight internal inconsistency in the description."
+  ],
+  "complete_enough": true
+}

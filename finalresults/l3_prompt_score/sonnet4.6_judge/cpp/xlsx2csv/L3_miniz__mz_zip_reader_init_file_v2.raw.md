@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The description is an excellent match for the implementation. It accurately covers every major step in the correct order: input validation (null checks and archive_size minimum size check), file open, archive size determination (use supplied value or seek to end), minimum size check on resolved file_size, internal reader initialization, field assignments (zip_type, pRead, pIO_opaque, pFile, archive_size, file_archive_start_ofs), central directory reading, and teardown on failure. The description even correctly notes that the seek failure path closes the file before returning, and that the central directory failure path calls the full end_internal teardown. No behavior is claimed that isn't in the code.",
+  "missing_functionality": [
+    "Minor: does not mention that when archive_size is nonzero it is used directly as file_size without any seek, which is implicit but could be stated more clearly (though it is implied by 'Determines the archive size from the supplied archive_size when nonzero').",
+    "Minor: does not mention the TODO comment in the source indicating that the archive_size sanity check is incomplete/placeholder."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

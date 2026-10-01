@@ -1,0 +1,21 @@
+{
+  "project": "MyUploader-Backend",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Prompt 覆盖上传 API（普通/大文件分块/秒传）、FileDao/FileService/File 模型、FileUtils（generateFileName/write/writeWithBlok）、UploadUtils（分块上传状态管理）。API 合约详细列出所有类方法。架构清晰。"
+    },
+    "unambiguity": {
+      "score": 4.4,
+      "reason": "FileUtils 方法签名（含 InputStream 参数和 IOException 抛出）、UploadUtils 状态管理语义（getFileName 幂等、isUploaded 全块判断、removeKey 去注册）、writeWithBlok 的偏移计算（chunkIndex*chunkSize）均精确描述。"
+    },
+    "testability": {
+      "score": 4.7,
+      "reason": "测试需求覆盖文件名生成、文件写入（含空流）、分块写入（含乱序）、状态管理（注册/完成判断/清理）。与黑盒测试匹配度极高。"
+    },
+    "consistency": {
+      "score": 4.3,
+      "reason": "API 类名和方法签名与源码一致。Spring Boot 架构（controller/service/dao/model）匹配。generateFileName 长度 >=32 UUID 风格与实现吻合。"
+    }
+  }
+}

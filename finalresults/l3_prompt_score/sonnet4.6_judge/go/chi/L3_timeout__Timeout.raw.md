@@ -1,0 +1,12 @@
+{
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: wrapping the handler with a timeout context, writing 504 on deadline expiry, and cancelling the context via defer. The three bullet points map cleanly to the implementation. One subtle inaccuracy is the phrase 'marked done' on timeout expiry — the description implies the context being done is what triggers the 504, but the actual check is `ctx.Err() == context.DeadlineExceeded` after the handler returns, not a direct reaction to the context being done. The description also omits the important caveat (present in the source comments) that the downstream handler must actively select on `ctx.Done()` for the timeout to have any effect — without that, the timeout signal is silently ignored. This is a meaningful behavioral detail for implementers.",
+  "missing_functionality": [
+    "The description does not mention that the downstream handler must select on ctx.Done() for the timeout to take effect; if the handler ignores the context, the timeout signal is silently ignored and the 504 is still written after the handler eventually returns.",
+    "The 504 is written only if ctx.Err() == context.DeadlineExceeded after the handler completes — the description implies the 504 is a direct consequence of expiry during execution, but it is actually checked post-handler in the deferred function."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying 'the derived context is marked done and, after the handler returns, the middleware writes an HTTP 504' slightly misrepresents the flow — the 504 is conditional on ctx.Err() == context.DeadlineExceeded, not merely on the context being done (which could also be cancelled for other reasons)."
+  ],
+  "complete_enough": true
+}

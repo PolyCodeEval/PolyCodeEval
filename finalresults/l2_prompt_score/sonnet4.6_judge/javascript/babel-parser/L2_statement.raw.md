@@ -1,0 +1,15 @@
+{
+  "score": 4.6,
+  "reason": "The file-level description accurately captures the overall purpose and scope of `parser/statement.ts`, and the per-function descriptions are detailed and closely match the actual implementation. Key behaviors are well-described: mutation-based token export, top-level program parsing with token/comment attachment, directive conversion with raw/value extras, interpreter directive parsing, `isForUsing`/`isAwaitUsing` lookahead logic, binding-identifier disambiguation via `keywordRelationalOperator`, switch-case parsing with `sawDefault` tracking, directive prologue detection with strict-mode activation, class body parsing with decorator handling, namespace/named export specifier parsing, `checkExport` duplicate tracking, lone-surrogate validation in `parseModuleExportName`, and star import specifier parsing. Minor gaps include: `isForUsing` description says 'reject when following character would make `using of` behave like a valid for-of LHS' but the actual logic checks for `=`, `:`, or `;` after `of` (the description is slightly vague about the exact character set); `parseBlockOrModuleBlockBody` branch description omits the `continue` statement that skips adding the directive to `body`; `maybeParseExportNamedSpecifiers` description omits that it uses `??=` to conditionally create `specifiers` and uses `push(...spread)` rather than assignment; `parseClassBody` description mentions 'decorated abstract/declare methods' error handling but the actual condition checks for `TSAbstractMethodDefinition` or `TSDeclareMethod` types specifically. These are minor precision issues that would not prevent reconstruction.",
+  "missing_functionality": [
+    "isForUsing: the exact characters checked after 'of' (equalsTo, colon, semicolon) are not specified — description says 'would make using of behave like a valid for-of LHS' which is imprecise",
+    "parseBlockOrModuleBlockBody directive branch: the `continue` statement (skipping body.push) is not explicitly mentioned",
+    "maybeParseExportNamedSpecifiers: uses `??=` for specifiers initialization and `push(...spread)` pattern — description says 'ensure specifiers exists' but omits the spread-push detail",
+    "parseClassBody: the TypeScript-specific decorated method check uses `TSAbstractMethodDefinition`/`TSDeclareMethod` type names — description only says 'TypeScript-specific shapes' without naming them"
+  ],
+  "incorrect_or_misleading_points": [
+    "isForUsing description says 'reject declaration parsing when the following character would make `using of` behave like a valid for-of left-hand side or other expression form, except allow recovery for a following semicolon' — this inverts the logic; the implementation returns false unless the char is `=`, `:`, or `;`, meaning it rejects when the char is NOT one of those",
+    "maybeTakeDecorators description says 'prepend the new decorators' via unshift — this is correct but the description says 'prepend' which could be confused with the order; the implementation does `classNode.decorators.unshift(...maybeDecorators)` which puts new decorators before existing ones"
+  ],
+  "complete_enough": true
+}

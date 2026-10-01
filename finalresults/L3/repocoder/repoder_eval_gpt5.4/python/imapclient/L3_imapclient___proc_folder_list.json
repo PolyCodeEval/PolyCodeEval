@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.69,
+  "stdout": "\"',\n            ]\n        )\n>       self.assertEqual(\n            folders,\n            [\n                (\n                    (b\"\\\\HasNoChildren\",),\n                    b\"/\",\n                    \"A\",\n                ),\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"Foo Bar\"),\n            ],\n        )\nE       AssertionError: Lists differ: [((b'\\\\HasNoChildren',), '/', 'A'), ((b'\\\\HasNoChildren',), '/', 'Foo Bar')] != [((b'\\\\HasNoChildren',), b'/', 'A'), ((b'\\\\HasNoChildren',), b'/', 'Foo Bar')]\nE       \nE       First differing element 0:\nE       ((b'\\\\HasNoChildren',), '/', 'A')\nE       ((b'\\\\HasNoChildren',), b'/', 'A')\nE       \nE       - [((b'\\\\HasNoChildren',), '/', 'A'), ((b'\\\\HasNoChildren',), '/', 'Foo Bar')]\nE       + [((b'\\\\HasNoChildren',), b'/', 'A'), ((b'\\\\HasNoChildren',), b'/', 'Foo Bar')]\nE       ?                          +                                   +\n\ntests/unit_tests/test_imapclient.py:129: AssertionError\n______________ TestListFolders.test_unquoted_numeric_folder_name _______________\n\nself = <unit_tests.test_imapclient.TestListFolders testMethod=test_unquoted_numeric_folder_name>\n\n    def test_unquoted_numeric_folder_name(self):\n        # Some IMAP implementations do this\n        folders = self.client._proc_folder_list([b'(\\\\HasNoChildren) \"/\" 123'])\n>       self.assertEqual(folders, [((b\"\\\\HasNoChildren\",), b\"/\", \"123\")])\nE       AssertionError: Lists differ: [((b'\\\\HasNoChildren',), '/', 123)] != [((b'\\\\HasNoChildren',), b'/', '123')]\nE       \nE       First differing element 0:\nE       ((b'\\\\HasNoChildren',), '/', 123)\nE       ((b'\\\\HasNoChildren',), b'/', '123')\nE       \nE       - [((b'\\\\HasNoChildren',), '/', 123)]\nE       + [((b'\\\\HasNoChildren',), b'/', '123')]\nE       ?                          +     +   +\n\ntests/unit_tests/test_imapclient.py:161: AssertionError\n_______ TestListFolders.test_unquoted_numeric_folder_name_parsed_as_long _______\n\nself = <unit_tests.test_imapclient.TestListFolders testMethod=test_unquoted_numeric_folder_name_parsed_as_long>\n\n    def test_unquoted_numeric_folder_name_parsed_as_long(self):\n        # big enough numeric values might get parsed as longs\n        folder_name = str(sys.maxsize + 1)\n        folders = self.client._proc_folder_list(\n            [b'(\\\\HasNoChildren) \"/\" ' + folder_name.encode(\"ascii\")]\n        )\n>       self.assertEqual(folders, [((b\"\\\\HasNoChildren\",), b\"/\", folder_name)])\nE       AssertionError: Lists differ: [((b'\\\\HasNoChildren',), '/', 9223372036854775808)] != [((b'\\\\HasNoChildren',), b'/', '9223372036854775808')]\nE       \nE       First differing element 0:\nE       ((b'\\\\HasNoChildren',), '/', 9223372036854775808)\nE       ((b'\\\\HasNoChildren',), b'/', '9223372036854775808')\nE       \nE       - [((b'\\\\HasNoChildren',), '/', 9223372036854775808)]\nE       + [((b'\\\\HasNoChildren',), b'/', '9223372036854775808')]\nE       ?                          +     +                   +\n\ntests/unit_tests/test_imapclient.py:169: AssertionError\n______________________ TestListFolders.test_utf7_decoding ______________________\n\nself = <unit_tests.test_imapclient.TestListFolders testMethod=test_utf7_decoding>\n\n    def test_utf7_decoding(self):\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"A\"',\n                b'(\\\\HasNoChildren) \"/\" \"Hello&AP8-world\"',\n            ],\n        )\n    \n        folders = self.client.list_folders(\"foo\", \"bar\")\n    \n        self.client._imap._simple_command.assert_called_once_with(\n            \"LIST\", b'\"foo\"', b'\"bar\"'\n        )\n>       self.assertEqual(\n            folders,\n            [\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"A\"),\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"Hello\\xffworld\"),\n            ],\n        )\nE       AssertionError: Lists differ: [((b'[14 chars]n',), '/', 'A'), ((b'\\\\HasNoChildren',), '/', 'Helloÿworld')] != [((b'[14 chars]n',), b'/', 'A'), ((b'\\\\HasNoChildren',), b'/', 'Helloÿworld')]\nE       \nE       First differing element 0:\nE       ((b'\\\\HasNoChildren',), '/', 'A')\nE       ((b'\\\\HasNoChildren',), b'/', 'A')\nE       \nE       - [((b'\\\\HasNoChildren',), '/', 'A'), ((b'\\\\HasNoChildren',), '/', 'Helloÿworld')]\nE       + [((b'\\\\HasNoChildren',), b'/', 'A'),\nE       +  ((b'\\\\HasNoChildren',), b'/', 'Helloÿworld')]\n\ntests/unit_tests/test_imapclient.py:90: AssertionError\n_____________________ TestListFolders.test_without_quotes ______________________\n\nself = <unit_tests.test_imapclient.TestListFolders testMethod=test_without_quotes>\n\n    def test_without_quotes(self):\n        folders = self.client._proc_folder_list(\n            [\n                b'(\\\\HasNoChildren) \"/\" A',\n                b'(\\\\HasNoChildren) \"/\" B',\n                b'(\\\\HasNoChildren) \"/\" C',\n            ]\n        )\n>       self.assertEqual(\n            folders,\n            [\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"A\"),\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"B\"),\n                ((b\"\\\\HasNoChildren\",), b\"/\", \"C\"),\n            ],\n        )\nE       AssertionError: Lists differ: [((b'[15 chars]',), '/', 'A'), ((b'\\\\HasNoChildren',), '/', '[34 chars]'C')] != [((b'[15 chars]',), b'/', 'A'), ((b'\\\\HasNoChildren',), b'/',[37 chars]'C')]\nE       \nE       First differing element 0:\nE       ((b'\\\\HasNoChildren',), '/', 'A')\nE       ((b'\\\\HasNoChildren',), b'/', 'A')\nE       \nE       - [((b'\\\\HasNoChildren',), '/', 'A'),\nE       + [((b'\\\\HasNoChildren',), b'/', 'A'),\nE       ?                          +\nE       \nE       -  ((b'\\\\HasNoChildren',), '/', 'B'),\nE       +  ((b'\\\\HasNoChildren',), b'/', 'B'),\nE       ?                          +\nE       \nE       -  ((b'\\\\HasNoChildren',), '/', 'C')]\nE       +  ((b'\\\\HasNoChildren',), b'/', 'C')]\nE       ?                          +\n\ntests/unit_tests/test_imapclient.py:149: AssertionError\n___________________ test_xlist_folders_calls_simple_command ____________________\n\n    def test_xlist_folders_calls_simple_command():\n        client = make_client()\n        client._cached_capabilities = (b\"XLIST\",)\n        client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        client._imap._untagged_response.return_value = (\"XLIST\", [b'(\\\\HasNoChildren) \"/\" \"INBOX\"'])\n    \n        folders = client.xlist_folders()\n    \n>       assert folders == [((b\"\\\\HasNoChildren\",), b\"/\", \"INBOX\")]\nE       AssertionError: assert [((b'\\\\HasNoC...'/', 'INBOX')] == [((b'\\\\HasNoC...'/', 'INBOX')]\nE         \nE         At index 0 diff: ((b'\\\\HasNoChildren',), '/', 'INBOX') != ((b'\\\\HasNoChildren',), b'/', 'INBOX')\nE         Use -v to get more diff\n\ntests/unit_tests/test_remaining_tasks.py:79: AssertionError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_blanks - As...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_mixed - Ass...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_simple - As...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes\nFAILED tests/unit_tests/test_remaining_tasks.py::test_xlist_folders_calls_simple_command\n======================== 11 failed, 276 passed in 2.08s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient___proc_folder_list",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 7,
+    "total": 7
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

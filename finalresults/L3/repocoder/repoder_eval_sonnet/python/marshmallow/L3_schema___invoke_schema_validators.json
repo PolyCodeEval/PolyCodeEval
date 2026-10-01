@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.36,
+  "stdout": "       Left contains one more item: 'foo cannot be a string'\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:614: AssertionError\n_ TestValidatesSchemaDecorator.test_allow_reporting_field_errors_in_schema_validator _\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7f5e71bdb730>\n\n    def test_allow_reporting_field_errors_in_schema_validator(self):\n        class NestedSchema(Schema):\n            baz = fields.Int(required=True)\n    \n        class MySchema(Schema):\n            foo = fields.Int(required=True)\n            bar = fields.Nested(NestedSchema, required=True)\n            bam = fields.Int(required=True)\n    \n            @validates_schema(skip_on_field_errors=True)\n            def consistency_validation(self, data, **kwargs):\n                errors: dict[str, str | dict] = {}\n                if data[\"bar\"][\"baz\"] != data[\"foo\"]:\n                    errors[\"bar\"] = {\"baz\": \"Non-matching value\"}\n                if data[\"bam\"] > data[\"foo\"]:\n                    errors[\"bam\"] = \"Value should be less than foo\"\n                if errors:\n                    raise ValidationError(errors)\n    \n        schema = MySchema()\n        errors = schema.validate({\"foo\": 2, \"bar\": {\"baz\": 5}, \"bam\": 6})\n>       assert errors[\"bar\"][\"baz\"] == \"Non-matching value\"\nE       AssertionError: assert ['Non-matching value', 'Non-matching value'] == 'Non-matching value'\n\ntests/unit_tests/test_decorators.py:643: AssertionError\n____ TestValidatesSchemaDecorator.test_allow_arbitrary_field_names_in_error ____\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7f5e71bdbd00>\n\n    def test_allow_arbitrary_field_names_in_error(self):\n        class MySchema(Schema):\n            @validates_schema\n            def validator(self, data, **kwargs):\n                raise ValidationError(\"Error message\", \"arbitrary_key\")\n    \n        errors = MySchema().validate({})\n>       assert errors[\"arbitrary_key\"] == [\"Error message\"]\nE       AssertionError: assert ['Error messa...rror message'] == ['Error message']\nE         \nE         Left contains one more item: 'Error message'\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:654: AssertionError\n____________ TestValidatesSchemaDecorator.test_skip_on_field_errors ____________\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7f5e71bdbb50>\n\n    def test_skip_on_field_errors(self):\n        class MySchema(Schema):\n            foo = fields.Int(required=True, validate=validate.Equal(3))\n            bar = fields.Int(required=True)\n    \n            @validates_schema(skip_on_field_errors=True)\n            def validate_schema(self, data, **kwargs):\n                if data[\"foo\"] != data[\"bar\"]:\n                    raise ValidationError(\"Foo and bar must be equal.\")\n    \n            @validates_schema(skip_on_field_errors=True, pass_collection=True)\n            def validate_many(self, data, many, **kwargs):\n                if many:\n                    assert type(data) is list\n                    if len(data) < 2:\n                        raise ValidationError(\"Must provide at least 2 items\")\n    \n        schema = MySchema()\n        # check that schema errors still occur with no field errors\n        errors = schema.validate({\"foo\": 3, \"bar\": 4})\n        assert \"_schema\" in errors\n        assert errors[\"_schema\"][0] == \"Foo and bar must be equal.\"\n    \n>       errors = schema.validate([{\"foo\": 3, \"bar\": 3}], many=True)\n\ntests/unit_tests/test_decorators.py:679: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:836: in validate\n    self._do_load(data, many=many, partial=partial, postprocess=False)\nsrc/marshmallow/schema.py:906: in _do_load\n    self._invoke_schema_validators(\nsrc/marshmallow/schema.py:1192: in _invoke_schema_validators\n    self._run_validator(\nsrc/marshmallow/schema.py:793: in _run_validator\n    validator_func(output, partial=partial, many=many, unknown=unknown)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MySchema(many=False)>, data = {'bar': 3, 'foo': 3}, many = True\nkwargs = {'partial': None, 'unknown': 'raise'}, @py_assert2 = <class 'dict'>\n@py_assert4 = False\n@py_format6 = \"<class 'dict'>\\n{<class 'dict'> = type({'bar': 3, 'foo': 3})\\n} is list\"\n@py_format8 = \"assert <class 'dict'>\\n{<class 'dict'> = type({'bar': 3, 'foo': 3})\\n} is list\"\n\n    @validates_schema(skip_on_field_errors=True, pass_collection=True)\n    def validate_many(self, data, many, **kwargs):\n        if many:\n>           assert type(data) is list\nE           AssertionError: assert <class 'dict'> is list\nE            +  where <class 'dict'> = type({'bar': 3, 'foo': 3})\n\ntests/unit_tests/test_decorators.py:669: AssertionError\n______ TestValidatesSchemaDecorator.test_data_key_is_used_in_errors_dict _______\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7f5e71bd9f90>\n\n    def test_data_key_is_used_in_errors_dict(self):\n        class MySchema(Schema):\n            foo = fields.Int(data_key=\"fooKey\")\n    \n            @validates(\"foo\")\n            def validate_foo(self, value, **kwargs):\n                raise ValidationError(\"from validates\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema(self, data, **kwargs):\n                raise ValidationError(\"from validates_schema str\", field_name=\"foo\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema2(self, data, **kwargs):\n                raise ValidationError({\"fooKey\": \"from validates_schema dict\"})\n    \n        with pytest.raises(ValidationError) as excinfo:\n            MySchema().load({\"fooKey\": 42})\n        exc = excinfo.value\n>       assert exc.messages == {\n            \"fooKey\": [\n                \"from validates\",\n                \"from validates_schema str\",\n                \"from validates_schema dict\",\n            ]\n        }\nE       AssertionError: assert {'fooKey': ['...schema dict']} == {'fooKey': ['...schema dict']}\nE         \nE         Differing items:\nE         {'fooKey': ['from validates', 'from validates_schema str', 'from validates_schema dict', 'from validates_schema str', 'from validates_schema dict']} != {'fooKey': ['from validates', 'from validates_schema str', 'from validates_schema dict']}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:716: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\n======================= 11 failed, 1168 passed in 3.68s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_schema_validators",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

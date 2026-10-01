@@ -1,0 +1,55 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.97,
+  "stdout": "heritance():\n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            baz = fields.Raw()\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema, only=(\"foo\", \"bar\"))\n    \n        sch = ParentSchema(only=(\"blubb.foo\", \"blubb.baz\"))\n        data = dict(bla=1, bli=2, blubb=dict(foo=42, bar=24, baz=242))\n        result = sch.dump(data)\n>       assert \"bla\" not in result\nE       AssertionError: assert 'bla' not in {'bla': 1, 'bli': 2, 'blubb': {'foo': 42}}\n\ntests/unit_tests/test_schema.py:814: AssertionError\n______________________ test_nested_only_empty_inheritance ______________________\n\n    def test_nested_only_empty_inheritance():\n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            baz = fields.Raw()\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema, only=(\"bar\",))\n    \n        sch = ParentSchema(only=(\"blubb.foo\",))\n        data = dict(bla=1, bli=2, blubb=dict(foo=42, bar=24, baz=242))\n        result = sch.dump(data)\n>       assert \"bla\" not in result\nE       AssertionError: assert 'bla' not in {'bla': 1, 'bli': 2, 'blubb': {'bar': 24, 'baz': 242, 'foo': 42}}\n\ntests/unit_tests/test_schema.py:837: AssertionError\n_________________________ test_nested_only_and_exclude _________________________\n\n    def test_nested_only_and_exclude():\n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            baz = fields.Raw()\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema)\n    \n        sch = ParentSchema(only=(\"bla\", \"blubb.foo\", \"blubb.bar\"), exclude=(\"blubb.foo\",))\n        data = dict(bla=1, bli=2, blubb=dict(foo=42, bar=24, baz=242))\n        result = sch.dump(data)\n        assert \"bla\" in result\n>       assert \"blubb\" in result\nE       AssertionError: assert 'blubb' in {'bla': 1}\n\ntests/unit_tests/test_schema.py:907: AssertionError\n__________________ test_nested_exclude_then_only_inheritance ___________________\n\n    def test_nested_exclude_then_only_inheritance():\n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            baz = fields.Raw()\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema, exclude=(\"foo\",))\n    \n        sch = ParentSchema(only=(\"blubb.bar\",))\n        data = dict(bla=1, bli=2, blubb=dict(foo=42, bar=24, baz=242))\n        result = sch.dump(data)\n>       assert \"bla\" not in result\nE       AssertionError: assert 'bla' not in {'bla': 1, 'bli': 2, 'blubb': {'bar': 24}}\n\ntests/unit_tests/test_schema.py:952: AssertionError\n___________________ test_nested_exclude_and_only_inheritance ___________________\n\n    def test_nested_exclude_and_only_inheritance():\n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            baz = fields.Raw()\n            ban = fields.Raw()\n            fuu = fields.Raw()\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(\n                ChildSchema, only=(\"foo\", \"bar\", \"baz\", \"ban\"), exclude=(\"foo\",)\n            )\n    \n        sch = ParentSchema(\n            only=(\"blubb.foo\", \"blubb.bar\", \"blubb.baz\"), exclude=(\"blubb.baz\",)\n        )\n        data = dict(bla=1, bli=2, blubb=dict(foo=42, bar=24, baz=242))\n        result = sch.dump(data)\n>       assert \"bla\" not in result\nE       AssertionError: assert 'bla' not in {'bla': 1, 'bli': 2, 'blubb': {'bar': 24}}\n\ntests/unit_tests/test_schema.py:981: AssertionError\n_____________________ test_deeply_nested_only_and_exclude ______________________\n\n    def test_deeply_nested_only_and_exclude():\n        class GrandChildSchema(Schema):\n            goo = fields.Raw()\n            gah = fields.Raw()\n            bah = fields.Raw()\n    \n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            flubb = fields.Nested(GrandChildSchema)\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(ChildSchema)\n    \n        sch = ParentSchema(\n            only=(\"bla\", \"blubb.foo\", \"blubb.flubb.goo\", \"blubb.flubb.gah\"),\n            exclude=(\"blubb.flubb.goo\",),\n        )\n        data = dict(bla=1, bli=2, blubb=dict(foo=3, bar=4, flubb=dict(goo=5, gah=6, bah=7)))\n        result = sch.dump(data)\n        assert \"bla\" in result\n>       assert \"blubb\" in result\nE       AssertionError: assert 'blubb' in {'bla': 1}\n\ntests/unit_tests/test_schema.py:1209: AssertionError\n___________________ test_nested_constructor_only_and_exclude ___________________\n\n    def test_nested_constructor_only_and_exclude():\n        class GrandChildSchema(Schema):\n            goo = fields.Raw()\n            gah = fields.Raw()\n            bah = fields.Raw()\n    \n        class ChildSchema(Schema):\n            foo = fields.Raw()\n            bar = fields.Raw()\n            flubb = fields.Nested(GrandChildSchema)\n    \n        class ParentSchema(Schema):\n            bla = fields.Raw()\n            bli = fields.Raw()\n            blubb = fields.Nested(\n                ChildSchema, only=(\"foo\", \"flubb.goo\", \"flubb.gah\"), exclude=(\"flubb.goo\",)\n            )\n    \n        sch = ParentSchema(only=(\"bla\", \"blubb\"))\n        data = dict(bla=1, bli=2, blubb=dict(foo=3, bar=4, flubb=dict(goo=5, gah=6, bah=7)))\n        result = sch.dump(data)\n        assert \"bla\" in result\n        assert \"blubb\" in result\n        assert \"bli\" not in result\n        child = result[\"blubb\"]\n        assert \"foo\" in child\n>       assert \"flubb\" in child\nE       AssertionError: assert 'flubb' in {'foo': 3}\n\ntests/unit_tests/test_schema.py:1461: AssertionError\n_______________________________ test_only_empty ________________________________\n\n    def test_only_empty():\n        class MySchema(Schema):\n            foo = fields.Raw()\n    \n        sch = MySchema(only=())\n>       assert \"foo\" not in sch.dump({\"foo\": \"bar\"})\nE       AssertionError: assert 'foo' not in {'foo': 'bar'}\nE        +  where {'foo': 'bar'} = dump({'foo': 'bar'})\nE        +    where dump = <MySchema(many=False)>.dump\n\ntests/unit_tests/test_schema.py:1528: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_schema.py::test_nested_only - AssertionError: as...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_inheritance - Assert...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_empty_inheritance - ...\nFAILED tests/unit_tests/test_schema.py::test_nested_only_and_exclude - Assert...\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude_then_only_inheritance\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude_and_only_inheritance\nFAILED tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude\nFAILED tests/unit_tests/test_schema.py::test_nested_constructor_only_and_exclude\nFAILED tests/unit_tests/test_schema.py::test_only_empty - AssertionError: ass...\n======================= 13 failed, 1166 passed in 5.07s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___normalize_nested_options",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[only]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_exclude_then_only_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_exclude_and_only_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_deeply_nested_only_and_exclude",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_constructor_only_and_exclude",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 8,
+    "total": 8
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

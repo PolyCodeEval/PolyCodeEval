@@ -1,0 +1,187 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 8.0,
+  "stdout": "field_obj, a=attr_name, d=data, p=partial: f.deserialize(\nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:667: in _deserialize\n    return self._load(value, partial=partial)\nsrc/marshmallow/fields.py:643: in _load\n    valid_data = self.schema.load(value, unknown=self.unknown, partial=partial)\nsrc/marshmallow/schema.py:701: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:858: in _do_load\n    result = self._deserialize(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <InnerSchema(many=False)>, data = 1\n\n    def _deserialize(\n        self,\n        data: Mapping[str, typing.Any] | Sequence[Mapping[str, typing.Any]],\n        *,\n        error_store: ErrorStore,\n        many: bool = False,\n        partial=None,\n        unknown: types.UnknownOption = RAISE,\n        index=None,\n    ) -> typing.Any | list[typing.Any]:\n        \"\"\"Deserialize ``data``.\n    \n        :param data: The data to deserialize.\n        :param error_store: Structure to store errors.\n        :param many: `True` if ``data`` should be deserialized as a collection.\n        :param partial: Whether to ignore missing fields and not require\n            any fields declared. Propagates down to ``Nested`` fields as well. If\n            its value is an iterable, only missing fields listed in that iterable\n            will be ignored. Use dot delimiters to specify nested fields.\n        :param unknown: Whether to exclude, include, or raise an error for unknown\n            fields in the data. Use `EXCLUDE`, `INCLUDE` or `RAISE`.\n        :param index: Index of the item being serialized (for storing errors) if\n            serializing a collection, otherwise `None`.\n        :return: The deserialized data as `dict_class` instance or list of `dict_class`\n        instances if `many` is `True`.\n        \"\"\"\n        if many:\n            return [\n                self._deserialize(\n                    d,\n                    error_store=error_store,\n                    many=False,\n                    partial=partial,\n                    unknown=unknown,\n                    index=idx,\n                )\n                for idx, d in enumerate(data)\n            ]\n    \n        ret = self.dict_class()\n        known_data_keys = {\n            field_obj.data_key if field_obj.data_key is not None else field_name\n            for field_name, field_obj in self.load_fields.items()\n        }\n    \n        # Handle unknown fields\n>       for key, value in data.items():\nE       AttributeError: 'int' object has no attribute 'items'\n\nsrc/marshmallow/schema.py:643: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_invalid_data\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_field_name_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization_with_index_errors_false\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple_with_data_key\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-exclude]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-include]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-raise]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-exclude]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-include]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-raise]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-exclude]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-include]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-raise]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-exclude]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-include]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-raise]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-exclude]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-include]\nFAILED tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-raise]\nFAILED tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_data_key_if_set\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_partial_propagated_to_nested\nFAILED tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_partial_propagated_to_nested\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_partial_propagated_to_nested\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[None] - ...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[False]\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[1] - Att...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[1.2] - A...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[val4] - ...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[val5] - ...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[val6] - ...\nFAILED tests/unit_tests/test_schema.py::test_load_invalid_input_type[lol] - A...\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[None]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[False]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[1]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[1.2]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val4]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val5]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val6]\nFAILED tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[lol]\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate_many_doesnt_store_index_if_index_errors_option_is_false\nFAILED tests/unit_tests/test_schema.py::test_custom_type_error_message - Attr...\nFAILED tests/unit_tests/test_schema.py::test_custom_type_error_message_with_many\nFAILED tests/unit_tests/test_schema.py::test_custom_error_messages_with_inheritance\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_invalid_type_passed_to_nested_field\n======================= 50 failed, 1129 passed in 7.39s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_invalid_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_field_name_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization_with_index_errors_false",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[True-raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[False-raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[42-raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[None-raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::test_deserialize_raises_exception_if_input_type_is_incorrect[data4-raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_data_key_if_set",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_partial_propagated_to_nested",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_partial_propagated_to_nested",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_partial_propagated_to_nested",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_invalid_input_type[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[1.2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val4]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val5]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[val6]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_invalid_input_type[lol]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestValidate::test_validate_many_doesnt_store_index_if_index_errors_option_is_false",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_custom_type_error_message_with_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_custom_error_messages_with_inheritance",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 41,
+    "total": 41
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

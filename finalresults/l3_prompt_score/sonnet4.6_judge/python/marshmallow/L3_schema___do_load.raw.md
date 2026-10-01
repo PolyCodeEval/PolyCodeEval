@@ -1,0 +1,14 @@
+{
+  "score": 4.0,
+  "reason": "The description accurately captures the overall pipeline: resolving defaults for `many`/`partial`/`unknown`, pre-load hooks with error short-circuiting, deserialization, field-level validation, schema-level validators (run twice with `pass_collection=True/False`), post-load hooks gated on no-errors + postprocess flag, and final error raising with `handle_error`. The core logic and control flow are well represented. However, there are a few inaccuracies and omissions worth noting: the description says field-level validators receive `many` but the implementation passes only `error_store`, `data`, and `many` — that's fine. More notably, the description says schema validators receive a flag 'indicating whether field-level errors had already been collected' but omits that this `field_errors` snapshot is taken *before* the two validator calls and shared between both invocations. The description also slightly mischaracterizes the `handle_error` call signature — the implementation passes `many` and `partial` as keyword args, not just `many` and `partial` options generically. The description mentions 'the eventual valid result is treated as absent' for pre-load errors, which matches `result = None`. Overall the description is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The `field_errors` flag is computed once before both schema-validator invocations and reused for both; the description implies it's passed independently to each call without clarifying this shared snapshot behavior.",
+    "The `handle_error` call passes `data` (original input) as a positional argument alongside `many` and `partial` as keyword args — the description omits `data` being passed to `handle_error`.",
+    "When pre-load hooks are absent, `processed_data = data` (passthrough) — the description doesn't mention this fallback assignment explicitly."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says schema validators are run 'twice: once in collection-aware mode and once in item-level mode' — this is correct in spirit but slightly misleading since both calls go to the same `_invoke_schema_validators` method with different `pass_collection` flags rather than being fundamentally different invocation modes.",
+    "The description says the error handler is delegated 'with the exception and the effective `many` and `partial` options' but omits that `data` (the original input) is also passed as a positional argument to `handle_error`."
+  ],
+  "complete_enough": true
+}

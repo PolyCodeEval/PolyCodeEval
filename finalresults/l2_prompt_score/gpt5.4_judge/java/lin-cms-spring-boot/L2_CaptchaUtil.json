@@ -1,0 +1,26 @@
+{
+  "task": "java/lin-cms-spring-boot/L2_CaptchaUtil",
+  "project": "java/lin-cms-spring-boot",
+  "language": "java",
+  "prompt_path": "datasets/java/lin-cms-spring-boot/tasks/L2_CaptchaUtil/prompt.md",
+  "task_json_path": "datasets/java/lin-cms-spring-boot/tasks/L2_CaptchaUtil/task.json",
+  "source_file_path": "datasets/java/lin-cms-spring-boot/src/main/java/io/github/talelin/latticy/common/util/CaptchaUtil.java",
+  "target_file": "io/github/talelin/latticy/common/util/CaptchaUtil.java",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.6,
+  "reason": "The prompt matches the implemented file very closely for all six hollowed methods. It correctly captures the captcha image generation flow, the font usage, randomized colors, interference lines, per-character rotation/jitter, PNG-to-Base64 encoding, and the AES/CBC/PKCS5Padding encryption and decryption details. It also accurately notes the higher-level JSON wrapping of `LoginCaptchaBO` into an encrypted tag. The only notable gap is that some exact graphics details are slightly underspecified or phrased a bit imprecisely compared with the implementation, but not enough to block reconstruction.",
+  "missing_functionality": [
+    "The description does not explicitly mention the exact rotation pivot used in `drawString`: `WIDTH * 0.8 / RANDOM_STR_NUM * i` for x and `HEIGHT / 2.0` for y.",
+    "The description omits that `getBufferedImage` fills the background using the graphics context's default current color rather than first setting an explicit background color.",
+    "The description does not mention that `getRandomCodeBase64` creates a local `Base64.Encoder` variable before encoding, though this is minor and not behaviorally important."
+  ],
+  "incorrect_or_misleading_points": [
+    "In `drawString`, saying the rotation is around the character’s approximate slot center is directionally correct, but the real pivot is not the slot center; it is specifically `WIDTH * 0.8 / RANDOM_STR_NUM * i`.",
+    "The statement that the method undoes the vertical translation adjustments is accurate, but the implementation only reverses the y-translation (`g.translate(0, -y)`) and does not undo the random x-translation."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_CaptchaUtil.raw.md"
+}

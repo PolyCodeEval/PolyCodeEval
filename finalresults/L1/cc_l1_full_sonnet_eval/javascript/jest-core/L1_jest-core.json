@@ -1,0 +1,783 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 6.42,
+  "stdout": "\nup to date in 507ms\n\n51 packages are looking for funding\n  run `npm fund` for details\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.17.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0\nnpm notice To update run: npm install -g npm@11.17.0\nnpm notice\n● Validation Error:\n\n  Module /workspace/src/node_modules/babel-jest/build/index.js in the transform option was not found.\n         <rootDir> is: /workspace/src\n\n  Configuration Documentation:\n  https://jestjs.io/docs/configuration\n\n",
+  "inferred_commands": {
+    "install": "cd /workspace/src && sed -i 's|workspace:*|*|g' package.json 2>/dev/null || true && npm install && mkdir -p node_modules/@jest/test-utils && cp jest-test-utils-shim.js node_modules/@jest/test-utils/index.js && echo '{\"name\":\"@jest/test-utils\",\"version\":\"30.3.0\",\"main\":\"index.js\"}' > node_modules/@jest/test-utils/package.json && mkdir -p __tests__ && cp /workspace/blackbox_tests/*.test.js __tests__/",
+    "test": "cd /workspace/src && ./node_modules/.bin/jest __tests__/jest-core.test.js __tests__/jest-core-extra.test.js --no-coverage -u",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "cd /workspace/src && sed -i 's|workspace:*|*|g' package.json 2>/dev/null || true && npm install && mkdir -p node_modules/@jest/test-utils && cp jest-test-utils-shim.js node_modules/@jest/test-utils/index.js && echo '{\"name\":\"@jest/test-utils\",\"version\":\"30.3.0\",\"main\":\"index.js\"}' > node_modules/@jest/test-utils/package.json && mkdir -p __tests__ && cp /workspace/blackbox_tests/*.test.js __tests__/",
+      "test": "cd /workspace/src && ./node_modules/.bin/jest __tests__/jest-core.test.js __tests__/jest-core-extra.test.js --no-coverage -u",
+      "combined": false
+    }
+  ],
+  "retries": 0,
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "build_status": "runtime_error",
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.7,
+    "Architecture": 4.0,
+    "Health": 4.5
+  },
+  "overall_score": 2.62,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [
+            {
+              "path": "collectHandles.ts",
+              "excerpt": "esult = () => Promise<Array<Error>>;\n\nfunction stackIsFromUser(stack: string) {\n  // Either the test file, or something required by it\n  if (stack.includes('Runtime.requireModule')) {\n    return true;\n  }\n\n  // jest-jasmine it or describe call\n  if (stack.includes('asyncJestTest') || stack.includes('asyncJestLifecycle')) {\n    return true;\n  }\n\n  // An async function call from within circus\n  if ("
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "atedResult) => void;\n  failedTestsCache?: FailedTestsCache;\n  filter?: Filter;\n}): Promise<void> {\n  // Clear cache for required modules - there might be different resolutions\n  // from Jest's config loading to running the tests\n  Resolver.clearDefaultResolverCache();\n\n  const Sequencer: typeof TestSequencer = await requireOrImportModule(\n    globalConfig.testSequencer,\n  );\n  const sequencer = ne"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库在项目根提供了 `SearchSource.ts`、`TestScheduler.ts`、`FailedTestsCache.ts`、`ReporterDispatcher.ts`、`SnapshotInteractiveMode.ts`，且 `index.ts` 暴露程序化入口。"
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "package-level programmatic APIs and internal orchestration modules used by Jest runtime integration",
+          "evidence": [
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\nconst {TestPathPatterns} = require('@jest/pattern');\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "t) => void;\n  failedTestsCache?: FailedTestsCache;\n  filter?: Filter;\n}): Promise<void> {\n  // Clear cache for required modules - there might be different resolutions\n  // from Jest's config loading to running the tests\n  Resolver.clearDefaultResolverCache();\n\n  const Sequencer: typeof TestSequencer = await requireOrImportModule(\n    globalConfig.testSequencer,\n  );\n  const sequencer = new Sequenc"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ----------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` 导出 `runCLI`、`createTestScheduler` 等程序化 API，`runJest.ts`、`SearchSource.ts`、`TestScheduler.ts` 等编排模块也在仓库中存在并互相集成。"
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "`SearchSource.ts` and `TestScheduler.ts` as core execution/discovery modules",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "!noSCM;\n};\n\nfunction normalizePosix(filePath: string) {\n  return filePath.replace(/\\\\/g, '/');\n}\n\nexport default class SearchSource {\n  private readonly _context: TestContext;\n  private _dependencyResolver: DependencyResolver | null;\n  private readonly _testPathCases: TestPathCases = [];\n\n  constructor(context: TestContext) {\n    this._context = context;\n    this._dependencyResolver = null;"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "erDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env package.\nconst AGENT_ENV_VARS = [\n  'AI_AGENT',\n  'AUGMENT_AGENT',\n  'CLAUDE_CODE',\n  'CLAUDECODE',\n  'CODEX_SANDBOX',\n  'CODEX_THRE"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "项目根存在 `SearchSource.ts` 与 `TestScheduler.ts`，且内容分别实现测试发现与调度逻辑。"
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "`FailedTestsCache` with its public methods `setTestResults(results)` and `filterTests(tests)`",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "lackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------------------------------\nimport ReporterDispatcher from '../ReporterDispatcher';\n\ndescribe("
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core FailedTestsCache.\n */\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache', () => {\n  test('filterTests returns all tests when no failures recorded', () => {\n    const cache = new FailedTestsCache();\n    const tests = [\n      { path: '/a.js' },\n      {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` 在项目根默认导出类，并实现了 `setTestResults(results)` 与 `filterTests(tests)`。"
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "`ReporterDispatcher` as a public module at the project root, with methods `register(reporter)`, `unregister(Ctor)`, `onRunStart`, `onTestFileStart`, `onTestFileResult`, `onTestCaseStart`, `onTestCaseResult`, `onRunComplete`, `getErrors()`, and `hasErrors()`",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "mport type {Circus} from '@jest/types';\nimport type {ReporterConstructor} from './TestScheduler';\n\nexport default class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this."
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "rorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env packag"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "项目根存在 `ReporterDispatcher.ts`，类中实现了 `register`、`unregister`、`onRunStart`、`onTestFileStart`、`onTestFileResult`、`onTestCaseStart`、`onTestCaseResult`、`onRunComplete`、`getErrors`、`hasErrors`。"
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "`SnapshotInteractiveMode` as a public module at the project root",
+          "evidence": [
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "Chars} from 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\nconst {ARROW, CLEAR} = specialChars;\n\nexport default class SnapshotInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLo"
+            },
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "{skipNodeResolution: this._context.config.skipNodeResolution},\n          ),\n        ),\n      };\n    }\n\n    const testModulesMap = dependencyResolver.resolveInverseModuleMap(\n      allPaths,\n      this.isTestFilePath.bind(this),\n      {skipNodeResolution: this._context.config.skipNodeResolution},\n    );\n\n    const allPathsAbsolute = new Set([...allPaths].map(p => path.resolve(p)));\n\n    const co"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "pshotResolver,\n  cleanup as cleanupSnapshots,\n} from 'jest-snapshot';\nimport {ErrorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running in"
+            }
+          ],
+          "status": "implemented",
+          "reason": "项目根存在 `SnapshotInteractiveMode.ts`，并默认导出 `SnapshotInteractiveMode`。"
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "package exports should include the concrete programmatic entry points used by the repository runtime, not only internal module files",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n  \"name\": \"@jest/core\",\n  \"version\": \"30.3.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"@jest/core\",\n      \"version\": \"30.3.0\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@jest/console\": \"*\",\n        \"@jest/pattern\": \"*\",\n        \"@jest/reporters\": \"*\",\n        \"@jest/test-result\": \"*\",\n        \"@jest/transform\": \""
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n  \"name\": \"@jest/core\",\n  \"description\": \"Delightful JavaScript Testing.\",\n  \"version\": \"30.3.0\",\n  \"main\": \"./index.ts\",\n  \"license\": \"MIT\",\n  \"dependencies\": {\n    \"@jest/console\": \"*\",\n    \"@jest/pattern\": \"*\",\n    \"@jest/reporters\": \"*\",\n    \"@jest/test-result\": \"*\",\n    \"@jest/transform\": \"*\",\n    \"@jest/types\": \"*\",\n    \"@types/node\": \"*\",\n    \"ansi-escapes\": \"^4.3.2\",\n    \"chalk\": \"^4.1.2\",\n    \"ci-info\": \"^4.2.0\",\n    \"exit-x\": \"^0.2.2\",\n    \"graceful-fs\": \"^4.2.11\",\n    \"jest-changed-files\": \"*\",\n    \"jest-config\": \"*\",\n    \"jest-haste-map\": \"*\",\n    \"jest-message-util\": \"*\",\n    \"j"
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\nconst {TestPathPatterns} = require('@jest/pattern');\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts` 导出了 `FailedTestsCache`、`ReporterDispatcher`、`SearchSource`、`SnapshotInteractiveMode`、`createTestScheduler`、`runCLI` 等具体程序化入口。"
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`FailedTestsCache` should remain the default export of its package-root-relative module",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "yRealpath} from 'jest-util';\nimport {JestHook, type JestHookEmitter, type TestWatcher} from 'jest-watcher';\nimport type FailedTestsCache from './FailedTestsCache';\nimport SearchSource from './SearchSource';\nimport {type TestSchedulerContext, createTestScheduler} from './TestScheduler';\nimport collectNodeHandles, {\n  type HandleCollectionResult,\n} from './collectHandles';\nimport getNoTestsFoundMess"
+            },
+            {
+              "path": "watch.ts",
+              "excerpt": "gOptions,\n  JestHook,\n  KEYS,\n  TestWatcher,\n  type WatchPlugin,\n  type WatchPluginClass,\n} from 'jest-watcher';\nimport FailedTestsCache from './FailedTestsCache';\nimport SearchSource from './SearchSource';\nimport getChangedFilesPromise from './getChangedFilesPromise';\nimport activeFilters from './lib/activeFiltersMessage';\nimport createContext from './lib/createContext';\nimport isValidPath from '"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` 使用 `export default class FailedTestsCache`。"
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`setTestResults(results)` should accept an array of test-result objects that include fields such as `numFailingTests`, `testFilePath`, and `testResults`",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {\n    this._enabledTestsMap = (testResults || []).reduce<TestMap>(\n      (suiteMap, testResult) => {\n        if (testResult.testExecError) {\n          suiteMap[testResult.testFilePath] = {};\n          return suiteMap;\n        }"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "es file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not found'),\n        testResults: [],\n      },\n    ]);\n    const filtered = cache.filterTests([{ path: '/exec-error.js' }, { path: '/other.js' }])"
+            },
+            {
+              "path": "plugins/UpdateSnapshotsInteractive.ts",
+              "excerpt": "estAssertions: Array<AssertionLocation> = [];\n  isInternal = true as const;\n\n  getFailedSnapshotTestAssertions(\n    testResults: AggregatedResult,\n  ): Array<AssertionLocation> {\n    const failedTestPaths: Array<AssertionLocation> = [];\n    if (testResults.numFailedTests === 0 || !testResults.testResults) {\n      return failedTestPaths;\n    }\n\n    for (const testResult of testResults.testResults)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setTestResults(testResults: Array<TestResult>)` 已声明并读取 `numFailingTests`、`testFilePath`、`testResults`、`testExecError` 等字段。"
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`filterTests(tests)` should accept and return arrays of test descriptors shaped around a `path` field",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "ord<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "--------\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache (edge cases)', () => {\n  test('filterTests includes file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not foun"
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "FailedTestsCache.\n */\nimport FailedTestsCache from '../FailedTestsCache';\n\ndescribe('FailedTestsCache', () => {\n  test('filterTests returns all tests when no failures recorded', () => {\n    const cache = new FailedTestsCache();\n    const tests = [\n      { path: '/a.js' },\n      { path: '/b.js' },\n    ];\n    expect(cache.filterTests(tests)).toEqual(tests);\n  });\n\n  test('filterTests returns only fa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`filterTests(tests: Array<Test>)` 接收测试描述数组，并按 `test.path` 进行过滤后返回数组。"
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Test Discovery",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "icensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport type {Test, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "siEscapes from 'ansi-escapes';\nimport chalk from 'chalk';\nimport type {AggregatedResult, AssertionLocation} from '@jest/test-result';\nimport {pluralize, specialChars} from 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\ntype RunnerUpdateFunction = (failure?: AssertionLocation) => void;\n\nconst {ARROW, CLEAR} = specialChars;\n\nfunction describeKey(key: string, description: string) {\n  return `${chal"
+            },
+            {
+              "path": "TestNamePatternPrompt.ts",
+              "excerpt": "t,\n  type ScrollOptions,\n  printPatternCaret,\n  printRestoredPatternCaret,\n} from 'jest-watcher';\n\nexport default class TestNamePatternPrompt extends PatternPrompt {\n  constructor(pipe: NodeJS.WritableStream, prompt: Prompt) {\n    super(pipe, prompt);\n    this._entityName = 'tests';\n  }\n\n  protected override _onChange(pattern: string, options: ScrollOptions): void {\n    super._onChange(pattern, op"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SearchSource.ts` 实现了 `findMatchingTests`、`findRelatedTests`、`getTestPaths` 等测试发现逻辑。"
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Scheduling and Execution",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`TestScheduler.ts` 与 `runJest.ts` 实现了调度、执行、聚合结果与 bail/runner 流程。"
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Reporting / Interactive Flows",
+          "evidence": [
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "return `${chalk.dim(`› Press`)} ${chalk.bold(key)} ${chalk.dim(description)}`;\n}\n\nconst TestProgressLabel = chalk.bold('Interactive Test Progress');\n\nexport default class FailedTestsInteractiveMode {\n  private _isActive = false;\n  private _countPaths = 0;\n  private _skippedNum = 0;\n  private _testAssertions: Array<AssertionLocation> = [];\n  private _updateTestRunnerConfig?: RunnerUpdateFunction;"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "rom 'jest-util';\nimport {KEYS} from 'jest-watcher';\n\nconst {ARROW, CLEAR} = specialChars;\n\nexport default class SnapshotInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLocation>;"
+            },
+            {
+              "path": "plugins/FailedTestsInteractive.ts",
+              "excerpt": "gin,\n  type JestHookSubscriber,\n  type UpdateConfigCallback,\n  type UsageData,\n} from 'jest-watcher';\nimport FailedTestsInteractiveMode from '../FailedTestsInteractiveMode';\n\nexport default class FailedTestsInteractivePlugin extends BaseWatchPlugin {\n  private _failedTestAssertions?: Array<AssertionLocation>;\n  private readonly _manager = new FailedTestsInteractiveMode(this._stdout);\n\n  override a"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库包含 `ReporterDispatcher.ts`、`SnapshotInteractiveMode.ts`、`FailedTestsInteractiveMode.ts` 与相关 watch plugins，覆盖 reporting 和交互流程。"
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Generate paths relative to the JavaScript project root. In evaluation, the project root is `/workspace/src/`, so your relative paths are written as `/workspace/src/<relative_path>`.",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "ontext.hasteFS,\n        snapshotResolver,\n      );\n    }\n    return this._dependencyResolver;\n  }\n\n  private _filterTestPathsWithStats(\n    allPaths: Array<Test>,\n    testPathPatternsExecutor: TestPathPatternsExecutor,\n  ): SearchResult {\n    const data: SearchResult = {\n      stats: {\n        roots: 0,\n        testMatch: 0,\n        testPathIgnorePatterns: 0,\n        testRegex: 0,\n      },\n      t"
+            },
+            {
+              "path": "cli/index.ts",
+              "excerpt": "} catch (error) {\n          return error;\n        }\n        return undefined;\n      })();\n    }\n    filter = async (testPaths: Array<string>) => {\n      if (filterSetupPromise) {\n        // Expect an undefined return value unless there was an error.\n        const err = await filterSetupPromise;\n        if (err) {\n          throw err;\n        }\n      }\n      return rawFilter(testPaths);\n    };\n  }"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "zeToJSON';\nimport runGlobalHook from './runGlobalHook';\nimport type {Filter, TestRunData} from './types';\n\nconst getTestPaths = async (\n  globalConfig: Config.GlobalConfig,\n  projectConfig: Config.ProjectConfig,\n  source: SearchSource,\n  outputStream: WriteStream,\n  changedFiles: ChangedFiles | undefined,\n  jestHooks: JestHookEmitter,\n  filter?: Filter,\n) => {\n  const data = await source.getTestPa"
+            }
+          ],
+          "status": "unclear",
+          "reason": "这是对生成答案中文件路径写法的约束，无法仅凭当前仓库源码反向确认生成时是否按 `/workspace/src/<relative_path>` 输出。"
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "\"peerDependencies\": {\n        \"@babel/core\": \"^7.0.0\"\n      }\n    },\n    \"node_modules/@babel/helper-define-polyfill-provider\": {\n      \"version\": \"0.6.8\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@babel/helper-compilation-targets\": \"^7.28.6\",\n        \"@babel/helper-plugin-utils\": \"^7.28.6\",\n        \"debug\": \"^4.4.3\",\n        \"lodash.debounce\": \"^4.0.8\","
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\"@jest/reporters\": \"*\",\n    \"@jest/test-result\": \"*\",\n    \"@jest/transform\": \"*\",\n    \"@jest/types\": \"*\",\n    \"@types/node\": \"*\",\n    \"ansi-escapes\": \"^4.3.2\",\n    \"chalk\": \"^4.1.2\",\n    \"ci-info\": \"^4.2.0\",\n    \"exit-x\": \"^0.2.2\",\n    \"graceful-fs\": \"^4.2.11\",\n    \"jest-changed-files\": \"*\",\n    \"jest-config\": \"*\",\n    \"jest-haste-map\": \"*\",\n    \"jest-message-util\": \"*\",\n    \"jest-regex-util\": \""
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\nconst {TestPathPatterns} = require('@jest/pattern');\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库包含 `package.json`、`package-lock.json`、`babel.config.js`、`jest.config.js` 等最小 Node.js 包结构与构建配置。"
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "getNoTestFoundRelatedToChangedFiles.ts",
+              "excerpt": "'chalk';\nimport type {Config} from '@jest/types';\nimport {isInteractive} from 'jest-util';\n\nexport default function getNoTestFoundRelatedToChangedFiles(\n  globalConfig: Config.GlobalConfig,\n): string {\n  const ref = globalConfig.changedSince\n    ? `\"${globalConfig.changedSince}\"`\n    : 'last commit';\n  const msg = `No tests found related to files changed since ${ref}.`;\n  return isInteractive ? c"
+            },
+            {
+              "path": "getNoTestFound.ts",
+              "excerpt": "jest/types';\nimport {pluralize} from 'jest-util';\nimport type {TestRunData} from './types';\n\nexport default function getNoTestFound(\n  testRunData: TestRunData,\n  globalConfig: Config.GlobalConfig,\n  willExitWith0: boolean,\n): string {\n  const testFiles = testRunData.reduce(\n    (current, {matches}) => current + (matches.total ?? 0),\n    0,\n  );\n  let msg = chalk.bold(`No tests found, exiting with"
+            },
+            {
+              "path": "getNoTestsFoundMessage.ts",
+              "excerpt": "the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport type {Config} from '@jest/types';\nimport getNoTestFound from './getNoTestFound';\nimport getNoTestFoundFailed from './getNoTestFoundFailed';\nimport getNoTestFoundPassWithNoTests from './getNoTestFoundPassWithNoTests';\nimport getNoTestFoundRelatedToChangedFiles from './getNoTestFoundRelatedToChangedFiles';\nimport getNoTestFo"
+            }
+          ],
+          "status": "missing",
+          "reason": "仓库实际包含 `__tests__/jest-core.test.js` 和 `__tests__/jest-core-extra.test.js`，与“Do not generate test files”要求直接冲突。"
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "Keep package-level source files such as `index.ts`, `SearchSource.ts`, and `TestScheduler.ts` at their normal project-root-relative locations.",
+          "evidence": [
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "/**\n * Copyright (c) Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport * as os from 'os';\nimport * as path from 'path';\nimport type {TestPathPatternsExecutor} from '@jest/pattern';\nimport type {Test, TestContext} from '@j"
+            },
+            {
+              "path": "cli/index.ts",
+              "excerpt": "'s');\n\n    const message =\n      chalk.red(\n        `\\nJest has detected the following ${openHandlesString} potentially keeping Jest from exiting:\\n\\n`,\n      ) + formatted.join('\\n\\n');\n\n    console.error(message);\n  }\n\n  performance.mark('jest/runCLI:end');\n  return {globalConfig, results};\n}\n\nconst buildContextsAndHasteMaps = async (\n  configs: Array<Config.ProjectConfig>,\n  globalConfig: Confi"
+            },
+            {
+              "path": "index.ts",
+              "excerpt": "/**\n * Copyright (c) Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nexport {default as FailedTestsCache} from './FailedTestsCache';\nexport {default as ReporterDispatcher} from './ReporterDispatcher';\nexport {default as Search"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`index.ts`、`SearchSource.ts`、`TestScheduler.ts` 都位于项目根的正常位置。"
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Preserve the package layout and internal module organization expected by the runtime tests, including the package-level entry points used by `jest-core.test.js`.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n  \"name\": \"@jest/core\",\n  \"version\": \"30.3.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"@jest/core\",\n      \"version\": \"30.3.0\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@jest/console\": \"*\",\n        \"@jest/pattern\": \"*\",\n        \"@jest/reporters\": \"*\",\n        \"@jest/test-result\": \"*\",\n        \"@jest/transform\": \""
+            },
+            {
+              "path": "package.json",
+              "excerpt": "jest-regex-util\": \"*\",\n    \"jest-resolve\": \"*\",\n    \"jest-resolve-dependencies\": \"*\",\n    \"jest-runner\": \"*\",\n    \"jest-runtime\": \"*\",\n    \"jest-snapshot\": \"*\",\n    \"jest-util\": \"*\",\n    \"jest-validate\": \"*\",\n    \"jest-watcher\": \"*\",\n    \"pretty-format\": \"*\",\n    \"slash\": \"^3.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/core\": \"^7.28.0\",\n    \"@babel/preset-env\": \"^7.28.5\",\n    \"@babel/preset-types"
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "'use strict';\n/**\n * Shim for @jest/test-utils (internal Jest monorepo package, not published to npm).\n * Provides makeGlobalConfig and makeProjectConfig helpers used in tests.\n */\nconst {TestPathPatterns} = require('@jest/pattern');\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "仓库保留了根级模块布局、`cli/`、`lib/`、`plugins/` 及 `index.ts` 入口，组织形式与运行时预期一致。"
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`FailedTestsCache.ts` (or `.js`) should exist at the project root, not inside a nested `src/` subdirectory.",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "t, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;\n\n    if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }"
+            },
+            {
+              "path": "getNoTestFound.ts",
+              "excerpt": "orms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {pluralize} from 'jest-util';\nimport type {TestRunData} from './types';\n\nexport default function getNoTestFound(\n  testRunData: TestRunData,\n  globalConfig: Config."
+            },
+            {
+              "path": "getNoTestFoundFailed.ts",
+              "excerpt": "orms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {isInteractive} from 'jest-util';\n\nexport default function getNoTestFoundFailed(\n  globalConfig: Config.GlobalConfig,\n): string {\n  const msg = 'No failed test suit"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`FailedTestsCache.ts` 位于项目根，而非嵌套 `src/` 目录。"
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "The project must include a file named `jest-test-utils-shim.js` at the project root — this shim replaces the `@jest/test-utils` module at install time and must export the utilities that `jest-core` depends on.",
+          "evidence": [
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "nst {TestPathPatterns} = require('@jest/pattern');\n\nconst makeGlobalConfig = (overrides = {}) => ({\n  bail: 0,\n  changedFilesWithAncestor: false,\n  changedSince: undefined,\n  ci: false,\n  collectCoverage: false,\n  collectCoverageFrom: [],\n  coverageDirectory: '',\n  coveragePathIgnorePatterns: [],\n  coverageProvider: 'babel',\n  coverageReporters: ['json', 'text', 'lcov', 'clover'],\n  coverageThresh"
+            },
+            {
+              "path": "getChangedFilesPromise.ts",
+              "excerpt": ") Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {\n  type ChangedFilesPromise,\n  getChangedFilesForRoots,\n} from 'jest-changed-files';\nimport {formatExecError} from 'jest-message-util';\n\nexport default"
+            },
+            {
+              "path": "getNoTestFoundRelatedToChangedFiles.ts",
+              "excerpt": ") Meta Platforms, Inc. and affiliates.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport chalk from 'chalk';\nimport type {Config} from '@jest/types';\nimport {isInteractive} from 'jest-util';\n\nexport default function getNoTestFoundRelatedToChangedFiles(\n  globalConfig: Config.GlobalConfig,\n): string {\n  const"
+            }
+          ],
+          "status": "implemented",
+          "reason": "项目根存在 `jest-test-utils-shim.js`，并导出 `makeGlobalConfig` 与 `makeProjectConfig`。"
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "if Babel is needed, provide `babel.config.js` in CommonJS format (`module.exports = { ... }`); the required content is:",
+          "evidence": [
+            {
+              "path": "babel.config.js",
+              "excerpt": "module.exports = {\n  presets: [\n    ['@babel/preset-env', {targets: {node: 'current'}, modules: 'commonjs'}],\n    ['@babel/preset-typescript', {allowDeclareFields: true, onlyRemoveTypeImports: true}],\n  ],\n};"
+            },
+            {
+              "path": "jest-test-utils-shim.js",
+              "excerpt": "rage: false,\n  collectCoverageFrom: [],\n  coverageDirectory: '',\n  coveragePathIgnorePatterns: [],\n  coverageProvider: 'babel',\n  coverageReporters: ['json', 'text', 'lcov', 'clover'],\n  coverageThreshold: {},\n  detectLeaks: false,\n  detectOpenHandles: false,\n  errorOnDeprecated: false,\n  expand: false,\n  filter: undefined,\n  findRelatedTests: false,\n  forceExit: false,\n  fakeTimers: {enableGlobal"
+            },
+            {
+              "path": "jest.config.js",
+              "excerpt": "Patterns: [\n    '/__fixtures__/',\n    '/test_root/',\n    '/test_root_with_',\n  ],\n  transform: {\n    '^.+\\\\.[jt]sx?$': 'babel-jest',\n  },\n  snapshotSerializers: ['jest-serializer-ansi-escapes'],\n  moduleNameMapper: {\n    '^@jest/test-utils$': '<rootDir>/jest-test-utils-shim.js',\n  },\n};"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`babel.config.js` 存在且内容与要求的 CommonJS 配置完全一致。"
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "`setTestResults([])` (empty array) causes `filterTests` to return an empty array (no tests pass the filter).",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "es file with testExecError even when numFailingTests is 0', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 0,\n        testFilePath: '/exec-error.js',\n        testExecError: new Error('module not found'),\n        testResults: [],\n      },\n    ]);\n    const filtered = cache.filterTests([{ path: '/exec-error.js' }, { path: '/other.js' }])"
+            },
+            {
+              "path": "__tests__/jest-core.test.js",
+              "excerpt": "];\n    expect(cache.filterTests(tests)).toEqual(tests);\n  });\n\n  test('filterTests returns only failed tests after setTestResults', () => {\n    const cache = new FailedTestsCache();\n    cache.setTestResults([\n      {\n        numFailingTests: 1,\n        testFilePath: '/failed.js',\n        testResults: [{ fullName: 'test 1', status: 'failed' }],\n      },\n      {\n        numFailingTests: 0,"
+            },
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "if (!enabledTestsMap) {\n      return tests;\n    }\n    return tests.filter(test => enabledTestsMap[test.path]);\n  }\n\n  setTestResults(testResults: Array<TestResult>): void {\n    this._enabledTestsMap = (testResults || []).reduce<TestMap>(\n      (suiteMap, testResult) => {\n        if (testResult.testExecError) {\n          suiteMap[testResult.testFilePath] = {};\n          return suiteMap;\n        }"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setTestResults([])` 会把 `_enabledTestsMap` 设为 `{}`，随后 `filterTests` 仅保留存在于 map 的路径，因此结果为空数组。"
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "A `TestResult` with a truthy `testExecError` field causes its `testFilePath` to be included in the filter (even if `numFailingTests` is 0), so that file passes `filterTests`.",
+          "evidence": [
+            {
+              "path": "FailedTestsCache.ts",
+              "excerpt": "d under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\nimport type {Test, TestResult} from '@jest/test-result';\n\ntype TestMap = Record<string, Record<string, boolean>>;\n\nexport default class FailedTestsCache {\n  private _enabledTestsMap?: TestMap;\n\n  filterTests(tests: Array<Test>): Array<Test> {\n    const enabledTestsMap = this._enabledTestsMap;"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "onsole', async () => {\n    dispatcher.register({ onTestFileResult: jest.fn().mockResolvedValue(undefined) });\n    const testResult = { coverage: {data: true}, console: ['log'], testResults: [] };\n    await dispatcher.onTestFileResult({}, testResult, {});\n    expect(testResult.coverage).toBeUndefined();\n    expect(testResult.console).toBeUndefined();\n  });\n\n  test('onTestFileResult falls back to on"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "'@jest/reporters';\nimport {\n  type AggregatedResult,\n  type SerializableError,\n  type Test,\n  type TestContext,\n  type TestResult,\n  addResult,\n  buildFailureTestResult,\n  makeEmptyAggregatedTestResult,\n} from '@jest/test-result';\nimport {createScriptTransformer} from '@jest/transform';\nimport type {Config} from '@jest/types';\nimport {formatExecError, separateMessageFromStack} from 'jest-message-"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`setTestResults` 中对 `testExecError` 做了显式分支，遇到该字段时会把 `testFilePath` 加入 `_enabledTestsMap`。"
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Paths not present in any `testFilePath` from `setTestResults` are excluded by `filterTests`.",
+          "evidence": [
+            {
+              "path": "cli/index.ts",
+              "excerpt": "} catch (error) {\n          return error;\n        }\n        return undefined;\n      })();\n    }\n    filter = async (testPaths: Array<string>) => {\n      if (filterSetupPromise) {\n        // Expect an undefined return value unless there was an error.\n        const err = await filterSetupPromise;\n        if (err) {\n          throw err;\n        }\n      }\n      return rawFilter(testPaths);\n    };\n  }"
+            },
+            {
+              "path": "SearchSource.ts",
+              "excerpt": "ontext.hasteFS,\n        snapshotResolver,\n      );\n    }\n    return this._dependencyResolver;\n  }\n\n  private _filterTestPathsWithStats(\n    allPaths: Array<Test>,\n    testPathPatternsExecutor: TestPathPatternsExecutor,\n  ): SearchResult {\n    const data: SearchResult = {\n      stats: {\n        roots: 0,\n        testMatch: 0,\n        testPathIgnorePatterns: 0,\n        testRegex: 0,\n      },\n      t"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "orter);\n    dispatcher.unregister(MyReporter);\n    await dispatcher.onRunStart({}, {});\n    expect(reporter.onRunStart).not.toHaveBeenCalled();\n  });\n\n  test('onTestFileResult clears coverage and console', async () => {\n    dispatcher.register({ onTestFileResult: jest.fn().mockResolvedValue(undefined) });\n    const testResult = { coverage: {data: true}, console: ['log'], testResults: [] };\n    awa"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`filterTests` 通过 `enabledTestsMap[test.path]` 过滤，未出现在 `setTestResults` 的 `testFilePath` 中的路径会被排除。"
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`ReporterDispatcher` exposes: `register(reporter)`, `unregister(ReporterConstructor)`, `onRunStart(results, options)`, `onTestFileStart(test)`, `onTestFileResult(test, testResult, results)`, `onTestCaseStart(test, info)`, `onTestCaseResult(test, result)`, `onRunComplete(contexts, results)`, `getErrors()`, and `hasErrors()`.",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "mport type {Circus} from '@jest/types';\nimport type {ReporterConstructor} from './TestScheduler';\n\nexport default class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this."
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "rorWithStack, invariant, requireOrImportModule} from 'jest-util';\nimport type {TestWatcher} from 'jest-watcher';\nimport ReporterDispatcher from './ReporterDispatcher';\nimport runGlobalHook from './runGlobalHook';\nimport {shouldRunInBand} from './testSchedulerHelper';\n\n// Env vars that indicate the process is running inside an AI coding agent.\n// Based on the detection logic from the std-env packag"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "/**\n * Blackbox tests for jest-core: ReporterDispatcher, SnapshotInteractiveMode,\n * FailedTestsInteractiveMode, and additional FailedTestsCache edge cases.\n */\n\n// ---------------------------------------------------------------------------\n// ReporterDispatcher\n// ---------------------------------------------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`ReporterDispatcher.ts` 明确定义了题目列出的全部公开方法。"
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "`register(reporter)` appends the reporter; `unregister(Ctor)` removes all reporters that are `instanceof Ctor`.",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "t class ReporterDispatcher {\n  private _reporters: Array<Reporter>;\n\n  constructor() {\n    this._reporters = [];\n  }\n\n  register(reporter: Reporter): void {\n    this._reporters.push(reporter);\n  }\n\n  unregister(reporterConstructor: ReporterConstructor): void {\n    this._reporters = this._reporters.filter(\n      reporter => !(reporter instanceof reporterConstructor),\n    );\n  }\n\n  async onTestFileR"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "=> {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "g;\n    this._dispatcher = new ReporterDispatcher();\n  }\n\n  addReporter(reporter: Reporter): void {\n    this._dispatcher.register(reporter);\n  }\n\n  removeReporter(reporterConstructor: ReporterConstructor): void {\n    this._dispatcher.unregister(reporterConstructor);\n  }\n\n  async scheduleTests(\n    tests: Array<Test>,\n    watcher: TestWatcher,\n  ): Promise<AggregatedResult> {\n    const onTestFileSta"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`register` 通过 `push` 追加；`unregister` 通过 `instanceof reporterConstructor` 过滤移除对应 reporter。"
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "`getErrors()` returns an array of errors collected via each reporter's optional `getLastError()` method (only non-falsy values).",
+          "evidence": [
+            {
+              "path": "ReporterDispatcher.ts",
+              "excerpt": "eporter.onRunComplete(testContexts, results);\n      }\n    }\n  }\n\n  // Return a list of last errors for every reporter\n  getErrors(): Array<Error> {\n    return this._reporters.reduce<Array<Error>>((list, reporter) => {\n      const error = reporter.getLastError && reporter.getLastError();\n      if (error) {\n        list.push(error);\n      }\n      return list;\n    }, []);\n  }\n\n  hasErrors(): boolean"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "porterConstructor): void {\n    this._dispatcher.unregister(reporterConstructor);\n  }\n\n  async scheduleTests(\n    tests: Array<Test>,\n    watcher: TestWatcher,\n  ): Promise<AggregatedResult> {\n    const onTestFileStart = this._dispatcher.onTestFileStart.bind(\n      this._dispatcher,\n    );\n    const timings: Array<number> = [];\n    const contexts = new Set<TestContext>();\n    tests.forEach(test =>"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`getErrors()` 遍历 reporters，调用可选的 `getLastError()`，并仅收集 truthy 错误。"
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "`hasErrors()` returns `true` when `getErrors()` is non-empty, `false` otherwise.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "dispatcher = new ReporterDispatcher();\n  });\n\n  test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});"
+            },
+            {
+              "path": "TestScheduler.ts",
+              "excerpt": "ss =\n      !aggregatedResults.numFailedTests &&\n      !aggregatedResults.numFailedTestSuites &&\n      !this._dispatcher.hasErrors();\n\n    if (\n      this._globalConfig.snapshotSerializers != null &&\n      this._globalConfig.snapshotSerializers.length !== 0\n    ) {\n      for (const context of contexts) {\n        await cleanupSnapshots(\n          context.config.snapshotResolver\n            ? await b"
+            },
+            {
+              "path": "collectHandles.ts",
+              "excerpt": "g) {\n  // Either the test file, or something required by it\n  if (stack.includes('Runtime.requireModule')) {\n    return true;\n  }\n\n  // jest-jasmine it or describe call\n  if (stack.includes('asyncJestTest') || stack.includes('asyncJestLifecycle')) {\n    return true;\n  }\n\n  // An async function call from within circus\n  if (stack.includes('callAsyncCircusFn')) {\n    // jest-circus it or describe ca"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`hasErrors()` 直接返回 `this.getErrors().length > 0`。"
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "Reporters are called in registration order.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "> {\n  let dispatcher;\n\n  beforeEach(() => {\n    dispatcher = new ReporterDispatcher();\n  });\n\n  test('starts with empty reporters list', () => {\n    expect(dispatcher.hasErrors()).toBe(false);\n    expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart"
+            },
+            {
+              "path": "lib/watchPluginsHelpers.ts",
+              "excerpt": "(usageInfoA && usageInfoB) {\n        // external plugins in alphabetical order\n        return usageInfoA.key.localeCompare(usageInfoB.key);\n      }\n      return 0;\n    })\n    .map(p => p.getUsageInfo && p.getUsageInfo(globalConfig))\n    .filter(isNonNullable);"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "\"license\": \"MIT\",\n      \"dependencies\": {\n        \"@jest/console\": \"*\",\n        \"@jest/pattern\": \"*\",\n        \"@jest/reporters\": \"*\",\n        \"@jest/test-result\": \"*\",\n        \"@jest/transform\": \"*\",\n        \"@jest/types\": \"*\",\n        \"@types/node\": \"*\",\n        \"ansi-escapes\": \"^4.3.2\",\n        \"chalk\": \"^4.1.2\",\n        \"ci-info\": \"^4.2.0\",\n        \"exit-x\": \"^0.2.2\",\n        \"graceful-fs\":"
+            }
+          ],
+          "status": "implemented",
+          "reason": "各个 dispatcher 回调都按 `for (const reporter of this._reporters)` 顺序遍历，保持注册顺序调用。"
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "Constructor: `new SnapshotInteractiveMode(pipe)` where `pipe` is a writable stream (`{write}`). Starts inactive with `getSkippedNum() === 0`.",
+          "evidence": [
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "private _testAssertions!: Array<AssertionLocation>;\n  private _countPaths!: number;\n  private _skippedNum: number;\n\n  constructor(pipe: NodeJS.WritableStream) {\n    this._pipe = pipe;\n    this._isActive = false;\n    this._skippedNum = 0;\n  }\n\n  isActive(): boolean {\n    return this._isActive;\n  }\n\n  getSkippedNum(): number {\n    return this._skippedNum;\n  }\n\n  private _clearTestSummary() {\n    t"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "cher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by constructor', async () => {\n    class MyReporter {\n      onRunStart() {}\n    }\n    const reporter = new MyReporter();\n    reporter.onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register(reporter);\n    dispatcher.unregister(MyReporter);\n    await dispatcher.o"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "private _testAssertions: Array<AssertionLocation> = [];\n  private _updateTestRunnerConfig?: RunnerUpdateFunction;\n\n  constructor(private readonly _pipe: NodeJS.WritableStream) {}\n\n  isActive(): boolean {\n    return this._isActive;\n  }\n\n  put(key: string): void {\n    switch (key) {\n      case KEYS.S:\n        this._skip();\n        break;\n      case KEYS.U:\n        this._next();\n        break;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`SnapshotInteractiveMode` 构造函数接收 `pipe`，初始化 `_isActive = false`、`_skippedNum = 0`，并有 `getSkippedNum()`。"
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "`run(failedSnapshotTestAssertions, onConfigChange)`: if the array is empty, does nothing (stays inactive). Otherwise, sets `isActive()` to `true` and immediately calls `onConfigChange` with the first assertion as the active item.",
+          "evidence": [
+            {
+              "path": "runJest.ts",
+              "excerpt": "ort getNoTestsFoundMessage from './getNoTestsFoundMessage';\nimport serializeToJSON from './lib/serializeToJSON';\nimport runGlobalHook from './runGlobalHook';\nimport type {Filter, TestRunData} from './types';\n\nconst getTestPaths = async (\n  globalConfig: Config.GlobalConfig,\n  projectConfig: Config.ProjectConfig,\n  source: SearchSource,\n  outputStream: WriteStream,\n  changedFiles: ChangedFiles | un"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "otInteractiveMode {\n  private readonly _pipe: NodeJS.WritableStream;\n  private _isActive: boolean;\n  private _updateTestRunnerConfig!: (\n    assertion: AssertionLocation | null,\n    shouldUpdateSnapshot: boolean,\n  ) => unknown;\n  private _testAssertions!: Array<AssertionLocation>;\n  private _countPaths!: number;\n  private _skippedNum: number;\n\n  constructor(pipe: NodeJS.WritableStream) {\n    this"
+            },
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "expect(dispatcher.getErrors()).toHaveLength(0);\n  });\n\n  test('register adds a reporter', async () => {\n    const onRunStart = jest.fn().mockResolvedValue(undefined);\n    dispatcher.register({ onRunStart });\n    await dispatcher.onRunStart({}, {});\n    expect(onRunStart).toHaveBeenCalledTimes(1);\n  });\n\n  test('unregister removes reporter by constructor', async () => {\n    class MyReporter {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`run()` 在空数组时直接返回；非空时复制断言、设置 `_isActive = true`，并通过 `_run(false)` 立刻把首个断言传给回调。"
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "`abort()`: deactivates the mode (sets `isActive()` to `false`), resets `getSkippedNum()` to `0`, and notifies the config callback that no assertion is pending.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": ";\n    expect(instance.isActive()).toBe(true);\n    expect(cb).toHaveBeenCalledWith(assertions[0], false);\n  });\n\n  test('abort deactivates and resets skippedNum to 0', () => {\n    const cb = jest.fn();\n    instance.run([{ fullName: 'snap 1', path: 'a.test.js' }], cb);\n    instance.abort();\n    expect(instance.isActive()).toBe(false);\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toHa"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "is._clearTestSummary();\n        this._run(true);\n        break;\n      case KEYS.Q:\n      case KEYS.ESCAPE:\n        this.abort();\n        break;\n      case KEYS.ENTER:\n        if (this._testAssertions.length > 0) {\n          this._clearTestSummary();\n          this._run(false);\n        }\n        break;\n      default:\n        break;\n    }\n  }\n\n  abort(): void {\n    this._isActive = false;\n    this._"
+            },
+            {
+              "path": "FailedTestsInteractiveMode.ts",
+              "excerpt": "break;\n      case KEYS.U:\n        this._next();\n        break;\n      case KEYS.Q:\n      case KEYS.ESCAPE:\n        this.abort();\n        break;\n      case KEYS.ENTER:\n        if (this._testAssertions.length === 0) {\n          this._drawUIDone();\n        } else {\n          this._run(false);\n        }\n        break;\n      default:\n        break;\n    }\n  }\n\n  run(\n    failedTestAssertions: Array<Asse"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`abort()` 将 `_isActive` 设为 `false`，将 `_skippedNum` 重置为 `0`，并调用 `_updateTestRunnerConfig(null, false)`。"
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "`restart()`: resets `getSkippedNum()` to `0` and re-triggers the run from the first remaining assertion.",
+          "evidence": [
+            {
+              "path": "__tests__/jest-core-extra.test.js",
+              "excerpt": "se);\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toHaveBeenLastCalledWith(null, false);\n  });\n\n  test('restart resets skippedNum and re-runs first assertion', () => {\n    const cb = jest.fn();\n    const assertions = [{ fullName: 'snap 1', path: 'a.test.js' }];\n    instance.run(assertions, cb);\n    instance.restart();\n    expect(instance.getSkippedNum()).toBe(0);\n    expect(cb).toH"
+            },
+            {
+              "path": "SnapshotInteractiveMode.ts",
+              "excerpt": "message += `\\n${chalk.bold.dim('Watch Usage')}\\n` +\n      chalk.bold.dim(` ${ARROW}Press `) + 'r' + chalk.bold.dim(' to restart Interactive Snapshot Mode.\\n') +\n      chalk.bold.dim(` ${ARROW}Press `) + 'q' + chalk.bold.dim(' to quit Interactive Snapshot Mode.\\n');\n\n    this._pipe.write(message);\n  }\n\n  private _drawUIDone() {\n    const numPass = this._countPaths;\n\n    let message = chalk.bold.dim"
+            },
+            {
+              "path": "runJest.ts",
+              "excerpt": "ort getNoTestsFoundMessage from './getNoTestsFoundMessage';\nimport serializeToJSON from './lib/serializeToJSON';\nimport runGlobalHook from './runGlobalHook';\nimport type {Filter, TestRunData} from './types';\n\nconst getTestPaths = async (\n  globalConfig: Config.GlobalConfig,\n  projectConfig: Config.ProjectConfig,\n  source: SearchSource,\n  outputStream: WriteStream,\n  changedFiles: ChangedFiles | un"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`restart()` 将 `_skippedNum` 重置为 `0`，随后调用 `_run(false)` 从当前剩余断言列表首项重新触发。"
+        }
+      ],
+      "feature_count": 33,
+      "constraint_count": 0,
+      "implemented_count": 31,
+      "partial_count": 0,
+      "missing_count": 1,
+      "unclear_count": 1,
+      "feature_coverage": 0.9394,
+      "constraint_coverage": 0.9394,
+      "fallback_used": false
+    },
+    "architecture": {
+      "status": "ok",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "javascript",
+        "app_style": "cli",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.2,
+        "stack_alignment": 4.0,
+        "reference_alignment": 3.8
+      },
+      "fallback_reason": ""
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 5,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "0",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "0",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\n仓库基本实现了 `jest-core` 的核心结构和行为：根级公开入口、`SearchSource`/`TestScheduler` 编排、`FailedTestsCache`、`ReporterDispatcher`、`SnapshotInteractiveMode`、Node 包配置以及 Babel shim/配置均可在实际文件中确认，且关键行为约束在源码中有直接实现。\n\n### Missing List\n\n- F016: 不应生成测试文件，但仓库实际包含 `__tests__/jest-core.test.js` 和 `__tests__/jest-core-extra.test.js`。\n\n### Critical Constraint Misses\n\n- F016: 仓库包含 `__tests__/` 下的测试文件，违反了“Do not generate test files”这一显式约束。",
+    "architecture_review": "### Stack Inference\n\n这是一个以 TypeScript 源文件为主、通过 Babel/Jest 转换执行的 Node.js 包，风格上属于 CLI + programmatic API 并存的库型项目。目录中存在 `cli/index.ts`、`watch.ts`、`runJest.ts`、`plugins/`、`lib/` 等典型 Jest 内核分层，说明它试图复刻 Jest orchestration 包的工程组织，而不是一个普通应用项目。\n\n### Scoring Mode\n\n本次评分以 `repo/` 的真实目录和源码关系为准，重点看模块分层、入口组织、构建契约与该 JavaScript/Node CLI 包的工程习惯是否一致，而不是看文件多不多。这个仓库整体上是在模仿 `@jest/core` 的包级布局，核心调度、发现、watch/plugin、CLI 入口都有对应模块，因此结构并不混乱；但它更像“可被测试直接消费的源码镜像”，而不是一个构建边界清晰、发布契约完整的 npm 包。\n\n### Strengths\n\n- 核心职责划分基本成立：`SearchSource.ts` 负责发现，`TestScheduler.ts` 负责调度，`ReporterDispatcher.ts` 负责报告分发，`watch.ts` 与 `plugins/` 负责交互模式，主流程由 `runJest.ts` 和 `cli/index.ts` 串联，主干模块关系清楚。\n- 公共入口与关键要求的文件位置大体对齐，`FailedTestsCache.ts`、`ReporterDispatcher.ts`、`SnapshotInteractiveMode.ts`、`SearchSource.ts`、`TestScheduler.ts` 都位于包根，符合题目强调的包级入口形状。\n- 存在一定的内部分层意识：通用辅助逻辑放在 `lib/`，watch 插件放在 `plugins/`，CLI 独立到 `cli/`，比把所有逻辑堆在单文件中更接近该技术栈的常见组织方式。\n\n### Issues\n\n- `package.json` uses `\"main\": \"./index.ts\"`, so the package points at raw TypeScript source instead of a built CommonJS artifact. For a Node/npm CLI/library package, that makes the build/entry contract weak and ties consumers to the test transform rather than a coherent publishable output.\n- The repository root is overloaded with many operational modules (`SearchSource.ts`, `TestScheduler.ts`, `runJest.ts`, watch helpers, prompts, interactive modes) instead of separating public entry points from internal orchestration code. It matches Jest naming, but as architecture it reduces discoverability and makes boundaries between API surface and internals less explicit.\n- There is no clear build/publish layer beyond Babel-for-tests. The package includes TS sources and test config, but no dedicated compile target, `exports` map, or dist layout, so build concerns and runtime concerns are only loosely coordinated.\n\n### Stack Mismatches\n\n- 对 JavaScript/npm 包的常见工程习惯来说，直接把 `index.ts` 作为 `main` 暴露并不标准，更像评测环境下的源码直跑方案。\n- 仓库同时放入源码、测试、Babel/Jest 运行配置，但缺少常见的发布层约定（如 `dist/`、`exports`、编译脚本），与常规可发布 Node 包存在偏差。\n\n### Reference Gaps\n\n- 需求明确说“Do not generate test files”，但仓库实际包含 `__tests__/jest-core.test.js` 和 `__tests__/jest-core-extra.test.js`，与参考要求直接不符。\n- 需求要求提供完整项目源码与必要构建配置，但当前仓库没有形成明确的产物导向构建结构；`main` 仍指向 `index.ts`，说明与“完整可交付包”的参考目标还有差距。\n- `version.ts` 使用 `require('../package.json')`，而按当前仓库结构它位于项目根目录同级，路径层级不协调，暴露出源码布局和入口引用之间仍有未收口的问题。"
+  },
+  "task": "javascript/jest-core/L1_jest-core",
+  "solver": "generated_outputs"
+}

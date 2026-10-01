@@ -1,0 +1,7 @@
+{
+  "score": 5.0,
+  "reason": "The description matches the implementation very closely. It correctly describes host-based refresh URL lookup, raising ValueError when the host is unknown, building a form-encoded refresh-token request with ASCII-encoded client_id, client_secret, refresh_token, and grant_type=refresh_token, performing the HTTP request, parsing the JSON response, and returning the access_token string. This is sufficient to reimplement the function accurately.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

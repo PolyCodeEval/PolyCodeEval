@@ -1,0 +1,14 @@
+{
+  "score": 4.3,
+  "reason": "The description accurately captures the core logic: return 6 if the value can be represented accurately with six digits, otherwise return full precision. It mentions the treatment of negative values, the two main value ranges, and the round-trip check. However, it omits the specific thresholds within the range below 1e6 (the different mulfor6 values for 0.0001–999,999) and the division factors for 1e6–1e10, which are implementation details needed for exact replication. These details are secondary but prevent the description from being fully self-contained.",
+  "missing_functionality": [
+    "Specific power-of-10 multipliers for each sub-range below 1e6 (e.g., 1e10 for very small numbers down to 0.0001, 1.0 for 100,000-999,999, etc.)",
+    "Specific division factors for the range 1e6 to 1e10 (e.g., 10 for 1e6-9,999,999, 100 for 1e7-99,999,999, etc.)",
+    "The rounding step (adding 0.5 before truncation) in the equality check"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'below 1e6' but the code uses a strict less-than (<) for the first branch, treating values exactly at 1e6 as part of the else-if branch, which matches the description's range [1e6, 1e10). This is fine.",
+    "The description does not explicitly mention that the function only applies the six-digit check for values down to 0.0001; for smaller positives (e.g., <0.0001) it falls through to full precision. That is implied but not stated."
+  ],
+  "complete_enough": true
+}

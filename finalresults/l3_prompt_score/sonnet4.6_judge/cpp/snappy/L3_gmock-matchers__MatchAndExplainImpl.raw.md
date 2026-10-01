@@ -1,0 +1,20 @@
+{
+  "score": 1.8,
+  "reason": "The description is almost entirely wrong about what this function does. The actual implementation is a container quantifier matcher — it iterates over elements of a container and checks whether all or any elements match an inner matcher, depending on the `all_elements_should_match` flag. The description instead talks about a generic matcher helper with no concrete parameter list, mentions 'empty description strings' and 'matcher name fallback' behavior that doesn't exist in this function at all, and completely misses the container iteration logic, the element index reporting, and the early-exit semantics. The description reads like a guess about a different, more abstract matcher utility rather than this specific function.",
+  "missing_functionality": [
+    "Container iteration over all elements using begin/end iterators",
+    "The `all_elements_should_match` boolean flag controlling 'all' vs 'any' semantics",
+    "Early exit on first mismatch (for all-match) or first match (for any-match)",
+    "Element index tracking and reporting ('whose element #i matches/doesn't match') in the listener",
+    "Use of a StringMatchResultListener per element to capture inner matcher explanation",
+    "PrintIfNotEmpty call to conditionally append inner explanation to the outer listener",
+    "Return value logic: returns `!all_elements_should_match` on early exit, `all_elements_should_match` on full traversal"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'visible context does not show a concrete user-facing parameter list' — the implementation has a clear, concrete signature",
+    "Description claims explanation is only produced when matching does not succeed — the function reports the first mismatching element regardless of which mode is active",
+    "Mention of 'empty description string' and 'matcher name fallback' behavior is fabricated and not present in this function",
+    "Description frames this as a generic single-value matcher; it is actually a container quantifier matcher"
+  ],
+  "complete_enough": false
+}

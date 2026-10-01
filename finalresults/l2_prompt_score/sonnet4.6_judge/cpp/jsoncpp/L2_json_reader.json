@@ -1,0 +1,27 @@
+{
+  "task": "cpp/jsoncpp/L2_json_reader",
+  "project": "cpp/jsoncpp",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/jsoncpp/tasks/L2_json_reader/prompt.md",
+  "task_json_path": "datasets/cpp/jsoncpp/tasks/L2_json_reader/task.json",
+  "source_file_path": "datasets/cpp/jsoncpp/src/lib_json/json_reader.cpp",
+  "target_file": "json_reader.cpp",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.7,
+  "reason": "The file-level and function-level descriptions are highly accurate and comprehensive, closely matching the actual implementation. The file description correctly identifies all major components: legacy Reader, OurReader, CharReaderBuilder, and stream helpers. Function descriptions capture key algorithmic details including overflow handling in decodeNumber, surrogate pair logic, BOM skipping, failIfExtra behavior, trailing comma support, duplicate key rejection, special float tokens (NaN/Infinity), single-quote strings, and the lastValueHasAComment_ guard in OurReader::readComment. The descriptions are detailed enough to reconstruct the file with high fidelity. Minor gaps include: the Reader::parse description says it 'does not reject extra trailing non-comment tokens' but doesn't mention it also doesn't pop the root (unlike OurReader), which is noted elsewhere; the OurReader::decodeNumber description mentions static_assert documentation but doesn't specify the exact negative reconstruction formula as clearly as the implementation uses it; and the Reader::pushError(value, message, extra) description checks 'extra.getOffsetStart()' but the implementation actually checks 'extra.getOffsetLimit()' — a subtle inaccuracy. Overall the descriptions are thorough and actionable.",
+  "missing_functionality": [
+    "Reader::parse description does not mention that it does NOT pop the root node from the stack (contrast with OurReader which does pop it)",
+    "OurReader::readToken description for '+' sign handling is slightly underspecified — the implementation treats '+' symmetrically to '-' for tokenPosInf, but the description focuses mainly on '-'",
+    "CharReaderBuilder::validate description does not mention the static allocation pattern ('static const auto& valid_keys = *new std::set<String>') used in the implementation"
+  ],
+  "incorrect_or_misleading_points": [
+    "Reader::pushError(value, message, extra) description says it validates 'extra value's start offset' but the implementation checks 'extra.getOffsetLimit() > length', not getOffsetStart()",
+    "OurReader::readComment description says placement is commentAfterOnSameLine when 'that value has not already received such a comment' — this is correct but the description omits that lastValueHasAComment_ is checked before lastValueEnd_, which is the actual order in the implementation",
+    "Reader::readValue description says 'throw only when exceptions are enabled' for stack overflow, but OurReader::readValue description says it 'throws runtime error' unconditionally — the asymmetry is real but could confuse implementers about whether OurReader has a conditional throw path"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_json_reader.raw.md"
+}

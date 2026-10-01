@@ -1,0 +1,23 @@
+{
+  "task": "go/gobreaker/L3_counter__subtract",
+  "project": "go/gobreaker",
+  "language": "go",
+  "prompt_path": "datasets/go/gobreaker/tasks/L3_counter__subtract/prompt.md",
+  "task_json_path": "datasets/go/gobreaker/tasks/L3_counter__subtract/task.json",
+  "source_file_path": "datasets/go/gobreaker/src/v2/counter.go",
+  "target_symbol": "v2/counter.go::subtract",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation well. It correctly covers the empty-bucket early return, wrapping the index by bucket-array length, subtracting the selected bucket's request/success/failure/exclusion totals with nonnegative clamping, and the conditional adjustment of consecutive success/failure streaks only when the current rolling streak matches the aggregate implied by all buckets. It is also fairly complete for implementation purposes. The main issue is that the streak logic is described a bit too abstractly: for consecutive successes, the implementation computes the implied aggregate as the oldest bucket's consecutive-success count plus the later buckets' total successes; similarly for failures it uses the oldest bucket's consecutive-failure count plus later buckets' total failures. The description says 'aggregate streak value implied by the full set of buckets,' which is directionally correct but omits this specific construction.",
+  "missing_functionality": [
+    "The description does not spell out the exact way the aggregate consecutive-success value is computed: oldest bucket's ConsecutiveSuccesses plus each subsequent bucket's TotalSuccesses.",
+    "The description does not spell out the exact way the aggregate consecutive-failure value is computed: oldest bucket's ConsecutiveFailures plus each subsequent bucket's TotalFailures."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_counter__subtract.raw.md"
+}

@@ -1,0 +1,21 @@
+{
+  "project": "people_management",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Prompt 覆盖人员/部门 CRUD、关系管理、查询功能。API 合约列出了完整的类方法集合。模块拆分（person/department/relationship）清晰。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "大部分接口清晰。部分方法（如关系查询）的返回类型和错误处理未完全细化，但不影响核心实现方向。"
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "Include 路径给出，CRUD 行为、边界条件描述足以构造测试用例。黑盒测试覆盖核心操作。"
+    },
+    "consistency": {
+      "score": 4.2,
+      "reason": "模块架构与源码对应，API 表面与实现基本一致。个别方法命名或参数类型可能有细微差异，但不影响整体一致性。"
+    }
+  }
+}

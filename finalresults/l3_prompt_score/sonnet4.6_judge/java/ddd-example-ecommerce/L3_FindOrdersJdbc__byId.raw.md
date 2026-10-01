@@ -1,0 +1,10 @@
+{
+  "score": 4.6,
+  "reason": "The description accurately captures all core behaviors: querying the `orders` table by id, loading associated items from `order_items`, converting items to domain objects, wrapping the result in an `Order` (populated with id and total), and falling back to `UnknownOrder` when no record is found. It correctly notes that items are included regardless of whether the list is empty. The only minor omission is that the order is constructed as an `OrderJdbc` instance (not a generic `Order`) and receives `jdbcTemplate` and `eventPublisher` dependencies via `toOrder`, and that items carry `product_id` and `quantity` fields — but these are implementation details that don't affect the functional contract described.",
+  "missing_functionality": [
+    "The description does not mention that items are fetched before the order query (items query runs unconditionally, even if no order exists).",
+    "No mention that the concrete returned type is OrderJdbc, which also receives jdbcTemplate and eventPublisher."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

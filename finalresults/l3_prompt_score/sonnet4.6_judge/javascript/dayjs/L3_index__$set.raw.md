@@ -1,0 +1,13 @@
+{
+  "score": 3.8,
+  "reason": "The description captures the core logic well: unit normalization, the day-of-week offset calculation for D/DATE, the month/year overflow-safe approach (set to day 1, apply change, restore capped day), direct field setting for other units, and returning `this` for chaining. However, it omits a significant detail: the function respects UTC mode via a `utcPad` prefix (`setUTC*` vs `set*`), which affects which native Date methods are called. It also slightly mischaracterizes the unrecognized-unit case — when `name` is undefined, `this.$d` is not modified at all (the `else if (name)` guard prevents it), but `init()` is still called; the description says 'leave the underlying date unchanged except for the final reinitialization step', which is technically correct but could be clearer. The day/date description is accurate. Overall the description is mostly correct and covers the main behaviors, but the UTC-awareness omission is a meaningful gap for reimplementation.",
+  "missing_functionality": [
+    "UTC mode support: the function uses `this.$u` to decide whether to call `setUTC*` or `set*` methods on the underlying Date object. This is not mentioned at all.",
+    "The `else if (name)` guard means unrecognized units skip the native Date call entirely (not just 'leave unchanged' — the guard is explicit). The description implies this but doesn't make the guard mechanism clear."
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says 'day/date value is interpreted as a day-of-week-like offset' — this is accurate but could mislead; it's specifically `this.$D + (int - this.$W)`, converting a target weekday index into a date-of-month offset.",
+    "The description does not mention that the month/year path uses `this.clone().set(C.DATE, 1)` (a clone via the public `set` method) specifically to support the badMutable plugin, which is a notable implementation detail."
+  ],
+  "complete_enough": false
+}

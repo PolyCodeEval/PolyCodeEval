@@ -1,0 +1,10 @@
+{
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly captures the early return when `max_match_len <= *pMatch_len`, the probe-budget selection from `m_max_probes`, traversal through `m_next` with distance limiting, the staged quick checks (`c01` at the current best-length boundary, then initial 2-byte equality), the bounded full comparison with a hard cap, and the rules for updating outputs only when a longer match is found. It also correctly notes the full-bound early success case and the refresh of the boundary quick-check state after improving the best length. The only notable gap is that the implementation effectively unrolls three probe steps per outer iteration, and the exact comparison bound is specifically 32 iterations of 4 word-comparisons, but these are lower-level details rather than major functional omissions.",
+  "missing_functionality": [
+    "The description does not mention that the probe macro is invoked three times per inner-loop cycle, which affects exact search behavior/performance.",
+    "It does not spell out the exact internal comparison structure: 32 loop iterations with 4 successive 2-byte comparisons per iteration before declaring a full-bound match."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

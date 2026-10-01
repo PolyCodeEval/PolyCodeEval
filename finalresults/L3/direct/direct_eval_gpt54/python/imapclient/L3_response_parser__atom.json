@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.04,
+  "stdout": "in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: (b'{18}',) != (b'012\\r\\nabc def XYZ\\r\\n',)\nE   \nE   First differing element 0:\nE   b'{18}'\nE   b'012\\r\\nabc def XYZ\\r\\n'\nE   \nE   - (b'{18}',)\nE   + (b'012\\r\\nabc def XYZ\\r\\n',)\n___________________ TestParseResponse.test_literal_with_more ___________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_literal_with_more>\n\n    def test_literal_with_more(self):\n        literal_text = add_crlf(b\"012\\n\" b\"abc def XYZ\\n\")\n        response = [(b'(12 \"foo\" {18}', literal_text), b\")\"]\n>       self._test(response, (12, b\"foo\", literal_text))\n\ntests/unit_tests/test_response_parser.py:159: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:191: in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: ((12, b'foo', b'{18}'),) != ((12, b'foo', b'012\\r\\nabc def XYZ\\r\\n'),)\nE   \nE   First differing element 0:\nE   (12, b'foo', b'{18}')\nE   (12, b'foo', b'012\\r\\nabc def XYZ\\r\\n')\nE   \nE   - ((12, b'foo', b'{18}'),)\nE   + ((12, b'foo', b'012\\r\\nabc def XYZ\\r\\n'),)\n______________________ TestParseResponse.test_not_an_int _______________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_not_an_int>\n\n    def test_not_an_int(self):\n>       self._test(b\"0123\", b\"0123\")\n\ntests/unit_tests/test_response_parser.py:45: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:191: in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: (123,) != (b'0123',)\nE   \nE   First differing element 0:\nE   123\nE   b'0123'\nE   \nE   - (123,)\nE   + (b'0123',)\nE   ?  +++   +\n____________________ TestParseResponse.test_quoted_specials ____________________\n\nself = <unit_tests.test_response_parser.TestParseResponse testMethod=test_quoted_specials>\n\n    def test_quoted_specials(self):\n        self._test(rb'\"\\\"foo bar\\\"\"', b'\"foo bar\"')\n        self._test(rb'\"foo \\\"bar\\\"\"', b'foo \"bar\"')\n>       self._test(rb'\"foo\\\\bar\"', rb\"foo\\bar\")\n\ntests/unit_tests/test_response_parser.py:164: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntests/unit_tests/test_response_parser.py:191: in _test\n    self.assertSequenceEqual(output, expected)\nE   AssertionError: Sequences differ: (b'foobar',) != (b'foo\\\\bar',)\nE   \nE   First differing element 0:\nE   b'foobar'\nE   b'foo\\\\bar'\nE   \nE   - (b'foobar',)\nE   + (b'foo\\\\bar',)\nE   ?       ++\n________________ TestParseFetchResponse.test_BODY_HEADER_FIELDS ________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_BODY_HEADER_FIELDS>\n\n    def test_BODY_HEADER_FIELDS(self):\n        header_text = b\"Subject: A subject\\r\\nFrom: Some one <someone@mail.com>\\r\\n\\r\\n\"\n>       self.assertEqual(\n            parse_fetch_response(\n                [\n                    (\n                        b\"123 (UID 31710 BODY[HEADER.FIELDS (from subject)] {57}\",\n                        header_text,\n                    ),\n                    b\")\",\n                ]\n            ),\n            {31710: {b\"BODY[HEADER.FIELDS (FROM SUBJECT)]\": header_text, b\"SEQ\": 123}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {31710: {b'SE[53 chars]}'}}) != {31710: {b'BODY[HEADER.FIELDS (FROM SUBJE[83 chars]123}}\n\ntests/unit_tests/test_response_parser.py:313: AssertionError\n_____________________ TestParseFetchResponse.test_literals _____________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_literals>\n\n    def test_literals(self):\n>       self.assertEqual(\n            parse_fetch_response(\n                [\n                    (b\"1 (RFC822.TEXT {4}\", b\"body\"),\n                    (b\" RFC822 {21}\", b\"Subject: test\\r\\n\\r\\nbody\"),\n                    b\")\",\n                ]\n            ),\n            {\n                1: {\n                    b\"RFC822.TEXT\": b\"body\",\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'SEQ': [43 chars]}'}}) != {1: {b'RFC822.TEXT': b'body', b'RFC822': [36 chars]: 1}}\n\ntests/unit_tests/test_response_parser.py:288: AssertionError\n______ TestParseFetchResponse.test_literals_and_keys_with_square_brackets ______\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_literals_and_keys_with_square_brackets>\n\n    def test_literals_and_keys_with_square_brackets(self):\n>       self.assertEqual(\n            parse_fetch_response([(b\"1 (BODY[TEXT] {11}\", b\"Hi there.\\r\\n\"), b\")\"]),\n            {1: {b\"BODY[TEXT]\": b\"Hi there.\\r\\n\", b\"SEQ\": 1}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'SEQ': 1, b'BODY[TEXT]': b'{11}'}}) != {1: {b'BODY[TEXT]': b'Hi there.\\r\\n', b'SEQ': 1}}\n\ntests/unit_tests/test_response_parser.py:306: AssertionError\n___________________ TestParseFetchResponse.test_mixed_types ____________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_mixed_types>\n\n    def test_mixed_types(self):\n>       self.assertEqual(\n            parse_fetch_response(\n                [\n                    (\n                        b'1 (INTERNALDATE \" 9-Feb-2007 17:08:08 +0100\" RFC822 {21}',\n                        b\"Subject: test\\r\\n\\r\\nbody\",\n                    ),\n                    b\")\",\n                ]\n            ),\n            {\n                1: {\n                    b\"INTERNALDATE\": datetime_to_native(\n                        datetime(2007, 2, 9, 17, 8, 8, 0, FixedOffset(60))\n                    ),\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'SEQ': [77 chars]}'}}) != {1: {b'INTERNALDATE': datetime.datetime(2[69 chars]: 1}}\n\ntests/unit_tests/test_response_parser.py:656: AssertionError\n__________________ TestParseFetchResponse.test_partial_fetch ___________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_partial_fetch>\n\n    def test_partial_fetch(self):\n        body = b\"01234567890123456789\"\n>       self.assertEqual(\n            parse_fetch_response([(b\"123 (UID 367 BODY[]<0> {20}\", body), b\")\"]),\n            {367: {b\"BODY[]<0>\": body, b\"SEQ\": 123}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {367: {b'SEQ': 123, b'BODY[]<0>': b'{20}'}}) != {367: {b'BODY[]<0>': b'01234567890123456789', b'SEQ': 123}}\n\ntests/unit_tests/test_response_parser.py:491: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_literal\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal_with_more\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_not_an_int\nFAILED tests/unit_tests/test_response_parser.py::TestParseResponse::test_quoted_specials\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_partial_fetch\n======================== 12 failed, 275 passed in 0.71s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_response_parser__atom",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_bad_literal",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_literal_with_more",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_not_an_int",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseResponse::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

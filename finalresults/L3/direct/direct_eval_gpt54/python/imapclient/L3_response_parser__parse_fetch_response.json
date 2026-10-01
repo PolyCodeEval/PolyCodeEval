@@ -1,0 +1,79 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.99,
+  "stdout": "           1: {\n                    b\"RFC822.TEXT\": b\"body\",\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'RFC822[54 chars]y'}}) != {1: {b'RFC822.TEXT': b'body', b'RFC822': [36 chars]: 1}}\n\ntests/unit_tests/test_response_parser.py:288: AssertionError\n______ TestParseFetchResponse.test_literals_and_keys_with_square_brackets ______\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_literals_and_keys_with_square_brackets>\n\n    def test_literals_and_keys_with_square_brackets(self):\n>       self.assertEqual(\n            parse_fetch_response([(b\"1 (BODY[TEXT] {11}\", b\"Hi there.\\r\\n\"), b\")\"]),\n            {1: {b\"BODY[TEXT]\": b\"Hi there.\\r\\n\", b\"SEQ\": 1}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'BODY[TEXT]': b'Hi there.\\r\\n'}}) != {1: {b'BODY[TEXT]': b'Hi there.\\r\\n', b'SEQ': 1}}\n\ntests/unit_tests/test_response_parser.py:306: AssertionError\n___________________ TestParseFetchResponse.test_mixed_types ____________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_mixed_types>\n\n    def test_mixed_types(self):\n>       self.assertEqual(\n            parse_fetch_response(\n                [\n                    (\n                        b'1 (INTERNALDATE \" 9-Feb-2007 17:08:08 +0100\" RFC822 {21}',\n                        b\"Subject: test\\r\\n\\r\\nbody\",\n                    ),\n                    b\")\",\n                ]\n            ),\n            {\n                1: {\n                    b\"INTERNALDATE\": datetime_to_native(\n                        datetime(2007, 2, 9, 17, 8, 8, 0, FixedOffset(60))\n                    ),\n                    b\"RFC822\": b\"Subject: test\\r\\n\\r\\nbody\",\n                    b\"SEQ\": 1,\n                }\n            },\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {1: {b'INTERN[87 chars]y'}}) != {1: {b'INTERNALDATE': datetime.datetime(2[69 chars]: 1}}\n\ntests/unit_tests/test_response_parser.py:656: AssertionError\n________________ TestParseFetchResponse.test_multiple_messages _________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_multiple_messages>\n\n    def test_multiple_messages(self):\n>       self.assertEqual(\n            parse_fetch_response([b\"2 (FLAGS (Foo Bar)) \", b\"7 (FLAGS (Baz Sneeve))\"]),\n            {\n                2: {b\"FLAGS\": (b\"Foo\", b\"Bar\"), b\"SEQ\": 2},\n                7: {b\"FLAGS\": (b\"Baz\", b\"Sneeve\"), b\"SEQ\": 7},\n            },\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {2: {b'FLAGS'[52 chars]')}}) != {2: {b'FLAGS': (b'Foo', b'Bar'), b'SEQ': [45 chars]: 7}}\n\ntests/unit_tests/test_response_parser.py:271: AssertionError\n________________ TestParseFetchResponse.test_none_special_case _________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_none_special_case>\n\n    def test_none_special_case(self):\n>       self.assertEqual(parse_fetch_response([None]), {})\n\ntests/unit_tests/test_response_parser.py:230: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/response_parser.py:122: in parse_fetch_response\n    msg_id_atom = next(parsed_response)\nsrc/imapclient/response_parser.py:94: in gen_parsed_response\n    for token in src:\nsrc/imapclient/response_lexer.py:122: in __iter__\n    for tok in self.read_token_stream(iter(source)):\nsrc/imapclient/response_lexer.py:152: in __iter__\n    return PushableIterator(self.src_text)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.response_lexer.PushableIterator object at 0x7f37a0fff8b0>\nit = None\n\n    def __init__(self, it: bytes):\n>       self.it = iter(it)\nE       TypeError: 'NoneType' object is not iterable\n\nsrc/imapclient/response_lexer.py:159: TypeError\n__________________ TestParseFetchResponse.test_not_uid_is_key __________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_not_uid_is_key>\n\n    def test_not_uid_is_key(self):\n>       self.assertEqual(\n            parse_fetch_response([b\"23 (UID 76)\"], uid_is_key=False),\n            {23: {b\"UID\": 76, b\"SEQ\": 23}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {23: {b'UID': 76}}) != {23: {b'UID': 76, b'SEQ': 23}}\n\ntests/unit_tests/test_response_parser.py:256: AssertionError\n__________________ TestParseFetchResponse.test_partial_fetch ___________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_partial_fetch>\n\n    def test_partial_fetch(self):\n        body = b\"01234567890123456789\"\n>       self.assertEqual(\n            parse_fetch_response([(b\"123 (UID 367 BODY[]<0> {20}\", body), b\")\"]),\n            {367: {b\"BODY[]<0>\": body, b\"SEQ\": 123}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {367: {b'UID'[42 chars]9'}}) != {367: {b'BODY[]<0>': b'012345678901234567[13 chars]123}}\n\ntests/unit_tests/test_response_parser.py:491: AssertionError\n______ TestParseFetchResponse.test_same_message_appearing_multiple_times _______\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_same_message_appearing_multiple_times>\n\n    def test_same_message_appearing_multiple_times(self):\n        # This can occur when server sends unsolicited FETCH responses\n        # (e.g. RFC 4551)\n>       self.assertEqual(\n            parse_fetch_response([b\"2 (FLAGS (Foo Bar)) \", b\"2 (MODSEQ 4)\"]),\n            {2: {b\"FLAGS\": (b\"Foo\", b\"Bar\"), b\"SEQ\": 2, b\"MODSEQ\": 4}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {2: {b'FLAGS': (b'Foo', b'Bar'), b'MODSEQ': 4}}) != {2: {b'FLAGS': (b'Foo', b'Bar'), b'SEQ': 2, b'MODSEQ': 4}}\n\ntests/unit_tests/test_response_parser.py:282: AssertionError\n___________________ TestParseFetchResponse.test_simple_pairs ___________________\n\nself = <unit_tests.test_response_parser.TestParseFetchResponse testMethod=test_simple_pairs>\n\n    def test_simple_pairs(self):\n>       self.assertEqual(\n            parse_fetch_response([b'23 (ABC 123 StUfF \"hello\")']),\n            {23: {b\"ABC\": 123, b\"STUFF\": b\"hello\", b\"SEQ\": 23}},\n        )\nE       AssertionError: defaultdict(<class 'dict'>, {23: {b'ABC': 123, b'StUfF': b'hello'}}) != {23: {b'ABC': 123, b'STUFF': b'hello', b'SEQ': 23}}\n\ntests/unit_tests/test_response_parser.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODYSTRUCTURE\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_FLAGS\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_UID\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_basic\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_multiple_messages\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_none_special_case\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_not_uid_is_key\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_partial_fetch\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_same_message_appearing_multiple_times\nFAILED tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_simple_pairs\n======================== 15 failed, 272 passed in 0.68s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_response_parser__parse_fetch_response",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODYSTRUCTURE",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_BODY_HEADER_FIELDS",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_FLAGS",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_UID",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_basic",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_literals_and_keys_with_square_brackets",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_mixed_types",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_multiple_messages",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_none_special_case",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_not_uid_is_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_partial_fetch",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_response_parser.py::TestParseFetchResponse::test_same_message_appearing_multiple_times",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 14,
+    "total": 14
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,26 @@
+{
+  "task": "javascript/jest-core/L3_TestScheduler__scheduleTests",
+  "project": "javascript/jest-core",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/jest-core/tasks/L3_TestScheduler__scheduleTests/prompt.md",
+  "task_json_path": "datasets/javascript/jest-core/tasks/L3_TestScheduler__scheduleTests/task.json",
+  "source_file_path": "datasets/javascript/jest-core/src/TestScheduler.ts",
+  "target_symbol": "TestScheduler.ts::scheduleTests",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.7,
+  "reason": "The description is remarkably thorough and accurate. It correctly captures all major behavioral branches: metadata derivation, runner instantiation via transformer, partitioning, serial/in-band logic, event-emitter vs callback branching with the exact five events, the watcher-interrupted guard, empty-test-suite and leak-detection failure paths, bail-early logic, snapshot cleanup and failure flagging, run-level error handling with rethrow vs suppression, and final success computation. One minor gap: the description says the inner catch (runner execution errors) 'records the run-level execution error' and 'reports run completion', but in the implementation that behavior only happens in the *outer* catch — the inner catch simply suppresses the error when the watcher is interrupted and rethrows otherwise; it does not itself call `onRunComplete` or set `runExecError`. Also, the description omits that `onRunStart` passes `showStatus: !runInBand` as part of the start notification options, and that event subscriptions are explicitly unsubscribed after `runTests` completes. These are minor omissions that don't materially affect implementability.",
+  "missing_functionality": [
+    "Event listener unsubscription after runTests completes (the unsubscribes loop)",
+    "onRunStart is called with showStatus: !runInBand in the options object",
+    "The inner try/catch only suppresses errors when watcher is interrupted and rethrows otherwise — it does not set runExecError or call onRunComplete (that is the outer catch's job)"
+  ],
+  "incorrect_or_misleading_points": [
+    "Bullet 9 conflates the inner and outer catch blocks: it says 'records the run-level execution error, reports run completion, and rethrows' as if this applies to runner setup/execution errors generically, but only the outer catch does all three; the inner catch (runner execution) only conditionally rethrows or suppresses"
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_TestScheduler__scheduleTests.raw.md"
+}

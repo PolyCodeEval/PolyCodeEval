@@ -1,0 +1,23 @@
+{
+  "task": "python/hone/L3_hone__get_nested_structure",
+  "project": "python/hone",
+  "language": "python",
+  "prompt_path": "datasets/python/hone/tasks/L3_hone__get_nested_structure/prompt.md",
+  "task_json_path": "datasets/python/hone/tasks/L3_hone__get_nested_structure/task.json",
+  "source_file_path": "datasets/python/hone/src/hone/hone.py",
+  "target_symbol": "hone.py::get_nested_structure",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description matches the implementation well: it explains that the function builds a nested mapping from flat keys, uses candidate prefixes from each key, skips prefixes that are already existing column names, groups matching unvisited columns by suffix, recurses when a group has more than one member, leaves non-grouped keys unchanged, and avoids reprocessing visited columns. The main omission is a subtle implementation detail: columns matched under a candidate split are marked visited even if that split does not ultimately produce a nested group, which can suppress later processing. Also, the code tries all splits for a key rather than stopping after the first successful group, and the ineffective `sorted(...)` call is not reflected, but these are minor for the core behavior.",
+  "missing_functionality": [
+    "The implementation marks matching columns as visited as soon as they are collected for a candidate split, even before confirming the group has more than one key and will actually be added to the output.",
+    "The function iterates through all valid splits for each key and may build multiple nested entries from one source key rather than explicitly selecting a single best split."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_hone__get_nested_structure.raw.md"
+}

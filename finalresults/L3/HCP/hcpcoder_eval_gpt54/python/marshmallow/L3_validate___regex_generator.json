@@ -1,0 +1,107 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.21,
+  "stdout": " if char == \"<\":\n                            char = sourceget()\n                            if char is None:\n                                raise source.error(\"unexpected end of pattern\")\n                            if char not in \"=!\":\n                                raise source.error(\"unknown extension ?<\" + char,\n                                                   len(char) + 2)\n                            dir = -1 # lookbehind\n                            lookbehindgroups = state.lookbehindgroups\n                            if lookbehindgroups is None:\n                                state.lookbehindgroups = state.groups\n                        p = _parse_sub(source, state, verbose, nested + 1)\n                        if dir < 0:\n                            if lookbehindgroups is None:\n                                state.lookbehindgroups = None\n                        if not sourcematch(\")\"):\n                            raise source.error(\"missing ), unterminated subpattern\",\n                                               source.tell() - start)\n                        if char == \"=\":\n                            subpatternappend((ASSERT, (dir, p)))\n                        else:\n                            subpatternappend((ASSERT_NOT, (dir, p)))\n                        continue\n    \n                    elif char == \"(\":\n                        # conditional backreference group\n                        condname = source.getuntil(\")\", \"group name\")\n                        if condname.isidentifier():\n                            condgroup = state.groupdict.get(condname)\n                            if condgroup is None:\n                                msg = \"unknown group name %r\" % condname\n                                raise source.error(msg, len(condname) + 1)\n                        else:\n                            try:\n                                condgroup = int(condname)\n                                if condgroup < 0:\n                                    raise ValueError\n                            except ValueError:\n                                msg = \"bad character in group name %r\" % condname\n                                raise source.error(msg, len(condname) + 1) from None\n                            if not condgroup:\n                                raise source.error(\"bad group number\",\n                                                   len(condname) + 1)\n                            if condgroup >= MAXGROUPS:\n                                msg = \"invalid group reference %d\" % condgroup\n                                raise source.error(msg, len(condname) + 1)\n                            if condgroup not in state.grouprefpos:\n                                state.grouprefpos[condgroup] = (\n                                    source.tell() - len(condname) - 1\n                                )\n                        state.checklookbehindgroup(condgroup, source)\n                        item_yes = _parse(source, state, verbose, nested + 1)\n                        if source.match(\"|\"):\n                            item_no = _parse(source, state, verbose, nested + 1)\n                            if source.next == \"|\":\n                                raise source.error(\"conditional backref with more than two branches\")\n                        else:\n                            item_no = None\n                        if not source.match(\")\"):\n                            raise source.error(\"missing ), unterminated subpattern\",\n                                               source.tell() - start)\n                        subpatternappend((GROUPREF_EXISTS, (condgroup, item_yes, item_no)))\n                        continue\n    \n                    elif char in FLAGS or char == \"-\":\n                        # flags\n                        flags = _parse_flags(source, state, char)\n                        if flags is None:  # global flags\n                            if not first or subpattern:\n                                import warnings\n                                warnings.warn(\n                                    'Flags not at the start of the expression %r%s'\n                                    ' but at position %d' % (\n                                        source.string[:20],  # truncate long regexes\n                                        ' (truncated)' if len(source.string) > 20 else '',\n                                        start,\n                                    ),\n                                    DeprecationWarning, stacklevel=nested + 6\n                                )\n                            if (state.flags & SRE_FLAG_VERBOSE) and not verbose:\n                                raise Verbose\n                            continue\n    \n                        add_flags, del_flags = flags\n                        group = None\n                    else:\n                        raise source.error(\"unknown extension ?\" + char,\n                                           len(char) + 1)\n    \n                # parse group contents\n                if group is not None:\n                    try:\n                        group = state.opengroup(name)\n                    except error as err:\n                        raise source.error(err.msg, len(name) + 1) from None\n                sub_verbose = ((verbose or (add_flags & SRE_FLAG_VERBOSE)) and\n                               not (del_flags & SRE_FLAG_VERBOSE))\n                p = _parse_sub(source, state, sub_verbose, nested + 1)\n                if not source.match(\")\"):\n>                   raise source.error(\"missing ), unterminated subpattern\",\n                                       source.tell() - start)\nE                   re.error: missing ), unterminated subpattern at position 1\n\n/usr/lib/python3.10/sre_parse.py:843: error\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_schema.py::TestLoadOnly::test_url_field_requre_tld_false\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://xn--mgbh0fb.xn--kgbechtv/]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://[192.168.1.1]:8329]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_relative_only_valid[?bar]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://123.45.67.8/]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example:80]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://user.name:pass.word@example]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example/foo/bar]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http//example]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://.example.org]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http:///foo/bar]\nFAILED tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http:// /foo/bar]\n======================= 22 failed, 1157 passed in 3.69s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_validate___regex_generator",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_schema.py::TestLoadOnly::test_url_field_requre_tld_false",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://xn--mgbh0fb.xn--kgbechtv/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_valid[http://@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[https://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://[192.168.1.1]:8329]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://^@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%0G@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_absolute_invalid[http://%@example.com]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_invalid[http://example.org\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_relative_only_valid[?bar]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://123.45.67.8/]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example.]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example:80]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://user.name:pass.word@example]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_valid[http://example/foo/bar]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http//example]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://example\\n]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http://.example.org]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_validate.py::test_url_dont_require_tld_invalid[http:///foo/bar]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 21,
+    "total": 21
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

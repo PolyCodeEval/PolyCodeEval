@@ -1,0 +1,183 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.23,
+  "stdout": "      @validates(\"value\")\n            def validate_value(self, value, **kwargs):\n                if value < 0:\n                    raise ValidationError(\"Must be positive.\")\n    \n        schema = ItemSchema(many=True)\n    \n        errors = schema.validate([{}, {\"value\": -1}])\n    \n        assert 0 in errors\n>       assert 1 in errors\nE       AssertionError: assert 1 in {0: {'value': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:1757: AssertionError\n_______________ TestFieldValidation.test_ignored_if_not_in_only ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f1370b20c10>\n\n    def test_ignored_if_not_in_only(self):\n        class MySchema(Schema):\n            a = fields.Raw()\n            b = fields.Raw()\n    \n            @validates(\"a\")\n            def validate_a(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_a\"})\n    \n            @validates(\"b\")\n            def validate_b(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_b\"})\n    \n        s = MySchema(only=(\"b\",))\n        errors = s.validate({\"b\": \"data\"})\n>       assert errors == {\"b\": {\"code\": \"invalid_b\"}}\nE       AssertionError: assert {} == {'b': {'code': 'invalid_b'}}\nE         \nE         Right contains 1 more item:\nE         {'b': {'code': 'invalid_b'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1815: AssertionError\n____________________ TestNestedSchema.test_nested_load_many ____________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f1370971bd0>\n\n    def test_nested_load_many(self):\n        in_data = {\n            \"title\": \"Shine A Light\",\n            \"collaborators\": [\n                {\"name\": \"Mick\", \"email\": \"mick@stones.com\"},\n                {\"name\": \"Keith\", \"email\": \"keith@stones.com\"},\n            ],\n        }\n        data = BlogSchema().load(in_data)\n        collabs = data[\"collaborators\"]\n        assert len(collabs) == 2\n>       assert all(type(each) is User for each in collabs)\nE       assert False\nE        +  where False = all(<generator object TestNestedSchema.test_nested_load_many.<locals>.<genexpr> at 0x7f13703bc900>)\n\ntests/unit_tests/test_schema.py:1931: AssertionError\n_ TestNestedSchema.test_all_errors_on_many_nested_field_with_validates_decorator _\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f13709717e0>\n\n    def test_all_errors_on_many_nested_field_with_validates_decorator(self):\n        class Inner(Schema):\n            req = fields.Raw(required=True)\n    \n        class Outer(Schema):\n            inner = fields.Nested(Inner, many=True)\n    \n            @validates(\"inner\")\n            def validates_inner(self, data, **kwargs):\n                raise ValidationError(\"not a chance\")\n    \n        outer = Outer()\n        with pytest.raises(ValidationError) as excinfo:\n            outer.load({\"inner\": [{}]})\n        errors = excinfo.value.messages\n        assert \"inner\" in errors\n>       assert \"_schema\" in errors[\"inner\"]\nE       AssertionError: assert '_schema' in {0: {'req': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:2008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context\nFAILED tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling - F...\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[pre_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[post_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[pre_dump]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]\nFAILED tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data\nFAILED tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema\nFAILED tests/unit_tests/test_schema.py::test_load_returns_an_object - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_load_many - AssertionError: asse...\nFAILED tests/unit_tests/test_schema.py::test_loads_returns_a_user - Assertion...\nFAILED tests/unit_tests/test_schema.py::test_loads_many - AttributeError: 'di...\nFAILED tests/unit_tests/test_schema.py::test_loads_deserializes_from_json - A...\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_all_errors_on_many_nested_field_with_validates_decorator\n======================= 47 failed, 1132 passed in 3.78s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema__resolve_hooks",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_decorated_processors_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_validates_schema_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[include]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_returning_none[raise]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processor_inheritance",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_schema_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_field_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[True-expected_data0-expected_original_data0-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_validator_nested_many_pass_original_and_pass_collection[False-expected_data1-expected_original_data1-data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators_merge_dict_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_passing_original_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_reporting_field_errors_in_schema_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_allow_arbitrary_field_names_in_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[pre_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load[post_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[pre_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_load_dict_error[post_load]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[pre_dump]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_error_handling_with_dump[post_dump]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 40,
+    "total": 40
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

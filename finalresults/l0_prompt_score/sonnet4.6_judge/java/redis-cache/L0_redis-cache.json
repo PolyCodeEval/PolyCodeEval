@@ -1,0 +1,29 @@
+{
+  "task": "java/redis-cache/L0_redis-cache",
+  "project": "java/redis-cache",
+  "language": "java",
+  "prompt_path": "datasets/java/redis-cache/tasks/L0_redis-cache/prompt.md",
+  "project_root": "datasets/java/redis-cache",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Covers RedisConfig (all fields with defaults: host=127.0.0.1, port=6379, database=0, ssl=false, password=null, clientName=null, serializer=JDKSerializer.INSTANCE), JDKSerializer (serialize/unserialize, null returns null, corrupted bytes throw), KryoSerializer (same API), DummyReadWriteLock (readLock/writeLock same object, newCondition returns null). All tested classes are covered."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "Guard-clause behaviors are precise: setHost(null/empty)->127.0.0.1, setPassword(null/empty)->null, setClientName(null/empty)->null. Default values match Jedis Protocol constants. JDKSerializer.INSTANCE and KryoSerializer.INSTANCE as public singletons. DummyReadWriteLock returning same lock object for both readLock/writeLock, and newCondition returning null."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "All blackbox tests (RedisConfig defaults, setter guard clauses, serializer round-trips for various types, DummyReadWriteLock same-lock-instance check, newCondition null) are directly derivable from prompt. Note: actual Redis connection is not tested, only configuration and serialization logic."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "The DummyReadWriteLock source confirms both readLock/writeLock return the same DummyLock instance and newCondition returns null, matching prompt. The prompt note that DummyReadWriteLock class visibility is package-private in source (class not public), but tests in the same package will still work. No functional conflicts."
+    }
+  },
+  "overall_score": 4.50
+}

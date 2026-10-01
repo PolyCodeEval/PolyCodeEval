@@ -1,0 +1,24 @@
+{
+  "task": "python/stocktrends/L3_indicators__shift_bricks",
+  "project": "python/stocktrends",
+  "language": "python",
+  "prompt_path": "datasets/python/stocktrends/tasks/L3_indicators__shift_bricks/prompt.md",
+  "task_json_path": "datasets/python/stocktrends/tasks/L3_indicators__shift_bricks/task.json",
+  "source_file_path": "datasets/python/stocktrends/src/stocktrends/indicators.py",
+  "target_symbol": "indicators.py::shift_bricks",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core logic: computing the shift between the latest close price in `self.df` and the last brick close in `self.bdf`, short-circuiting when the absolute difference is less than one brick size, and applying a whole-step adjustment to both open and close columns. The direction-of-move framing is correct. One minor inaccuracy is the phrase \"last brick's open and close values\" — the implementation updates **all rows** in `self.bdf[['open', 'close']]`, not just the last row. This is a meaningful behavioral difference but easy to overlook. The description is otherwise complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The implementation shifts open and close for the entire bdf dataframe (all rows), not just the most recent brick row — the description says 'the last brick's open and close values'."
+  ],
+  "incorrect_or_misleading_points": [
+    "'shift the last brick's open and close values' is misleading — `self.bdf[['open', 'close']] += step * self.brick_size` applies the shift to every row in bdf, not only the last one."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_indicators__shift_bricks.raw.md"
+}

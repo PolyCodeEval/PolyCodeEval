@@ -1,0 +1,7 @@
+{
+  "score": 4.9,
+  "reason": "The file-level and function-level descriptions closely match the implementation. They correctly describe the JWT helper’s purpose, configuration fields, JJWT/HMAC usage, exception-swallowing behavior for parsing helpers, the refresh flow, and bearer-token extraction logic. The prompt is also specific enough about using existing helpers and preserving the comment in `getToken`, which aligns well with the real file. Only very minor implementation details are omitted, such as the exact local variable naming in `refreshToken` and the fact that the refreshed builder uses `.claims(claims)` directly rather than explicitly restating issuer/subject.",
+  "missing_functionality": [],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

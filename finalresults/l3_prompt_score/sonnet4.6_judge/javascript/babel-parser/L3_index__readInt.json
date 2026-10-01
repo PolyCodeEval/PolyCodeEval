@@ -1,0 +1,29 @@
+{
+  "task": "javascript/babel-parser/L3_index__readInt",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__readInt/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__readInt/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::readInt",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description is largely accurate and covers the core behavior well: radix-based parsing, fixed vs unbounded length, forceLen semantics, numeric separator handling, error callback behavior, accumulation formula, and failure conditions. It correctly identifies the two separator error types and the bailOnError/recovery branching. A few subtle details are missed or slightly off: the description says non-digit/non-letter characters terminate parsing 'unless forceLen requires consuming them, in which case parsing ultimately fails' — but the implementation actually sets val=0 and invalid=true for *any* out-of-radix character when forceLen is true (including letters with val > radix), not just non-digit/non-letter ones. The description also doesn't mention that the loop counter `i` increments but `pos` does not when a separator is skipped (the `continue` path), which is a subtle but implementable detail. The description omits that `forbiddenSiblings` checks apply to the *previous* character as well as the next, and that `Number.isNaN(next)` (end of input) triggers unexpectedNumericSeparator. The description also doesn't mention the `lineStart` and `curLine` parameters passed to error callbacks. These are secondary details that don't undermine the overall accuracy.",
+  "missing_functionality": [
+    "The loop uses a counter `i` (not just `pos`) to bound iterations, so separator skips via `continue` consume a loop iteration without advancing `i` relative to pos — this subtle interaction is not described.",
+    "forbiddenSiblings check applies to the *previous* character (prev) as well as next; description only implies neighbor checks without specifying both directions explicitly.",
+    "Number.isNaN(next) (i.e., reading past end of input) triggers the unexpectedNumericSeparator path — not mentioned.",
+    "lineStart and curLine parameters are passed to all error callbacks but not mentioned in the description.",
+    "forceLen sets val=0 and invalid=true for any out-of-radix character (including letters with val > radix, not just non-digit/non-letter characters)."
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'non-digit/non-letter characters terminate parsing unless forceLen requires consuming them' — but forceLen applies to all out-of-radix values (val >= radix), including ASCII letters that are valid digits for lower radices but not the current one, not just non-digit/non-letter characters.",
+    "Description implies the `invalidDigit` callback path only applies to 'decimal-style digits invalid for the radix' (val <= 9) — this is correct but the description's phrasing could be clearer that letters with val > 9 that exceed the radix fall through to the forceLen/break path, not the invalidDigit path."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__readInt.raw.md"
+}

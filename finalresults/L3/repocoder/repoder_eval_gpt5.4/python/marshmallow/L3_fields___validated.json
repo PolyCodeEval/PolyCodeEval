@@ -1,0 +1,203 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 12.33,
+  "stdout": " _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Float(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump...number.', 'too_large': 'Number too large.', 'special': 'Special numeric values (nan or infinity) are not permitted.'})>\nvalue = '42.3'\n\n    def _validated(self, value: typing.Any) -> float:\n        num = super()._validated(value)\n        if self.allow_nan is False:\n>           if math.isnan(num) or num == float(\"inf\") or num == float(\"-inf\"):\nE           TypeError: must be real number, not str\n\nsrc/marshmallow/fields.py:1070: TypeError\n__________________________ test_custom_error_message ___________________________\n\n    def test_custom_error_message():\n        class ErrorSchema(Schema):\n            email = fields.Email(error_messages={\"invalid\": \"Invalid email\"})\n            homepage = fields.Url(error_messages={\"invalid\": \"Bad homepage.\"})\n            balance = fields.Decimal(error_messages={\"invalid\": \"Bad balance.\"})\n    \n        u = {\"email\": \"joe.net\", \"homepage\": \"joe@example.com\", \"balance\": \"blah\"}\n        s = ErrorSchema()\n        with pytest.raises(ValidationError) as excinfo:\n>           s.load(u)\n\ntests/unit_tests/test_schema.py:634: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:892: in _do_load\n    result = self._deserialize(\nsrc/marshmallow/schema.py:681: in _deserialize\n    value = self._call_and_store(\nsrc/marshmallow/schema.py:522: in _call_and_store\n    value = getter_func(data)\nsrc/marshmallow/schema.py:674: in getter\n    return field_obj.deserialize(\nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:1008: in _deserialize\n    return self._validated(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Decimal(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, du...alance.', 'too_large': 'Number too large.', 'special': 'Special numeric values (nan or infinity) are not permitted.'})>\nvalue = 'blah'\n\n    def _validated(self, value: typing.Any) -> decimal.Decimal:\n        try:\n            num = super()._validated(value)\n        except decimal.InvalidOperation as error:\n            raise self.make_error(\"invalid\") from error\n>       if not self.allow_nan and (num.is_nan() or num.is_infinite()):\nE       AttributeError: 'str' object has no attribute 'is_nan'\n\nsrc/marshmallow/fields.py:1149: AttributeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[bad]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[in_val2]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[True]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[False]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_overflow\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_integer_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_with_places\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_with_places_and_rounding\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_deserialization_string\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_special_values\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_special_values_not_permitted\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-None]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-False]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-True]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-None]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-False]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-True]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-None]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-False]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-True]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-None]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-False]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-True]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_toggle_show_invalid_value_in_error_message\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_structured_dict_key_value_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_field_wrong_type\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deserialize_invalid_item\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_to_dict\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_many\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_single_deserialization_to_dict\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_list_deserialization_to_dict\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization_with_index_errors_false\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validator\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field0]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field1]\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field2]\nFAILED tests/unit_tests/test_schema.py::test_loads_deserializes_from_json - T...\nFAILED tests/unit_tests/test_schema.py::test_custom_error_message - Attribute...\n======================= 47 failed, 1132 passed in 11.70s =======================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields___validated",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_skip_on_field_errors",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[bad]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[in_val2]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_float_field_deserialization[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_overflow",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_integer_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_with_places",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_with_places_and_rounding",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_deserialization_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_special_values",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_decimal_field_special_values_not_permitted",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[nan-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-nan-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[inf-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-None]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_float_field_allow_nan[-inf-True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_toggle_show_invalid_value_in_error_message",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_structured_dict_key_value_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_field_wrong_type",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deserialize_invalid_item",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_to_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_single_deserialization_to_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_nested_list_deserialization_to_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_unknown_fields_deserialization_with_index_errors_false",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_integer_with_validators[field2]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 45,
+    "total": 45
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

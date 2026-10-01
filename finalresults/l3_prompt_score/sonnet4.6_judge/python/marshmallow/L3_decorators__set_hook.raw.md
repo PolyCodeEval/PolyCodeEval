@@ -1,0 +1,12 @@
+{
+  "score": 4.6,
+  "reason": "The description accurately captures all major behaviors: dual-mode decorator/decorator-factory support via `functools.partial` when `fn` is None, attaching hook metadata to `__marshmallow_hook__` as a `defaultdict(list)`, appending `(many, kwargs)` tuples under the tag key, and returning the original function unchanged. The note about only supporting functions and instance methods is also included. The only minor gap is that the description says 'creating a tag-to-list mapping if needed' which slightly undersells that the entire `__marshmallow_hook__` attribute is a `defaultdict(list)` (not just a plain dict), and it omits the subtle `if hook_config is not None` guard before appending — though in practice this guard is always true after the try/except block. These are secondary implementation details that don't affect correctness of a reimplementation.",
+  "missing_functionality": [
+    "The `__marshmallow_hook__` attribute is specifically a `defaultdict(list)`, not a generic tag-to-list mapping — this distinction matters for reimplementation.",
+    "The `if hook_config is not None` guard before appending is not mentioned (though it is effectively always true in normal usage)."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing the storage as 'a tag-to-list mapping' is slightly imprecise; it is a `defaultdict(list)`, which auto-creates list entries on first access."
+  ],
+  "complete_enough": true
+}

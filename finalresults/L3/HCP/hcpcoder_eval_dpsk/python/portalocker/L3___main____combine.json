@@ -1,0 +1,395 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 18.69,
+  "stdout": "r process holds the lock, try to read its PID\n            return self.read_pid()\n\n        return None  # We successfully acquired the lock\n\n    def __exit__(\n        self,\n        exc_type: type[BaseException] | None,\n        exc_value: BaseException | None,\n        traceback: typing.Any,\n    ) -> bool | None:\n        if self._acquired_lock:  # pragma: no branch - trivial guard\n            self.release()\n            self._acquired_lock = False\n        return None\n\n    def release(self) -> None:\n        \"\"\"Release the sidecar lock and remove the PID file.\"\"\"\n        # Release sidecar first\n        if self._inner_lock is not None:\n            with contextlib.suppress(Exception):\n                self._inner_lock.release()\n            self._inner_lock = None\n        # Then use default behavior to close/unlock any fh and unlink PID file\n        super().release()\n        # Try to remove sidecar file as well\n        with contextlib.suppress(Exception):\n            if os.path.isfile(self._lockfile):\n                os.unlink(self._lockfile)\n\n\nclass BoundedSemaphore(LockBase):\n    \"\"\"\n    Bounded semaphore to prevent too many parallel processes from running\n\n    This method is deprecated because multiple processes that are completely\n    unrelated could end up using the same semaphore.  To prevent this,\n    use `NamedBoundedSemaphore` instead. The\n    `NamedBoundedSemaphore` is a drop-in replacement for this class.\n\n    >>> semaphore = BoundedSemaphore(2, directory='')\n    >>> str(semaphore.get_filenames()[0])\n    'bounded_semaphore.00.lock'\n    >>> str(sorted(semaphore.get_random_filenames())[1])\n    'bounded_semaphore.01.lock'\n    \"\"\"\n\n    lock: Lock | None\n\n    def __init__(\n        self,\n        maximum: int,\n        name: str = 'bounded_semaphore',\n        filename_pattern: str = '{name}.{number:02d}.lock',\n        directory: str = tempfile.gettempdir(),\n        timeout: float | None = DEFAULT_TIMEOUT,\n        check_interval: float | None = DEFAULT_CHECK_INTERVAL,\n        fail_when_locked: bool | None = True,\n    ) -> None:\n        self.maximum = maximum\n        self.name = name\n        self.filename_pattern = filename_pattern\n        self.directory = directory\n        self.lock: Lock | None = None\n        super().__init__(\n            timeout=timeout,\n            check_interval=check_interval,\n            fail_when_locked=fail_when_locked,\n        )\n\n        if not name or name == 'bounded_semaphore':\n            warnings.warn(\n                '`BoundedSemaphore` without an explicit `name` '\n                'argument is deprecated, use NamedBoundedSemaphore',\n                DeprecationWarning,\n                stacklevel=1,\n            )\n\n    def get_filenames(self) -> typing.Sequence[pathlib.Path]:\n        return [self.get_filename(n) for n in range(self.maximum)]\n\n    def get_random_filenames(self) -> typing.Sequence[pathlib.Path]:\n        filenames = list(self.get_filenames())\n        random.shuffle(filenames)\n        return filenames\n\n    def get_filename(self, number: int) -> pathlib.Path:\n        return pathlib.Path(self.directory) / self.filename_pattern.format(\n            name=self.name,\n            number=number,\n        )\n\n    def acquire(  # type: ignore[override]\n        self,\n        timeout: float | None = None,\n        check_interval: float | None = None,\n        fail_when_locked: bool | None = None,\n    ) -> Lock | None:\n        assert not self.lock, 'Already locked'\n\n        filenames = self.get_filenames()\n\n        for n in self._timeout_generator(timeout, check_interval):\n            logger.debug('trying lock (attempt %d) %r', n, filenames)\n            # no branch\n            if self.try_lock(filenames):  # pragma: no branch\n                return self.lock  # pragma: no cover\n\n        if fail_when_locked := coalesce(\n            fail_when_locked,\n            self.fail_when_locked,\n        ):\n            raise AlreadyLocked()\n\n        return None\n\n    def try_lock(self, filenames: typing.Sequence[Filename]) -> bool:\n        filename: Filename\n        for filename in filenames:\n            logger.debug('trying lock for %r', filename)\n            self.lock = Lock(filename, fail_when_locked=True)\n            try:\n                self.lock.acquire()\n            except AlreadyLocked:\n                self.lock = None\n            else:\n                logger.debug('locked %r', filename)\n                return True\n\n        return False\n\n    def release(self) -> None:  # pragma: no cover\n        if self.lock is not None:\n            self.lock.release()\n            self.lock = None\n\n\nclass NamedBoundedSemaphore(BoundedSemaphore):\n    \"\"\"\n    Bounded semaphore to prevent too many parallel processes from running\n\n    It's also possible to specify a timeout when acquiring the lock to wait\n    for a resource to become available.  This is very similar to\n    `threading.BoundedSemaphore` but works across multiple processes and across\n    multiple operating systems.\n\n    Because this works across multiple processes it's important to give the\n    semaphore a name.  This name is used to create the lock files.  If you\n    don't specify a name, a random name will be generated.  This means that\n    you can't use the same semaphore in multiple processes unless you pass the\n    semaphore object to the other processes.\n\n    >>> semaphore = NamedBoundedSemaphore(2, name='test')\n    >>> str(semaphore.get_filenames()[0])\n    '...test.00.lock'\n\n    >>> semaphore = NamedBoundedSemaphore(2)\n    >>> 'bounded_semaphore' in str(semaphore.get_filenames()[0])\n    True\n\n    \"\"\"\n\n    def __init__(\n        self,\n        maximum: int,\n        name: str | None = None,\n        filename_pattern: str = '{name}.{number:02d}.lock',\n        directory: str = tempfile.gettempdir(),\n        timeout: float | None = DEFAULT_TIMEOUT,\n        check_interval: float | None = DEFAULT_CHECK_INTERVAL,\n        fail_when_locked: bool | None = True,\n    ) -> None:\n        if name is None:\n            name = f'bounded_semaphore.{random.randint(0, 1000000):d}'\n        super().__init__(\n            maximum,\n            name,\n            filename_pattern,\n            directory,\n            timeout,\n            check_interval,\n            fail_when_locked,\n        )\n\ntry:  # pragma: no cover\n    from .redis import RedisLock\nexcept ImportError:  # pragma: no cover\n    RedisLock = None  # type: ignore[assignment,misc]\n\n\n#: The package name on Pypi\n#: Current author and maintainer, view the git history for the previous ones\n#: Current author's email address\n#: Version number\n#: Package description for Pypi\n#: Package homepage\n\n\n#: Exception thrown when the file is already locked by someone else\n#: Exception thrown if an error occurred during locking\n\n\n#: Lock a file. Note that this is an advisory lock on Linux/Unix systems\n#: Unlock a file\n\n#: Place an exclusive lock.\n#: Only one process may hold an exclusive lock for a given file at a given\n#: time.\nLOCK_EX: LockFlags = LockFlags.EXCLUSIVE\n\n#: Place a shared lock.\n#: More than one process may hold a shared lock for a given file at a given\n#: time.\nLOCK_SH: LockFlags = LockFlags.SHARED\n\n#: Acquire the lock in a non-blocking fashion.\nLOCK_NB: LockFlags = LockFlags.NON_BLOCKING\n\n#: Remove an existing lock held by this process.\nLOCK_UN: LockFlags = LockFlags.UNBLOCK\n\n#: Locking flags enum\n\n#: Locking utility class to automatically handle opening with timeouts and\n#: context wrappers\n\n__all__ = [\n    'LOCK_EX',\n    'LOCK_NB',\n    'LOCK_SH',\n    'LOCK_UN',\n    'AlreadyLocked',\n    'BoundedSemaphore',\n    'Lock',\n    'LockException',\n    'LockFlags',\n    'NamedBoundedSemaphore',\n    'PidFileLock',\n    'RLock',\n    'RedisLock',\n    'TemporaryFileLock',\n    'lock',\n    'open_atomic',\n    'unlock',\n]\n\n#################\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_combined.py::test_combined - NameError: name 'Lo...\n================= 1 failed, 92 passed, 1 deselected in 17.88s ==================\n",
+  "stderr": "",
+  "task": "python/portalocker/L3___main____combine",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "test_27",
+        "passed": true
+      },
+      {
+        "name": "test_28",
+        "passed": true
+      },
+      {
+        "name": "test_29",
+        "passed": true
+      },
+      {
+        "name": "test_30",
+        "passed": true
+      },
+      {
+        "name": "test_31",
+        "passed": true
+      },
+      {
+        "name": "test_32",
+        "passed": true
+      },
+      {
+        "name": "test_33",
+        "passed": true
+      },
+      {
+        "name": "test_34",
+        "passed": true
+      },
+      {
+        "name": "test_35",
+        "passed": true
+      },
+      {
+        "name": "test_36",
+        "passed": true
+      },
+      {
+        "name": "test_37",
+        "passed": true
+      },
+      {
+        "name": "test_38",
+        "passed": true
+      },
+      {
+        "name": "test_39",
+        "passed": true
+      },
+      {
+        "name": "test_40",
+        "passed": true
+      },
+      {
+        "name": "test_41",
+        "passed": true
+      },
+      {
+        "name": "test_42",
+        "passed": true
+      },
+      {
+        "name": "test_43",
+        "passed": true
+      },
+      {
+        "name": "test_44",
+        "passed": true
+      },
+      {
+        "name": "test_45",
+        "passed": true
+      },
+      {
+        "name": "test_46",
+        "passed": true
+      },
+      {
+        "name": "test_47",
+        "passed": true
+      },
+      {
+        "name": "test_48",
+        "passed": true
+      },
+      {
+        "name": "test_49",
+        "passed": true
+      },
+      {
+        "name": "test_50",
+        "passed": true
+      },
+      {
+        "name": "test_51",
+        "passed": true
+      },
+      {
+        "name": "test_52",
+        "passed": true
+      },
+      {
+        "name": "test_53",
+        "passed": true
+      },
+      {
+        "name": "test_54",
+        "passed": true
+      },
+      {
+        "name": "test_55",
+        "passed": true
+      },
+      {
+        "name": "test_56",
+        "passed": true
+      },
+      {
+        "name": "test_57",
+        "passed": true
+      },
+      {
+        "name": "test_58",
+        "passed": true
+      },
+      {
+        "name": "test_59",
+        "passed": true
+      },
+      {
+        "name": "test_60",
+        "passed": true
+      },
+      {
+        "name": "test_61",
+        "passed": true
+      },
+      {
+        "name": "test_62",
+        "passed": true
+      },
+      {
+        "name": "test_63",
+        "passed": true
+      },
+      {
+        "name": "test_64",
+        "passed": true
+      },
+      {
+        "name": "test_65",
+        "passed": true
+      },
+      {
+        "name": "test_66",
+        "passed": true
+      },
+      {
+        "name": "test_67",
+        "passed": true
+      },
+      {
+        "name": "test_68",
+        "passed": true
+      },
+      {
+        "name": "test_69",
+        "passed": true
+      },
+      {
+        "name": "test_70",
+        "passed": true
+      },
+      {
+        "name": "test_71",
+        "passed": true
+      },
+      {
+        "name": "test_72",
+        "passed": true
+      },
+      {
+        "name": "test_73",
+        "passed": true
+      },
+      {
+        "name": "test_74",
+        "passed": true
+      },
+      {
+        "name": "test_75",
+        "passed": true
+      },
+      {
+        "name": "test_76",
+        "passed": true
+      },
+      {
+        "name": "test_77",
+        "passed": true
+      },
+      {
+        "name": "test_78",
+        "passed": true
+      },
+      {
+        "name": "test_79",
+        "passed": true
+      },
+      {
+        "name": "test_80",
+        "passed": true
+      },
+      {
+        "name": "test_81",
+        "passed": true
+      },
+      {
+        "name": "test_82",
+        "passed": true
+      },
+      {
+        "name": "test_83",
+        "passed": true
+      },
+      {
+        "name": "test_84",
+        "passed": true
+      },
+      {
+        "name": "test_85",
+        "passed": true
+      },
+      {
+        "name": "test_86",
+        "passed": true
+      },
+      {
+        "name": "test_87",
+        "passed": true
+      },
+      {
+        "name": "test_88",
+        "passed": true
+      },
+      {
+        "name": "test_89",
+        "passed": true
+      },
+      {
+        "name": "test_90",
+        "passed": true
+      },
+      {
+        "name": "test_91",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      }
+    ],
+    "passed": 92,
+    "failed": 1,
+    "total": 93
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.9892,
+  "compile_score": 0.5,
+  "test_score": 0.4946,
+  "score": 0.9946
+}

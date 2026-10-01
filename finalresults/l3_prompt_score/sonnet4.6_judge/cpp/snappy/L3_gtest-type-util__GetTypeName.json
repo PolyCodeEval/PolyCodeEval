@@ -1,0 +1,24 @@
+{
+  "task": "cpp/snappy/L3_gtest-type-util__GetTypeName",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest-type-util__GetTypeName/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest-type-util__GetTypeName/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/include/gtest/internal/gtest-type-util.h",
+  "target_symbol": "third_party/googletest/googletest/include/gtest/internal/gtest-type-util.h::GetTypeName",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the main logic: using type.name(), attempting demangling on supported platforms, falling back on failure, and returning raw name on unsupported platforms. However, it incorrectly implies that the demangling-failure fallback returns the raw `type.name()` unchanged, when in fact it also passes through `CanonicalizeForStdLibVersioning`. Canonicalization applies to both success and failure branches on cxxabi/HP aCC platforms.",
+  "missing_functionality": [
+    "When demangling fails on cxxabi/HP aCC platforms, the result still passes through CanonicalizeForStdLibVersioning before being returned — not returned as-is."
+  ],
+  "incorrect_or_misleading_points": [
+    "Description implies the failure-to-demangle path returns the unmodified original type.name() string, but the implementation still applies CanonicalizeForStdLibVersioning to the fallback string."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest-type-util__GetTypeName.raw.md"
+}

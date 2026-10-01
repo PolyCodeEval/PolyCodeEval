@@ -1,0 +1,30 @@
+{
+  "task": "go/gobreaker/L0_gobreaker",
+  "project": "go/gobreaker",
+  "language": "go",
+  "prompt_path": "datasets/go/gobreaker/tasks/L0_gobreaker/prompt.md",
+  "project_root": "datasets/go/gobreaker",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt covers the core circuit breaker state machine, settings, counts, execute flow, two-step API, and the tested v1/v2 generic APIs well enough to reproduce the main library behavior. It omits notable repository capabilities present in the real codebase, especially v2 rolling-window settings such as BucketPeriod and IsExcluded, plus distributed and redis-related modules, so it does not fully represent the full project scope."
+    },
+    "unambiguity": {
+      "score": 4.6,
+      "reason": "Core states, transitions, exported types, default trip condition, timeout behavior, and main error contracts are described clearly, and the testing section gives concrete API signatures and edge cases. Minor ambiguity remains around whether half-open transition is observed on State() or only on the next request, and the prompt does not spell out some v2-specific behavioral details."
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "The prompt provides explicit package paths, exported APIs, state-machine transitions, error outcomes, count rules, and v2 generic expectations that map closely to the blackbox tests. A solver could implement the tested surface from the prompt with little guesswork, though a few callback and timing nuances still rely on careful interpretation."
+    },
+    "consistency": {
+      "score": 4.1,
+      "reason": "Most described behavior matches the real implementation and blackbox expectations, including default ReadyToTrip, timeout to half-open, count resets, and synchronous Execute semantics. The main mismatch is that the prompt models the v2 Settings/API as sharing the simpler v1 field set and two-step shape, while the actual v2 code adds BucketPeriod and IsExcluded and uses an error-based done callback for two-step operation."
+    }
+  },
+  "overall_score": 4.54,
+  "raw_response_file": "L0_gobreaker.raw.md"
+}

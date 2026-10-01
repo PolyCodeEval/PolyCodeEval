@@ -1,0 +1,30 @@
+{
+  "task": "python/Hybrid_Images/L0_Hybrid_Images",
+  "project": "python/Hybrid_Images",
+  "language": "python",
+  "prompt_path": "datasets/python/Hybrid_Images/tasks/L0_Hybrid_Images/prompt.md",
+  "project_root": "datasets/python/Hybrid_Images",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "gpt-5.4",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt 覆盖了项目核心能力：cross-correlation、convolution、Gaussian kernel、low/high pass，以及 hybrid image 组合；也说明了核心模块集中在 hybrid.py，并给出了主要数据形状、边界处理和典型使用流程。主要缺口是没有把 create_hybrid_image 的真实接口与 uint8 输出约束写成同等细度的测试契约，也未覆盖示例脚本和 acceptance 资源流。"
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "对黑盒测试关注的函数给了明确签名、输入输出 shape、dtype、零填充和数值容差，足以指导实现可验证版本。仍有少量歧义：'Support configurable sigma/kernel-size or equivalent filter parameters' 这类表述偏宽，且 hybrid-image 组合部分未像基础算子那样明确参数顺序、模式枚举和最终输出类型。"
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "Prompt 几乎直接给出了 blackbox tests 所需的 API contract：函数名、签名、shape、dtype、边界处理、恒等核/对称核/均值核行为、以及 low_pass 与 high_pass 的可断言关系，能够稳定支持黑盒验证核心功能。唯一不足是 acceptance 层 create_hybrid_image 的精确契约没有同样展开。"
+    },
+    "consistency": {
+      "score": 3.0,
+      "reason": "Prompt 与仓库当前真实实现/文档存在明显接口不一致：源码和 architecture 文档中的 gaussian_blur_kernel_2d、low_pass、high_pass 参数顺序分别是 (sigma, width, height) 与 (img, sigma, size)，而 prompt 指定为 (sigma, height, width) 与 (img, kernel_size, sigma)。虽然 prompt 与黑盒测试彼此一致，但若目标是复现当前仓库实现，这些真实接口偏差会造成明显冲突。"
+    }
+  },
+  "overall_score": 4.38,
+  "raw_response_file": "L0_Hybrid_Images.raw.md"
+}

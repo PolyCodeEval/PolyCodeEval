@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 1.07,
+  "stdout": "/zxcvbn/scoring.py:348: in spatial_guesses\n    guesses += nCk(i - 1, j - 1) * s * pow(d, j)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 1, k = 0\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n___________________________ test_dictionary_guesses ____________________________\n\n    def test_dictionary_guesses():\n        match = {\n            'token': 'aaaaa',\n            'rank': 32,\n        }\n        msg = \"base guesses == the rank\"\n        assert scoring.dictionary_guesses(match) == 32, msg\n    \n        match = {\n            'token': 'AAAaaa',\n            'rank': 32\n        }\n        msg = \"extra guesses are added for capitalization\"\n>       assert scoring.dictionary_guesses(\n            match) == 32 * scoring.uppercase_variations(match), msg\n\ntests/unit_tests/scoring_test.py:340: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/scoring.py:264: in dictionary_guesses\n    match['uppercase_variations'] = uppercase_variations(match)\nsrc/zxcvbn/scoring.py:386: in uppercase_variations\n    variations += nCk(U + L, i)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 6, k = 1\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n___________________________ test_uppercase_variants ____________________________\n\n    def test_uppercase_variants():\n        for [word, variants] in [\n            ['', 1],\n            ['a', 1],\n            ['A', 2],\n            ['abcdef', 1],\n            ['Abcdef', 2],\n            ['abcdeF', 2],\n            ['ABCDEF', 2],\n>           ['aBcdef', scoring.nCk(6, 1)],\n            ['aBcDef', scoring.nCk(6, 1) + scoring.nCk(6, 2)],\n            ['ABCDEf', scoring.nCk(6, 1)],\n            ['aBCDEf', scoring.nCk(6, 1) + scoring.nCk(6, 2)],\n            ['ABCdef', scoring.nCk(6, 1) + scoring.nCk(6, 2) + scoring.nCk(6, 3)],\n        ]:\n\ntests/unit_tests/scoring_test.py:383: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 6, k = 1\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n______________________________ test_l33t_variants ______________________________\n\n    def test_l33t_variants():\n        match = {\n            'l33t': False\n        }\n        assert scoring.l33t_variations(match) == 1, \"1 variant for non-l33t matches\"\n        for [word, variants, sub] in [\n            ['', 1, {}],\n            ['a', 1, {}],\n            ['4', 2, {'4': 'a'}],\n            ['4pple', 2, {'4': 'a'}],\n            ['abcet', 1, {}],\n            ['4bcet', 2, {'4': 'a'}],\n            ['a8cet', 2, {'8': 'b'}],\n            ['abce+', 2, {'+': 't'}],\n            ['48cet', 4, {'4': 'a', '8': 'b'}],\n>           ['a4a4aa', scoring.nCk(6, 2) + scoring.nCk(6, 1), {'4': 'a'}],\n            ['4a4a44', scoring.nCk(6, 2) + scoring.nCk(6, 1), {'4': 'a'}],\n            ['a44att+', (scoring.nCk(4, 2) + scoring.nCk(4, 1)) *\n                    scoring.nCk(3, 1), {'4': 'a', '+': 't'}],\n        ]:\n\ntests/unit_tests/scoring_test.py:408: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 6, k = 2\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:281: in repeat_match\n    base_analysis = most_guessable_match_sequence(\nsrc/zxcvbn/scoring.py:197: in most_guessable_match_sequence\n    update(m, l + 1)\nsrc/zxcvbn/scoring.py:111: in update\n    pi = estimate_guesses(m, password)\nsrc/zxcvbn/scoring.py:241: in estimate_guesses\n    guesses = estimation_functions[match['pattern']](match)\nsrc/zxcvbn/scoring.py:348: in spatial_guesses\n    guesses += nCk(i - 1, j - 1) * s * pow(d, j)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 1, k = 0\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n____________________________ test_nCk_small_values _____________________________\n\n    def test_nCk_small_values():\n>       assert nCk(5, 2) == 10\n\ntests/unit_tests/zxcvbn_test.py:37: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nn = 5, k = 2\n\n    def nCk(n, k):\n        \"\"\"http://blog.plover.com/math/choose.html\"\"\"\n>       matches.append({\n            'pattern': 'date',\n            'token': token,\n            'i': i,\n            'j': j,\n            'separator': rx_match.group(2),\n            'year': dmy['year'],\n            'month': dmy['month'],\n            'day': dmy['day'],\n        })\nE       NameError: name 'matches' is not defined\n\nsrc/zxcvbn/scoring.py:31: NameError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/scoring_test.py::test_nCk - NameError: name 'matches'...\nFAILED tests/unit_tests/scoring_test.py::test_spatial_guesses - NameError: na...\nFAILED tests/unit_tests/scoring_test.py::test_dictionary_guesses - NameError:...\nFAILED tests/unit_tests/scoring_test.py::test_uppercase_variants - NameError:...\nFAILED tests/unit_tests/scoring_test.py::test_l33t_variants - NameError: name...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - NameError: name ...\nFAILED tests/unit_tests/zxcvbn_test.py::test_nCk_small_values - NameError: na...\n========================= 7 failed, 27 passed in 0.72s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_scoring__nCk",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      }
+    ],
+    "passed": 27,
+    "failed": 7,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7941,
+  "compile_score": 0.5,
+  "test_score": 0.3971,
+  "score": 0.8971
+}

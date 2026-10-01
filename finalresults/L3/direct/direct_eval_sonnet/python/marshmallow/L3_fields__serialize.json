@@ -1,0 +1,59 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.66,
+  "stdout": "     # only has a function field\n        class UserFunctionContextSchema(Schema):\n            is_collab = fields.Function(serialize)\n    \n        owner = User(\"Joe\")\n        serializer = UserFunctionContextSchema()\n        data = serializer.dump(owner)\n>       assert data[\"is_collab\"] == \"value\"\nE       KeyError: 'is_collab'\n\ntests/unit_tests/test_context.py:93: KeyError\n________________ TestContext.test_nested_fields_inherit_context ________________\n\nself = <tests.unit_tests.test_context.TestContext object at 0x7f717caffca0>\n\n    def test_nested_fields_inherit_context(self):\n        class InnerSchema(Schema):\n            likes_bikes = fields.Function(lambda obj: \"bikes\" in Context.get()[\"info\"])\n    \n        class CSchema(Schema):\n            inner = fields.Nested(InnerSchema)\n    \n        ser = CSchema()\n        with Context[dict]({\"info\": \"i like bikes\"}):\n            obj: dict[str, dict] = {\"inner\": {}}\n            result = ser.dump(obj)\n>           assert result[\"inner\"][\"likes_bikes\"] is True\nE           KeyError: 'likes_bikes'\n\ntests/unit_tests/test_context.py:106: KeyError\n________ TestContext.test_function_field_passed_serialize_with_context _________\n\nself = <tests.unit_tests.test_context.TestContext object at 0x7f717caff460>\nuser = <User Monty>\n\n    def test_function_field_passed_serialize_with_context(self, user):\n        class Parent(Schema):\n            pass\n    \n        field = fields.Function(\n            serialize=lambda obj: obj.name.upper() + Context.get()[\"key\"]\n        )\n        field.parent = Parent()\n        with Context({\"key\": \"BAR\"}):\n>           assert field.serialize(\"key\", user) == \"MONTYBAR\"\nE           AssertionError: assert <marshmallow.missing> == 'MONTYBAR'\nE            +  where <marshmallow.missing> = serialize('key', <User Monty>)\nE            +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_context.py:176: AssertionError\n______________________________ test_method_field _______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\n\n    def test_method_field(serialized_user):\n>       assert serialized_user[\"is_old\"] is False\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:529: KeyError\n_____________________________ test_function_field ______________________________\n\nserialized_user = {'activation_date': '2013-12-11', 'age': 42.3, 'balance': Decimal('100'), 'birthdate': '2013-01-23', ...}\nuser = <User Monty>\n\n    def test_function_field(serialized_user, user):\n>       assert serialized_user[\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:535: KeyError\n__________________ TestNestedSchema.test_nested_method_field ___________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f717bf8ebc0>\nblog = <tests.base.Blog object at 0x7f717bb95b40>\n\n    def test_nested_method_field(self, blog):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"is_old\"]\nE       KeyError: 'is_old'\n\ntests/unit_tests/test_schema.py:1948: KeyError\n_________________ TestNestedSchema.test_nested_function_field __________________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f717bf69780>\nblog = <tests.base.Blog object at 0x7f717bd47f10>, user = <User Monty>\n\n    def test_nested_function_field(self, blog, user):\n        data = BlogSchema().dump(blog)\n>       assert data[\"user\"][\"lowername\"] == user.name.lower()\nE       KeyError: 'lowername'\n\ntests/unit_tests/test_schema.py:1953: KeyError\n____________ TestFieldSerialization.test_function_field_passed_func ____________\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f717bfcdcc0>\nuser = <User Foo>\n\n    def test_function_field_passed_func(self, user):\n        field = fields.Function(lambda obj: obj.name.upper())\n>       assert field.serialize(\"key\", user) == \"FOO\"\nE       AssertionError: assert <marshmallow.missing> == 'FOO'\nE        +  where <marshmallow.missing> = serialize('key', <User Foo>)\nE        +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_serialization.py:46: AssertionError\n_________ TestFieldSerialization.test_function_field_passed_serialize __________\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f717bfce530>\nuser = <User Foo>\n\n    def test_function_field_passed_serialize(self, user):\n        field = fields.Function(serialize=lambda obj: obj.name.upper())\n>       assert field.serialize(\"key\", user) == \"FOO\"\nE       AssertionError: assert <marshmallow.missing> == 'FOO'\nE        +  where <marshmallow.missing> = serialize('key', <User Foo>)\nE        +    where serialize = <fields.Function(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, d...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_serialization.py:60: AssertionError\n_ TestFieldSerialization.test_function_field_does_not_swallow_attribute_error __\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f717bfce170>\nuser = <User Foo>\n\n    def test_function_field_does_not_swallow_attribute_error(self, user):\n        def raise_error(obj):\n            raise AttributeError\n    \n        field = fields.Function(serialize=raise_error)\n>       with pytest.raises(AttributeError):\nE       Failed: DID NOT RAISE <class 'AttributeError'>\n\ntests/unit_tests/test_serialization.py:68: Failed\n__ TestFieldSerialization.test_method_field_does_not_swallow_attribute_error ___\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f717bfcf220>\n\n    def test_method_field_does_not_swallow_attribute_error(self):\n        class MySchema(Schema):\n            mfield = fields.Method(\"raise_error\")\n    \n            def raise_error(self, obj):\n                raise AttributeError\n    \n>       with pytest.raises(AttributeError):\nE       Failed: DID NOT RAISE <class 'AttributeError'>\n\ntests/unit_tests/test_serialization.py:493: Failed\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_method - K...\nFAILED tests/unit_tests/test_context.py::TestContext::test_context_function\nFAILED tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer\nFAILED tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context\nFAILED tests/unit_tests/test_context.py::TestContext::test_function_field_passed_serialize_with_context\nFAILED tests/unit_tests/test_schema.py::test_method_field - KeyError: 'is_old'\nFAILED tests/unit_tests/test_schema.py::test_function_field - KeyError: 'lowe...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_func\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_serialize\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_does_not_swallow_attribute_error\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_method_field_does_not_swallow_attribute_error\n======================= 13 failed, 1166 passed in 2.21s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__serialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_context_function",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_function_field_handles_bound_serializer",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_nested_fields_inherit_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_function_field_passed_serialize_with_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_func",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_passed_serialize",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_function_field_does_not_swallow_attribute_error",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 9,
+    "total": 9
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

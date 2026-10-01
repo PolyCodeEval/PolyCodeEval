@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.71,
+  "stdout": " {awareness} {obj_type}.', 'format': '\"{input}\" cannot be formatted as a {obj_type}.'})>\nvalue = '1384043025', attr = None, data = None, kwargs = {}\n\n    def _deserialize(self, value, attr, data, **kwargs) -> _D:\n        internal_type: type[_D] = getattr(dt, self.OBJ_TYPE)\n        if isinstance(value, internal_type):\n            return value\n        data_format = self.format or self.DEFAULT_FORMAT\n        func = self.DESERIALIZATION_FUNCS.get(data_format)\n        try:\n            if func:\n                return func(value)\n            return self._make_object_from_format(value, data_format)\n        except (TypeError, AttributeError, ValueError) as error:\n>           raise self.make_error(\n                \"invalid\", input=value, obj_type=self.OBJ_TYPE\n            ) from error\nE           marshmallow.exceptions.ValidationError: Not a valid datetime.\n\nsrc/marshmallow/fields.py:1301: ValidationError\n_ TestFieldDeserialization.test_boolean_timestamp_field_deserialization[True-timestamp] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff242ad0>\nfmt = 'timestamp', in_value = True\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\"in_value\", [True, False])\n    def test_boolean_timestamp_field_deserialization(self, fmt, in_value):\n        field = fields.DateTime(format=fmt)\n>       with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\nE       Failed: DID NOT RAISE ValidationError\n\ntests/unit_tests/test_deserialization.py:596: Failed\n_ TestFieldDeserialization.test_boolean_timestamp_field_deserialization[False-timestamp] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff242da0>\nfmt = 'timestamp', in_value = False\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\"in_value\", [True, False])\n    def test_boolean_timestamp_field_deserialization(self, fmt, in_value):\n        field = fields.DateTime(format=fmt)\n>       with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\nE       Failed: DID NOT RAISE ValidationError\n\ntests/unit_tests/test_deserialization.py:596: Failed\n_ TestFieldDeserialization.test_invalid_timestamp_field_deserialization[-1-timestamp] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff221c60>\nfmt = 'timestamp', in_value = -1\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\n        \"in_value\",\n        [\"\", \"!@#\", -1],\n    )\n    def test_invalid_timestamp_field_deserialization(self, fmt, in_value):\n        field = fields.DateTime(format=fmt)\n>       with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\nE       Failed: DID NOT RAISE ValidationError\n\ntests/unit_tests/test_deserialization.py:606: Failed\n_ TestFieldDeserialization.test_invalid_timestamp_field_deserialization[-1-timestamp_ms] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff222770>\nfmt = 'timestamp_ms', in_value = -1\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\n        \"in_value\",\n        [\"\", \"!@#\", -1],\n    )\n    def test_invalid_timestamp_field_deserialization(self, fmt, in_value):\n        field = fields.DateTime(format=fmt)\n>       with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\nE       Failed: DID NOT RAISE ValidationError\n\ntests/unit_tests/test_deserialization.py:606: Failed\n_ TestFieldDeserialization.test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff241f60>\nfmt = 'timestamp'\nmock_fromtimestamp = <class 'tests.unit_tests.test_deserialization.MockDateTimeOSError'>\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\n        \"mock_fromtimestamp\", [MockDateTimeOSError, MockDateTimeOverflowError]\n    )\n    def test_oversized_timestamp_field_deserialization(self, fmt, mock_fromtimestamp):\n        with patch(\"datetime.datetime\", mock_fromtimestamp):\n            field = fields.DateTime(format=fmt)\n            with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\n>               field.deserialize(99999999999999999)\n\ntests/unit_tests/test_deserialization.py:618: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:1298: in _deserialize\n    return func(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalue = 99999999999999999\n\n    def from_timestamp(value: typing.Any) -> dt.datetime:\n>       return dt.datetime.utcfromtimestamp(value)\nE       OSError: [Errno 75] Value too large for defined data type\n\nsrc/marshmallow/utils.py:41: OSError\n_ TestFieldDeserialization.test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp] _\n\nself = <tests.unit_tests.test_deserialization.TestFieldDeserialization object at 0x7f48ff240fd0>\nfmt = 'timestamp'\nmock_fromtimestamp = <class 'tests.unit_tests.test_deserialization.MockDateTimeOverflowError'>\n\n    @pytest.mark.parametrize(\"fmt\", [\"timestamp\", \"timestamp_ms\"])\n    @pytest.mark.parametrize(\n        \"mock_fromtimestamp\", [MockDateTimeOSError, MockDateTimeOverflowError]\n    )\n    def test_oversized_timestamp_field_deserialization(self, fmt, mock_fromtimestamp):\n        with patch(\"datetime.datetime\", mock_fromtimestamp):\n            field = fields.DateTime(format=fmt)\n            with pytest.raises(ValidationError, match=\"Not a valid datetime.\"):\n>               field.deserialize(99999999999999999)\n\ntests/unit_tests/test_deserialization.py:618: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:1298: in _deserialize\n    return func(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nvalue = 99999999999999999\n\n    def from_timestamp(value: typing.Any) -> dt.datetime:\n>       return dt.datetime.utcfromtimestamp(value)\nE       OSError: [Errno 75] Value too large for defined data type\n\nsrc/marshmallow/utils.py:41: OSError\n___________________ test_from_timestamp_with_negative_value ____________________\n\n    def test_from_timestamp_with_negative_value():\n        value = -10\n>       with pytest.raises(ValueError, match=r\"Not a valid POSIX timestamp\"):\nE       Failed: DID NOT RAISE ValueError\n\ntests/unit_tests/test_utils.py:121: Failed\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected1]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[True-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[False-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp_ms]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp]\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp]\nFAILED tests/unit_tests/test_utils.py::test_from_timestamp_with_negative_value\n======================== 8 failed, 1171 passed in 3.21s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_utils__from_timestamp",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1384043025-expected1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[True-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[False-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-1-timestamp_ms]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOSError-timestamp]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_oversized_timestamp_field_deserialization[MockDateTimeOverflowError-timestamp]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 7,
+    "total": 7
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

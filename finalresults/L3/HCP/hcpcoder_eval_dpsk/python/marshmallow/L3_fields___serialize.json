@@ -1,0 +1,83 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 19.93,
+  "stdout": "eld.serialize(\"age\", user) == user.age\nE       AssertionError: assert datetime.datetime(1970, 1, 1, 0, 0, 42, tzinfo=datetime.timezone.utc) == 42\nE        +  where datetime.datetime(1970, 1, 1, 0, 0, 42, tzinfo=datetime.timezone.utc) = serialize('age', <User Foo>)\nE        +    where serialize = <fields.Raw(dump_default=<marshmallow.missing>, attribute=None, validate=<function TestFieldSerialization.test_seriali...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\nE        +  and   42 = <User Foo>.age\n\ntests/unit_tests/test_serialization.py:906: AssertionError\n____ TestFieldSerialization.test_all_fields_serialize_none_to_none[Boolean] ____\n\nself = <tests.unit_tests.test_serialization.TestFieldSerialization object at 0x7f2168440af0>\nFieldClass = <class 'marshmallow.fields.Boolean'>\n\n    @pytest.mark.parametrize(\"FieldClass\", ALL_FIELDS)\n    def test_all_fields_serialize_none_to_none(self, FieldClass):\n        field = FieldClass(allow_none=True)\n>       res = field.serialize(\"foo\", {\"foo\": None})\n\ntests/unit_tests/test_serialization.py:930: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Boolean(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, du...d field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'invalid': 'Not a valid boolean.'})>\nvalue = None, attr = 'foo', obj = {'foo': None}, kwargs = {}\n\n    def _serialize(\n        self, value: _InternalT | None, attr: str | None, obj: typing.Any, **kwargs\n    ) -> typing.Any:\n        \"\"\"Serializes ``value`` to a basic Python datatype. Noop by default.\n        Concrete :class:`Field` classes should implement this method.\n    \n        Example: ::\n    \n            class TitleCase(Field):\n                def _serialize(self, value, attr, obj, **kwargs):\n                    if not value:\n                        return \"\"\n                    return str(value).title()\n    \n        :param value: The value to be serialized.\n        :param attr: The attribute or key on the object to be serialized.\n        :param obj: The object the value was pulled from.\n        :param kwargs: Field-specific keyword arguments.\n        :return: The serialized value\n        \"\"\"\n        if isinstance(value, str):\n            try:\n                value = float(value)\n            except ValueError as e:\n                raise ValueError(\"Invalid timestamp.\") from e\n>       return dt.datetime.fromtimestamp(value, tz=dt.timezone.utc)\nE       TypeError: 'NoneType' object cannot be interpreted as an integer\n\nsrc/marshmallow/fields.py:441: TypeError\n_________________________ test_serializing_named_tuple _________________________\n\n    def test_serializing_named_tuple():\n        field = fields.Raw()\n    \n        p = Point(x=4, y=2)\n    \n>       assert field.serialize(\"x\", p) == 4\nE       AssertionError: assert datetime.datetime(1970, 1, 1, 0, 0, 4, tzinfo=datetime.timezone.utc) == 4\nE        +  where datetime.datetime(1970, 1, 1, 0, 0, 4, tzinfo=datetime.timezone.utc) = serialize('x', Point(x=4, y=2))\nE        +    where serialize = <fields.Raw(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump_o...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>.serialize\n\ntests/unit_tests/test_serialization.py:961: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_invalid_value\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_wrong_type\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry\nFAILED tests/unit_tests/test_schema.py::test_serializing_basic_object - Value...\nFAILED tests/unit_tests/test_schema.py::test_serializer_dump - ValueError: In...\nFAILED tests/unit_tests/test_schema.py::test_dump_many - ValueError: Invalid ...\nFAILED tests/unit_tests/test_schema.py::test_dump_returns_a_dict - ValueError...\nFAILED tests/unit_tests/test_schema.py::test_dumps_returns_a_string - ValueEr...\nFAILED tests/unit_tests/test_schema.py::test_dumping_single_object_with_collection_schema\nFAILED tests/unit_tests/test_schema.py::test_dumps_many - ValueError: Invalid...\nFAILED tests/unit_tests/test_schema.py::test_dumps_returns_json - ValueError:...\nFAILED tests/unit_tests/test_schema.py::test_serialize_many - ValueError: Inv...\nFAILED tests/unit_tests/test_schema.py::test_inheriting_schema - ValueError: ...\nFAILED tests/unit_tests/test_schema.py::test_email_field - ValueError: Invali...\nFAILED tests/unit_tests/test_schema.py::test_integer_field - ValueError: Inva...\nFAILED tests/unit_tests/test_schema.py::test_as_string - ValueError: Invalid ...\nFAILED tests/unit_tests/test_schema.py::test_serializing_generator - ValueErr...\nFAILED tests/unit_tests/test_schema.py::test_exclude_in_init - ValueError: In...\nFAILED tests/unit_tests/test_schema.py::test_exclude_fields - ValueError: Inv...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested - Value...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_many_fields\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_only - ...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_exclude - Valu...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_list_field - V...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field\nFAILED tests/unit_tests/test_schema.py::test_serialization_with_required_field\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_enum_field_by_value_true_serialization\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_serialize_with_data_key_as_empty_string\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_serialize_does_not_apply_validators\nFAILED tests/unit_tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[Boolean]\nFAILED tests/unit_tests/test_serialization.py::test_serializing_named_tuple\nERROR tests/unit_tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load\nERROR tests/unit_tests/test_schema.py::test_naive_datetime_field - ValueError...\nERROR tests/unit_tests/test_schema.py::test_datetime_formatted_field - ValueE...\nERROR tests/unit_tests/test_schema.py::test_datetime_iso_field - ValueError: ...\nERROR tests/unit_tests/test_schema.py::test_tz_datetime_field - ValueError: I...\nERROR tests/unit_tests/test_schema.py::test_class_variable - ValueError: Inva...\nERROR tests/unit_tests/test_schema.py::test_custom_field - ValueError: Invali...\nERROR tests/unit_tests/test_schema.py::test_url_field - ValueError: Invalid t...\nERROR tests/unit_tests/test_schema.py::test_method_field - ValueError: Invali...\nERROR tests/unit_tests/test_schema.py::test_function_field - ValueError: Inva...\nERROR tests/unit_tests/test_schema.py::test_can_serialize_uuid - ValueError: ...\nERROR tests/unit_tests/test_schema.py::test_can_serialize_time - ValueError: ...\n================= 35 failed, 1132 passed, 12 errors in 18.97s ==================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields___serialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_invalid_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_wrong_type",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_dumping_single_object_with_collection_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_many_fields",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_method_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_function_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_serialization_with_required_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_enum_field_by_value_true_serialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_serialize_with_data_key_as_empty_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_serialize_does_not_apply_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[Boolean]",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 15,
+    "total": 15
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

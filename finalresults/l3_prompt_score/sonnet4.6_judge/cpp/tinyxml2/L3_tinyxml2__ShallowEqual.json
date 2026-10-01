@@ -1,0 +1,24 @@
+{
+  "task": "cpp/tinyxml2/L3_tinyxml2__ShallowEqual",
+  "project": "cpp/tinyxml2",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__ShallowEqual/prompt.md",
+  "task_json_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__ShallowEqual/task.json",
+  "source_file_path": "datasets/cpp/tinyxml2/src/tinyxml2.cpp",
+  "target_symbol": "tinyxml2.cpp::ShallowEqual",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: checking that the compare node is non-null, castable to an element, has the same name, and has matching attribute values in sequence with identical count. It correctly notes that child nodes and text content are not compared. The one notable inaccuracy is the claim that attribute names are not compared independently — the implementation does compare attribute values in positional order but does NOT compare attribute names at all, which the description mentions as a deliberate omission. That part is actually correct. However, the description slightly mischaracterizes the null check: the implementation uses `TIXMLASSERT(compare)` (an assertion, not a runtime null guard), meaning null input is undefined behavior rather than a graceful false return. This is a minor but real distinction. Overall the description is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The null check on `compare` is an assertion (TIXMLASSERT), not a runtime guard — passing null is undefined behavior, not a safe false return. The description implies it is a safe check."
+  ],
+  "incorrect_or_misleading_points": [
+    "Saying 'the input node is non-null' as a condition implies a safe null check, but the implementation asserts non-null (debug assertion), so null input is not handled gracefully at runtime."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_tinyxml2__ShallowEqual.raw.md"
+}

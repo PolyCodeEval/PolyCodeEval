@@ -1,0 +1,22 @@
+{
+  "task": "go/gobreaker/L2_gobreaker_go",
+  "project": "go/gobreaker",
+  "language": "go",
+  "prompt_path": "datasets/go/gobreaker/tasks/L2_gobreaker_go/prompt.md",
+  "task_json_path": "datasets/go/gobreaker/tasks/L2_gobreaker_go/task.json",
+  "source_file_path": "datasets/go/gobreaker/src/gobreaker.go",
+  "target_file": "gobreaker.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 4.9,
+  "reason": "The file-level description and all ten function-level descriptions are highly accurate and closely match the actual implementation. Every key behavior is captured: the three-state machine, default value substitution in `NewCircuitBreaker`, panic recovery in `Execute`, generation-capture semantics in `Allow`, mutex synchronization and state-refresh pattern in `beforeRequest`/`afterRequest`, the closed/half-open/open routing in `onSuccess` and `onFailure`, time-driven rollover and transition logic in `currentState`, the guard-on-same-state in `setState`, and the expiry recalculation rules in `toNewGeneration`. The descriptions are precise enough that a model could reconstruct the file with high fidelity without any significant gaps.",
+  "missing_functionality": [
+    "The `currentState` description says 'if an expiry is set and it is before now' for the closed-state rollover, but the implementation uses `!cb.expiry.IsZero() && cb.expiry.Before(now)` — the IsZero guard is implied but not explicitly stated, which is a very minor omission.",
+    "The `NewCircuitBreaker` description says 'start a fresh generation based on the current time' but does not explicitly state that this is done by calling `toNewGeneration(time.Now())` directly (without calling `setState`), which is a subtle but important detail distinguishing initialization from a state transition."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L2_gobreaker_go.raw.md"
+}

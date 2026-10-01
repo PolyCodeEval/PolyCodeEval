@@ -1,0 +1,16 @@
+{
+  "score": 4.6,
+  "reason": "The file-level summary matches the implementation very well: this is indeed the full embedded miniz runtime, including zlib-style APIs, low-level DEFLATE/inflate internals, ZIP reader/writer/validator support, zip64 handling, checksum helpers, memory/file glue, and PNG writing. The function responsibilities are also unusually comprehensive and mostly align closely with the real code, often down to important algorithmic details and edge-case behaviors. The main weaknesses are a few omissions in public helper coverage and some places where the description sounds more universal than the implementation is actually conditional or slightly narrower. Overall it is highly faithful, but not perfectly complete for reconstructing all 103 hollowed bodies without consulting code patterns.",
+  "missing_functionality": [
+    "Several implemented public/helper functions are not described individually despite being hollowed in the skeleton, such as miniz_def_alloc/free/realloc helpers, mz_version, tdefl_compress_buffer, tdefl_get_prev_return_status, tdefl_get_adler32, tinfl_decompress_mem_to_mem, mz_zip_zero_struct, mz_zip_reader_end, mz_zip_writer_init, mz_zip_writer_init_heap, mz_zip_writer_init_file, mz_zip_writer_init_from_reader, mz_zip_writer_add_mem, mz_zip_writer_add_cfile, mz_zip_reader_extract_file_to_mem/_no_alloc/_callback/_to_file/_to_cfile wrappers, mz_zip_reader_file_stat, mz_zip_get_mode/type/is_zip64/get_central_dir_size/get_num_files/get_archive_size/get_archive_file_start_offset/get_cfile/read_archive_data, mz_zip_peek_last_error, and mz_zip_clear_last_error.",
+    "The prompt does not mention that many archive-writing/extraction paths are heavily conditional on compile-time options like MINIZ_NO_STDIO, MINIZ_NO_TIME, MINIZ_NO_ARCHIVE_WRITING_APIS, and architecture-dependent fast paths, which matters when reconstructing exact bodies and signatures.",
+    "Some convenience and lifecycle details are missing, such as reader/writer mode transitions, ownership transfer in heap finalization, and the fact that append-from-reader reuses/rewrites existing central-directory structures rather than rebuilding entries from abstract metadata only."
+  ],
+  "incorrect_or_misleading_points": [
+    "The file description says the file implements the full miniz runtime, but the actual implementation is feature-gated by many MINIZ_NO_* macros, so 'full' is only conditionally true depending on build configuration.",
+    "The disabled compact CRC-32 description is accurate for the #if 0 body, but it may mislead a reconstructor into thinking both mz_crc32 bodies are active completion targets; in practice only one implementation is compiled unless USE_EXTERNAL_MZCRC is set.",
+    "The mz_inflate description slightly overstates direct finish-mode behavior as 'require status DONE'; the implementation returns BUF_ERROR and marks failure if first-call FINISH does not end cleanly, which is subtly different from a pure hard requirement phrasing.",
+    "Some archive validation and writer descriptions imply broader zip64/general support than implemented; the real code has explicit practical 32-bit limits in places (central directory sizing, file counts, some append/copy cases) and rejects certain theoretically valid cases."
+  ],
+  "complete_enough": false
+}

@@ -1,0 +1,21 @@
+{
+  "project": "script",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "Prompt 覆盖了 Pipe 管道的 Sources（File/Stdin/Exec/Echo/Get 等）、Filters（Match/Grep/Sort/Uniq/JQ/Column 等）、Sinks（String/Slice/CountLines/Stdout 等）。覆盖核心 shell-script 替代能力。"
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "API 方法签名（如 File → *Pipe、Match 返回 *Pipe、String 返回 (string, error)）清楚。但 Filter/FilterLine/FilterScan 的自定义函数参数和错误累积（accumulate at sink）语义需结合代码推断。"
+    },
+    "testability": {
+      "score": 4.4,
+      "reason": "测试需求覆盖列提取、Slice 源、Match 过滤、链式调用。pipe 错误累积、空输出处理等行为有说明。"
+    },
+    "consistency": {
+      "score": 4.2,
+      "reason": "API 表面与真实 script 库一致。但实际库的 Pipe 方法更丰富（有 ExecForEach、JQ 依赖 gojq 等），prompt 仅覆盖测试子集。"
+    }
+  }
+}

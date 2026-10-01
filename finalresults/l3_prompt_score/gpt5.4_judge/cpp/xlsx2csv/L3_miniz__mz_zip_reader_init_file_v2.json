@@ -1,0 +1,23 @@
+{
+  "task": "cpp/xlsx2csv/L3_miniz__mz_zip_reader_init_file_v2",
+  "project": "cpp/xlsx2csv",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_init_file_v2/prompt.md",
+  "task_json_path": "datasets/cpp/xlsx2csv/tasks/L3_miniz__mz_zip_reader_init_file_v2/task.json",
+  "source_file_path": "datasets/cpp/xlsx2csv/src/src/miniz.c",
+  "target_symbol": "miniz.c::mz_zip_reader_init_file_v2",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely. It correctly covers parameter validation, file opening, archive size resolution, minimum-size checks, internal reader initialization, setup of file-backed reader state, central-directory loading, cleanup on failure, and the final success condition. It is also sufficiently specific to support implementation. The only notable omissions are a couple of low-level details from the exact code path, such as not mentioning that file length is obtained via FTELL after seeking to end without restoring the original position, and that failure of the internal init/central-dir read paths returns plain false rather than necessarily setting a new error in this function.",
+  "missing_functionality": [
+    "Does not explicitly mention that when archive_size is zero, the function obtains the size by seeking to end and then calling FTELL64, with no additional validation of remaining bytes relative to file_start_ofs.",
+    "Does not mention that on central-directory-read failure the file handle is cleaned up indirectly via mz_zip_reader_end_internal rather than being closed directly in this function."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true,
+  "raw_response_file": "L3_miniz__mz_zip_reader_init_file_v2.raw.md"
+}

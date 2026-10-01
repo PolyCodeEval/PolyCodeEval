@@ -1,0 +1,24 @@
+{
+  "task": "javascript/babel-parser/L3_index__skipSpace",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__skipSpace/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__skipSpace/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::skipSpace",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.6,
+  "reason": "The description is highly accurate and thorough. It correctly captures all major behaviors: whitespace/tab/space skipping, Unicode whitespace via isWhitespace, line terminator handling with line counter and lineStart updates, CRLF as single line break, block and line comment skipping, the slash-only-stops condition, legacy HTML comment handling (both --> and <!--) with the correct module/option-flag guard, the lineStart > spaceStart condition for -->, comment registration via addComment, comment-whitespace tracking with the option flag, and the final commentStack push with sourceToOffsetPos conversion and null node fields. One minor inaccuracy: the description says '`-->` is recognized only when it appears at the start of the file or after a line break within the skipped region' — the implementation checks `spaceStart === 0 || this.state.lineStart > spaceStart`, meaning it's valid if the skip started at position 0 OR if a newline has been consumed since the skip started, which is subtly different from 'after a line break within the skipped region' (spaceStart===0 covers start-of-file even without a newline). This is a minor nuance. The description also correctly notes that <!--  is recognized 'wherever encountered' (no lineStart check), matching the implementation. Overall the description is complete enough to implement the function faithfully.",
+  "missing_functionality": [
+    "The description does not explicitly mention that comment-whitespace tracking is gated on a specific option flag (bit 8192), nor that the legacy HTML comment option uses a different flag (bit 16384) — though it does say 'relevant compatibility option is enabled', which is acceptable."
+  ],
+  "incorrect_or_misleading_points": [
+    "The --> condition is described as 'appears at the start of the file or after a line break within the skipped region', but the implementation checks `spaceStart === 0 || this.state.lineStart > spaceStart`. The second condition means a newline was encountered anywhere before the current position since the skip began, not strictly 'after a line break within the skipped region' — though in practice these are nearly equivalent, the spaceStart===0 case is slightly broader than 'start of file' in the description's framing."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__skipSpace.raw.md"
+}

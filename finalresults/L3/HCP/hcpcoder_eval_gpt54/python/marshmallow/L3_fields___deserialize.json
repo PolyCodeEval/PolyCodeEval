@@ -1,0 +1,111 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 7.86,
+  "stdout": "= MySchema(only=(\"b\",))\n>       errors = s.validate({\"b\": \"data\"})\n\ntests/unit_tests/test_schema.py:1814: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:836: in validate\n    self._do_load(data, many=many, partial=partial, postprocess=False)\nsrc/marshmallow/schema.py:892: in _do_load\n    result = self._deserialize(\nsrc/marshmallow/schema.py:681: in _deserialize\n    value = self._call_and_store(\nsrc/marshmallow/schema.py:522: in _call_and_store\n    value = getter_func(data)\nsrc/marshmallow/schema.py:674: in getter\n    return field_obj.deserialize(\nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Raw(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump_o...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>\nvalue = 'data', attr = 'b', data = {'b': 'data'}, kwargs = {}\n\n    def _deserialize(\n        self,\n        value: typing.Any,\n        attr: str | None,\n        data: typing.Mapping[str, typing.Any] | None,\n        **kwargs,\n    ) -> _InternalT:\n        \"\"\"Deserialize value. Concrete :class:`Field` classes should implement this method.\n    \n        :param value: The value to be deserialized.\n        :param attr: The attribute/key in `data` to be deserialized.\n        :param data: The raw input data passed to the `Schema.load <marshmallow.Schema.load>`.\n        :param kwargs: Field-specific keyword arguments.\n        :raise ValidationError: In case of formatting or validation failure.\n        :return: The deserialized value.\n    \n        .. versionchanged:: 3.0.0\n            Added ``**kwargs`` to signature.\n        \"\"\"\n>       raise NotImplementedError(\"Method and Function fields do not support _deserialize directly\")\nE       NotImplementedError: Method and Function fields do not support _deserialize directly\n\nsrc/marshmallow/fields.py:457: NotImplementedError\n__________ TestNestedSchema.test_invalid_type_passed_to_nested_field ___________\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f1b6ab94370>\n\n    def test_invalid_type_passed_to_nested_field(self):\n        class InnerSchema(Schema):\n            foo = fields.Raw()\n    \n        class MySchema(Schema):\n            inner = fields.Nested(InnerSchema, many=True)\n    \n        sch = MySchema()\n    \n>       sch.load({\"inner\": [{\"foo\": 42}]})\n\ntests/unit_tests/test_schema.py:1974: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:892: in _do_load\n    result = self._deserialize(\nsrc/marshmallow/schema.py:681: in _deserialize\n    value = self._call_and_store(\nsrc/marshmallow/schema.py:522: in _call_and_store\n    value = getter_func(data)\nsrc/marshmallow/schema.py:674: in getter\n    return field_obj.deserialize(\nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\nsrc/marshmallow/fields.py:667: in _deserialize\n    return self._load(value, partial=partial)\nsrc/marshmallow/fields.py:643: in _load\n    valid_data = self.schema.load(value, unknown=self.unknown, partial=partial)\nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:892: in _do_load\n    result = self._deserialize(\nsrc/marshmallow/schema.py:630: in _deserialize\n    ret_l = [\nsrc/marshmallow/schema.py:631: in <listcomp>\n    self._deserialize(\nsrc/marshmallow/schema.py:681: in _deserialize\n    value = self._call_and_store(\nsrc/marshmallow/schema.py:522: in _call_and_store\n    value = getter_func(data)\nsrc/marshmallow/schema.py:674: in getter\n    return field_obj.deserialize(\nsrc/marshmallow/fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <fields.Raw(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump_o...equired': 'Missing data for required field.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.'})>\nvalue = 42, attr = 'foo', data = {'foo': 42}, kwargs = {}\n\n    def _deserialize(\n        self,\n        value: typing.Any,\n        attr: str | None,\n        data: typing.Mapping[str, typing.Any] | None,\n        **kwargs,\n    ) -> _InternalT:\n        \"\"\"Deserialize value. Concrete :class:`Field` classes should implement this method.\n    \n        :param value: The value to be deserialized.\n        :param attr: The attribute/key in `data` to be deserialized.\n        :param data: The raw input data passed to the `Schema.load <marshmallow.Schema.load>`.\n        :param kwargs: Field-specific keyword arguments.\n        :raise ValidationError: In case of formatting or validation failure.\n        :return: The deserialized value.\n    \n        .. versionchanged:: 3.0.0\n            Added ``**kwargs`` to signature.\n        \"\"\"\n>       raise NotImplementedError(\"Method and Function fields do not support _deserialize directly\")\nE       NotImplementedError: Method and Function fields do not support _deserialize directly\n\nsrc/marshmallow/fields.py:457: NotImplementedError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_context.py::TestContext::test_nested_list_fields_inherit_context\nFAILED tests/unit_tests/test_context.py::TestContext::test_nested_dict_fields_inherit_context\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_invalid_value\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_wrong_type\nFAILED tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_as_empty_string\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_validation_errors_are_stored\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_multiple_errors_can_be_stored_for_a_field\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[True]\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[False]\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_validation\nFAILED tests/unit_tests/test_schema.py::test_load_validation_error_stores_input_data_and_valid_data\nFAILED tests/unit_tests/test_schema.py::test_errored_fields_do_not_appear_in_output\nFAILED tests/unit_tests/test_schema.py::test_nested_custom_set_in_exclude_reusing_schema\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_list\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_dict\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_invalid_type_passed_to_nested_field\n======================= 23 failed, 1156 passed in 7.33s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields___deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_nested_list_fields_inherit_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_context.py::TestContext::test_nested_dict_fields_inherit_context",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_invalid_value",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_wrong_type",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_as_empty_string",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_validation_errors_are_stored",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_multiple_errors_can_be_stored_for_a_field",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_validation",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_validation_error_stores_input_data_and_valid_data",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_errored_fields_do_not_appear_in_output",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_custom_set_in_exclude_reusing_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_list",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_raises_error_with_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 22,
+    "total": 22
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

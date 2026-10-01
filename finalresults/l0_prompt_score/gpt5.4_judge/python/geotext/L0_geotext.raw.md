@@ -1,0 +1,21 @@
+{
+  "project": "geotext",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Prompt covers the library purpose, bundled data files, main module layout, GeoText constructor, and the core outputs countries, cities, nationalities, and country_mentions. It also mentions country filtering and data-driven extraction, which matches the repository's primary behavior. It omits helper functions such as read_table/build_index/get_data_path and does not spell out duplicate-preserving list behavior, so it is slightly short of fully describing the current implementation."
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "Core API shape and blackbox-relevant behaviors are mostly explicit: import path, constructor signature, filter semantics, OrderedDict for country_mentions, case sensitivity for cities, and support for multi-word entities. Some important behavioral details remain implicit, including that outputs are lists rather than sets, repeated mentions are preserved in countries/cities/nationalities, and country_mentions also counts direct country and nationality matches in addition to city attribution."
+    },
+    "testability": {
+      "score": 4.8,
+      "reason": "The prompt gives concrete import paths, constructor parameters, attribute contracts, edge cases, and expected observable behavior that map closely to the blackbox tests. A developer could implement the tested functionality from the prompt with little guesswork. Minor gaps remain around duplicate handling and the exact composition of country_mentions beyond city-based counting."
+    },
+    "consistency": {
+      "score": 4.2,
+      "reason": "The prompt is broadly consistent with the current code and tests: GeoText in geotext.geotext, bundled data files, extraction of countries/cities/nationalities, country filtering affecting only cities, and OrderedDict country mention counts. The main mismatch is that the prompt says country_mentions is inferred through city attribution, while the implementation also counts direct country-name and nationality matches. The prompt also presents result containers generically, whereas the implementation returns lists with duplicates preserved."
+    }
+  }
+}

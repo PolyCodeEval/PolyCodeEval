@@ -1,0 +1,21 @@
+{
+  "project": "babel-parser",
+  "scores": {
+    "completeness": {
+      "score": 4.3,
+      "reason": "Prompt covers the library nature, the two main parse entry points, sourceType behavior, plugin-driven syntax, AST locations/tokens/errors, parser/tokenizer layering, and public exports, which is enough to reconstruct the core repository behavior. It omits many important real options and advanced syntax/plugin surfaces present in the codebase, plus the existing CLI and broader fixture ecosystem, so it is not fully comprehensive."
+    },
+    "unambiguity": {
+      "score": 4.2,
+      "reason": "Core API contracts, returned node shapes, key sourceType semantics, and incompatible plugin handling are stated clearly enough for implementation and blackbox verification. Some requirements remain broad or underspecified, such as the exact set of supported experimental plugins, Babel-compatibility boundaries, and concrete error object structure beyond throwing SyntaxError with location data."
+    },
+    "testability": {
+      "score": 4.6,
+      "reason": "The prompt gives directly testable contracts for package import path, parse and parseExpression behavior, AST wrapper expectations, location fields, module/script handling, plugin toggles, and invalid plugin combinations. It aligns well with the blackbox tests even though it does not fully specify optional metadata behaviors and recovery semantics in the depth covered by the full repository tests."
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "Most statements match the real implementation: parse/parseExpression exports, unambiguous fallback, tokTypes exposure, plugin validation, and explicit parse-error/tokenizer layers are all present. The main inconsistency is that the repository also includes a CLI entry and supports additional real options such as commonjs sourceType and many plugin-specific validations that the prompt does not acknowledge, while it also mentions removed syntax like record/tuple as supported examples."
+    }
+  }
+}

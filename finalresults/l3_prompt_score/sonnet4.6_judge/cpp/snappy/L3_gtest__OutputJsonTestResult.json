@@ -1,0 +1,25 @@
+{
+  "task": "cpp/snappy/L3_gtest__OutputJsonTestResult",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L3_gtest__OutputJsonTestResult/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L3_gtest__OutputJsonTestResult/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest.cc",
+  "target_symbol": "third_party/googletest/googletest/src/gtest.cc::OutputJsonTestResult",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: iterating over test part results, emitting only failed parts, building a `failures` array with `failure` and `type` fields, JSON-escaping the combined location+newline+message string, and closing the JSON object. The key logic around lazy array header insertion (only on first failure) is correctly described. The main gap is the description says entries are 'comma-separated' but doesn't clarify that the comma+newline is written *before* each failure entry (not between them), and it omits the detail that the closing `]` uses `kIndent` while the closing `}` uses `Indent(8)` — a different indentation level. The description also doesn't mention that a `,\\n` is always emitted before the failure object (even before the `failures` key on the first one), which is a subtle but implementable detail. Overall the description is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The closing `]` of the failures array uses `kIndent` (Indent(10)) while the closing `}` uses `Indent(8)` — two different indentation levels; the description only mentions one closing brace indented to the surrounding structure.",
+    "The `,\\n` separator is written before each failure entry (including before the `failures` key on the first failure), not between entries — the description implies standard comma-separation which could be misread as trailing or interleaved commas."
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says 'comma-separated JSON objects within the failures array' which implies commas between objects; the actual implementation prepends `,\\n` before every failure (including the first), so the comma comes from the preceding context, not between array elements."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_gtest__OutputJsonTestResult.raw.md"
+}

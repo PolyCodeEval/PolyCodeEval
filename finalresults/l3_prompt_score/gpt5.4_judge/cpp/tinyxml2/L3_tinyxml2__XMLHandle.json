@@ -1,0 +1,28 @@
+{
+  "task": "cpp/tinyxml2/L3_tinyxml2__XMLHandle",
+  "project": "cpp/tinyxml2",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__XMLHandle/prompt.md",
+  "task_json_path": "datasets/cpp/tinyxml2/tasks/L3_tinyxml2__XMLHandle/task.json",
+  "source_file_path": "datasets/cpp/tinyxml2/src/tinyxml2.h",
+  "target_symbol": "tinyxml2.h::XMLHandle",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.0,
+  "reason": "The description matches the implemented navigation and safe type-access behavior well: it correctly describes null-safe wrapper semantics, the supported relative navigation methods, typed conversions, and the fact that the class only stores an XMLNode pointer without ownership logic. However, it omits some implemented API surface that is important for a complete implementation of this class section: the constructors from pointer and reference, the copy constructor, and the assignment operator. It also slightly overgeneralizes the typed access behavior by saying the node is returned when it 'can be viewed as that type,' whereas the implementation simply delegates to the underlying XMLNode type-cast helpers.",
+  "missing_functionality": [
+    "The description does not mention the two explicit constructors: one from XMLNode* and one from XMLNode&.",
+    "The description does not mention the copy constructor.",
+    "The description does not mention the assignment operator.",
+    "It does not explicitly note that ToNode() returns the raw stored pointer directly, without any cast helper call."
+  ],
+  "incorrect_or_misleading_points": [
+    "The phrase about 'other standard relative-navigation operations in this handle API' is vague; the implementation specifically provides only FirstChild, FirstChildElement, LastChild, LastChildElement, PreviousSibling, PreviousSiblingElement, NextSibling, and NextSiblingElement.",
+    "Saying the typed conversions return the typed pointer when the node 'can be viewed as that type' is slightly interpretive; the implementation delegates directly to XMLNode::ToElement/ToText/ToUnknown/ToDeclaration."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_tinyxml2__XMLHandle.raw.md"
+}

@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.33,
+  "stdout": "FAIL\tgithub.com/go-chi/chi/v5 [build failed]\nFAIL\tgithub.com/go-chi/chi/v5/middleware [build failed]\nFAIL\n",
+  "stderr": "# github.com/go-chi/chi/v5\n./tree.go:236:9: syntax error: unexpected literal 's the function body for `addChild`: at end of statement\n./tree.go:236:45: newline in rune literal\n./tree.go:238:7: syntax error: unexpected literal `go\n    {\n    \tsearch := prefix\n\n    \t// handler leaf node added to the tree is the child.\n    \t// this may be overridden later down the flow\n    \thn := child\n\n    \t// Parse next segment\n    \tsegTyp, _, segRexpat, segTail, _, segEndIdx := patNextSegment(search)\n\n    \t// Add child depending on next segment type.\n    \tswitch segTyp {\n\n    \tcase ntStatic:\n    \t\t// Search prefix is all static (no params/wildcards), just insert a new node into the tree.\n    \t\tn.children[ntStatic] = append(n.children[ntStatic], child)\n    \t\tn.children[ntStatic].Sort()\n    \t\treturn hn\n\n    \tdefault:\n    \t\t// Search prefix contains a param, regexp or wildcard segment.\n\n    \t\t// Extract the head of the path: the piece from the start of the search\n    \t\t// up to and including the next segment's start.\n    \t\thead := search[:segEndIdx]\n\n    \t\t// Determine if the head (everything before the next segment) starts with a static part.\n    \t\tif child.typ == ntStatic {\n    \t\t\t// Split the child into a static prefix and the rest.\n    \t\t\t// The static part may be empty (e.g., pattern starts with '{' or '*').\n    \t\t\tif search[0] != '{' && search[0] != '*' {\n    \t\t\t\t// Find where the dynamic segment starts.\n    \t\t\t\tidx := strings.IndexAny(search, \"{*\")\n    \t\t\t\tif idx > 0 {\n    \t\t\t\t\t// create the static part\n    \t\t\t\t\tstaticChild := &node{\n    \t\t\t\t\t\ttyp:    ntStatic,\n    \t\t\t\t\t\tlabel:  search[0],\n    \t\t\t\t\t\tprefix: search[:idx],\n    \t\t\t\t\t}\n    \t\t\t\t\tn.children[ntStatic] = append(n.children[ntStatic], staticChild)\n    \t\t\t\t\tn.children[ntStatic].Sort()\n    \t\t\t\t\treturn staticChild.addChild(child, search[idx:])\n    \t\t\t\t}\n    \t\t\t}\n    \t\t}\n\n    \t\t// Determine the segment label and prefix.\n    \t\tvar label byte\n    \t\tif segTyp == ntRegexp {\n    \t\t\tlabel = '{'\n    \t\t} else if segTyp == ntCatchAll {\n    \t\t\tlabel = '*'\n    \t\t} else {\n    \t\t\tlabel = '{'\n    \t\t}\n\n    \t\t_ = label\n    \t\t_ = head\n    \t\t_ = segRexpat\n    \t\t_ = segTail\n\n    \t\t// Walk the remaining search path past the current segment.\n    \t\tsearch = search[segEndIdx:]\n\n    \t\t// Add the child into the correct slot based on its type.\n    \t\tn.children[child.typ] = append(n.children[child.typ], child)\n    \t\tn.children[child.typ].Sort()\n\n    \t\t// If there is a remaining path after the segment, recurse to insert the tail.\n    \t\tif len(search) > 0 {\n    \t\t\tsubchild := &node{\n    \t\t\t\ttyp:    ntStatic,\n    \t\t\t\tlabel:  search[0],\n    \t\t\t\tprefix: search,\n    \t\t\t}\n    \t\t\thn = child.addChild(subchild, search)\n    \t\t}\n\n    \t\treturn hn\n    \t}\n    }\n    ` at end of statement\n./tree.go:323:15: syntax error: unexpected name me, expected := or = or comma\n",
+  "task": "go/chi/L3_tree__addChild",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

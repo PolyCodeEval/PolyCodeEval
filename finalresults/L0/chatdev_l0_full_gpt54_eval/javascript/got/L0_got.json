@@ -1,0 +1,833 @@
+{
+  "task": "javascript/got/L0_got",
+  "solver": "chatdev_gpt54_javascript生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 165.51,
+  "stdout": "added 1160 packages from 974 contributors in 102.717s\n\n220 packages are looking for funding\n  run `npm fund` for details\n\nadded 131 packages from 52 contributors in 44.298s\n\n225 packages are looking for funding\n  run `npm fund` for details\n\n\u001b[7m    \u001b[0m \u001b[91m\u001b[0m\n\n\nFound 1056 errors.\n\nFAIL test/got.test.js\n  ● Test suite failed to run\n\n    Cannot find module '../dist/source/index.js' from 'test/got.test.js'\n\n      3 |  * Tests error classes and option merging (no actual HTTP requests).\n      4 |  */\n    > 5 | const got = require('../dist/source/index.js');\n        |             ^\n      6 |\n      7 | describe('got - error classes', () => {\n      8 |   test('RequestError is exported', () => {\n\n      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)\n      at Object.require (test/got.test.js:5:13)\n\nFAIL test/got_extended.test.js\n  ● Test suite failed to run\n\n    Cannot find module '../dist/source/index.js' from 'test/got_extended.test.js'\n\n      4 |  * paginate API, defaults structure, and extend/mergeOptions edge cases.\n      5 |  */\n    > 6 | const got = require('../dist/source/index.js');\n        |             ^\n      7 |\n      8 | // Resolve the callable got instance (supports both CJS default and .default)\n      9 | const gotInstance = got.default || got;\n\n      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)\n      at Object.require (test/got_extended.test.js:6:13)\n\nTest Suites: 2 failed, 2 total\nTests:       0 total\nSnapshots:   0 total\nTime:        4.534 s\nRan all test suites matching /test\\/got.test.js|test\\/got_extended.test.js/i.\n",
+  "stderr": "",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.61,
+    "Architecture": 4.23,
+    "Health": 4.0
+  },
+  "overall_score": 2.61,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` exports a callable `got` instance and defines the required public surface (`extend`, `mergeOptions`, `defaults`, method aliases, `stream`, `paginate`, and error classes)."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "runtime entry at `dist/source/index.js` after build",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\",\n\t\t\"https\",\n\t\t\"http2\",\n\t\t\"get\",\n\t\t\"got\",\n\t\t\"url\",\n\t\t\"uri\",\n\t\t\"request\",\n\t\t\"simple\",\n\t\t\""
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "esponseType = 'text' | 'json' | 'buffer';\ntype Hooks = {\n\tbeforeRequest?: Array<(options: NormalizedOptions) => void>;\n\tafterResponse?: Array<(response: ResponseLike) => ResponseLike | void>;\n\tbeforeError?: Array<(error: Error) => Error | void>;\n};\ntype PaginationOptions = {\n\ttransform?: (response: ResponseLike) => any;\n\tfilter?: (item: any, allItems: any[], currentItems: any[]) => boolean;\n\tpagin"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "s for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` is set up to compile under `source/` and `repo/package.json` points runtime entry to `dist/source`; with `tsc` and `outDir: \"dist\"`, this yields `dist/source/index.js`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "the main export should be a callable `got` function, with instance extension/defaults behavior and exported error classes such as `RequestError`, `HTTPError`, `TimeoutError`, `CancelError`, `ParseError`, `MaxRedirectsError`, `UnsupportedProtocolError`, `CacheError`, `ReadError`, and `UploadError`",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "nce = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// ---------------------------------------------------------------------------\n\ndescribe('got - additional error classes', () => {\n  test('CacheError is exported', () => {\n    expect(got.CacheError).toBeDefined();\n    expect(typeof got.CacheError).toBe('fun"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": ").\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).toBeDefined();\n  });\n\n  test('TimeoutError is exported', () => {\n    expect(got.TimeoutErr"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` creates a callable `got` function via `createGot()` and attaches `extend`, `defaults`, and all listed error classes (`RequestError`, `HTTPError`, `TimeoutError`, `CancelError`, `ParseError`, `MaxRedirectsError`, `UnsupportedProtocolError`, `CacheError`, `ReadError`, `UploadError`)."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "CommonJS consumers should be able to obtain the callable export either directly or via `.default`, matching the runtime module shape used by tests",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// -------------------------------------------------------------"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "tch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0."
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "import {URL} from 'url';\nimport {PassThrough, Readable} from 'stream';\nimport * as http from 'http';\nimport * as https from 'https';\nimport * as http2 from 'http2';\nimport {CookieJar} from 'tough-cookie';\ntype Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE';\ntype ResponseType = 'text' | 'json' | 'buffer';\ntype Hook"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` sets `got.default = got` and exports with `export = got`, so CommonJS consumers can use either the direct export or `.default`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "source entry under `source/index.ts` that builds into the runtime path used by consumers",
+          "evidence": [
+            {
+              "path": "source\\index.ts",
+              "excerpt": "};\n}\n/**\n * Merge plain options objects with stable handling for nested objects and hooks.\n */\nfunction mergeOptions(...sources: Array<Options | NormalizedOptions | undefined>): NormalizedOptions {\n\tconst result: any = {};\n\tconst mergedHooks = {\n\t\tbeforeRequest: [] as Array<(options: NormalizedOptions) => void>,\n\t\tafterResponse: [] as Array<(response: ResponseLike) => ResponseLike | void>,\n\t\tbefor"
+            },
+            {
+              "path": "package.json",
+              "excerpt": ": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\""
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).toBeDe"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The source entry exists at `repo/source/index.ts`, and `repo/tsconfig.json` compiles `source` into `dist`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "the callable `got` export should own helpers/properties including `extend(options)`, `mergeOptions(...sources)`, and `defaults`",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "ults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// ---------------------------------------------------------"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typ"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` attaches `extend`, `mergeOptions`, and `defaults` directly on the callable `got` export."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "the callable export should also preserve the method-style surface used by consumers for request aliases and instance extension on the same export object",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "ults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// ---------------------------------------------------------"
+            },
+            {
+              "path": "package.json",
+              "excerpt": ",\n\t\t\t\"node/prefer-global/url\": \"off\",\n\t\t\t\"node/prefer-global/url-search-params\": \"off\",\n\t\t\t\"import/no-anonymous-default-export\": \"off\",\n\t\t\t\"@typescript-eslint/no-implicit-any-catch\": \"off\"\n\t\t}\n\t},\n\t\"runkitExampleFilename\": \"./documentation/examples/runkit-example.js\"\n}"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": ").\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).toBeDefined();\n  });\n\n  test('TimeoutError is exported', () => {\n    expect(got.TimeoutErr"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` keeps request method aliases (`get`, `post`, `put`, `patch`, `head`, `delete`) and instance extension methods on the same callable export object."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`RequestError` should preserve a constructor shape like `new RequestError(message, error, self)`",
+          "evidence": [
+            {
+              "path": "source\\index.ts",
+              "excerpt": "st merged = mergeOptions(defaultOptions, objectOptions, options);\n\t\tif (objectOptions.url === undefined) {\n\t\t\tthrow new RequestError('Missing `url` property in options object', undefined, {options: merged});\n\t\t}\n\t\treturn {\n\t\t\turl: objectOptions.url,\n\t\t\toptions: merged\n\t\t};\n\t}\n\tif (typeof input === 'undefined') {\n\t\tif (options && options.url !== undefined) {\n\t\t\treturn {\n\t\t\t\turl: options.url,\n\t\t\t\top"
+            },
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "adError).toBe('function');\n  });\n});\n\n// ---------------------------------------------------------------------------\n// RequestError properties and inheritance\n// ---------------------------------------------------------------------------\n\ndescribe('got - RequestError properties', () => {\n  test('RequestError has name \"RequestError\"', () => {\n    const err = new got.RequestError('test', {}, { opti"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "al HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).toBeDefined();\n  });\n\n  test('TimeoutError is exported', () => {\n    expec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` defines `class RequestError extends Error` with constructor signature `constructor(message: string, error?: Error, self?: any)`, matching `new RequestError(message, error, self)`."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "Request APIs",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --r"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE';\ntype ResponseType = 'text' | 'json' | 'buffer';\ntype Hooks = {\n\tbeforeRequest?: Array<(options: NormalizedOptions) => void>;\n\tafterResponse?: Array<(response: ResponseLike) => ResponseLike | void>;\n\tbeforeError?: Array<(error: Error) => Error | void>;\n};\ntype PaginationOptions = {\n\ttransform?: (response: ResponseLike) => any;\n\tfilter?: (item: any,"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exporte"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository implements promise-based requests (`createPromiseInterface`, `requestAsPromise`) and stream requests (`createStream`) in `repo/source/index.ts`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "Protocol and Transport Support",
+          "evidence": [
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "est('MaxRedirectsError is exported', () => {\n    expect(got.MaxRedirectsError).toBeDefined();\n  });\n\n  test('UnsupportedProtocolError is exported', () => {\n    expect(got.UnsupportedProtocolError).toBeDefined();\n  });\n\n  test('RequestError can be instantiated', () => {\n    const err = new got.RequestError('test error', {}, { options: {} });\n    expect(err).toBeInstanceOf(Error);\n    expect(err.mes"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "result.decompress = result.decompress !== false;\n\tresult.http2 = result.http2 === true;\n\treturn result;\n}\nfunction hasProtocol(value: string): boolean {\n\treturn /^[a-zA-Z][a-zA-Z\\d+\\-.]*:/.test(value);\n}\nfunction isRelativeInput(value: string): boolean {\n\treturn !hasProtocol(value);\n}\n/**\n * Normalize a user input and options object into a request URL.\n */\nfunction normalizeArguments(input?: str"
+            },
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "end/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// ---------------------------------------------------------------------------\n\ndes"
+            }
+          ],
+          "status": "partial",
+          "reason": "`repo/source/index.ts` clearly supports `http:` and `https:` requests and has an `http2` code path, but broader transport features from the prompt are not comprehensively evidenced."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "Reliability Features",
+          "evidence": [],
+          "status": "partial",
+          "reason": "`repo/source/index.ts` includes some reliability features such as timeouts, redirects, hooks, and related errors, but the prompt’s broader reliability scope is only partially covered and no actual retry execution logic is evident."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "epo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_javascript生成\\\\javascript\\\\got\\\\L0_got\",\n  \"files_collected\": 3,\n  \"duration_seconds\": 716.41\n}"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "rter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\",\n\t\t\"https\",\n\t\t\"http2\",\n\t\t\"get\",\n\t\t\"got\",\n\t\t\"url\",\n\t\t\"uri\",\n\t\t\"request\",\n\t\t\"simple\",\n\t\t\"curl\",\n\t\t\"wget\",\n\t\t\"fetch\",\n\t\t\"net\",\n\t\t\"network\",\n\t\t\"gzip\",\n\t\t\"brotli\",\n\t\t\"requests\",\n\t\t\"human-friendly\",\n\t\t\"axios\",\n\t\t\"superagent\",\n\t\t\"nod"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "result;\n}\nfunction hasProtocol(value: string): boolean {\n\treturn /^[a-zA-Z][a-zA-Z\\d+\\-.]*:/.test(value);\n}\nfunction isRelativeInput(value: string): boolean {\n\treturn !hasProtocol(value);\n}\n/**\n * Normalize a user input and options object into a request URL.\n */\nfunction normalizeArguments(input?: string | URL | Options, options?: Options): {url: string | URL; options: NormalizedOptions} {\n\tif (i"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The generated project files are placed directly at the repository root (`package.json`, `tsconfig.json`, `source/index.ts`), matching the required project-relative layout."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "Provide a minimal Node.js package structure, including `package.json` and any build configuration needed for the project outputs.",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\","
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "l/remapping\": \"^2.3.5\",\n\t\t\t\t\"convert-source-map\": \"^2.0.0\",\n\t\t\t\t\"debug\": \"^4.1.0\",\n\t\t\t\t\"gensync\": \"^1.0.0-beta.2\",\n\t\t\t\t\"json5\": \"^2.2.3\",\n\t\t\t\t\"semver\": \"^6.3.1\"\n\t\t\t},\n\t\t\t\"dependencies\": {\n\t\t\t\t\"convert-source-map\": {\n\t\t\t\t\t\"version\": \"2.0.0\",\n\t\t\t\t\t\"resolved\": \"https://registry.npmmirror.com/convert-source-map/-/convert-source-map-2.0.0.tgz\",\n\t\t\t\t\t\"integrity\": \"sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19T"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "{\n  \"agent\": \"chatdev\",\n  \"task\": \"javascript/got/L0_got\",\n  \"started_at\": \"2026-06-18T01:31:28.199750+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\javascript\\\\got\\\\tasks\\\\L0_got\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"GPT_5_4\",\n  \"token_usage\": {\n    \"prompt_tokens\": 104908,\n    \"completion_tokens\": 21129,\n    \"total_tokens\": 126037\n  },\n  \"status\": \"ok\",\n  \"workspace_root\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\workspaces\\\\chatdev\\\\javascript\\\\got\\\\L0_got\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_java"
+            }
+          ],
+          "status": "implemented",
+          "reason": "The repository includes a Node.js package structure with `package.json`, `package-lock.json`, `tsconfig.json`, and source files needed for build output."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "ithub.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\",\n\t\t\"https\",\n\t\t\"http2\",\n\t\t\"get\",\n\t\t\"got\",\n\t\t\"url\",\n\t\t\"uri\",\n\t\t\"req"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();"
+            },
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "/**\n * Extended blackbox tests for got HTTP client.\n * Covers additional error classes, HTTP method aliases, stream API,\n * paginate API, defaults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS de"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository contains generated test files under `repo/test/` (`got.test.js`, `got_extended.test.js`), which violates the instruction not to generate test files."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "Ensure the build produces `dist/source/index.js`, since the tests import that exact runtime file.",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\",\n\t\t\"https\",\n\t\t\"http2\",\n\t\t\"get\",\n\t\t\"got\",\n\t\t\"url\",\n\t\t\"uri\",\n\t\t\"request\",\n\t\t\"simple\",\n\t\t\""
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "s for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typeof got.RequestError).toBe('function');\n  });\n\n  test('HTTPError is exported', () => {\n    expect(got.HTTPError).t"
+            },
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "iases, stream API,\n * paginate API, defaults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// -----------------"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/tsconfig.json` uses `outDir: \"dist\"`, and the source file path `source/index.ts` compiles to `dist/source/index.js`, the exact path required by tests."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "Do not include `jest` or other test-runner packages (`mocha`, `jasmine`, etc.) in `devDependencies`.",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"del-cli\": \"^3.0.1\",\n\t\t\"delay\": \"^4.4.0\",\n\t\t\"express\": \"^4.17.1\",\n\t\t\"form-data\": \"^3.0.0\",\n\t\t\"get-stream\": \"^6.0.0\",\n\t\t\"jest\": \"^29.7.0\",\n\t\t\"nock\": \"^13.0.4\",\n\t\t\"node-fetch\": \"^2.6.0\",\n\t\t\"np\": \"^6.4.0\",\n\t\t\"nyc\": \"^15.1.0\",\n\t\t\"p-event\": \"^4.2.0\",\n\t\t\"pem\": \"^1.14.4\",\n\t\t\"pify\": \"^5.0.0\",\n\t\t\"sinon\": \"^9.0.3\",\n\t\t\"slow-stream\": \"0.0.4\",\n\t\t\"tempy\": \"^1.0.0\",\n\t\t\"to-readable-stream\": \"^2.1.0\",\n\t\t\"tough-coo"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "\"module\": \"commonjs\",\n\t\t\"declaration\": true,\n\t\t\"esModuleInterop\": true,\n\t\t\"strict\": false,\n\t\t\"skipLibCheck\": true\n\t},\n\t\"include\": [\n\t\t\"source\"\n\t]\n}"
+            }
+          ],
+          "status": "missing",
+          "reason": "`repo/package.json` includes forbidden test-runner package `jest` in `devDependencies`."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "This is **got version `11.8.6`**. Do not generate an ESM-only or v12-style package.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"lockfileVersion\": 1,\n\t\"requires\": true,\n\t\"dependencies\": {\n\t\t\"@ava/typescript\": {\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"resolved\": \"https://registry.npmmirror.com/@ava/typescript/-/typescript-1.1.1.tgz\",\n\t\t\t\"integrity\": \"sha512-KbLUAe2cWXK63WLK6LnOJonjwEDU/8MNX"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19."
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typ"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` sets version `11.8.6`, and the package is not ESM-only."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "The package must use **CommonJS** output. Do **not** add `\"type\": \"module\"` to `package.json` — the blackbox tests use `require('../dist/source/index.js')` and will break with ESM-only packages.",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"lockfileVersion\": 1,\n\t\"requires\": true,\n\t\"dependencies\": {\n\t\t\"@ava/typescript\": {\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"resolved\": \"https://registry.npmmirror.com/@ava/typescript/-/typescript-1.1.1.tgz\",\n\t\t\t\"integrity\": \"sha512-KbLUAe2cWXK63WLK6LnOJonjwEDU/8MNXCOA1ooX/YFZgKRmeAD1kZu+2K0ks5fnOCEcckNQAooyBNGdZUmMQA==\",\n\t\t\t\"dev\": true,\n\t\t\t\"requires\": {\n\t\t\t\t\"e"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\"node-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responseli"
+            },
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "w got.RequestError('test', {}, { options: {} });\n    expect(err.name).toBe('RequestError');\n  });\n\n  test('RequestError uses default code ERR_GOT_REQUEST_ERROR when no code provided', () => {\n    const err = new got.RequestError('test', {}, { options: {} });\n    expect(err.code).toBe('ERR_GOT_REQUEST_ERROR');\n  });\n\n  test('RequestError uses code from the error object when provided', () => {\n    c"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/tsconfig.json` sets `\"module\": \"commonjs\"`, and `repo/package.json` does not declare `\"type\": \"module\"`."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "`package.json` must set `\"main\": \"dist/source\"` (not `\"exports\"` with ESM).",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && npm run build && nyc --reporter=html --reporter=text ava\",\n\t\t\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "l/remapping\": \"^2.3.5\",\n\t\t\t\t\"convert-source-map\": \"^2.0.0\",\n\t\t\t\t\"debug\": \"^4.1.0\",\n\t\t\t\t\"gensync\": \"^1.0.0-beta.2\",\n\t\t\t\t\"json5\": \"^2.2.3\",\n\t\t\t\t\"semver\": \"^6.3.1\"\n\t\t\t},\n\t\t\t\"dependencies\": {\n\t\t\t\t\"convert-source-map\": {\n\t\t\t\t\t\"version\": \"2.0.0\",\n\t\t\t\t\t\"resolved\": \"https://registry.npmmirror.com/convert-source-map/-/convert-source-map-2.0.0.tgz\",\n\t\t\t\t\t\"integrity\": \"sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19T"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "avascript/got/L0_got\",\n  \"started_at\": \"2026-06-18T01:31:28.199750+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\javascript\\\\got\\\\tasks\\\\L0_got\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"GPT_5_4\",\n  \"token_usage\": {\n    \"prompt_tokens\": 104908,\n    \"completion_tokens\": 21129,\n    \"total_tokens\": 126037\n  },\n  \"status\": \"ok\",\n  \"workspace_root\": \"H:\\\\"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` sets `\"main\": \"dist/source\"` and does not use an ESM `exports` field."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "The TypeScript source lives under `source/` and must be compiled to `dist/` via `tsc`. The `tsconfig.json` must use `\"outDir\": \"dist\"` and produce CommonJS output (no `\"module\": \"ESNext\"`).",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\",\n\t\t\"@types/benchmark\": \"^1.0.33\",\n\t\t\"@types/express\": \"^4.17.7\",\n\t\t\"@types/node\": \"^14.14.0\",\n\t\t\"@types/node-fetch\": \"^2.5.7\",\n\t\t\"@types/pem\": \"^1.9.5\",\n\t\t\"@types/pify\": \"^3.0.2\",\n\t\t\"@"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "onjs\",\n\t\t\"declaration\": true,\n\t\t\"esModuleInterop\": true,\n\t\t\"strict\": false,\n\t\t\"skipLibCheck\": true\n\t},\n\t\"include\": [\n\t\t\"source\"\n\t]\n}"
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"lockfileVersion\": 1,\n\t\"requires\": true,\n\t\"dependencies\": {\n\t\t\"@ava/typescript\": {\n\t\t\t\"version\": \"1.1.1\",\n\t\t\t\"resolved\": \"https://registry.npmmirror.com/@ava/typescript/-/typescript-1.1.1.tgz\",\n\t\t\t\"integrity\": \"sha512-KbLUAe2cWXK63WLK6LnOJonjwEDU/8MNXCOA1ooX/YFZgKRmeAD1kZu+2K0ks5fnOCEcckNQAooyBNGdZUmMQA==\",\n\t\t\t\"dev\": true,\n\t\t\t\"requires\": {\n\t\t\t\t\"e"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` lives under `source/`, `repo/package.json` builds with `tsc`, and `repo/tsconfig.json` sets `\"outDir\": \"dist\"` and `\"module\": \"commonjs\"`."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "`package.json` must include **`tough-cookie@4.0.0`** as a runtime dependency (exact version required by the test harness).",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\",\n\t\t\"@types/benchmark\": \"^1.0.33\",\n\t\t\"@types/express\": \"^4.17.7\",\n\t\t\"@types/node\": \"^14.14.0\",\n\t\t\"@types/node-fetch\": \"^2.5.7\","
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "l/remapping\": \"^2.3.5\",\n\t\t\t\t\"convert-source-map\": \"^2.0.0\",\n\t\t\t\t\"debug\": \"^4.1.0\",\n\t\t\t\t\"gensync\": \"^1.0.0-beta.2\",\n\t\t\t\t\"json5\": \"^2.2.3\",\n\t\t\t\t\"semver\": \"^6.3.1\"\n\t\t\t},\n\t\t\t\"dependencies\": {\n\t\t\t\t\"convert-source-map\": {\n\t\t\t\t\t\"version\": \"2.0.0\",\n\t\t\t\t\t\"resolved\": \"https://registry.npmmirror.com/convert-source-map/-/convert-source-map-2.0.0.tgz\",\n\t\t\t\t\t\"integrity\": \"sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19T"
+            },
+            {
+              "path": "tsconfig.json",
+              "excerpt": "\"module\": \"commonjs\",\n\t\t\"declaration\": true,\n\t\t\"esModuleInterop\": true,\n\t\t\"strict\": false,\n\t\t\"skipLibCheck\": true\n\t},\n\t\"include\": [\n\t\t\"source\"\n\t]\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes runtime dependency `\"tough-cookie\": \"4.0.0\"` exactly."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Key runtime dependencies from the oracle `package.json` (use these exact versions):",
+          "evidence": [
+            {
+              "path": "package-lock.json",
+              "excerpt": "Xw==\",\n\t\t\t\"dev\": true,\n\t\t\t\"requires\": {\n\t\t\t\t\"@nicolo-ribaudo/eslint-scope-5-internals\": \"5.1.1-v1\",\n\t\t\t\t\"eslint-visitor-keys\": \"^2.1.0\",\n\t\t\t\t\"semver\": \"^6.3.1\"\n\t\t\t},\n\t\t\t\"dependencies\": {\n\t\t\t\t\"semver\": {\n\t\t\t\t\t\"version\": \"6.3.1\",\n\t\t\t\t\t\"resolved\": \"https://registry.npmmirror.com/semver/-/semver-6.3.1.tgz\",\n\t\t\t\t\t\"integrity\": \"sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "\"release\": \"np\",\n\t\t\"build\": \"del-cli dist && tsc\",\n\t\t\"prepare\": \"npm run build\"\n\t},\n\t\"files\": [\n\t\t\"dist/source\"\n\t],\n\t\"keywords\": [\n\t\t\"http\",\n\t\t\"https\",\n\t\t\"http2\",\n\t\t\"get\",\n\t\t\"got\",\n\t\t\"url\",\n\t\t\"uri\",\n\t\t\"request\",\n\t\t\"simple\",\n\t\t\"curl\",\n\t\t\"wget\",\n\t\t\"fetch\",\n\t\t\"net\",\n\t\t\"network\",\n\t\t\"gzip\",\n\t\t\"brotli\",\n\t\t\"requests\",\n\t\t\"human-friendly\",\n\t\t\"axios\",\n\t\t\"superagent\",\n\t\t\"node-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependenc"
+            },
+            {
+              "path": "manifest.json",
+              "excerpt": "{\n  \"agent\": \"chatdev\",\n  \"task\": \"javascript/got/L0_got\",\n  \"started_at\": \"2026-06-18T01:31:28.199750+00:00\",\n  \"prompt_path\": \"H:\\\\PCE\\\\PolyCodeEval\\\\datasets\\\\javascript\\\\got\\\\tasks\\\\L0_got\\\\prompt.md\",\n  \"dry_run\": false,\n  \"collect_only\": false,\n  \"chatdev_model\": \"GPT_5_4\",\n  \"token_usage\": {\n    \"prompt_tokens\": 104908,\n    \"completion_tokens\": 21129,\n    \"total_tokens\": 126037\n  },\n  \"status\": \"ok\",\n  \"workspace_root\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\workspaces\\\\chatdev\\\\javascript\\\\got\\\\L0_got\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_java"
+            }
+          ],
+          "status": "implemented",
+          "reason": "All oracle-listed runtime dependencies are present in `repo/package.json` with the exact requested versions/ranges."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "`\"@sindresorhus/is\": \"^4.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "brotli\",\n\t\t\"requests\",\n\t\t\"human-friendly\",\n\t\t\"axios\",\n\t\t\"superagent\",\n\t\t\"node-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\","
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"@sindresorhus/is\": \"^4.0.0\"`."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "`\"@szmarczak/http-timer\": \"^4.0.5\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "friendly\",\n\t\t\"axios\",\n\t\t\"superagent\",\n\t\t\"node-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"@szmarczak/http-timer\": \"^4.0.5\"`."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "`\"@types/cacheable-request\": \"^6.0.1\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"node-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responseli"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"@types/cacheable-request\": \"^6.0.1\"`."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "`\"@types/responselike\": \"^1.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "es\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"@types/responselike\": \"^1.0.0\"`."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "`\"cacheable-lookup\": \"^5.0.3\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": ".0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"cacheable-lookup\": \"^5.0.3\"`."
+        },
+        {
+          "id": "F028",
+          "type": "feature",
+          "text": "`\"cacheable-request\": \"^7.0.2\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "de-fetch\",\n\t\t\"ky\"\n\t],\n\t\"dependencies\": {\n\t\t\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"cacheable-request\": \"^7.0.2\"`."
+        },
+        {
+          "id": "F029",
+          "type": "feature",
+          "text": "`\"decompress-response\": \"^6.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "uest\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\""
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"decompress-response\": \"^6.0.0\"`."
+        },
+        {
+          "id": "F030",
+          "type": "feature",
+          "text": "`\"http2-wrapper\": \"^1.0.0-beta.5.2\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "like\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\","
+            },
+            {
+              "path": "package-lock.json",
+              "excerpt": "\"@jridgewell/remapping\": \"^2.3.5\",\n\t\t\t\t\"convert-source-map\": \"^2.0.0\",\n\t\t\t\t\"debug\": \"^4.1.0\",\n\t\t\t\t\"gensync\": \"^1.0.0-beta.2\",\n\t\t\t\t\"json5\": \"^2.2.3\",\n\t\t\t\t\"semver\": \"^6.3.1\"\n\t\t\t},\n\t\t\t\"dependencies\": {\n\t\t\t\t\"convert-source-map\": {\n\t\t\t\t\t\"version\": \"2.0.0\",\n\t\t\t\t\t\"resolved\": \"https://registry.npmmirror.com/convert-source-map/-/convert-source-map-2.0.0.tgz\",\n\t\t\t\t\t\"integrity\": \"sha512-Kvp459HrV2FEJ1CAsi"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"http2-wrapper\": \"^1.0.0-beta.5.2\"`."
+        },
+        {
+          "id": "F031",
+          "type": "feature",
+          "text": "`\"lowercase-keys\": \"^2.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\",\n\t\t\"@types/benchmark\": \"^1.0.33\",\n\t\t\"@typ"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"lowercase-keys\": \"^2.0.0\"`."
+        },
+        {
+          "id": "F032",
+          "type": "feature",
+          "text": "`\"p-cancelable\": \"^2.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "t\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\",\n\t\t\"@types/benchmark\": \"^1.0.33\",\n\t\t\"@types/express\": \"^4.17.7\",\n\t\t\"@ty"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"p-cancelable\": \"^2.0.0\"`."
+        },
+        {
+          "id": "F033",
+          "type": "feature",
+          "text": "`\"responselike\": \"^2.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "\"@sindresorhus/is\": \"^4.0.0\",\n\t\t\"@szmarczak/http-timer\": \"^4.0.5\",\n\t\t\"@types/cacheable-request\": \"^6.0.1\",\n\t\t\"@types/responselike\": \"^1.0.0\",\n\t\t\"cacheable-lookup\": \"^5.0.3\",\n\t\t\"cacheable-request\": \"^7.0.2\",\n\t\t\"decompress-response\": \"^6.0.0\",\n\t\t\"http2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "buffer';\ntype Hooks = {\n\tbeforeRequest?: Array<(options: NormalizedOptions) => void>;\n\tafterResponse?: Array<(response: ResponseLike) => ResponseLike | void>;\n\tbeforeError?: Array<(error: Error) => Error | void>;\n};\ntype PaginationOptions = {\n\ttransform?: (response: ResponseLike) => any;\n\tfilter?: (item: any, allItems: any[], currentItems: any[]) => boolean;\n\tpaginate?: (response: ResponseLike, al"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"responselike\": \"^2.0.0\"`."
+        },
+        {
+          "id": "F034",
+          "type": "feature",
+          "text": "`\"tough-cookie\": \"4.0.0\"`",
+          "evidence": [
+            {
+              "path": "package.json",
+              "excerpt": "2-wrapper\": \"^1.0.0-beta.5.2\",\n\t\t\"lowercase-keys\": \"^2.0.0\",\n\t\t\"p-cancelable\": \"^2.0.0\",\n\t\t\"responselike\": \"^2.0.0\",\n\t\t\"tough-cookie\": \"4.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"@ava/typescript\": \"^1.1.1\",\n\t\t\"@sindresorhus/tsconfig\": \"^0.7.0\",\n\t\t\"@sinonjs/fake-timers\": \"^6.0.1\",\n\t\t\"@types/benchmark\": \"^1.0.33\",\n\t\t\"@types/express\": \"^4.17.7\",\n\t\t\"@types/node\": \"^14.14.0\",\n\t\t\"@types/node-fetch\": \"^2.5.7\","
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "import * as http from 'http';\nimport * as https from 'https';\nimport * as http2 from 'http2';\nimport {CookieJar} from 'tough-cookie';\ntype Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE';\ntype ResponseType = 'text' | 'json' | 'buffer';\ntype Hooks = {\n\tbeforeRequest?: Array<(options: NormalizedOptions) => void>;\n\tafterResponse?: Array<(response: ResponseLike) => ResponseLike | void>;"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/package.json` includes `\"tough-cookie\": \"4.0.0\"`."
+        },
+        {
+          "id": "F035",
+          "type": "feature",
+          "text": "The callable `got` export has HTTP method shortcut functions at `.get`, `.post`, `.put`, `.patch`, `.head`, and `.delete`.",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "ults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and .default)\nconst gotInstance = got.default || got;\n\n// ---------------------------------------------------------------------------\n// Additional exported error classes\n// ---------------------------------------------------------"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typ"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` adds `.get`, `.post`, `.put`, `.patch`, `.head`, and `.delete` on the callable `got` export."
+        },
+        {
+          "id": "F036",
+          "type": "feature",
+          "text": "`got.stream` is a function with the same method shortcuts (`.get`, `.post`, etc.) as stream variants.",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "/**\n * Extended blackbox tests for got HTTP client.\n * Covers additional error classes, HTTP method aliases, stream API,\n * paginate API, defaults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "import {URL} from 'url';\nimport {PassThrough, Readable} from 'stream';\nimport * as http from 'http';\nimport * as https from 'https';\nimport * as http2 from 'http2';\nimport {CookieJar} from 'tough-cookie';\ntype Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE';\ntype ResponseType = 'text' | 'json' | 'buffer';\ntype Hooks = {\n\tbefor"
+            },
+            {
+              "path": "package.json",
+              "excerpt": "{\n\t\"name\": \"got\",\n\t\"version\": \"11.8.6\",\n\t\"description\": \"Human-friendly and powerful HTTP request library for Node.js\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/got\",\n\t\"funding\": \"https://github.com/sindresorhus/got?sponsor=1\",\n\t\"main\": \"dist/source\",\n\t\"engines\": {\n\t\t\"node\": \">=10.19."
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` defines `got.stream` and adds the same HTTP method shortcuts to it in the shared method loop."
+        },
+        {
+          "id": "F037",
+          "type": "feature",
+          "text": "`got.paginate` is defined, with `.all` and `.each` as callable functions.",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "/**\n * Extended blackbox tests for got HTTP client.\n * Covers additional error classes, HTTP method aliases, stream API,\n * paginate API, defaults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typ"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "transform?: (response: ResponseLike) => any;\n\tfilter?: (item: any, allItems: any[], currentItems: any[]) => boolean;\n\tpaginate?: (response: ResponseLike, allItems: any[], currentItems: any[]) => false | string | URL | {url?: string | URL; options?: Options};\n};\ntype Options = {\n\turl?: string | URL;\n\tmethod?: string;\n\theaders?: Record<string, string>;\n\tbody?: any;\n\tjson?: any;\n\tsearchParams?: Rec"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/source/index.ts` defines `got.paginate`, and attaches callable `.all` and `.each` helpers."
+        },
+        {
+          "id": "F038",
+          "type": "feature",
+          "text": "Instances created by `got.extend(options)` expose `.get`, `.post`, `.mergeOptions`, and `.defaults`.",
+          "evidence": [
+            {
+              "path": "test\\got_extended.test.js",
+              "excerpt": "/**\n * Extended blackbox tests for got HTTP client.\n * Covers additional error classes, HTTP method aliases, stream API,\n * paginate API, defaults structure, and extend/mergeOptions edge cases.\n */\nconst got = require('../dist/source/index.js');\n\n// Resolve the callable got instance (supports both CJS default and"
+            },
+            {
+              "path": "test\\got.test.js",
+              "excerpt": "/**\n * Blackbox tests for got HTTP client.\n * Tests error classes and option merging (no actual HTTP requests).\n */\nconst got = require('../dist/source/index.js');\n\ndescribe('got - error classes', () => {\n  test('RequestError is exported', () => {\n    expect(got.RequestError).toBeDefined();\n    expect(typ"
+            },
+            {
+              "path": "source\\index.ts",
+              "excerpt": "' | 'PATCH' | 'HEAD' | 'DELETE';\ntype ResponseType = 'text' | 'json' | 'buffer';\ntype Hooks = {\n\tbeforeRequest?: Array<(options: NormalizedOptions) => void>;\n\tafterResponse?: Array<(response: ResponseLike) => ResponseLike | void>;\n\tbeforeError?: Array<(error: Error) => Error | void>;\n};\ntype PaginationOptions = {\n\ttransform?: (response: ResponseLike) => any;\n\tfilter?: (item: any, allItems: any[],"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Instances returned by `got.extend()` are created through `createGot()`, which attaches `.get`, `.post`, `.mergeOptions`, and `.defaults`."
+        }
+      ],
+      "feature_count": 38,
+      "constraint_count": 0,
+      "implemented_count": 34,
+      "partial_count": 2,
+      "missing_count": 2,
+      "unclear_count": 0,
+      "feature_coverage": 0.9211,
+      "constraint_coverage": 0.9211,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 216025,
+        "completion_tokens": 4363,
+        "total_tokens": 220388
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "javascript",
+        "framework": "express",
+        "app_style": "library",
+        "build_system": "npm",
+        "persistence": "unknown",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 4.1,
+        "stack_alignment": 4.4,
+        "reference_alignment": 4.2
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 142181,
+        "completion_tokens": 1646,
+        "total_tokens": 143827
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 31,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 0,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "",
+        "govet_exit": "",
+        "eslint_exit": "2",
+        "nodecheck_exit": "0"
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository satisfies most of the required package-shape and public-entry-point constraints. It provides a CommonJS TypeScript build targeting `dist/source/index.js`, exports a callable `got` function with `.default`, `.extend`, `.mergeOptions`, `.defaults`, HTTP method aliases, `stream`, `paginate`, and the requested error classes. It also matches the required version and runtime dependency set in `package.json`.\n\n### Missing List\n\n- Requirement F014: test files were generated under `repo/test/` despite the prompt forbidding them.\n- Requirement F016: `jest` appears in `devDependencies`, which the prompt explicitly forbids.\n- Requirement F010 is only partially evidenced: HTTP/HTTPS/HTTP2 support exists, but the broader transport-support scope is not fully demonstrated.\n- Requirement F011 is only partially evidenced: some reliability features exist, but retry execution logic and the full stated reliability scope are not fully implemented.\n\n### Critical Constraint Misses\n\n- Generated forbidden test files under `repo/test/`, violating the instruction not to generate tests.\n- Included forbidden test-runner package `jest` in `devDependencies`.",
+    "architecture_review": "### Stack Inference\n\n该仓库实际更接近一个 `npm` 驱动的 Node.js + TypeScript 库项目，而不是 Express 应用。入口源文件位于 `source/index.ts`，通过 `tsc` 编译到 CommonJS `dist/source/index.js`，这与题目要求的 got 风格运行时形态基本一致；不过它的工程组织更像“单文件库实现”，而不是常见的分层 TypeScript 网络库。\n\n### Scoring Mode\n\n本次按“架构评估”模式打分，重点看真实仓库中的目录组织、构建链路、入口设计、模块分层，以及它们是否符合 Node.js TypeScript 库项目的常见工程习惯。评分不会因为文件少就直接判低，也不会因为依赖多就判高，而是看这些结构是否服务于需求。\n\n### Strengths\n\n- 目录层级很少，`source/`、`package.json`、`tsconfig.json`、构建输出约定之间关系直观，入口定位成本低。\n- `package.json` 与 `tsconfig.json` 在关键构建约束上基本协调：CommonJS 输出、`outDir: dist`、`main: dist/source`，与题目要求的运行时入口一致。\n- 源码放在 `source/`、编译产物放在 `dist/` 的约定符合 Node.js/TypeScript 库项目的常见做法。\n\n### Issues\n\n- 核心实现几乎全部堆叠在 `source/index.ts` 单文件中，把选项归一化、传输层、重试/重定向、流接口、分页、错误模型全部耦合在一起，和需求里强调的模块化分层目标明显不符。\n- 仓库把 `test/` 一并提交进结果，而原始任务明确要求不要生成测试文件；这说明项目边界与交付结构控制较弱，也降低了结构评估分。\n- `package.json` 的工程脚本和开发依赖明显沿用上游大仓库配置，包含 `jest`、`ava`、`xo`、`nyc`、`express` 等大量与本次“最小可交付库”无关的内容，构建面和项目真实结构不匹配。\n- 构建入口虽然指向 `dist/source`，但源码层只有单一入口文件，没有把公共 API、错误类、请求执行、流处理、分页等拆分为惯常的库内模块，后续维护和替换成本高。\n- `task.json` 推断为 `express` 栈，但仓库实际是 Node.js/TypeScript HTTP client 库；项目中虽然存在 `express` devDependency，却不是架构主体，说明依赖和栈表征存在噪声。\n\n### Stack Mismatches\n\n- `task.json` 中的 `framework: express` 与仓库实际职责不符；这里只是 HTTP client library，不是 Express 服务端应用。\n- 作为 TypeScript 库项目，保留大量与运行时无关的上游测试/发布工具依赖，不符合常见的精简库工程习惯。\n\n### Reference Gaps\n\n- 需求要求“保持 option normalization、request execution、retry logic、response handling 模块化”，但实际仓库没有对应模块边界，基本由单文件实现替代。\n- 任务要求不要生成测试文件，仓库却包含 `test/got.test.js` 和 `test/got_extended.test.js`。\n- 任务强调最小项目形态，但 `package.json` 仍保留大量上游仓库级测试/发布/质量工具配置，偏离了最小实现目标。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 358206,
+    "completion_tokens": 6009,
+    "total_tokens": 364215,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 216025,
+        "completion_tokens": 4363,
+        "total_tokens": 220388
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 142181,
+        "completion_tokens": 1646,
+        "total_tokens": 143827
+      }
+    ]
+  },
+  "language": "javascript",
+  "project_name": "got",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.61,
+  "architecture_score": 4.23,
+  "health_score": 4.0,
+  "all_tests_passed": false
+}

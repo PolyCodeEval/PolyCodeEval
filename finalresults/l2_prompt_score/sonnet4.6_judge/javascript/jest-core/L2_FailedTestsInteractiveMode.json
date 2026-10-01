@@ -1,0 +1,29 @@
+{
+  "task": "javascript/jest-core/L2_FailedTestsInteractiveMode",
+  "project": "javascript/jest-core",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/jest-core/tasks/L2_FailedTestsInteractiveMode/prompt.md",
+  "task_json_path": "datasets/javascript/jest-core/tasks/L2_FailedTestsInteractiveMode/task.json",
+  "source_file_path": "datasets/javascript/jest-core/src/FailedTestsInteractiveMode.ts",
+  "target_file": "FailedTestsInteractiveMode.ts",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "descriptions_present": true,
+  "score": 3.2,
+  "reason": "The file-level description and most function-level descriptions are broadly accurate, but contain several meaningful gaps and one notable inaccuracy. The `put` function description says the Enter key 'returns to watch mode if there are no remaining assertions' but the implementation actually calls `this.abort()` in that case (not a separate 'return to watch mode' path — abort resets state and calls updateTestRunnerConfig with no args). More critically, the `put` description omits the `_drawUIDoneWithSkipped()` call entirely, describing it only as 'shows the done with skipped tests UI' without naming the method, which is acceptable, but the description also misses that the skip guard checks `this._skippedNum === this._testAssertions.length` (all tracked, not just 'every tracked assertion has already been marked skipped' which is ambiguous). The `updateWithResults` description says 'redraws the overlay when the queue becomes empty' but the implementation calls `_drawUIOverlay()` in both the empty-queue and non-empty-queue paths after shifting — the description implies the overlay is only redrawn on empty, missing that `_drawUIOverlay` is always called after shift when the queue is empty. The `_drawUIDone` description is accurate and complete. Notably absent from all descriptions: the `_drawUIDoneWithSkipped`, `_drawUIProgress`, `_drawUIOverlay`, `_run`, `abort`, and `restart` private methods, which are referenced by the hollowed functions and are essential context for reconstruction. A model reconstructing `put` would not know that `abort()` and `restart()` exist as named methods, nor that `_drawUIDoneWithSkipped()` is a distinct method. This makes the description incomplete enough to hinder accurate reconstruction.",
+  "missing_functionality": [
+    "No mention of the `abort()` private method, which is called by quit/escape keys and by Enter when queue is empty — a reconstructor would not know this method exists or its name",
+    "No mention of the `restart()` private method, called by the 'r' key",
+    "No mention of `_drawUIDoneWithSkipped()` as a named method — only vaguely referenced as 'shows the done with skipped tests UI'",
+    "No mention of `_drawUIOverlay()`, `_drawUIProgress()`, or `_run()` helper methods that the hollowed functions delegate to",
+    "The `updateWithResults` description omits that `_drawUIOverlay()` is called (not just 'redraws the overlay') after the shift when the queue is non-empty — it says 'advances the session by invoking the internal runner update' but the actual call is `this._run()`, not a UI redraw; the description conflates two separate branches incorrectly",
+    "The skip guard condition (`_skippedNum === _testAssertions.length`) is described ambiguously as 'every tracked assertion has already been marked skipped' without clarifying the exact numeric comparison"
+  ],
+  "incorrect_or_misleading_points": [
+    "The `put` Enter-key description says 'returns to watch mode if there are no remaining assertions' but the implementation calls `this.abort()`, which resets internal state — it does not directly return to watch mode as a distinct action",
+    "The `updateWithResults` description says 'redraws the overlay when the queue becomes empty; if more assertions remain, advances the session by invoking the internal runner update' — but the implementation calls `_drawUIOverlay()` only when the queue is empty after shift, and calls `_run()` when assertions remain; the description implies the overlay is redrawn in both cases after the shift, which is inaccurate"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L2_FailedTestsInteractiveMode.raw.md"
+}

@@ -1,0 +1,29 @@
+{
+  "task": "go/sqlx/L0_sqlx",
+  "project": "go/sqlx",
+  "language": "go",
+  "prompt_path": "datasets/go/sqlx/tasks/L0_sqlx/prompt.md",
+  "project_root": "datasets/go/sqlx",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Core functions (Open, Connect, NewDb, Get, Select, NamedExec), bind helpers (BindType, BindDriver, Rebind, In, Named, BindNamed), bind-type constants (UNKNOWN, DOLLAR, QUESTION, NAMED, AT), and all default driver-to-bind-type mappings are present. The :: escape sequence, := non-parameter rule, and In error conditions are specified. Missing: the sqlx extended type hierarchy (DB, Tx, Rows, Stmt) with struct scanning details, reflectx package, and struct tag handling are not detailed. The test suite focuses on bind/rebind/named/in, so this is not a critical gap for testability."
+    },
+    "unambiguity": {
+      "score": 4.5,
+      "reason": "NAMED bind type Rebind producing :arg1, :arg2 is explicitly stated. UNKNOWN leaves query unchanged. In error conditions (wrong number of ? vs args) and In no-op behavior (no slice args) are specified. Named() output using ? placeholders (QUESTION style) is described. :: -> literal colon and := -> not a named param are called out. Default driver mappings are exhaustive. Named with missing struct field erroring is described."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests cover BindType for postgres/mysql, Rebind for DOLLAR/QUESTION/AT, Named with struct/map/missing field, In expansion with slices and error cases. The prompt's precise specifications for Rebind, Named, and In support all these tests. The :: escape and := non-parameter rules in extended tests are also covered."
+    },
+    "consistency": {
+      "score": 5.0,
+      "reason": "All driver mappings, Rebind behavior, NAMED :arg1 format, and In semantics are consistent with sqlx's actual implementation. No contradictions found. Module path (github.com/jmoiron/sqlx) is correct."
+    }
+  },
+  "overall_score": 4.63
+}

@@ -1,0 +1,13 @@
+{
+  "score": 4.5,
+  "reason": "The description matches the implementation closely and captures the main control flow, escape handling, unterminated-error behavior, line tracking, template-vs-string newline rules, and return shape. It is detailed enough to support an implementation. The main mismatch is that it claims U+2028/U+2029 line separators are not appended or normalized in the output, while the implementation effectively leaves them in the raw sliced text and only updates line counters. It also slightly overstates that parsing always consumes to the matching terminator/end of input, since for non-template bare CR/LF it reports an error and then keeps looping rather than immediately terminating at that point.",
+  "missing_functionality": [
+    "The description does not explicitly mention that string termination is delegated to `isStringEnd`, which for templates also treats `${` as an end condition in addition to the backtick.",
+    "It does not clearly state that on invalid escapes, later invalid escapes are ignored for location recording and only the first one is stored, though this is implied."
+  ],
+  "incorrect_or_misleading_points": [
+    "The statement that Unicode line separator and paragraph separator characters are treated as line breaks but do not append any normalization to the output is misleading: the implementation updates line tracking without flushing the current chunk, so those characters remain included in the final sliced output.",
+    "Saying it consumes input until the matching terminator or end of input is slightly imprecise for non-template `\\n`/`\\r`: the function reports an unterminated error there but does not immediately stop."
+  ],
+  "complete_enough": true
+}

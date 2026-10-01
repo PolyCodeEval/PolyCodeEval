@@ -1,0 +1,39 @@
+{
+  "task": "javascript/babel-parser/L2_lib__index_js",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L2_lib__index_js/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L2_lib__index_js/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_file": "lib/index.js",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 3.6,
+  "reason": "The description matches the implementation at a high level: this file is indeed Babel parser’s compiled runtime bundle, with tokenizer/runtime state, parse errors, scope management, plugin mixins, AST helpers, and top-level parse entrypoints. The highlighted responsibilities for `Parser`, `parse`, `getParser`, and `getParserClass` are directionally correct, including unambiguous sourceType handling and plugin-based parser composition. However, the prompt is far too broad and generic relative to a 421-hole file. It omits many concrete behavioral contracts that are essential to reconstructing this exact bundle, especially option normalization rules, plugin validation constraints, token-table construction details, ESTree/Flow/TypeScript adaptation behavior, comment attachment semantics, and numerous exported/runtime utility specifics. So it is a good summary, but not complete enough to reliably regenerate the actual file.",
+  "missing_functionality": [
+    "Concrete option normalization details in `createDefaultOptions`/`getOptions`, including default values, annexB restrictions, startLine/startIndex/startColumn coupling, and `sourceType: 'commonjs'` validation behavior.",
+    "Specific parser constructor behavior: computing bitmask `optionFlags`, initializing scopes/plugins/filename/startIndex, and how those flags govern ranges, locations, tokens, parenthesized expressions, import-expression mode, error recovery, comment attachment, and annexB behavior.",
+    "Precise `parse()` output behavior: file/program node creation, error array attachment, packed `locData` export when `locations === 'packed'`, and comment/token finalization.",
+    "Detailed `parse(input, options)` behavior for `sourceType: 'unambiguous'`, including `sawUnambiguousESM`, `ambiguousScriptDifferentAst`, mutation of `program.sourceType` back to `script`, and fallback/rethrow semantics.",
+    "Plugin validation rules in `validatePlugins`, including illegal plugin combinations and required plugin option values for pipelineOperator, optionalChainingAssign, discardBinding, and removed/deprecated plugins.",
+    "Deterministic parser class composition order based only on a fixed subset of mixin plugin names, and cache-key construction using joined enabled plugin names.",
+    "Token system specifics: exported token-type metadata objects, token id allocation, keyword-vs-keywordLike behavior, token property tables, and exported `tokTypes` generation.",
+    "Identifier and Unicode lexing behavior, including astral identifier support, reserved word checks, contextual keyword handling, and escaped identifier validation.",
+    "Tokenizer-specific behaviors such as lookahead state cloning, location packing cache, regexp/template/string parsing, numeric separator rules, interpreter directive support, and comment token emission.",
+    "Comment attachment algorithm details: leading/trailing/inner comments, comment stack finalization, special handling for lists/arguments/properties/type parameters, and attachComment gating.",
+    "ESTree mixin exact AST rewrites, e.g. `Literal` conversion, `ChainExpression`, `MethodDefinition`/`PropertyDefinition`, `ImportExpression` normalization, private-name conversion, and directive-to-expression-statement conversion.",
+    "Flow mixin concrete syntax coverage and semantics: pragma detection, flow comments, declare/module/export/type/interface/enum parsing, type-cast expressions, and Flow-specific import/export typing behavior.",
+    "TypeScript mixin concrete syntax coverage and semantics: type parameter parsing, ambient context, modifiers, interfaces, enums, namespaces/modules, import-equals, type assertions, mapped/tuple/conditional types, and TSESLint optional property filling.",
+    "Placeholder and V8 intrinsic plugin semantics, including placeholder tokenization and AST node behavior.",
+    "Additional exported helpers and utilities such as `getLine`, `getColumn`, packed locData support, and exported token conversion."
+  ],
+  "incorrect_or_misleading_points": [
+    "The function-level descriptions are mostly generic and do not signal many exact semantics that are crucial in this implementation, so they may overstate reconstructability despite being directionally correct.",
+    "Saying tokenizer helpers 'must keep tokenizer state, lookahead behavior, and token stream output consistent with Babel’s parser expectations' is true but too abstract for the real implementation, which depends on very specific token ids, tables, and option-flag behavior.",
+    "The language-extension section groups Flow, TypeScript, JSX, placeholders, V8 intrinsic, and ESTree together, but the implementation contains substantial, highly distinct logic for each; this grouping understates how much file-specific behavior must be reproduced."
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L2_lib__index_js.raw.md"
+}

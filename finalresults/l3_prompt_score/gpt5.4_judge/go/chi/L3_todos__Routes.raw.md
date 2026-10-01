@@ -1,0 +1,12 @@
+{
+  "score": 4.2,
+  "reason": "The description matches the main structure of the implementation: it builds and returns a chi router, registers collection-level list and create endpoints, adds item-level routes under `/{id}` for get, update, delete, and a sync action, and notes an additional root-level delete-style handler. The main weakness is that it does not specify the actual HTTP methods precisely enough for the unusual root-path handler (`PUT /` mapped to `Delete`) or for the sync action (`GET /{id}/sync`). Still, it captures the core routing behavior well enough overall.",
+  "missing_functionality": [
+    "It does not clearly state that the collection root delete-style handler is specifically registered as `PUT /` and handled by `rs.Delete`.",
+    "It does not specify that the sync action is exposed as `GET /{id}/sync`."
+  ],
+  "incorrect_or_misleading_points": [
+    "Referring to a 'DELETE-style handler on the collection root path' is somewhat imprecise because the implementation actually registers a `PUT` handler at `/`, not a `DELETE` handler."
+  ],
+  "complete_enough": true
+}

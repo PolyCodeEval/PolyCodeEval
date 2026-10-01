@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.44,
+  "stdout": "st_find_special_folder_with_special_use>\n\n    def test_find_special_folder_with_special_use(self):\n        self.client._cached_capabilities = (b\"SPECIAL-USE\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"INBOX\"',\n                b'(\\\\HasNoChildren \\\\Sent) \"/\" \"Sent\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:247: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:797: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:690: in list_folders\n    return self._do_list(\"LIST\", directory, pattern)\nsrc/imapclient/imapclient.py:739: in _do_list\n    return self._proc_folder_list(dat)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f14e984c6d0>\nfolder_data = [b'(\\\\HasNoChildren) \"/\" \"INBOX\"', b'(\\\\HasNoChildren \\\\Sent) \"/\" \"Sent\"']\n\n    def _proc_folder_list(self, folder_data):\n        # Filter out empty strings and None's.\n        # This also deals with the special case of - no 'untagged'\n        # responses (ie, no folders). This comes back as [None].\n>       if not isinstance(s, bytes):\nE       NameError: name 's' is not defined\n\nsrc/imapclient/imapclient.py:745: NameError\n_ TestFindSpecialFolder.test_find_special_folder_with_special_use_single_flag __\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_with_special_use_single_flag>\n\n    def test_find_special_folder_with_special_use_single_flag(self):\n        self.client._cached_capabilities = (b\"SPECIAL-USE\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"INBOX\"',\n                b'(\\\\Sent) \"/\" \"Sent\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:262: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:797: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:690: in list_folders\n    return self._do_list(\"LIST\", directory, pattern)\nsrc/imapclient/imapclient.py:739: in _do_list\n    return self._proc_folder_list(dat)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f14e97dd1e0>\nfolder_data = [b'(\\\\HasNoChildren) \"/\" \"INBOX\"', b'(\\\\Sent) \"/\" \"Sent\"']\n\n    def _proc_folder_list(self, folder_data):\n        # Filter out empty strings and None's.\n        # This also deals with the special case of - no 'untagged'\n        # responses (ie, no folders). This comes back as [None].\n>       if not isinstance(s, bytes):\nE       NameError: name 's' is not defined\n\nsrc/imapclient/imapclient.py:745: NameError\n_ TestFindSpecialFolder.test_find_special_folder_without_special_use_nor_namespace _\n\nself = <unit_tests.test_imapclient.TestFindSpecialFolder testMethod=test_find_special_folder_without_special_use_nor_namespace>\n\n    def test_find_special_folder_without_special_use_nor_namespace(self):\n        self.client._cached_capabilities = (b\"FOO\",)\n        self.client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        self.client._imap._untagged_response.return_value = (\n            \"LIST\",\n            [\n                b'(\\\\HasNoChildren) \"/\" \"Sent Items\"',\n            ],\n        )\n    \n>       folder = self.client.find_special_folder(b\"\\\\Sent\")\n\ntests/unit_tests/test_imapclient.py:276: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:797: in find_special_folder\n    for folder in self.list_folders():\nsrc/imapclient/imapclient.py:690: in list_folders\n    return self._do_list(\"LIST\", directory, pattern)\nsrc/imapclient/imapclient.py:739: in _do_list\n    return self._proc_folder_list(dat)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f14e96b69b0>\nfolder_data = [b'(\\\\HasNoChildren) \"/\" \"Sent Items\"']\n\n    def _proc_folder_list(self, folder_data):\n        # Filter out empty strings and None's.\n        # This also deals with the special case of - no 'untagged'\n        # responses (ie, no folders). This comes back as [None].\n>       if not isinstance(s, bytes):\nE       NameError: name 's' is not defined\n\nsrc/imapclient/imapclient.py:745: NameError\n___________________ test_xlist_folders_calls_simple_command ____________________\n\n    def test_xlist_folders_calls_simple_command():\n        client = make_client()\n        client._cached_capabilities = (b\"XLIST\",)\n        client._imap._simple_command.return_value = (\"OK\", [b\"something\"])\n        client._imap._untagged_response.return_value = (\"XLIST\", [b'(\\\\HasNoChildren) \"/\" \"INBOX\"'])\n    \n>       folders = client.xlist_folders()\n\ntests/unit_tests/test_remaining_tasks.py:77: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/imapclient/imapclient.py:179: in wrapper\n    return func(client, *args, **kwargs)\nsrc/imapclient/imapclient.py:722: in xlist_folders\n    return self._do_list(\"XLIST\", directory, pattern)\nsrc/imapclient/imapclient.py:739: in _do_list\n    return self._proc_folder_list(dat)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <imapclient.testable_imapclient.TestableIMAPClient object at 0x7f14e9738730>\nfolder_data = [b'(\\\\HasNoChildren) \"/\" \"INBOX\"']\n\n    def _proc_folder_list(self, folder_data):\n        # Filter out empty strings and None's.\n        # This also deals with the special case of - no 'untagged'\n        # responses (ie, no folders). This comes back as [None].\n>       if not isinstance(s, bytes):\nE       NameError: name 's' is not defined\n\nsrc/imapclient/imapclient.py:745: NameError\n------------------------------ Captured log call -------------------------------\nDEBUG    imapclient.imapclient:imapclient.py:289 Connected to host somehost over SSL/TLS\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_blanks - Na...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_empty_response\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_mixed - Nam...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_simple - Na...\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding\nFAILED tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag\nFAILED tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_without_special_use_nor_namespace\nFAILED tests/unit_tests/test_remaining_tasks.py::test_xlist_folders_calls_simple_command\n======================== 15 failed, 272 passed in 2.05s ========================\n",
+  "stderr": "",
+  "task": "python/imapclient/L3_imapclient___proc_folder_list",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_empty_response",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_folder_encode_off",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_funky_characters",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_quoted_specials",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_unquoted_numeric_folder_name_parsed_as_long",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_utf7_decoding",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestListFolders::test_without_quotes",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_with_special_use_single_flag",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_imapclient.py::TestFindSpecialFolder::test_find_special_folder_without_special_use_nor_namespace",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

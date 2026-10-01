@@ -1,0 +1,159 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.73,
+  "stdout": "..}, {'pattern': 'dictionary', 'i': 9, 'j': 12, 'token': 'junk', ...}, ...]\n_exclude_additive = False\n\n    def most_guessable_match_sequence(password, matches, _exclude_additive=False):\n        n = len(password)\n    \n        # Group matches by ending index j\n        matches_by_j = [[] for _ in range(n)]\n        for m in matches:\n            j = m['j']\n            if 0 <= j < n:\n                matches_by_j[j].append(m)\n    \n        # Sort each group by start index i (descending helps, but not required)\n        for lst in matches_by_j:\n            lst.sort(key=lambda m: m['i'])\n    \n        optimal = {\n            -1: {\n                'guesses': 1,\n                'l': 0,\n                'sequence': []\n            }\n        }\n    \n        D = BRUTEFORCE_CARDINALITY  # 10\n    \n        for k in range(n):\n            # Start by extending the previous prefix with a brute‑force character\n            base = optimal[k - 1]\n            guesses = base['guesses'] * BRUTEFORCE_CARDINALITY\n            l = base['l'] + 1\n            sequence = base['sequence'] + [{\n                'pattern': 'bruteforce',\n                'token': password[k],\n                'i': k,\n                'j': k,\n                'guesses': BRUTEFORCE_CARDINALITY\n            }]\n    \n            # Consider every match that ends at k\n            for m in matches_by_j[k]:\n                base_m = optimal.get(m['i'] - 1)\n                if base_m is None:\n                    continue\n    \n                # Apply minimum guesses thresholds\n>               match_guesses = m['guesses']\nE               KeyError: 'guesses'\n\nsrc/zxcvbn/scoring.py:121: KeyError\n______________________________ test_long_password ______________________________\n\n    def test_long_password():\n        input_ = None\n        password = \"weopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioejiojweopiopdsjmkldjvoisdjfioej\"\n    \n>       zxcvbn(password, user_inputs=[input_])\n\ntests/unit_tests/zxcvbn_test.py:33: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__init__.py:27: in zxcvbn\n    matches = matching.omnimatch(password, ranked_dictionaries)\nsrc/zxcvbn/matching.py:90: in omnimatch\n    matches.extend(matcher(password, _ranked_dictionaries=_ranked_dictionaries))\nsrc/zxcvbn/matching.py:281: in repeat_match\n    base_analysis = most_guessable_match_sequence(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'weopiopdsjmkldjvoisdjfioejioj'\nmatches = [{'pattern': 'dictionary', 'i': 0, 'j': 1, 'token': 'we', ...}, {'pattern': 'sequence', 'i': 2, 'j': 3, 'token': 'op',...rn': 'spatial', 'i': 4, 'j': 6, 'token': 'iop', ...}, {'pattern': 'sequence', 'i': 5, 'j': 6, 'token': 'op', ...}, ...]\n_exclude_additive = False\n\n    def most_guessable_match_sequence(password, matches, _exclude_additive=False):\n        n = len(password)\n    \n        # Group matches by ending index j\n        matches_by_j = [[] for _ in range(n)]\n        for m in matches:\n            j = m['j']\n            if 0 <= j < n:\n                matches_by_j[j].append(m)\n    \n        # Sort each group by start index i (descending helps, but not required)\n        for lst in matches_by_j:\n            lst.sort(key=lambda m: m['i'])\n    \n        optimal = {\n            -1: {\n                'guesses': 1,\n                'l': 0,\n                'sequence': []\n            }\n        }\n    \n        D = BRUTEFORCE_CARDINALITY  # 10\n    \n        for k in range(n):\n            # Start by extending the previous prefix with a brute‑force character\n            base = optimal[k - 1]\n            guesses = base['guesses'] * BRUTEFORCE_CARDINALITY\n            l = base['l'] + 1\n            sequence = base['sequence'] + [{\n                'pattern': 'bruteforce',\n                'token': password[k],\n                'i': k,\n                'j': k,\n                'guesses': BRUTEFORCE_CARDINALITY\n            }]\n    \n            # Consider every match that ends at k\n            for m in matches_by_j[k]:\n                base_m = optimal.get(m['i'] - 1)\n                if base_m is None:\n                    continue\n    \n                # Apply minimum guesses thresholds\n>               match_guesses = m['guesses']\nE               KeyError: 'guesses'\n\nsrc/zxcvbn/scoring.py:121: KeyError\n____________________________ test_cli_outputs_json _____________________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8996dd38e0>\ncapsys = <_pytest.capture.CaptureFixture object at 0x7f8996dd3a00>\n\n    def test_cli_outputs_json(monkeypatch, capsys):\n        monkeypatch.setattr('sys.stdin', StringIO('password\\n'))\n        monkeypatch.setattr('sys.argv', ['zxcvbn'])\n        with patch('select.select', return_value=([StringIO('password\\n')], [], [])):\n>           cli()\n\ntests/unit_tests/zxcvbn_test.py:48: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/zxcvbn/__main__.py:39: in cli\n    res = zxcvbn(password, user_inputs=args.user_input)\nsrc/zxcvbn/__init__.py:28: in zxcvbn\n    result = scoring.most_guessable_match_sequence(password, matches)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\npassword = 'password'\nmatches = [{'pattern': 'dictionary', 'i': 0, 'j': 3, 'token': 'pass', ...}, {'pattern': 'dictionary', 'i': 0, 'j': 4, 'token': '...', 'i': 0, 'j': 7, 'token': 'password', ...}, {'pattern': 'dictionary', 'i': 0, 'j': 7, 'token': 'password', ...}, ...]\n_exclude_additive = False\n\n    def most_guessable_match_sequence(password, matches, _exclude_additive=False):\n        n = len(password)\n    \n        # Group matches by ending index j\n        matches_by_j = [[] for _ in range(n)]\n        for m in matches:\n            j = m['j']\n            if 0 <= j < n:\n                matches_by_j[j].append(m)\n    \n        # Sort each group by start index i (descending helps, but not required)\n        for lst in matches_by_j:\n            lst.sort(key=lambda m: m['i'])\n    \n        optimal = {\n            -1: {\n                'guesses': 1,\n                'l': 0,\n                'sequence': []\n            }\n        }\n    \n        D = BRUTEFORCE_CARDINALITY  # 10\n    \n        for k in range(n):\n            # Start by extending the previous prefix with a brute‑force character\n            base = optimal[k - 1]\n            guesses = base['guesses'] * BRUTEFORCE_CARDINALITY\n            l = base['l'] + 1\n            sequence = base['sequence'] + [{\n                'pattern': 'bruteforce',\n                'token': password[k],\n                'i': k,\n                'j': k,\n                'guesses': BRUTEFORCE_CARDINALITY\n            }]\n    \n            # Consider every match that ends at k\n            for m in matches_by_j[k]:\n                base_m = optimal.get(m['i'] - 1)\n                if base_m is None:\n                    continue\n    \n                # Apply minimum guesses thresholds\n>               match_guesses = m['guesses']\nE               KeyError: 'guesses'\n\nsrc/zxcvbn/scoring.py:121: KeyError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/matching_test.py::test_repeat_matching - KeyError: 'g...\nFAILED tests/unit_tests/scoring_test.py::test_search - AssertionError: return...\nFAILED tests/unit_tests/scoring_test.py::test_repeat_guesses - KeyError: 'gue...\nFAILED tests/unit_tests/zxcvbn_test.py::test_unicode_user_inputs - KeyError: ...\nFAILED tests/unit_tests/zxcvbn_test.py::test_invalid_user_inputs - KeyError: ...\nFAILED tests/unit_tests/zxcvbn_test.py::test_long_password - KeyError: 'guesses'\nFAILED tests/unit_tests/zxcvbn_test.py::test_cli_outputs_json - KeyError: 'gu...\n========================= 7 failed, 27 passed in 0.46s =========================\n",
+  "stderr": "",
+  "task": "python/zxcvbn/L3_scoring__most_guessable_match_sequence",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "test_0",
+        "passed": true
+      },
+      {
+        "name": "test_1",
+        "passed": true
+      },
+      {
+        "name": "test_2",
+        "passed": true
+      },
+      {
+        "name": "test_3",
+        "passed": true
+      },
+      {
+        "name": "test_4",
+        "passed": true
+      },
+      {
+        "name": "test_5",
+        "passed": true
+      },
+      {
+        "name": "test_6",
+        "passed": true
+      },
+      {
+        "name": "test_7",
+        "passed": true
+      },
+      {
+        "name": "test_8",
+        "passed": true
+      },
+      {
+        "name": "test_9",
+        "passed": true
+      },
+      {
+        "name": "test_10",
+        "passed": true
+      },
+      {
+        "name": "test_11",
+        "passed": true
+      },
+      {
+        "name": "test_12",
+        "passed": true
+      },
+      {
+        "name": "test_13",
+        "passed": true
+      },
+      {
+        "name": "test_14",
+        "passed": true
+      },
+      {
+        "name": "test_15",
+        "passed": true
+      },
+      {
+        "name": "test_16",
+        "passed": true
+      },
+      {
+        "name": "test_17",
+        "passed": true
+      },
+      {
+        "name": "test_18",
+        "passed": true
+      },
+      {
+        "name": "test_19",
+        "passed": true
+      },
+      {
+        "name": "test_20",
+        "passed": true
+      },
+      {
+        "name": "test_21",
+        "passed": true
+      },
+      {
+        "name": "test_22",
+        "passed": true
+      },
+      {
+        "name": "test_23",
+        "passed": true
+      },
+      {
+        "name": "test_24",
+        "passed": true
+      },
+      {
+        "name": "test_25",
+        "passed": true
+      },
+      {
+        "name": "test_26",
+        "passed": true
+      },
+      {
+        "name": "failed_0",
+        "passed": false
+      },
+      {
+        "name": "failed_1",
+        "passed": false
+      },
+      {
+        "name": "failed_2",
+        "passed": false
+      },
+      {
+        "name": "failed_3",
+        "passed": false
+      },
+      {
+        "name": "failed_4",
+        "passed": false
+      },
+      {
+        "name": "failed_5",
+        "passed": false
+      },
+      {
+        "name": "failed_6",
+        "passed": false
+      }
+    ],
+    "passed": 27,
+    "failed": 7,
+    "total": 34
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.7941,
+  "compile_score": 0.5,
+  "test_score": 0.3971,
+  "score": 0.8971
+}

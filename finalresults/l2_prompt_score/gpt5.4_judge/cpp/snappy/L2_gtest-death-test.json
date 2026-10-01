@@ -1,0 +1,30 @@
+{
+  "task": "cpp/snappy/L2_gtest-death-test",
+  "project": "cpp/snappy",
+  "language": "cpp",
+  "prompt_path": "datasets/cpp/snappy/tasks/L2_gtest-death-test/prompt.md",
+  "task_json_path": "datasets/cpp/snappy/tasks/L2_gtest-death-test/task.json",
+  "source_file_path": "datasets/cpp/snappy/src/third_party/googletest/googletest/src/gtest-death-test.cc",
+  "target_file": "third_party/googletest/googletest/src/gtest-death-test.cc",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.8,
+  "reason": "The description matches the implementation very closely at both file and function level. It correctly captures the cross-platform death-test architecture, the parent/child pipe protocol, the different Windows/Fuchsia/POSIX execution strategies, and the detailed control flow for nearly all hollowed functions. It is also unusually strong on edge cases such as EOF meaning success, internal error propagation, formatted stderr handling, thread warnings, SIGPROF handling on Linux, clone-stack setup, and child-side abort behavior. The main gaps are a few implementation-specific details that are present in the real file but not explicitly called out, such as clearing the close-on-exec flag with an exact fcntl call, the use of the constant internal flag name symbol on Fuchsia, some exact logging/setup details, and one minor wording mismatch around the Fuchsia stderr fd configuration. Overall, this is highly faithful and likely sufficient for reconstructing the file.",
+  "missing_functionality": [
+    "The description does not explicitly mention that DefaultDeathTestFactory::Create increments the current test's death-test count via increment_death_test_count() before matching against the internal-run selection.",
+    "ExecDeathTest::AssumeRole is described semantically, but not the exact implementation detail that it clears close-on-exec on the write end using fcntl(pipe_fd[1], F_SETFD, 0).",
+    "WindowsDeathTest::AssumeRole omits some exact API-setup details present in the implementation, such as the STARTUPINFOA standard-handle wiring and use of GetCommandLineA() to preserve the existing command line before appending flags.",
+    "FuchsiaDeathTest::AssumeRole does not explicitly mention that stderr capture uses fdio_fd_create on the producer socket before cloning it onto STDERR_FILENO.",
+    "ParseInternalRunDeathTestFlag does not note that write_fd remains initialized to -1 on Fuchsia and is filled only on Windows/POSIX."
+  ],
+  "incorrect_or_misleading_points": [
+    "In DeathTestAbort, the description says to open the supplied write file descriptor as a FILE* if launched via internal_run_death_test; the implementation actually consults GetUnitTestImpl()->internal_run_death_test_flag(), which is slightly broader/more precise than checking the raw flag string directly.",
+    "For FuchsiaDeathTest::AssumeRole, 'configure it as needed' is vague and could imply nonblocking stderr setup; the implementation actually calls fcntl(stderr_producer_fd, F_SETFL, 0), which sets flags to 0 rather than enabling nonblocking on that fd.",
+    "The description for WindowsDeathTest::AssumeRole says the internal_run_death_test flag contains a write-handle value and event-handle value, which is correct, but it omits that these are passed as size_t-serialized HANDLE values and reconstructed through handle duplication in the child.",
+    "The file-level description says the parent/child status communication is pipe-like across platforms, which is directionally correct, but on Fuchsia stderr capture is socket-based and exception handling/job control are also essential parts of the platform-specific mechanism."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_gtest-death-test.raw.md"
+}

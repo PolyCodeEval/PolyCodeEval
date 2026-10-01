@@ -1,0 +1,25 @@
+{
+  "task": "python/Hybrid_Images/L3_hybrid__cross_correlation_2d",
+  "project": "python/Hybrid_Images",
+  "language": "python",
+  "prompt_path": "datasets/python/Hybrid_Images/tasks/L3_hybrid__cross_correlation_2d/prompt.md",
+  "task_json_path": "datasets/python/Hybrid_Images/tasks/L3_hybrid__cross_correlation_2d/task.json",
+  "source_file_path": "datasets/python/Hybrid_Images/src/hybrid.py",
+  "target_symbol": "src/hybrid.py::cross_correlation_2d",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: 2D cross-correlation with zero padding, same-size output, per-channel dot product, odd kernel dimensions, and no normalization or flipping. It correctly notes that grayscale inputs are expanded internally to 3D and that the output matches the original shape. One minor inaccuracy is the claim that the padded array 'preserves the input data type' — this is true for `newpad` (which uses `dtype=img.dtype`), but `output` is created with `np.empty(img.shape)` which uses the default float64 dtype, not necessarily the input dtype. The description also slightly mischaracterizes the padding size: the implementation uses `(m + height - 1, n + width - 1)` padding (i.e., `(m-1)/2` on each side), which is standard zero-padding for same-size output, and the description's phrasing 'zero padding around the image' is close enough. Overall the description is accurate and complete enough to guide a correct implementation.",
+  "missing_functionality": [
+    "The output array is created with np.empty(img.shape) which does not preserve the input dtype — the description's claim that the output dtype is preserved is slightly misleading.",
+    "The description does not mention that for grayscale inputs, result[0] is used (scalar extraction) rather than the full result vector, which is a subtle implementation detail."
+  ],
+  "incorrect_or_misleading_points": [
+    "Claims the output array is 'initialized with the input shape' and implies dtype preservation, but np.empty does not guarantee dtype matching the input — only the padded working array uses img.dtype."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_hybrid__cross_correlation_2d.raw.md"
+}

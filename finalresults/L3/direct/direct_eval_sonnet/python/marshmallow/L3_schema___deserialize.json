@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 4.19,
+  "stdout": "               partial=partial,\n                        unknown=unknown,\n                    )\n                except ValidationError as err:\n                    errors = err.normalized_messages()\n        if errors:\n            exc = ValidationError(errors, data=data, valid_data=result)\n            self.handle_error(exc, data, many=many, partial=partial)\n>           raise exc\nE           marshmallow.exceptions.ValidationError: {'children': {0: {'age': ['Missing data for required field.']}}}\n\nsrc/marshmallow/schema.py:945: ValidationError\n_________ TestDictNested.test_dict_nested_partial_propagated_to_nested _________\n\nself = <tests.unit_tests.test_fields.TestDictNested object at 0x7fa3f164cbe0>\n\n    def test_dict_nested_partial_propagated_to_nested(self):\n        class Child(Schema):\n            name = fields.String(required=True)\n            age = fields.Integer(required=True)\n    \n        class Family(Schema):\n            children = fields.Dict(values=fields.Nested(Child))\n    \n        payload = {\"children\": {\"daughter\": {\"name\": \"Lucette\"}}}\n    \n        for val in (True, (\"children.age\",)):\n>           result = Family(partial=val).load(payload)\n\ntests/unit_tests/test_fields.py:614: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:737: in load\n    return self._do_load(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Family(many=False)>\ndata = {'children': {'daughter': {'name': 'Lucette'}}}\n\n    def _do_load(\n        self,\n        data: (Mapping[str, typing.Any] | Sequence[Mapping[str, typing.Any]]),\n        *,\n        many: bool | None = None,\n        partial: bool | types.StrSequenceOrSet | None = None,\n        unknown: types.UnknownOption | None = None,\n        postprocess: bool = True,\n    ):\n        \"\"\"Deserialize `data`, returning the deserialized result.\n        This method is private API.\n    \n        :param data: The data to deserialize.\n        :param many: Whether to deserialize `data` as a collection. If `None`, the\n            value for `self.many` is used.\n        :param partial: Whether to validate required fields. If its\n            value is an iterable, only fields listed in that iterable will be\n            ignored will be allowed missing. If `True`, all fields will be allowed missing.\n            If `None`, the value for `self.partial` is used.\n        :param unknown: Whether to exclude, include, or raise an error for unknown\n            fields in the data. Use `EXCLUDE`, `INCLUDE` or `RAISE`.\n            If `None`, the value for `self.unknown` is used.\n        :param postprocess: Whether to run post_load methods..\n        :return: Deserialized data\n        \"\"\"\n        error_store = ErrorStore()\n        errors: dict[str, list[str]] = {}\n        many = self.many if many is None else bool(many)\n        unknown = self.unknown if unknown is None else unknown\n        if partial is None:\n            partial = self.partial\n        # Run preprocessors\n        if self._hooks[PRE_LOAD]:\n            try:\n                processed_data = self._invoke_load_processors(\n                    PRE_LOAD,\n                    data,\n                    many=many,\n                    original_data=data,\n                    partial=partial,\n                    unknown=unknown,\n                )\n            except ValidationError as err:\n                errors = err.normalized_messages()\n                result: list | dict | None = None\n        else:\n            processed_data = data\n        if not errors:\n            # Deserialize data\n            result = self._deserialize(\n                processed_data,\n                error_store=error_store,\n                many=many,\n                partial=partial,\n                unknown=unknown,\n            )\n            # Run field-level validation\n            self._invoke_field_validators(\n                error_store=error_store, data=result, many=many\n            )\n            # Run schema-level validation\n            if self._hooks[VALIDATES_SCHEMA]:\n                field_errors = bool(error_store.errors)\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=True,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=False,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n            errors = error_store.errors\n            # Run post processors\n            if not errors and postprocess and self._hooks[POST_LOAD]:\n                try:\n                    result = self._invoke_load_processors(\n                        POST_LOAD,\n                        result,\n                        many=many,\n                        original_data=data,\n                        partial=partial,\n                        unknown=unknown,\n                    )\n                except ValidationError as err:\n                    errors = err.normalized_messages()\n        if errors:\n            exc = ValidationError(errors, data=data, valid_data=result)\n            self.handle_error(exc, data, many=many, partial=partial)\n>           raise exc\nE           marshmallow.exceptions.ValidationError: {'children': {'daughter': {'value': {'age': ['Missing data for required field.']}}}}\n\nsrc/marshmallow/schema.py:945: ValidationError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[True]\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[False]\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_deserialization\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_validation\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_load\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_deeply_nested_partial_load\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_default\nFAILED tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple_with_data_key\nFAILED tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_attr_and_obj\nFAILED tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_data_key_if_set\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_partial_propagated_to_nested\nFAILED tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_partial_propagated_to_nested\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_partial_propagated_to_nested\n======================= 19 failed, 1160 passed in 3.74s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_symmetry",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_attribute_param_error_returns_data_key_not_attribute_name",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_deserialization[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_deserialization",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_partial_fields_validation",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_load",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_deeply_nested_partial_load",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_default",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestValidation::test_nested_partial_tuple_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_attr_and_obj",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestField::test_custom_field_receives_data_key_if_set",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_partial_propagated_to_nested",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestTupleNested::test_tuple_nested_partial_propagated_to_nested",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 18,
+    "total": 18
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 11.88,
+  "stdout": "valid_fields),\n            )\n>           raise ValueError(message)\nE           ValueError: Invalid fields for SelfReferencingSchema: employer.\n\nsrc/marshmallow/schema.py:1006: ValueError\n_________ TestSelfReference.test_nesting_schema_by_passing_class_name __________\n\nself = <tests.unit_tests.test_schema.TestSelfReference object at 0x7feb3c17d2d0>\nuser = <User Tom>, employer = <User Joe>\n\n    def test_nesting_schema_by_passing_class_name(self, user, employer):\n        class SelfReferencingSchema(Schema):\n            name = fields.Str()\n            age = fields.Int()\n            employer = fields.Nested(\"SelfReferencingSchema\", exclude=(\"employer\",))\n    \n>       data = SelfReferencingSchema().dump(user)\n\ntests/unit_tests/test_schema.py:2108: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\nsrc/marshmallow/fields.py:626: in _serialize\n    schema = self.schema\nsrc/marshmallow/fields.py:606: in schema\n    self._schema = schema_class(\nsrc/marshmallow/schema.py:442: in __init__\n    self._init_fields()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <SelfReferencingSchema(many=False)>\n\n    def _init_fields(self) -> None:\n        \"\"\"Update self.fields, self.load_fields, and self.dump_fields based on schema options.\n        This method is private API.\n        \"\"\"\n        if self.opts.fields:\n            available_field_names = self.set_class(self.opts.fields)\n        else:\n            available_field_names = self.set_class(self.declared_fields.keys())\n    \n        if self.only is not None:\n            field_names = self.set_class(self.only) & available_field_names\n        else:\n            field_names = available_field_names\n    \n        field_names -= self.set_class(self.exclude)\n    \n        invalid_fields = (self.set_class(self.only) - available_field_names) if self.only is not None else self.set_class()\n        invalid_fields |= self.set_class(self.exclude) - available_field_names\n        if invalid_fields:\n            message = \"Invalid fields for {0}: {1}.\".format(\n                self.__class__.__name__,\n                \", \".join(invalid_fields),\n            )\n>           raise ValueError(message)\nE           ValueError: Invalid fields for SelfReferencingSchema: employer.\n\nsrc/marshmallow/schema.py:1006: ValueError\n_____________ TestSelfReference.test_nesting_within_itself_exclude _____________\n\nself = <tests.unit_tests.test_schema.TestSelfReference object at 0x7feb3c17d5a0>\nuser = <User Tom>, employer = <User Joe>\n\n    def test_nesting_within_itself_exclude(self, user, employer):\n        class SelfSchema(Schema):\n            name = fields.String()\n            age = fields.Integer()\n            employer = fields.Nested(lambda: SelfSchema(exclude=(\"employer\",)))\n    \n>       data = SelfSchema().dump(user)\n\ntests/unit_tests/test_schema.py:2119: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:572: in dump\n    result = self._serialize(processed_obj, many=many)\nsrc/marshmallow/schema.py:541: in _serialize\n    value = field_obj.serialize(attr_name, obj, accessor=self.get_attribute)\nsrc/marshmallow/fields.py:340: in serialize\n    return self._serialize(value, attr, obj, **kwargs)\nsrc/marshmallow/fields.py:626: in _serialize\n    schema = self.schema\nsrc/marshmallow/fields.py:575: in schema\n    nested = nested()\ntests/unit_tests/test_schema.py:2117: in <lambda>\n    employer = fields.Nested(lambda: SelfSchema(exclude=(\"employer\",)))\nsrc/marshmallow/schema.py:442: in __init__\n    self._init_fields()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <SelfSchema(many=False)>\n\n    def _init_fields(self) -> None:\n        \"\"\"Update self.fields, self.load_fields, and self.dump_fields based on schema options.\n        This method is private API.\n        \"\"\"\n        if self.opts.fields:\n            available_field_names = self.set_class(self.opts.fields)\n        else:\n            available_field_names = self.set_class(self.declared_fields.keys())\n    \n        if self.only is not None:\n            field_names = self.set_class(self.only) & available_field_names\n        else:\n            field_names = available_field_names\n    \n        field_names -= self.set_class(self.exclude)\n    \n        invalid_fields = (self.set_class(self.only) - available_field_names) if self.only is not None else self.set_class()\n        invalid_fields |= self.set_class(self.exclude) - available_field_names\n        if invalid_fields:\n            message = \"Invalid fields for {0}: {1}.\".format(\n                self.__class__.__name__,\n                \", \".join(invalid_fields),\n            )\n>           raise ValueError(message)\nE           ValueError: Invalid fields for SelfSchema: employer.\n\nsrc/marshmallow/schema.py:1006: ValueError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_exclude\nFAILED tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[exclude-fields_list1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]\nFAILED tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]\nFAILED tests/unit_tests/test_options.py::TestFieldOrdering::test_nested_field_order_with_exclude_arg_is_maintained\nFAILED tests/unit_tests/test_registry.py::test_two_way_nesting - ValueError: ...\nFAILED tests/unit_tests/test_schema.py::test_exclude_in_init - ValueError: In...\nFAILED tests/unit_tests/test_schema.py::test_nested_custom_set_in_exclude_reusing_schema\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude - ValueError: Inv...\nFAILED tests/unit_tests/test_schema.py::test_nested_exclude_inheritance - Val...\nFAILED tests/unit_tests/test_schema.py::test_nested_instance_exclude - ValueE...\nFAILED tests/unit_tests/test_schema.py::test_meta_nested_exclude - ValueError...\nFAILED tests/unit_tests/test_schema.py::test_data_key_collision[f1] - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_data_key_collision[f5] - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_attribute_collision[f1] - Assert...\nFAILED tests/unit_tests/test_schema.py::test_attribute_collision[f5] - Assert...\nFAILED tests/unit_tests/test_schema.py::test_exclude_invalid_attribute - Asse...\nFAILED tests/unit_tests/test_schema.py::test_only_bounded_by_fields - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_meta_field_not_on_obj_raises_attribute_error\nFAILED tests/unit_tests/test_schema.py::test_exclude_fields - ValueError: Inv...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_exclude - Valu...\nFAILED tests/unit_tests/test_schema.py::TestSelfReference::test_nesting_schema_by_passing_lambda\nFAILED tests/unit_tests/test_schema.py::TestSelfReference::test_nesting_schema_by_passing_class_name\nFAILED tests/unit_tests/test_schema.py::TestSelfReference::test_nesting_within_itself_exclude\n======================= 27 failed, 1152 passed in 11.11s =======================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___init_fields",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_exclude",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[exclude-fields_list1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_class_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_instance_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestListNested::test_list_nested_lambda_only_and_exclude_merged_with_nested[exclude-expected_attribute1-expected_dump1]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_options.py::TestFieldOrdering::test_nested_field_order_with_exclude_arg_is_maintained",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_nested_custom_set_in_exclude_reusing_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_meta_field_not_on_obj_raises_attribute_error",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestSelfReference::test_nesting_schema_by_passing_lambda",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestSelfReference::test_nesting_schema_by_passing_class_name",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 12,
+    "total": 12
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

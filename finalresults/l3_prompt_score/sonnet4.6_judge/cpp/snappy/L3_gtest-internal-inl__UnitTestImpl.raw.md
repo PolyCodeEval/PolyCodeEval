@@ -1,0 +1,15 @@
+{
+  "score": 4.7,
+  "reason": "The description is remarkably thorough and accurate, covering virtually every aspect of the `UnitTestImpl` class: reporter management, counter methods, pass/fail logic, suite/test access by index and name, legacy TestCase API, AddTestInfo with working-directory capture, parameterized and type-parameterized registries, current suite/test pointers, ad hoc result bucket, property recording, filtering with sharding, list-tests utility, environments, per-thread trace stack, death-test support, XML/streaming output configuration, PostFlagParsingInit idempotency, randomization state, shuffle/unshuffle with death-test ordering, catch_exceptions flag, and non-copyability. The only minor omissions are: (1) the `RunAllTests()` method is not mentioned in the description, (2) the internal mutex (`global_test_part_result_reporter_mutex_`) protecting the global reporter is not mentioned, (3) the `last_death_test_suite_` index field tracking death test suite ordering is not explicitly called out, and (4) the `ReactionToSharding` enum is not named. These are secondary details that do not materially affect implementability.",
+  "missing_functionality": [
+    "RunAllTests() method — runs all tests, prints results, returns bool success — is not mentioned",
+    "Internal mutex (global_test_part_result_reporter_mutex_) protecting the global test part result reporter is not described",
+    "last_death_test_suite_ index field used to track the last registered death test suite for ordering purposes is not mentioned",
+    "ReactionToSharding enum (HONOR_SHARDING_PROTOCOL / IGNORE_SHARDING_PROTOCOL) passed to FilterTests is not named"
+  ],
+  "incorrect_or_misleading_points": [
+    "Description says the working-directory capture is conditioned on death tests being enabled (GTEST_HAS_DEATH_TEST) — this is correct — but also implies it is conditioned on GTEST_HAS_FILE_SYSTEM for the field storage, which the description does not mention; minor omission rather than an error",
+    "Description says 'ownership remains external to this class' for reporters, which is accurate for the pointer fields, but the class also owns two *default* reporter instances (DefaultGlobalTestPartResultReporter and DefaultPerThreadTestPartResultReporter) as value members — this nuance is missing"
+  ],
+  "complete_enough": true
+}

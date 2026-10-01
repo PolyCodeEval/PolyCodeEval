@@ -1,0 +1,27 @@
+{
+  "task": "go/chi/L2_mux",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L2_mux/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L2_mux/task.json",
+  "source_file_path": "datasets/go/chi/src/mux.go",
+  "target_file": "mux.go",
+  "review_type": "l2_prompt_score",
+  "review_schema_version": "l2_prompt_score_v1",
+  "judge_model": "gpt-5.4",
+  "descriptions_present": true,
+  "score": 4.8,
+  "reason": "The file-level and function-level descriptions align very closely with the actual implementation and capture nearly all behavior needed to reconstruct the hollowed functions. They correctly describe the mux as a radix-tree-backed router, the middleware and subrouter composition model, sync.Pool-based routing context reuse, propagation of custom 404/405 handlers, mount behavior, route lookup, and request dispatch. The function responsibilities are especially strong and mostly map line-for-line to the implementation. Only a few minor implementation details are omitted or slightly idealized, but none substantially change the intended behavior.",
+  "missing_functionality": [
+    "ServeHTTP description does not explicitly mention setting rctx.parentCtx to the original request context before wrapping the request with RouteCtxKey.",
+    "Find description does not mention that method lookup uses methodMap[method] directly, without uppercasing, unlike Method().",
+    "routeHTTP description does not explicitly mention that path values are copied from all rctx.URLParams entries via r.SetPathValue for every captured parameter."
+  ],
+  "incorrect_or_misleading_points": [
+    "ServeHTTP says to 'reset it, attach this mux as Routes, and store the original request context in parentCtx'; this is accurate, but the opening phrase about treating a mux with no built handler as having 'no usable routes' slightly overgeneralizes the implementation, which simply serves NotFound whenever mx.handler is nil.",
+    "Mount description says the wildcard URL param should be 'cleared' when present; the implementation specifically sets the last '*' URL param value to an empty string rather than removing it.",
+    "Find description says to begin with the pattern recorded in rctx.routePattern 'from that match attempt'; while correct in effect, the implementation always assigns pattern := rctx.routePattern immediately after FindRoute and returns endpoint.pattern directly for non-subroute matches."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L2_mux.raw.md"
+}

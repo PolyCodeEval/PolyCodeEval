@@ -1,0 +1,26 @@
+{
+  "task": "javascript/babel-parser/L3_index__skipBlockComment",
+  "project": "javascript/babel-parser",
+  "language": "javascript",
+  "prompt_path": "datasets/javascript/babel-parser/tasks/L3_index__skipBlockComment/prompt.md",
+  "task_json_path": "datasets/javascript/babel-parser/tasks/L3_index__skipBlockComment/task.json",
+  "source_file_path": "datasets/javascript/babel-parser/src/lib/index.js",
+  "target_symbol": "lib/index.js::skipBlockComment",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "gpt-5.4",
+  "description_present": true,
+  "score": 4.4,
+  "reason": "The description matches the implementation well: it correctly describes the Flow-comments gate, nested Flow comment error, the second Flow-comment check used to advance position and set `hasFlowComment`, the early return, and the fallback to the superclass block-comment skipper with a different terminator when already inside a Flow comment. The main issue is that it adds a bit of interpretation around \"completion handling\" and \"closing marker\" without making clear that this function itself only calls helper methods and conditionally advances by the numeric value returned from `skipFlowComment()`. Still, it captures the core behavior and is close to sufficient for implementation.",
+  "missing_functionality": [
+    "The description does not explicitly say that Flow-comment handling only happens when the `flowComments` plugin is enabled.",
+    "It does not make explicit that `skipFlowComment()` is called twice: first as a detector in the condition, then again after `hasFlowCommentCompletion()` to get the skip length used for `state.pos` advancement."
+  ],
+  "incorrect_or_misleading_points": [
+    "The wording about checking for a closing Flow comment marker may be slightly misleading because this function does not directly inspect markers itself; it relies on `skipFlowComment()` returning a skip length.",
+    "Saying it treats the comment as a Flow-specific construct instead of a normal block comment is broadly right, but the implementation only does so when both the plugin is enabled and `skipFlowComment()` returns a truthy value."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_index__skipBlockComment.raw.md"
+}

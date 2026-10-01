@@ -1,0 +1,21 @@
+{
+  "project": "chi",
+  "scores": {
+    "completeness": {
+      "score": 4.2,
+      "reason": "Prompt 覆盖核心路由（NewRouter/Get/Post 等）、中间件（Use/With）、路由组（Group/Route/Mount）、URL 参数提取。但实际 chi 库还包含 middleware 包（Logger/Recoverer/RealIP 等）、子路由器内部方法、context 类型等，prompt 仅覆盖了 API testing 需要的子集。"
+    },
+    "unambiguity": {
+      "score": 4.4,
+      "reason": "URL 模式语法（{param}、{param:regex}、*）、方法注册、Use/With 语义、Group vs Route vs Mount 区别、404/405 行为描述清楚。但 chi 内部 context 类型和 RouteContext 关系表述较简略。"
+    },
+    "testability": {
+      "score": 4.2,
+      "reason": "测试需求列出了基础路由、参数提取、Mount 前缀剥离、NotFound/MethodNotAllowed、中间件作用域隔离等。但实际黑盒测试还涉及 BasicAuth middleware 等功能，prompt 仅在 middleware 行为部分列出，与测试匹配度尚可。"
+    },
+    "consistency": {
+      "score": 4.6,
+      "reason": "API 表面（NewRouter、Router 接口方法、URLParam）与真实 chi 库一致。Mount 前缀剥离、Group 中间件隔离等语义匹配。轻微：实际库中 middleware 包方法更多但 prompt 未要求覆盖全部，属于合理取舍。"
+    }
+  }
+}

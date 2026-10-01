@@ -1,0 +1,29 @@
+{
+  "task": "go/gobreaker/L0_gobreaker",
+  "project": "go/gobreaker",
+  "language": "go",
+  "prompt_path": "datasets/go/gobreaker/tasks/L0_gobreaker/prompt.md",
+  "project_root": "datasets/go/gobreaker",
+  "review_type": "l0_prompt_review",
+  "review_schema_version": "l0_prompt_review_v1",
+  "judge_model": "claude-sonnet-4-6",
+  "scores": {
+    "completeness": {
+      "score": 4.5,
+      "reason": "Root package and v2 subpackage are described, including NewCircuitBreaker, NewTwoStepCircuitBreaker, Settings, Counts, State constants (StateClosed, StateHalfOpen, StateOpen), ErrOpenState, ErrTooManyRequests, Execute, Allow (two-step), State/Name/Counts methods. The Counts struct fields are implicitly required by the test. The v2 generic API is specified. Minor gap: Settings fields (Name, MaxRequests, Interval, Timeout, ReadyToTrip, OnStateChange) are not enumerated, but their semantics are described in behavioral constraints."
+    },
+    "unambiguity": {
+      "score": 4.0,
+      "reason": "Behavioral constraints are precise: panic counts as failure and re-panics, Counts reset on state transition, Interval-based Counts clearing, half-open failure -> open, ErrTooManyRequests after MaxRequests in half-open. State.String() return values are specified verbatim. The two-step breaker's Allow/done(bool) flow is described. The v2 package name (package gobreaker not package v2) is explicitly called out, which is a critical detail."
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "Blackbox tests verify: initial StateClosed, Name, default ReadyToTrip (6 failures), Counts start at zero, Execute failure -> StateOpen, ErrOpenState, TwoStep Allow/done, half-open MaxRequests exhaustion, ErrTooManyRequests. The prompt's behavioral constraints (default ReadyToTrip threshold of 5 is not mentioned but tested - tests verify ConsecutiveFailures > 5 means after 6th failure). The default threshold is implied by the Counts description but not explicitly stated as 'ConsecutiveFailures > 5'. This is a minor gap."
+    },
+    "consistency": {
+      "score": 4.5,
+      "reason": "All described behaviors match gobreaker's implementation. The v2 package naming requirement (package gobreaker) is correctly stated and critical. Module paths are accurate. State.String() values match. The only slight inconsistency risk is that the default ReadyToTrip threshold (ConsecutiveFailures > 5 in the actual code) is not explicitly stated in the prompt, though it is tested in the blackbox suite."
+    }
+  },
+  "overall_score": 4.38
+}

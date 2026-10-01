@@ -1,0 +1,12 @@
+{
+  "score": 4.8,
+  "reason": "The file-level description and all three function-level descriptions are highly accurate and closely match the actual implementation. The descriptions correctly capture the delegation pattern to CommentReadService, the enrichment via UserRelationshipQueryService, the null/empty guard conditions, the cursor pager construction logic including hasExtra detection, element removal at page.getLimit(), list reversal when not 'next', and the CursorPager return shape. One minor gap is that the findById description says 'write that boolean into the comment's profile following flag' but doesn't explicitly mention that the method calls getProfileData() to access the profile — a small but inferable detail. The description for findByArticleIdWithCursor correctly distinguishes hasMore from hasExtra in the empty-list case (both false) and the final return (hasExtra flag), matching the implementation's use of a single boolean. Overall the descriptions are complete enough to reconstruct the file faithfully.",
+  "missing_functionality": [
+    "findById description does not explicitly mention that the comment's profile is accessed via getProfileData() before calling setFollowing(), which is a concrete API detail a model needs to know.",
+    "The file-level description does not mention that CursorPager is constructed with page.getDirection() (not the page object itself), though this is implied by 'page direction'."
+  ],
+  "incorrect_or_misleading_points": [
+    "The findByArticleIdWithCursor description says 'hasMore/hasExtra set to false' for the empty case, but the CursorPager constructor in the implementation only takes (list, direction, hasExtra) — there is no separate hasMore parameter. This could confuse a model into thinking there are two boolean fields to set."
+  ],
+  "complete_enough": true
+}

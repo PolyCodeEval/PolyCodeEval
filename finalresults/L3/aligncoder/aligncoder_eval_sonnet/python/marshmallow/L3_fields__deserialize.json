@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.33,
+  "stdout": "rors(self):\n        with pytest.raises(ValidationError) as excinfo:\n            BlogSchema().load(\n                {\"title\": \"Monty's blog\", \"user\": {\"name\": \"Monty\", \"email\": \"foo\"}}\n            )\n        errors = excinfo.value.messages\n        assert \"email\" in errors[\"user\"]\n        assert len(errors[\"user\"][\"email\"]) == 1\n        assert \"Not a valid email address.\" in errors[\"user\"][\"email\"][0]\n        # No problems with collaborators\n>       assert \"collaborators\" not in errors\nE       AssertionError: assert 'collaborators' not in {'categories': ['Not a valid list.'], 'collaborators': ['Not a valid list.'], 'id': ['Not a valid string.'], 'user': {... date.'], 'age': ['Not a valid number.'], 'balance': ['Not a valid number.'], 'birthdate': ['Not a valid date.'], ...}}\n\ntests/unit_tests/test_schema.py:1944: AssertionError\n________ TestDefaults.test_missing_inputs_are_excluded_from_load_output ________\n\nself = <tests.unit_tests.test_schema.TestDefaults object at 0x7f1783b29990>\nschema = <MySchema(many=False)>\ndata = {'int_no_default': None, 'int_with_default': None, 'list_no_default': None, 'nested_no_default': None, ...}\n\n    def test_missing_inputs_are_excluded_from_load_output(self, schema, data):\n        for key in [\n            \"int_no_default\",\n            \"str_no_default\",\n            \"list_no_default\",\n            \"nested_no_default\",\n        ]:\n            d = data.copy()\n            del d[key]\n>           result = schema.load(d)\n\ntests/unit_tests/test_schema.py:2462: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MySchema(many=False)>\ndata = {'int_with_default': None, 'list_no_default': None, 'nested_no_default': None, 'str_no_default': None, ...}\n\n    def _do_load(\n        self,\n        data: (Mapping[str, typing.Any] | Sequence[Mapping[str, typing.Any]]),\n        *,\n        many: bool | None = None,\n        partial: bool | types.StrSequenceOrSet | None = None,\n        unknown: types.UnknownOption | None = None,\n        postprocess: bool = True,\n    ):\n        \"\"\"Deserialize `data`, returning the deserialized result.\n        This method is private API.\n    \n        :param data: The data to deserialize.\n        :param many: Whether to deserialize `data` as a collection. If `None`, the\n            value for `self.many` is used.\n        :param partial: Whether to validate required fields. If its\n            value is an iterable, only fields listed in that iterable will be\n            ignored will be allowed missing. If `True`, all fields will be allowed missing.\n            If `None`, the value for `self.partial` is used.\n        :param unknown: Whether to exclude, include, or raise an error for unknown\n            fields in the data. Use `EXCLUDE`, `INCLUDE` or `RAISE`.\n            If `None`, the value for `self.unknown` is used.\n        :param postprocess: Whether to run post_load methods..\n        :return: Deserialized data\n        \"\"\"\n        error_store = ErrorStore()\n        errors: dict[str, list[str]] = {}\n        many = self.many if many is None else bool(many)\n        unknown = self.unknown if unknown is None else unknown\n        if partial is None:\n            partial = self.partial\n        # Run preprocessors\n        if self._hooks[PRE_LOAD]:\n            try:\n                processed_data = self._invoke_load_processors(\n                    PRE_LOAD,\n                    data,\n                    many=many,\n                    original_data=data,\n                    partial=partial,\n                    unknown=unknown,\n                )\n            except ValidationError as err:\n                errors = err.normalized_messages()\n                result: list | dict | None = None\n        else:\n            processed_data = data\n        if not errors:\n            # Deserialize data\n            result = self._deserialize(\n                processed_data,\n                error_store=error_store,\n                many=many,\n                partial=partial,\n                unknown=unknown,\n            )\n            # Run field-level validation\n            self._invoke_field_validators(\n                error_store=error_store, data=result, many=many\n            )\n            # Run schema-level validation\n            if self._hooks[VALIDATES_SCHEMA]:\n                field_errors = bool(error_store.errors)\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=True,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n                self._invoke_schema_validators(\n                    error_store=error_store,\n                    pass_collection=False,\n                    data=result,\n                    original_data=data,\n                    many=many,\n                    partial=partial,\n                    unknown=unknown,\n                    field_errors=field_errors,\n                )\n            errors = error_store.errors\n            # Run post processors\n            if not errors and postprocess and self._hooks[POST_LOAD]:\n                try:\n                    result = self._invoke_load_processors(\n                        POST_LOAD,\n                        result,\n                        many=many,\n                        original_data=data,\n                        partial=partial,\n                        unknown=unknown,\n                    )\n                except ValidationError as err:\n                    errors = err.normalized_messages()\n        if errors:\n            exc = ValidationError(errors, data=data, valid_data=result)\n            self.handle_error(exc, data, many=many, partial=partial)\n>           raise exc\nE           marshmallow.exceptions.ValidationError: {'int_no_default': ['Not a valid integer.']}\n\nsrc/marshmallow/schema.py:943: ValidationError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_values\nFAILED tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param\nFAILED tests/unit_tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_none\nFAILED tests/unit_tests/test_schema.py::test_load_many_stores_error_indices\nFAILED tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema\nFAILED tests/unit_tests/test_schema.py::test_load_returns_an_object - marshma...\nFAILED tests/unit_tests/test_schema.py::test_load_many - marshmallow.exceptio...\nFAILED tests/unit_tests/test_schema.py::test_loads_returns_a_user - marshmall...\nFAILED tests/unit_tests/test_schema.py::test_loads_many - marshmallow.excepti...\nFAILED tests/unit_tests/test_schema.py::test_loads_deserializes_from_json - m...\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate_raises_with_errors_dict\nFAILED tests/unit_tests/test_schema.py::TestValidate::test_validate - Asserti...\nFAILED tests/unit_tests/test_schema.py::test_relative_url_field - marshmallow...\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_errors\nFAILED tests/unit_tests/test_schema.py::TestDefaults::test_missing_inputs_are_excluded_from_load_output\n======================= 19 failed, 1160 passed in 4.67s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_fields__deserialize",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_decorated_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_multiple_validators",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_missing_values",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_deserialization.py::TestSchemaDeserialization::test_deserialize_with_data_key_param",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_none",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_load_many_stores_error_indices",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::test_loading_single_object_with_collection_schema",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestValidate::test_validate_raises_with_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_load_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestNestedSchema::test_nested_errors",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 11,
+    "total": 11
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

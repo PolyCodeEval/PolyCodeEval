@@ -1,0 +1,63 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 3.9,
+  "stdout": "Schema(Schema):\n            foo = fields.String(data_key=\"foo-name\")\n    \n            @validates(\"foo\")\n            def validate_string(self, data, **kwargs):\n                raise ValidationError(\"nope\")\n    \n        schema = BadSchema()\n        errors = schema.validate({\"foo-name\": \"data\"})\n>       assert \"foo-name\" in errors\nE       AssertionError: assert 'foo-name' in {'_schema': ['nope']}\n\ntests/unit_tests/test_decorators.py:379: AssertionError\n________ TestValidatesDecorator.test_validates_accepts_multiple_fields _________\n\nself = <tests.unit_tests.test_decorators.TestValidatesDecorator object at 0x7f4c388af7c0>\n\n    def test_validates_accepts_multiple_fields(self):\n        class BadSchema(Schema):\n            foo = fields.String()\n            bar = fields.String(data_key=\"Bar\")\n    \n            @validates(\"foo\", \"bar\")\n            def validate_string(self, data: str, data_key: str):\n                raise ValidationError(f\"'{data}' is invalid for {data_key}.\")\n    \n        schema = BadSchema()\n        with pytest.raises(ValidationError) as excinfo:\n>           schema.load({\"foo\": \"data\", \"Bar\": \"data2\"})\n\ntests/unit_tests/test_decorators.py:399: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:900: in _do_load\n    self._invoke_field_validators(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <BadSchema(many=False)>\n\n    def _invoke_field_validators(self, *, error_store: ErrorStore, data, many: bool):\n        for attr_name, hook_many, validator_kwargs in self._hooks[VALIDATES]:\n            if hook_many != many:\n                continue\n            validator = getattr(self, attr_name)\n            try:\n                if many:\n                    for index, item in enumerate(data):\n                        validator(item, many=many, index=index, **validator_kwargs)\n                else:\n>                   validator(data, many=many, **validator_kwargs)\nE                   TypeError: TestValidatesDecorator.test_validates_accepts_multiple_fields.<locals>.BadSchema.validate_string() got an unexpected keyword argument 'many'\n\nsrc/marshmallow/schema.py:1135: TypeError\n______ TestValidatesSchemaDecorator.test_data_key_is_used_in_errors_dict _______\n\nself = <tests.unit_tests.test_decorators.TestValidatesSchemaDecorator object at 0x7f4c388aeb90>\n\n    def test_data_key_is_used_in_errors_dict(self):\n        class MySchema(Schema):\n            foo = fields.Int(data_key=\"fooKey\")\n    \n            @validates(\"foo\")\n            def validate_foo(self, value, **kwargs):\n                raise ValidationError(\"from validates\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema(self, data, **kwargs):\n                raise ValidationError(\"from validates_schema str\", field_name=\"foo\")\n    \n            @validates_schema(skip_on_field_errors=False)\n            def validate_schema2(self, data, **kwargs):\n                raise ValidationError({\"fooKey\": \"from validates_schema dict\"})\n    \n        with pytest.raises(ValidationError) as excinfo:\n            MySchema().load({\"fooKey\": 42})\n        exc = excinfo.value\n>       assert exc.messages == {\n            \"fooKey\": [\n                \"from validates\",\n                \"from validates_schema str\",\n                \"from validates_schema dict\",\n            ]\n        }\nE       AssertionError: assert {'_schema': [...schema dict']} == {'fooKey': ['...schema dict']}\nE         \nE         Differing items:\nE         {'fooKey': ['from validates_schema str', 'from validates_schema dict']} != {'fooKey': ['from validates', 'from validates_schema str', 'from validates_schema dict']}\nE         Left contains 1 more item:\nE         {'_schema': ['from validates']}\nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:716: AssertionError\n_____ TestFieldValidation.test_handle_error_skips_missing_item_key_in_many _____\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f4c37df1330>\n\n    def test_handle_error_skips_missing_item_key_in_many(self):\n        class ItemSchema(Schema):\n            value = fields.Int(required=True)\n    \n            @validates(\"value\")\n            def validate_value(self, value, **kwargs):\n                if value < 0:\n                    raise ValidationError(\"Must be positive.\")\n    \n        schema = ItemSchema(many=True)\n    \n        errors = schema.validate([{}, {\"value\": -1}])\n    \n        assert 0 in errors\n>       assert 1 in errors\nE       AssertionError: assert 1 in {0: {'value': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:1757: AssertionError\n_______________ TestFieldValidation.test_ignored_if_not_in_only ________________\n\nself = <tests.unit_tests.test_schema.TestFieldValidation object at 0x7f4c37c46f20>\n\n    def test_ignored_if_not_in_only(self):\n        class MySchema(Schema):\n            a = fields.Raw()\n            b = fields.Raw()\n    \n            @validates(\"a\")\n            def validate_a(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_a\"})\n    \n            @validates(\"b\")\n            def validate_b(self, val, **kwargs):\n                raise ValidationError({\"code\": \"invalid_b\"})\n    \n        s = MySchema(only=(\"b\",))\n        errors = s.validate({\"b\": \"data\"})\n>       assert errors == {\"b\": {\"code\": \"invalid_b\"}}\nE       AssertionError: assert {'code': ['in... 'invalid_b']} == {'b': {'code': 'invalid_b'}}\nE         \nE         Left contains 1 more item:\nE         {'code': ['invalid_a', 'invalid_b']}\nE         Right contains 1 more item:\nE         {'b': {'code': 'invalid_b'}}\nE         Use -v to get more diff\n\ntests/unit_tests/test_schema.py:1815: AssertionError\n_ TestNestedSchema.test_all_errors_on_many_nested_field_with_validates_decorator _\n\nself = <tests.unit_tests.test_schema.TestNestedSchema object at 0x7f4c37c44700>\n\n    def test_all_errors_on_many_nested_field_with_validates_decorator(self):\n        class Inner(Schema):\n            req = fields.Raw(required=True)\n    \n        class Outer(Schema):\n            inner = fields.Nested(Inner, many=True)\n    \n            @validates(\"inner\")\n            def validates_inner(self, data, **kwargs):\n                raise ValidationError(\"not a chance\")\n    \n        outer = Outer()\n        with pytest.raises(ValidationError) as excinfo:\n            outer.load({\"inner\": [{}]})\n        errors = excinfo.value.messages\n        assert \"inner\" in errors\n>       assert \"_schema\" in errors[\"inner\"]\nE       AssertionError: assert '_schema' in {0: {'req': ['Missing data for required field.']}}\n\ntests/unit_tests/test_schema.py:2008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key\nFAILED tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields\nFAILED tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many\nFAILED tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only\nFAILED tests/unit_tests/test_schema.py::TestNestedSchema::test_all_errors_on_many_nested_field_with_validates_decorator\n======================= 11 failed, 1168 passed in 3.20s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_field_validators",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_attribute",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_decorator",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_field_not_present",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_precedence",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_with_data_key",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesDecorator::test_validates_accepts_multiple_fields",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestValidatesSchemaDecorator::test_data_key_is_used_in_errors_dict",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_handle_error_skips_missing_item_key_in_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_schema.py::TestFieldValidation::test_ignored_if_not_in_only",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 10,
+    "total": 10
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}

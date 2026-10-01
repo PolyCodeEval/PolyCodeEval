@@ -1,0 +1,17 @@
+{
+  "score": 4.2,
+  "reason": "The file-level and function-level descriptions are largely accurate and match the implementation well. The descriptions correctly capture StrPair's mode flags, DynArray's small-buffer optimization and doubling growth strategy, MemPoolT's block-based free-list allocator, XMLVisitor's default-true callbacks, XMLUtil's inline helpers including the UTF-8 heuristic, XMLNode's full accessor API, XMLText's CDATA flag, XMLAttribute's typed convenience accessors, XMLDocument::CreateUnlinkedNode's placement-new and _unlinked tracking, XMLHandle/XMLConstHandle's null-safe chaining, and XMLPrinter's streaming API. Minor gaps include: the skeleton has a syntax error ('a XMLNode can be queried' text leaking into the XMLUtil class closing brace area, which is in the skeleton but not the real file), the descriptions don't mention XMLComment/XMLDeclaration/XMLUnknown classes at all (they appear in the skeleton and implementation but have no function-level entries), XMLElement's extensive inline QueryAttribute/SetAttribute/QueryText API is not described, and XMLDocument's full private state (DepthTracker, PushDepth/PopDepth, _parsingDepth, _unlinked, four MemPoolT members, _errorNames) is only partially hinted at. The XMLPrinter description omits _firstElement, PrepareForNewNode, and the entity flag arrays. Despite these gaps, the descriptions are detailed enough that a competent implementer could reconstruct the majority of the file correctly.",
+  "missing_functionality": [
+    "XMLComment, XMLDeclaration, and XMLUnknown classes have no function-level descriptions despite being hollowed classes in the skeleton",
+    "XMLElement class is not described at all in the function responsibilities, yet it contains extensive inline API (QueryAttribute overloads, SetAttribute overloads, QueryText helpers, InsertNewChild* methods)",
+    "XMLDocument class body is not described — its constructor, Parse/LoadFile/SaveFile methods, error API, DepthTracker inner class, PushDepth/PopDepth, four MemPoolT member pools, _unlinked DynArray, and _errorNames are all absent from the descriptions",
+    "XMLPrinter's _firstElement flag, PrepareForNewNode private helper, PrintString, and the two entity flag arrays (_entityFlag, _restrictedEntityFlag) are not mentioned",
+    "XMLAttribute::UnsignedValue, BoolValue, DoubleValue, FloatValue convenience methods are described only generically; their exact pattern (local init + Query call + return local) is only spelled out for Int/Int64/Unsigned64"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description says XMLAttribute::Unsigned64Value 'initializes a local uint64_t to 0, calls QueryUnsigned64Value' — this matches the implementation, but the description groups it with Int64Value as if they are the only 64-bit variants; UnsignedValue/BoolValue/DoubleValue/FloatValue follow the same pattern and are not called out",
+    "The XMLNode description says 'convenience wrappers that cast away const for element-specific navigation' but does not mention the non-const FirstChildElement/LastChildElement/PreviousSiblingElement/NextSiblingElement wrappers that use const_cast, which are important inline implementations to reconstruct",
+    "The file-level description mentions 'C++17-compatible' but the header itself has no C++17-specific features and targets broad compatibility including ANDROID_NDK and Borland; this could mislead a reconstructor"
+  ],
+  "complete_enough": true
+}

@@ -1,0 +1,26 @@
+{
+  "task": "go/chi/L3_compress__Flush",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_compress__Flush/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_compress__Flush/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/compress.go",
+  "target_symbol": "middleware/compress.go::Flush",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 3.2,
+  "reason": "The description captures the two-phase flush logic (http.Flusher check and compressFlusher check with subsequent ResponseWriter flush), but gets the order reversed. The implementation first checks for `http.Flusher` and flushes, then checks for `compressFlusher` and flushes both the compression writer and the underlying ResponseWriter. The description implies the compressFlusher path is the primary/first path and the http.Flusher path is secondary, which is the opposite of the actual code. Additionally, the description says 'if no flush-capable interface is available, it performs no action' — this is technically true but omits that both checks are always attempted independently (they are not mutually exclusive branches). The description also omits that `compressFlusher.Flush()` returns an error which is silently ignored.",
+  "missing_functionality": [
+    "The http.Flusher check happens first and independently of the compressFlusher check — both are always attempted, not as an if/else",
+    "The error return value from compressFlusher.Flush() is silently discarded"
+  ],
+  "incorrect_or_misleading_points": [
+    "The description implies compressFlusher is checked first ('If the wrapped writer exposes a specialized compression flush capability'), but the implementation checks http.Flusher first",
+    "The description implies the two checks are mutually exclusive ('if no flush-capable interface is available'), but both checks run unconditionally and independently"
+  ],
+  "complete_enough": false,
+  "raw_response_file": "L3_compress__Flush.raw.md"
+}

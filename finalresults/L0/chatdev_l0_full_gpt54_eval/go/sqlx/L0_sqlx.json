@@ -1,0 +1,670 @@
+{
+  "task": "go/sqlx/L0_sqlx",
+  "solver": "chatdev_gpt54_go生成",
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.32,
+  "stdout": "",
+  "stderr": "main.go:1:1: expected 'package', found '.'\n",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "inferred_commands": {
+    "install": "",
+    "test": "",
+    "combined": false
+  },
+  "attempts": [
+    {
+      "install": "",
+      "test": ""
+    }
+  ],
+  "retries": 0,
+  "test_mode": "blackbox",
+  "result_schema_version": "l0_scoring_v4_codex_review",
+  "score_scale": "0-5",
+  "scoring_mode": "full",
+  "score_formula": "0.4*C + 0.25*F + 0.25*A + 0.1*H",
+  "radar_scores": {
+    "Correctness": 0.0,
+    "Faithfulness": 4.44,
+    "Architecture": 2.67,
+    "Health": 3.5
+  },
+  "overall_score": 2.13,
+  "dimension_details": {
+    "correctness": {
+      "status": "ok",
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "tests_total": 0,
+      "test_pass_ratio": 0.0,
+      "derived_from": "test_details"
+    },
+    "faithfulness": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "requirements": [
+        {
+          "id": "F001",
+          "type": "feature",
+          "text": "# Required Public Entry Points",
+          "evidence": [],
+          "status": "partial",
+          "reason": "Most required entry points exist in root package, but the overall requirement set is not fully satisfied because the repository also violates related packaging constraints elsewhere."
+        },
+        {
+          "id": "F002",
+          "type": "feature",
+          "text": "Go module path: `github.com/jmoiron/sqlx`",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/jmoiron/sqlx\n\ngo 1.10\n\nrequire (\n\tgithub.com/go-sql-driver/mysql v1.8.1\n\tgithub.com/lib/pq v1.10.9\n\tgithub.com/mattn/go-sqlite3 v1.14.22\n)"
+            },
+            {
+              "path": "main.go",
+              "excerpt": ".ONESHELL:\nSHELL = /bin/sh\n.SHELLFLAGS = -ec\nBASE_PACKAGE := github.com/jmoiron/sqlx\ntooling:\n\tgo install honnef.co/go/tools/cmd/staticcheck@v0.4.7\n\tgo install golang.org/x/vuln/cmd/govulncheck@v1.0.4\n\tgo install golang.org/x/tools/cmd/goimports@v0.20.0\nhas-changes:\n\tgit diff --exit-code --quiet HEAD --\nlint:\n\tgo vet ./...\n\tstaticcheck -ch"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/go.mod` declares `module github.com/jmoiron/sqlx`."
+        },
+        {
+          "id": "F003",
+          "type": "feature",
+          "text": "package `sqlx` exposing `Open(driver, dsn)`, `Connect(driver, dsn)`, `NewDb(db, driver)`, `Get`, `Select`, and `NamedExec`",
+          "evidence": [
+            {
+              "path": "sqlx.go",
+              "excerpt": "package sqlx\nimport (\n\t\"database/sql\"\n\t\"errors\"\n)\n// Result aliases the standard sql.Result type.\ntype Result = sql.Result\n// Queryer is implemented by types that can execute queries.\ntype Queryer interface {\n\tQuery(query string, args ...interface{}) (*sql.Rows, error)\n\tQueryRow("
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "package sqlx\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode\"\n)\nconst (\n\t// UNKNOWN indicates an unknown bind type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\n// --- BindDriver and BindType edge cases ---\n\nfunc TestBindDriverRegistersCustomDriver(t *testing.T) {\n\tsqlx.BindDriver(\"customdriver\", sqlx.DOLLAR)\n\tbt := sqlx.BindType(\"customdriver\")\n\tif bt != sqlx.DOLLAR {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/sqlx.go` defines package `sqlx` and exposes `Open`, `Connect`, `NewDb`, top-level `Get`, `Select`, and `NamedExec`."
+        },
+        {
+          "id": "F004",
+          "type": "feature",
+          "text": "bind and query helpers used from the root package",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "mport (\n\t\"errors\"\n\t\"fmt\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode\"\n)\nconst (\n\t// UNKNOWN indicates an unknown bind type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2... placeholders.\n\tNAMED\n\t// AT uses @p1, @p2... placeholders.\n\tAT\n)\nvar (\n\tbindMu      sync.RWMutex\n\tdriverBinds = map[string]int{}\n)"
+            },
+            {
+              "path": "test_rebind_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestRebindDollarConversion(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.DOLLAR, query)\n\texpected := \"SELECT * FROM users WHERE id = $1 AND name = $2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)\n\t}"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "terface{}) error {\n\treturn Select(db, dest, query, args...)\n}\n// NamedExec executes a named query using the DB's driver bind type.\nfunc (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {\n\treturn namedExec(db, db.driverName, query, arg)\n}\n// Queryx executes a query and returns wrapped rows.\nfunc (tx *Tx) Queryx(query string, args ...interface{}) (*Rows, error) {\n\trows, err := t"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Root package files expose query helpers in `sqlx.go` and bind helpers in `bind.go`."
+        },
+        {
+          "id": "F005",
+          "type": "feature",
+          "text": "root helpers include `BindType`, `BindDriver`, `Rebind`, `In`, `Named`, and `BindNamed`",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "{\n\t\tBindDriver(name, AT)\n\t}\n}\n// BindDriver registers a bind type for a driver name.\nfunc BindDriver(driverName string, bindType int) {\n\tbindMu.Lock()\n\tdriverBinds[driverName] = bindType\n\tbindMu.Unlock()\n}\n// BindType returns the bind type for the driver name or UNKNOWN if unregistered.\nfunc BindType(driverName string) int {\n\tbindMu.RLock()\n\tt, ok := driverBinds[driverName]\n\tbindMu.RUnlock()\n\tif !"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\n// --- BindDriver and BindType edge cases ---\n\nfunc TestBindDriverRegistersCustomDriver(t *testing.T) {\n\tsqlx.BindDriver(\"customdriver\", sqlx.DOLLAR)\n\tbt := sqlx.BindType(\"customdriver\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('customdriver') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "ecer interface {\n\tExec(query string, args ...interface{}) (sql.Result, error)\n}\n// DB wraps sql.DB and adds convenience helpers.\ntype DB struct {\n\t*sql.DB\n\tdriverName string\n}\n// Tx wraps sql.Tx and adds convenience helpers.\ntype Tx struct {\n\t*sql.Tx\n\tdriverName string\n}\n// Rows wraps sql.Rows and adds struct scanning.\ntype Rows struct {\n\t*sql.Rows\n}\n// Row provides a sqlx-style row wrapper for st"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` defines root helpers `BindType`, `BindDriver`, `Rebind`, `In`, `Named`, and `BindNamed`."
+        },
+        {
+          "id": "F006",
+          "type": "feature",
+          "text": "bind-type constants used by callers include names such as `UNKNOWN`, `DOLLAR`, `QUESTION`, `NAMED`, and `AT`",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "nterface{}, error) {\n\tparams, err := namedParams(arg)\n\tif err != nil {\n\t\treturn \"\", nil, err\n\t}\n\tvar b strings.Builder\n\tnames := make([]string, 0)\n\tscanNamedSQL(query, func(kind tokenKind, text string, name string) {\n\t\tif kind == tokenNamedParam {\n\t\t\tnames = append(names, name)\n\t\t\tb.WriteByte('?')\n\t\t\treturn\n\t\t}\n\t\tb.WriteString(text)\n\t})\n\targs := make([]interface{}, 0, len(names))\n\tfor _, name := r"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ".DOLLAR {\n\t\tt.Fatalf(\"expected BindType('customdriver') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeUnknownDriverReturnsUnknown(t *testing.T) {\n\tbt := sqlx.BindType(\"nonexistent_driver_xyz\")\n\tif bt != sqlx.UNKNOWN {\n\t\tt.Fatalf(\"expected BindType for unknown driver = UNKNOWN (%d), got %d\", sqlx.UNKNOWN, bt)\n\t}\n}\n\nfunc TestBindTypeOracleReturnsNamed(t *testing.T) {\n\tbt := sqlx.Bi"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T) {\n\tbt := sqlx.BindType(\"mysql\")\n\tif bt != sqlx.QUESTION {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` declares bind constants `UNKNOWN`, `QUESTION`, `DOLLAR`, `NAMED`, and `AT`."
+        },
+        {
+          "id": "F007",
+          "type": "feature",
+          "text": "preserve helper signatures shaped like `In(query string, args ...interface{}) (string, []interface{}, error)` and `Named(query string, arg interface{}) (string, []interface{}, error)`",
+          "evidence": [
+            {
+              "path": "sqlx.go",
+              "excerpt": "ecer interface {\n\tExec(query string, args ...interface{}) (sql.Result, error)\n}\n// DB wraps sql.DB and adds convenience helpers.\ntype DB struct {\n\t*sql.DB\n\tdriverName string\n}\n// Tx wraps sql.Tx and adds convenience helpers.\ntype Tx struct {\n\t*sql.Tx\n\tdriverName string\n}\n// Rows wraps sql.Rows and adds struct scanning.\ntype Rows struct {\n\t*sql.Rows\n}\n// Row provides a sqlx-style row wrapper for st"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ":arg2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)\n\t}\n}\n\nfunc TestRebindUnknownBehavesLikeQuestion(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.UNKNOWN, query)\n\tif result != query {\n\t\tt.Fatalf(\"expected UNKNOWN to leave query unchanged, got %q\", result)\n\t}\n}\n\nfunc TestRebindSinglePlaceholder(t *testing.T) {"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "s[driverName]\n\tbindMu.RUnlock()\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn t\n}\n// Rebind converts QUESTION placeholders in a query to the requested bind type.\nfunc Rebind(bindType int, query string) string {\n\tif bindType == QUESTION || bindType == UNKNOWN {\n\t\treturn query\n\t}\n\tvar b strings.Builder\n\targn := 1\n\tscanSQL(query, func(kind tokenKind, text string) {\n\t\tif kind != tokenPlaceholder {\n\t\t\tb.WriteS"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` preserves `In(query string, args ...interface{}) (string, []interface{}, error)` and `Named(query string, arg interface{}) (string, []interface{}, error)`."
+        },
+        {
+          "id": "F008",
+          "type": "feature",
+          "text": "`BindType(driverName string)` should return the bind-type value used by `Rebind(bindType, query string) string`; returns `UNKNOWN` for unregistered drivers",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "{\n\t\tBindDriver(name, AT)\n\t}\n}\n// BindDriver registers a bind type for a driver name.\nfunc BindDriver(driverName string, bindType int) {\n\tbindMu.Lock()\n\tdriverBinds[driverName] = bindType\n\tbindMu.Unlock()\n}\n// BindType returns the bind type for the driver name or UNKNOWN if unregistered.\nfunc BindType(driverName string) int {\n\tbindMu.RLock()\n\tt, ok := driverBinds[driverName]\n\tbindMu.RUnlock()\n\tif !"
+            },
+            {
+              "path": "test_rebind_test.go",
+              "excerpt": "ry)\n\tif result != query {\n\t\tt.Fatalf(\"expected query to pass through unchanged, got %q\", result)\n\t}\n}\n\nfunc TestRebindATBindType(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.AT, query)\n\texpected := \"SELECT * FROM users WHERE id = @p1 AND name = @p2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)\n\t}\n}\n\nfunc TestR"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "unc namedExec(e Execer, driverName, query string, arg interface{}) (sql.Result, error) {\n\tbound, args, err := BindNamed(BindType(driverName), query, arg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(bound, args...)\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` returns `UNKNOWN` for unregistered drivers, and `repo/sqlx.go` uses `BindType(driverName)` when binding named exec queries."
+        },
+        {
+          "id": "F009",
+          "type": "feature",
+          "text": "`BindDriver(driverName string, bindType int)` registers the bind type for a driver name",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "or _, name := range []string{\"postgres\", \"pgx\", \"pq-timeouts\", \"cloudsqlpostgres\", \"ql\", \"nrpostgres\", \"cockroach\"} {\n\t\tBindDriver(name, DOLLAR)\n\t}\n\tfor _, name := range []string{\"mysql\", \"sqlite3\", \"nrmysql\", \"nrsqlite3\"} {\n\t\tBindDriver(name, QUESTION)\n\t}\n\tfor _, name := range []string{\"oci8\", \"ora\", \"goracle\", \"godror\"} {\n\t\tBindDriver(name, NAMED)\n\t}\n\tfor _, name := range []string{\"sqlserver\", \""
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T) {\n\tbt := sqlx.BindType(\"mysql\")\n\tif"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\n// --- BindDriver and BindType edge cases ---\n\nfunc TestBindDriverRegistersCustomDriver(t *testing.T) {\n\tsqlx.BindDriver(\"customdriver\", sqlx.DOLLAR)\n\tbt := sqlx.BindType(\"customdriver\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('customdriver') = DOLLAR (%d), got %d\", sqlx.D"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` implements `BindDriver(driverName string, bindType int)` by storing the mapping in `driverBinds`."
+        },
+        {
+          "id": "F010",
+          "type": "feature",
+          "text": "`BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error)` binds named params using the specified bind type",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "ON placeholders and positional args.\nfunc Named(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedInternal(QUESTION, query, arg, false)\n}\n// BindNamed compiles a named query into the requested bind style and positional args.\nfunc BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedInternal(bindType, query, arg, tru"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "gs...)\n}\nfunc namedExec(e Execer, driverName, query string, arg interface{}) (sql.Result, error) {\n\tbound, args, err := BindNamed(BindType(driverName), query, arg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(bound, args...)\n}"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ".Fatalf(\"expected BindType('sqlserver') = AT (%d), got %d\", sqlx.AT, bt)\n\t}\n}\n\n// --- Rebind edge cases ---\n\nfunc TestRebindNamedBindType(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.NAMED, query)\n\texpected := \"SELECT * FROM users WHERE id = :arg1 AND name = :arg2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` defines `BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error)` and applies `Rebind` to the compiled query."
+        },
+        {
+          "id": "F011",
+          "type": "feature",
+          "text": "default driver mappings: `postgres`/`pgx`/`pq-timeouts`/`cloudsqlpostgres`/`ql`/`nrpostgres`/`cockroach` -> DOLLAR; `mysql`/`sqlite3`/`nrmysql`/`nrsqlite3` -> QUESTION; `oci8`/`ora`/`goracle`/`godror` -> NAMED; `sqlserver`/`azuresql` -> AT",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "g(\":arg\")\n\t\t\tb.WriteString(strconv.Itoa(argn))\n\t\tcase AT:\n\t\t\tb.WriteString(\"@p\")\n\t\t\tb.WriteString(strconv.Itoa(argn))\n\t\tdefault:\n\t\t\tb.WriteByte('?')\n\t\t}\n\t\targn++\n\t})\n\treturn b.String()\n}\n// In expands slice arguments in place of QUESTION placeholders.\nfunc In(query string, args ...interface{}) (string, []interface{}, error) {\n\tplaceholders := countPlaceholders(query)\n\thasSlice := false\n\tfor _, arg"
+            },
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/jmoiron/sqlx\n\ngo 1.10\n\nrequire (\n\tgithub.com/go-sql-driver/mysql v1.8.1\n\tgithub.com/lib/pq v1.10.9\n\tgithub.com/mattn/go-sqlite3 v1.14.22\n)"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "args ...interface{}) (sql.Result, error)\n}\n// DB wraps sql.DB and adds convenience helpers.\ntype DB struct {\n\t*sql.DB\n\tdriverName string\n}\n// Tx wraps sql.Tx and adds convenience helpers.\ntype Tx struct {\n\t*sql.Tx\n\tdriverName string\n}\n// Rows wraps sql.Rows and adds struct scanning.\ntype Rows struct {\n\t*sql.Rows\n}\n// Row provides a sqlx-style row wrapper for struct scanning.\ntype Row struct {\n\tro"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` initializes all listed default driver-to-bind mappings in `init()`."
+        },
+        {
+          "id": "F012",
+          "type": "feature",
+          "text": "`Rebind` with `NAMED` bind type converts `?` placeholders to `:arg1`, `:arg2`, etc.",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "int {\n\tbindMu.RLock()\n\tt, ok := driverBinds[driverName]\n\tbindMu.RUnlock()\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn t\n}\n// Rebind converts QUESTION placeholders in a query to the requested bind type.\nfunc Rebind(bindType int, query string) string {\n\tif bindType == QUESTION || bindType == UNKNOWN {\n\t\treturn query\n\t}\n\tvar b strings.Builder\n\targn := 1\n\tscanSQL(query, func(kind tokenKind, text string) {"
+            },
+            {
+              "path": "test_rebind_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestRebindDollarConversion(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.DOLLAR, query)\n\texpected := \"SELECT * FROM users WHERE id = $1 AND name = $2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T) {\n\tbt := sqlx.BindType(\"mysql\")\n\tif"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` converts `?` to `:argN` when `bindType == NAMED`."
+        },
+        {
+          "id": "F013",
+          "type": "feature",
+          "text": "`Rebind` with `UNKNOWN` leaves the query unchanged (same as `QUESTION`)",
+          "evidence": [
+            {
+              "path": "test_rebind_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestRebindDollarConversion(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.DOLLAR, query)\n\texpected := \"SELECT * FROM users WHERE id = $1 AND name = $2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "qlserver\")\n\tif bt != sqlx.AT {\n\t\tt.Fatalf(\"expected BindType('sqlserver') = AT (%d), got %d\", sqlx.AT, bt)\n\t}\n}\n\n// --- Rebind edge cases ---\n\nfunc TestRebindNamedBindType(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.NAMED, query)\n\texpected := \"SELECT * FROM users WHERE id = :arg1 AND name = :arg2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expect"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "int {\n\tbindMu.RLock()\n\tt, ok := driverBinds[driverName]\n\tbindMu.RUnlock()\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn t\n}\n// Rebind converts QUESTION placeholders in a query to the requested bind type.\nfunc Rebind(bindType int, query string) string {\n\tif bindType == QUESTION || bindType == UNKNOWN {\n\t\treturn query\n\t}\n\tvar b strings.Builder\n\targn := 1\n\tscanSQL(query, func(kind tokenKind, text string) {"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` returns the original query unchanged when `bindType` is `QUESTION` or `UNKNOWN`."
+        },
+        {
+          "id": "F014",
+          "type": "feature",
+          "text": "In named query compilation, `::` is an escape sequence that produces a single literal `:` in the output",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "lf(\"expected BindType for unknown driver = UNKNOWN (%d), got %d\", sqlx.UNKNOWN, bt)\n\t}\n}\n\nfunc TestBindTypeOracleReturnsNamed(t *testing.T) {\n\tbt := sqlx.BindType(\"oci8\")\n\tif bt != sqlx.NAMED {\n\t\tt.Fatalf(\"expected BindType('oci8') = NAMED (%d), got %d\", sqlx.NAMED, bt)\n\t}\n}\n\nfunc TestBindTypeSqlserverReturnsAT(t *testing.T) {\n\tbt := sqlx.BindType(\"sqlserver\")\n\tif bt != sqlx.AT {\n\t\tt.Fatalf(\"expec"
+            },
+            {
+              "path": "test_named_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestNamedWithStruct(t *testing.T) {\n\ttype Person struct {\n\t\tName string `db:\"name\"`\n\t\tAge  int    `db:\"age\"`\n\t}\n\n\tquery, args, err := sqlx.Named(\"SELECT * FROM people WHERE name = :name AND age = :age\", Person{Name: \"Alice\", Age: 30})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "d type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2... placeholders.\n\tNAMED\n\t// AT uses @p1, @p2... placeholders.\n\tAT\n)\nvar (\n\tbindMu      sync.RWMutex\n\tdriverBinds = map[string]int{}\n)\nfunc init() {\n\tfor _, name := range []string{\"postgres\", \"pgx\", \"pq-timeouts\", \"cloudsqlpostgres\", \"ql\", \"nrpostgres\", \"co"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` handles `::` in `scanNamedSQL` by emitting a single literal `:`."
+        },
+        {
+          "id": "F015",
+          "type": "feature",
+          "text": "In named query compilation, `:=` (colon immediately followed by equals) is not treated as a named parameter",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "lf(\"expected BindType for unknown driver = UNKNOWN (%d), got %d\", sqlx.UNKNOWN, bt)\n\t}\n}\n\nfunc TestBindTypeOracleReturnsNamed(t *testing.T) {\n\tbt := sqlx.BindType(\"oci8\")\n\tif bt != sqlx.NAMED {\n\t\tt.Fatalf(\"expected BindType('oci8') = NAMED (%d), got %d\", sqlx.NAMED, bt)\n\t}\n}\n\nfunc TestBindTypeSqlserverReturnsAT(t *testing.T) {\n\tbt := sqlx.BindType(\"sqlserver\")\n\tif bt != sqlx.AT {\n\t\tt.Fatalf(\"expec"
+            },
+            {
+              "path": "test_named_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestNamedWithStruct(t *testing.T) {\n\ttype Person struct {\n\t\tName string `db:\"name\"`\n\t\tAge  int    `db:\"age\"`\n\t}\n\n\tquery, args, err := sqlx.Named(\"SELECT * FROM people WHERE name = :name AND age = :age\", Person{Name: \"Alice\", Age: 30})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "d type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2... placeholders.\n\tNAMED\n\t// AT uses @p1, @p2... placeholders.\n\tAT\n)\nvar (\n\tbindMu      sync.RWMutex\n\tdriverBinds = map[string]int{}\n)\nfunc init() {\n\tfor _, name := range []string{\"postgres\", \"pgx\", \"pq-timeouts\", \"cloudsqlpostgres\", \"ql\", \"nrpostgres\", \"co"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` handles `:=` in `scanNamedSQL` as literal text instead of a named parameter."
+        },
+        {
+          "id": "F016",
+          "type": "feature",
+          "text": "`In` returns an error when the number of `?` bindvars does not match the number of arguments (after slice expansion)",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "er(driverName string, bindType int) {\n\tbindMu.Lock()\n\tdriverBinds[driverName] = bindType\n\tbindMu.Unlock()\n}\n// BindType returns the bind type for the driver name or UNKNOWN if unregistered.\nfunc BindType(driverName string) int {\n\tbindMu.RLock()\n\tt, ok := driverBinds[driverName]\n\tbindMu.RUnlock()\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn t\n}\n// Rebind converts QUESTION placeholders in a query to the re"
+            },
+            {
+              "path": "test_extended_test.go",
+              "excerpt": ".Fatalf(\"expected BindType('customdriver') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeUnknownDriverReturnsUnknown(t *testing.T) {\n\tbt := sqlx.BindType(\"nonexistent_driver_xyz\")\n\tif bt != sqlx.UNKNOWN {\n\t\tt.Fatalf(\"expected BindType for unknown driver = UNKNOWN (%d), got %d\", sqlx.UNKNOWN, bt)\n\t}\n}\n\nfunc TestBindTypeOracleReturnsNamed(t *testing.T) {\n\tbt := sqlx.BindType(\"oci8\""
+            },
+            {
+              "path": "scan.go",
+              "excerpt": "mv.SetMapIndex(reflect.ValueOf(c), val)\n\t}\n\treturn mv, nil\n}\ntype fieldInfo struct {\n\tindex []int\n}\n// fieldPointers returns scan destinations for columns into a struct value.\nfunc fieldPointers(structVal reflect.Value, cols []string) ([]interface{}, error) {\n\tif structVal.Kind() != reflect.Struct {\n\t\treturn nil, errors.New(\"sqlx: destination must point to struct\")\n\t}\n\tindex := buildFieldIndex("
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` returns an error from `In` when placeholder and argument counts do not match."
+        },
+        {
+          "id": "F017",
+          "type": "feature",
+          "text": "`In` with no slice arguments returns the query and args unchanged",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)\n\t}\n}\n\n// --- In edge cases ---\n\nfunc TestInNonSliceArgsPassthrough(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tnewQuery, newArgs, err := sqlx.In(query, 42, \"Alice\")\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif newQuery != query {\n\t\tt.Fatalf(\"expected query unchanged %q, got %"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "b.WriteString(strconv.Itoa(argn))\n\t\tdefault:\n\t\t\tb.WriteByte('?')\n\t\t}\n\t\targn++\n\t})\n\treturn b.String()\n}\n// In expands slice arguments in place of QUESTION placeholders.\nfunc In(query string, args ...interface{}) (string, []interface{}, error) {\n\tplaceholders := countPlaceholders(query)\n\thasSlice := false\n\tfor _, arg := range args {\n\t\tif isExpandableSlice(arg) {\n\t\t\thasSlice = true\n\t\t\tbreak\n\t\t}\n\t}"
+            },
+            {
+              "path": "test_in_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestInExpandsSliceArgs(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id IN (?)\"\n\tids := []int{1, 2, 3}\n\n\tnewQuery, newArgs, err := sqlx.In(query, ids)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\n\texpectedQuery := \"SELECT * FROM users WHERE id IN (?, ?, ?)\"\n\tif newQuery"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` returns the original query and args unchanged when `In` receives no expandable slice arguments and counts match."
+        },
+        {
+          "id": "F018",
+          "type": "feature",
+          "text": "Extended Types",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "if bt != sqlx.NAMED {\n\t\tt.Fatalf(\"expected BindType('oci8') = NAMED (%d), got %d\", sqlx.NAMED, bt)\n\t}\n}\n\nfunc TestBindTypeSqlserverReturnsAT(t *testing.T) {\n\tbt := sqlx.BindType(\"sqlserver\")\n\tif bt != sqlx.AT {\n\t\tt.Fatalf(\"expected BindType('sqlserver') = AT (%d), got %d\", sqlx.AT, bt)\n\t}\n}\n\n// --- Rebind edge cases ---\n\nfunc TestRebindNamedBindType(t *testing.T) {\n\tquery := \"SELECT * FROM users"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "/sql\"\n\t\"errors\"\n)\n// Result aliases the standard sql.Result type.\ntype Result = sql.Result\n// Queryer is implemented by types that can execute queries.\ntype Queryer interface {\n\tQuery(query string, args ...interface{}) (*sql.Rows, error)\n\tQueryRow(query string, args ...interface{}) *sql.Row\n}\n// Execer is implemented by types that can execute statements.\ntype Execer interface {\n\tExec(query string,"
+            }
+          ],
+          "status": "partial",
+          "reason": "Extended wrapper types exist for `sql.DB`, `sql.Tx`, `sql.Rows`, and row handling, but there is no `sql.Stmt` wrapper as described in the overview."
+        },
+        {
+          "id": "F019",
+          "type": "feature",
+          "text": "Connecting",
+          "evidence": [],
+          "status": "implemented",
+          "reason": "`repo/sqlx.go` implements connecting helpers `Open`, `Connect`, and `NewDb`."
+        },
+        {
+          "id": "F020",
+          "type": "feature",
+          "text": "Querying into Structs",
+          "evidence": [
+            {
+              "path": "sqlx.go",
+              "excerpt": "r\n\t\t}\n\t\treturn sql.ErrNoRows\n\t}\n\tif err := r.rows.Scan(dest...); err != nil {\n\t\treturn err\n\t}\n\treturn r.rows.Err()\n}\n// StructScan scans the wrapped row into a struct or map destination.\nfunc (r *Row) StructScan(dest interface{}) error {\n\tif r == nil {\n\t\treturn errors.New(\"sqlx: nil row\")\n\t}\n\tif r.err != nil {\n\t\treturn r.err\n\t}\n\tif r.rows == nil {\n\t\treturn errors.New(\"sqlx: nil row\")\n\t}\n\tdefer r.r"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/sqlx.go` and `repo/scan.go` implement `Get`, `Select`, and struct scanning into row/slice destinations."
+        },
+        {
+          "id": "F021",
+          "type": "feature",
+          "text": "Named Queries",
+          "evidence": [
+            {
+              "path": "test_named_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestNamedWithStruct(t *testing.T) {\n\ttype Person struct {\n\t\tName string `db:\"name\"`\n\t\tAge  int    `db:\"age\"`\n\t}\n\n\tquery, args, err := sqlx.Named(\"SELECT * FROM people WHERE name = :name AND age = :age\", Person{Name: \"Alice\", Age: 30})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "*DB) Select(dest interface{}, query string, args ...interface{}) error {\n\treturn Select(db, dest, query, args...)\n}\n// NamedExec executes a named query using the DB's driver bind type.\nfunc (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {\n\treturn namedExec(db, db.driverName, query, arg)\n}\n// Queryx executes a query and returns wrapped rows.\nfunc (tx *Tx) Queryx(query string"
+            },
+            {
+              "path": "bind.go",
+              "excerpt": "d type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2... placeholders.\n\tNAMED\n\t// AT uses @p1, @p2... placeholders.\n\tAT\n)\nvar (\n\tbindMu      sync.RWMutex\n\tdriverBinds = map[string]int{}\n)\nfunc init() {\n\tfor _, name := range []string{\"postgres\", \"pgx\", \"pq-timeouts\", \"cloudsqlpostgres\", \"ql\", \"nrpostgres\", \"co"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` and `repo/sqlx.go` implement named query compilation and named execution helpers."
+        },
+        {
+          "id": "F022",
+          "type": "feature",
+          "text": "Bind Variable Rebinding",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "mport (\n\t\"errors\"\n\t\"fmt\"\n\t\"reflect\"\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"unicode\"\n)\nconst (\n\t// UNKNOWN indicates an unknown bind type.\n\tUNKNOWN = iota\n\t// QUESTION uses ? placeholders.\n\tQUESTION\n\t// DOLLAR uses $1, $2... placeholders.\n\tDOLLAR\n\t// NAMED uses :arg1, :arg2... placeholders.\n\tNAMED\n\t// AT uses @p1, @p2... placeholders.\n\tAT\n)\nvar (\n\tbindMu      sync.RWMutex\n\tdriverBinds = map[string]int{}\n)"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T) {\n\tbt := sqlx.BindType(\"mysql\")\n\tif"
+            },
+            {
+              "path": "test_rebind_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestRebindDollarConversion(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id = ? AND name = ?\"\n\tresult := sqlx.Rebind(sqlx.DOLLAR, query)\n\texpected := \"SELECT * FROM users WHERE id = $1 AND name = $2\"\n\tif result != expected {\n\t\tt.Fatalf(\"expected %q, got %q\", expected, result)\n\t}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` implements bind-type registration, lookup, rebinding, and `In` expansion."
+        },
+        {
+          "id": "F023",
+          "type": "feature",
+          "text": "Struct Tag",
+          "evidence": [
+            {
+              "path": "bind.go",
+              "excerpt": "if v.IsNil() {\n\t\t\treturn nil, errors.New(\"sqlx: nil pointer argument\")\n\t\t}\n\t\tv = v.Elem()\n\t}\n\tif v.Kind() != reflect.Struct {\n\t\treturn nil, errors.New(\"sqlx: named argument must be struct or map[string]interface{}\")\n\t}\n\tout := make(map[string]interface{})\n\tcollectStructFields(v, out)\n\treturn out, nil\n}\nfunc collectStructFields(v reflect.Value, out map[string]interface{}) {\n\tt := v.Type()\n\tfor i"
+            },
+            {
+              "path": "scan.go",
+              "excerpt": "return err\n\t\t\t}\n\t\t\tsliceVal.Set(reflect.Append(sliceVal, mv))\n\t\t}\n\t\treturn rows.Err()\n\t}\n\tif elemType.Kind() != reflect.Struct {\n\t\treturn fmt.Errorf(\"sqlx: unsupported slice element type %s\", elemType.String())\n\t}\n\tfor rows.Next() {\n\t\telemPtr := reflect.New(elemType)\n\t\tptrs, err := fieldPointers(elemPtr.Elem(), cols)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tif err := rows.Scan(ptrs...); err != nil {"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "Exec(query string, args ...interface{}) (sql.Result, error)\n}\n// DB wraps sql.DB and adds convenience helpers.\ntype DB struct {\n\t*sql.DB\n\tdriverName string\n}\n// Tx wraps sql.Tx and adds convenience helpers.\ntype Tx struct {\n\t*sql.Tx\n\tdriverName string\n}\n// Rows wraps sql.Rows and adds struct scanning.\ntype Rows struct {\n\t*sql.Rows\n}\n// Row provides a sqlx-style row wrapper for struct scanning.\nty"
+            }
+          ],
+          "status": "implemented",
+          "reason": "`repo/bind.go` and `repo/scan.go` read `db` struct tags for named parameter extraction and struct field mapping."
+        },
+        {
+          "id": "F024",
+          "type": "feature",
+          "text": "Generate files relative to the project root; in evaluation they will be placed under `src/`.",
+          "evidence": [
+            {
+              "path": "manifest.json",
+              "excerpt": "lx\\\\L0_sqlx\\\\repo\",\n  \"output_dir\": \"H:\\\\PCE\\\\PolyCodeEval\\\\results\\\\agents\\\\chatdev_gpt54_go生成\\\\go\\\\sqlx\\\\L0_sqlx\",\n  \"files_collected\": 6,\n  \"duration_seconds\": 524.48\n}"
+            }
+          ],
+          "status": "implemented",
+          "reason": "Repository files are placed at the project root rather than under an extra wrapper directory."
+        },
+        {
+          "id": "F025",
+          "type": "feature",
+          "text": "Provide a standard Go module layout, including `go.mod` and any required package directories.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/jmoiron/sqlx\n\ngo 1.10\n\nrequire (\n\tgithub.com/go-sql-driver/mysql v1.8.1\n\tgithub.com/lib/pq v1.10.9\n\tgithub.com/mattn/go-sqlite3 v1.14.22\n)"
+            },
+            {
+              "path": "sqlx.go",
+              "excerpt": "{\n\t*sql.Tx\n\tdriverName string\n}\n// Rows wraps sql.Rows and adds struct scanning.\ntype Rows struct {\n\t*sql.Rows\n}\n// Row provides a sqlx-style row wrapper for struct scanning.\ntype Row struct {\n\trows *sql.Rows\n\terr  error\n}\n// Open opens a database and returns a wrapped DB.\nfunc Open(driverName, dsn string) (*DB, error) {\n\tdb, err := sql.Open(driverName, dsn)\n\tif err != nil {\n\t\treturn nil, err\n\t}"
+            },
+            {
+              "path": "main.go",
+              "excerpt": "n-check:\n\tgovulncheck ./...\ntest-race:\n\tgo test -v -race -count=1 ./...\nupdate-dependencies:\n\tgo get -u -t -v ./...\n\tgo mod tidy"
+            }
+          ],
+          "status": "partial",
+          "reason": "The repo includes a root `go.mod` and source files in a normal module layout, but one root Go file is malformed content."
+        },
+        {
+          "id": "F026",
+          "type": "feature",
+          "text": "Do not generate test files, `blackbox_tests/`, or any outer wrapper directory.",
+          "evidence": [
+            {
+              "path": "test_extended_test.go",
+              "excerpt": "n(args))\n\t}\n\tif args[0] != \"hello\" {\n\t\tt.Fatalf(\"expected arg 'hello', got %v\", args[0])\n\t}\n}\n\nfunc TestNamedColonEqualsNotTreatedAsParam(t *testing.T) {\n\ttype Params struct {\n\t\tName string `db:\"name\"`\n\t}\n\t// := should pass through unchanged\n\tquery, args, err := sqlx.Named(\"SELECT * FROM t WHERE x := :name\", Params{Name: \"val\"})\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}\n\tif len(a"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysql"
+            },
+            {
+              "path": "test_in_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestInExpandsSliceArgs(t *testing.T) {\n\tquery := \"SELECT * FROM users WHERE id IN (?)\"\n\tids := []int{1, 2, 3}\n\n\tnewQuery, newArgs, err := sqlx.In(query, ids)\n\tif err != nil {\n\t\tt.Fatalf(\"unexpected error: %v\", err)\n\t}"
+            }
+          ],
+          "status": "missing",
+          "reason": "The repository includes multiple `*_test.go` files despite the prompt explicitly forbidding generated test files."
+        },
+        {
+          "id": "F027",
+          "type": "feature",
+          "text": "Ensure the module path is `github.com/jmoiron/sqlx` and the root package is importable as `sqlx`.",
+          "evidence": [
+            {
+              "path": "go.mod",
+              "excerpt": "module github.com/jmoiron/sqlx\n\ngo 1.10\n\nrequire (\n\tgithub.com/go-sql-driver/mysql v1.8.1\n\tgithub.com/lib/pq v1.10.9\n\tgithub.com/mattn/go-sqlite3 v1.14.22\n)"
+            },
+            {
+              "path": "main.go",
+              "excerpt": ".ONESHELL:\nSHELL = /bin/sh\n.SHELLFLAGS = -ec\nBASE_PACKAGE := github.com/jmoiron/sqlx\ntooling:\n\tgo install honnef.co/go/tools/cmd/staticcheck@v0.4.7\n\tgo install golang.org/x/vuln/cmd/govulncheck@v1.0.4\n\tgo install golang.org/x/tools/cmd/goimports@v0.20.0\nhas-changes:\n\tgit diff --exit-code --quiet HEAD --\nlint:\n\tgo vet ./...\n\tstaticcheck -ch"
+            },
+            {
+              "path": "test_bindtype_test.go",
+              "excerpt": "package sqlx_test\n\nimport (\n\t\"testing\"\n\n\t\"github.com/jmoiron/sqlx\"\n)\n\nfunc TestBindTypePostgresReturnsDollar(t *testing.T) {\n\tbt := sqlx.BindType(\"postgres\")\n\tif bt != sqlx.DOLLAR {\n\t\tt.Fatalf(\"expected BindType('postgres') = DOLLAR (%d), got %d\", sqlx.DOLLAR, bt)\n\t}\n}\n\nfunc TestBindTypeMysqlReturnsQuestion(t *testing.T)"
+            }
+          ],
+          "status": "partial",
+          "reason": "`go.mod` uses the correct module path, but the root package is not cleanly importable because `repo/main.go` contains Makefile syntax instead of valid Go source."
+        }
+      ],
+      "feature_count": 27,
+      "constraint_count": 0,
+      "implemented_count": 22,
+      "partial_count": 4,
+      "missing_count": 1,
+      "unclear_count": 0,
+      "feature_coverage": 0.8889,
+      "constraint_coverage": 0.8889,
+      "fallback_used": false,
+      "judge_token_usage": {
+        "prompt_tokens": 185219,
+        "completion_tokens": 3870,
+        "total_tokens": 189089
+      }
+    },
+    "architecture": {
+      "status": "ok",
+      "review_backend": "codex",
+      "codex_model": "gpt-5.4",
+      "stack_profile": {
+        "language": "go",
+        "framework": "go",
+        "app_style": "library",
+        "build_system": "go-mod",
+        "persistence": "postgres",
+        "frontend_presence": false,
+        "confidence": 0.8
+      },
+      "reference_mode": "codex_review",
+      "reference_sources": [],
+      "reference_architecture_summary": "",
+      "reference_checklist": [],
+      "subscores": {
+        "structure_reasonableness": 2.9,
+        "stack_alignment": 2.4,
+        "reference_alignment": 2.7
+      },
+      "fallback_reason": "",
+      "judge_token_usage": {
+        "prompt_tokens": 138188,
+        "completion_tokens": 2125,
+        "total_tokens": 140313
+      }
+    },
+    "health": {
+      "avg_ccn": 0.0,
+      "max_ccn": 0.0,
+      "functions_over_15": 0,
+      "line_length_violations": 3,
+      "trailing_whitespace_violations": 0,
+      "language_specific_issue_count": 3,
+      "tool_results": {
+        "lizard_exit": "127",
+        "flake8_exit": "",
+        "gofmt_exit": "2",
+        "govet_exit": "1",
+        "eslint_exit": "",
+        "nodecheck_exit": ""
+      },
+      "status": "ok"
+    }
+  },
+  "judge_reviews": {
+    "faithfulness_review": "### Implemented Summary\n\nThe repository substantially implements the requested `sqlx`-style API: root bind helpers, named parameter binding, rebinding across dialects, `In` expansion, connection helpers, and struct-tag-based scanning are all present in visible source files. Default driver mappings and the specified edge cases for `::`, `:=`, `NAMED`, and `UNKNOWN` are implemented from the actual code.\n\n### Missing List\n\n- Generated test files violate the output constraint.\n- No visible `sql.Stmt`-style wrapper, so the extended type coverage from the overview is incomplete.\n- `repo/main.go` contains non-Go content, leaving the root package not cleanly importable/buildable as required.\n\n### Critical Constraint Misses\n\n- Repository includes generated `*_test.go` files even though the prompt explicitly said not to generate test files.\n- `repo/main.go` is not valid Go source; it contains Makefile-style content, which breaks normal package import/build expectations for the module root.",
+    "architecture_review": "### Stack Inference\n\n该仓库的实际栈与 `task.json` 推断基本一致：它是一个基于 `database/sql` 的 Go 模块库项目，而不是应用程序，也没有前端部分。核心实现集中在 `sqlx.go`、`bind.go`、`scan.go`，对应库 API、绑定变量处理、扫描逻辑，说明作者理解了“Go 库 + go modules + SQL 辅助层”的基本方向。\n\n### Scoring Mode\n\n本次按“架构评审”模式打分，重点看真实仓库的目录组织、职责分布、构建入口、是否符合 Go 库项目习惯，以及与需求文档的结构性对齐程度；不会因为文件少就默认差，也不会因为实现了部分 API 就默认结构好。\n\n### Strengths\n\n- 根包命名、模块路径和主要公开入口基本围绕 `github.com/jmoiron/sqlx` 组织，主实现没有被放进无关的多层目录，使用方导入路径直观。\n- 实现层面存在基础分层：`sqlx.go` 负责公开 API 和包装类型，`bind.go` 负责 bind/named/in 逻辑，`scan.go` 负责结构体与 map 扫描，职责划分比完全堆在单文件中更清晰。\n- `manifest.json` 位于边缘位置，没有侵入库代码；辅助元信息与核心实现至少是物理分开的。\n\n### Issues\n\n- `repo/main.go` 不是 Go 源文件而是 Makefile 内容，导致仓库入口语义混乱；在 Go 模块根目录放置一个扩展名为 `.go` 的非 Go 文件，说明构建入口与文件命名约定明显失配。\n- 仓库目标是提供库，但根目录混入 `test_*.go` 黑盒测试文件，与原始要求的“Do not generate test files”直接冲突，也削弱了交付物边界的清晰性。\n- 构建辅助文件放置方式不符合 Go 常见工程习惯：若需要这些任务，应提供 `Makefile`、`Taskfile.yml` 或脚本，而不是写入 `main.go`。这不是体量问题，而是结构职责放错位置。\n- 模块依赖直接引入多个数据库驱动到库本身的 `go.mod`，对一个通用 SQL 辅助库来说耦合偏重；需求只要求库能力，并未要求把具体驱动作为库级必需依赖。\n- 虽然 `sqlx.go`、`bind.go`、`scan.go` 在逻辑上形成 API、绑定、扫描三块分工，但都堆在根包且缺少更明确的构建/工具边界，整体更像“通过测试的最小实现”而非稳健整理过的库工程。\n\n### Stack Mismatches\n\n- 对 Go 库项目而言，`main.go` 通常意味着可执行程序入口，但这里实际承载的是 Makefile 语法，和 `app_style=library`、`build_system=go-mod` 的常见习惯都不一致。\n- Go 生态下构建任务通常放在 `Makefile` 或 CI 配置中，而不是伪装成 `.go` 文件；这属于明显的栈惯例违背。\n- 作为库项目，仓库根目录直接绑定具体数据库驱动依赖并夹带评测测试，工程边界比典型 Go 库更杂。\n\n### Reference Gaps\n\n- 原始要求明确禁止生成测试文件，但仓库包含多份 `test_*.go`。\n- 原始要求是标准 Go 模块布局；仓库虽然有 `go.mod`，但把构建脚本误放进 `main.go`，未形成标准可理解的工具文件布局。\n- 需求强调返回完整项目源码与必要构建文件；当前确实有构建任务内容，但文件类型和命名错误，说明“必要构建文件”并未以合理工程形态落地。"
+  },
+  "judge_token_usage": {
+    "provider": "codex",
+    "model": "gpt-5.4",
+    "prompt_tokens": 323407,
+    "completion_tokens": 5995,
+    "total_tokens": 329402,
+    "calls": [
+      {
+        "dimension": "faithfulness",
+        "prompt_tokens": 185219,
+        "completion_tokens": 3870,
+        "total_tokens": 189089
+      },
+      {
+        "dimension": "architecture",
+        "prompt_tokens": 138188,
+        "completion_tokens": 2125,
+        "total_tokens": 140313
+      }
+    ]
+  },
+  "language": "go",
+  "project_name": "sqlx",
+  "build_status": "failed",
+  "correctness": 0.0,
+  "faithfulness_score": 4.44,
+  "architecture_score": 2.67,
+  "health_score": 3.5,
+  "all_tests_passed": false
+}

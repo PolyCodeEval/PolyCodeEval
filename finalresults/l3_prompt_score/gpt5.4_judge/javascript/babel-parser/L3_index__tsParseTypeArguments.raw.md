@@ -1,0 +1,10 @@
+{
+  "score": 4.9,
+  "reason": "The description matches the implementation very closely. It correctly states that the function parses TypeScript type arguments inside angle brackets, does so within type and top-level type contexts, stores the parsed list in a `TSTypeParameterInstantiation` node, raises `EmptyTypeArguments` when no arguments are present, and conditionally rescans `<`/`>` when not already in type mode and in brace context. It is also sufficiently detailed to support reimplementation. The only minor omission is that the function explicitly creates and finishes an AST node via parser helpers, and that the closing `>` is expected after the rescan/error checks rather than being part of the delimited-list parse itself.",
+  "missing_functionality": [
+    "It does not explicitly mention that the function starts a parser node and finalizes it as `TSTypeParameterInstantiation` using node-construction helpers.",
+    "It does not explicitly mention that the closing `>` token is consumed after the empty-list check and optional rescan."
+  ],
+  "incorrect_or_misleading_points": [],
+  "complete_enough": true
+}

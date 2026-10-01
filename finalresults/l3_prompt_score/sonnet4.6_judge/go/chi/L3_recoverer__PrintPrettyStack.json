@@ -1,0 +1,25 @@
+{
+  "task": "go/chi/L3_recoverer__PrintPrettyStack",
+  "project": "go/chi",
+  "language": "go",
+  "prompt_path": "datasets/go/chi/tasks/L3_recoverer__PrintPrettyStack/prompt.md",
+  "task_json_path": "datasets/go/chi/tasks/L3_recoverer__PrintPrettyStack/task.json",
+  "source_file_path": "datasets/go/chi/src/middleware/recoverer.go",
+  "target_symbol": "middleware/recoverer.go::PrintPrettyStack",
+  "function_extraction_status": "ok",
+  "review_type": "l3_prompt_score",
+  "review_schema_version": "l3_prompt_score_v3",
+  "judge_model": "claude-sonnet-4-6",
+  "description_present": true,
+  "score": 4.2,
+  "reason": "The description accurately captures the core behavior: capturing the runtime stack trace, attempting pretty-printing via the recovery value, writing success output to the configured error writer, and falling back to stderr on failure. The fallback destination is correctly identified as standard error, which matches `os.Stderr.Write(debugStack)`. One subtle inaccuracy is that the description says 'fall back to writing the original standard stack trace directly to standard error' — this is correct in practice since `recovererErrorWriter` defaults to `os.Stderr`, but the success path writes to `recovererErrorWriter` (a configurable writer), not necessarily stderr. The description conflates these two as both being stderr-like, which is slightly misleading. The description also omits that `recovererErrorWriter` is a package-level variable (defaulting to `os.Stderr`) that exists specifically to support testability, which is a secondary but notable design detail. Overall the description is accurate enough to guide a correct implementation.",
+  "missing_functionality": [
+    "Does not mention that `recovererErrorWriter` is a package-level configurable `io.Writer` variable (defaulting to `os.Stderr`), which is the actual destination for successful output rather than stderr directly.",
+    "Does not mention that the pretty-printing is delegated to a `prettyStack.parse()` method that takes both the raw debug stack bytes and the recovery value."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing the success-path destination as 'the configured recovery error writer' is accurate, but the fallback is described as 'standard error' — while technically correct, the asymmetry between the two paths (configurable writer vs. hardcoded os.Stderr) is not made clear and could mislead an implementer into using the same writer for both paths."
+  ],
+  "complete_enough": true,
+  "raw_response_file": "L3_recoverer__PrintPrettyStack.raw.md"
+}

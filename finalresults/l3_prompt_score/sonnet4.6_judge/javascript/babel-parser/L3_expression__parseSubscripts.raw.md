@@ -1,0 +1,14 @@
+{
+  "score": 3.8,
+  "reason": "The description accurately captures the high-level loop structure of `parseSubscripts` (initializing state, looping via `parseSubscript`, clearing `maybeAsyncArrow`, returning the accumulated base) and correctly enumerates the dispatch cases in `parseSubscript` (bind `::`, tagged template, `?.`, call `(...)`, member `[]`/`.`). The optional-chaining error and early-stop behavior for `new a?.()` are also correctly described. However, the description conflates `parseSubscripts` and `parseSubscript` into one narrative without clearly distinguishing them, which could confuse an implementer. It also omits that after `?.` is consumed (`this.next()`), the code falls through to check for `(` or member access — i.e., `?.` alone doesn't dispatch; it sets `optional=true` and then the subsequent checks handle the actual subscript form. The description implies `?.` is its own dispatch branch rather than a flag-setting prefix. Additionally, the description doesn't mention the `computed` flag derived from `bracketL`, nor that `parseMember` is called for computed, optional, or dot-access cases uniformly.",
+  "missing_functionality": [
+    "After consuming `?.` with `this.next()`, the code falls through to the call or member-access checks using the `optional` flag — `?.` is not a standalone dispatch branch but a prefix that sets `optional=true`.",
+    "The `computed` flag (from eating `bracketL`) is used to distinguish computed member access `[]` from dot access, and both route to `parseMember`; this detail is absent.",
+    "The description does not clearly separate `parseSubscripts` (the loop) from `parseSubscript` (the single-step dispatch), making it harder to implement them as two distinct methods."
+  ],
+  "incorrect_or_misleading_points": [
+    "Describing `?.` as a recognized dispatch form that 'marks the chain as optional' implies it is a terminal case, but in the implementation it sets a flag and then falls through to call or member-access handling — it is not a standalone subscript form.",
+    "The description says 'if the next character starts a call (`?.(`) it immediately stops' — this is only true when `noCalls` is set (i.e., inside `new`); the description doesn't make this conditionality clear enough."
+  ],
+  "complete_enough": true
+}

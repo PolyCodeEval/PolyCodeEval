@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 2.15,
+  "stdout": "FAIL\tgithub.com/spf13/cobra [build failed]\nFAIL\tgithub.com/spf13/cobra/doc [build failed]\nFAIL\n",
+  "stderr": "# github.com/spf13/cobra\n./flag_groups.go:226:13: syntax error: unexpected name at at end of statement\n./flag_groups.go:226:162: invalid character U+2014 '—' in identifier\n./flag_groups.go:226: newline in rune literal\n./flag_groups.go:228:7: syntax error: unexpected literal `go\n    if c.DisableFlagParsing {\n    \t\treturn\n    \t}\n\n    \tflags := c.Flags()\n\n    \tgroupStatus := map[string]map[string]bool{}\n    \toneRequiredGroupStatus := map[string]map[string]bool{}\n    \tmutuallyExclusiveGroupStatus := map[string]map[string]bool{}\n    \tflags.VisitAll(func(pflag *flag.Flag) {\n    \t\tprocessFlagForGroupAnnotation(flags, pflag, requiredAsGroupAnnotation, groupStatus)\n    \t\tprocessFlagForGroupAnnotation(flags, pflag, oneRequiredAnnotation, oneRequiredGroupStatus)\n    \t\tprocessFlagForGroupAnnotation(flags, pflag, mutuallyExclusiveAnnotation, mutuallyExclusiveGroupStatus)\n    \t})\n\n    \t// When a flag in a required-together group is set, mark all other flags in the group as required\n    \tfor flagList, flagnameAndStatus := range groupStatus {\n    \t\t// Check if any flag in the group is set\n    \t\tanySet := false\n    \t\tfor _, isSet := range flagnameAndStatus {\n    \t\t\tif isSet {\n    \t\t\t\tanySet = true\n    \t\t\t\tbreak\n    \t\t\t}\n    \t\t}\n\n    \t\tif anySet {\n    \t\t\t// Mark all unset flags in the group as required\n    \t\t\tfor flagname, isSet := range flagnameAndStatus {\n    \t\t\t\tif !isSet {\n    \t\t\t\t\t_ = flagList // used to avoid unused variable warning\n    \t\t\t\t\tif err := flags.SetAnnotation(flagname, BashCompOneRequiredFlag, []string{\"true\"}); err != nil {\n    \t\t\t\t\t\t// silently ignore errors for flags not found\n    \t\t\t\t\t}\n    \t\t\t\t}\n    \t\t\t}\n    \t\t}\n    \t}\n\n    \t// When none of the flags in a one-required group are present, mark all flags as required\n    \tfor _, flagnameAndStatus := range oneRequiredGroupStatus {\n    \t\tanySet := false\n    \t\tfor _, isSet := range flagnameAndStatus {\n    \t\t\tif isSet {\n    \t\t\t\tanySet = true\n    \t\t\t\tbreak\n    \t\t\t}\n    \t\t}\n\n    \t\tif !anySet {\n    \t\t\t// Mark all flags in the group as required\n    \t\t\tfor flagname := range flagnameAndStatus {\n    \t\t\t\tif err := flags.SetAnnotation(flagname, BashCompOneRequiredFlag, []string{\"true\"}); err != nil {\n    \t\t\t\t\t// silently ignore errors for flags not found\n    \t\t\t\t}\n    \t\t\t}\n    \t\t}\n    \t}\n\n    \t// When a flag in a mutually exclusive group is set, mark other flags in the group as hidden\n    \tfor _, flagnameAndStatus := range mutuallyExclusiveGroupStatus {\n    \t\tfor flagname, isSet := range flagnameAndStatus {\n    \t\t\tif isSet {\n    \t\t\t\t// Hide all other flags in the group\n    \t\t\t\tfor otherflagname := range flagnameAndStatus {\n    \t\t\t\t\tif otherflagname != flagname {\n    \t\t\t\t\t\tf := flags.Lookup(otherflagname)\n    \t\t\t\t\t\tif f != nil {\n    \t\t\t\t\t\t\tf.Hidden = true\n    \t\t\t\t\t\t}\n    \t\t\t\t\t}\n    \t\t\t\t}\n    \t\t\t}\n    \t\t}\n    \t}\n    ` at end of statement\n",
+  "task": "go/cobra/L3_flag_groups__enforceFlagGroupsForCompletion",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [],
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "compile_passed": false,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.0,
+  "test_score": 0.0,
+  "score": 0.0
+}

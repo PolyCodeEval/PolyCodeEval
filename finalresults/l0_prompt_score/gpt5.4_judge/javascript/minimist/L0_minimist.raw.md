@@ -1,0 +1,21 @@
+{
+  "project": "minimist",
+  "scores": {
+    "completeness": {
+      "score": 4.4,
+      "reason": "prompt 覆盖了解析长短参数、布尔/字符串/默认值、别名、unknown、stopEarly、-- 分隔符、数字自动转换等核心能力，也说明了导入入口与返回结构，足以复现仓库主功能。缺失点主要是 dotted keys 生成嵌套对象、重复参数聚合为数组、原型污染防护等真实实现中的重要边界。"
+    },
+    "unambiguity": {
+      "score": 4.1,
+      "reason": "核心输入输出和大部分选项语义写得较清楚，黑盒可依此实现主要行为。但若干边界仍有歧义，例如 boolean:true 只影响双短横无等号长参数还是所有 flag、-- 在 opts['--'] 下的精确落点、unknown 的“未识别”判定范围，以及重复参数/点路径键的处理方式。"
+    },
+    "testability": {
+      "score": 4.5,
+      "reason": "prompt 明确给出了 require('../index.js') 的入口、函数签名、返回对象结构和多项可黑盒验证的行为示例，足以支持实现并通过主要测试。会影响满分的点是部分仓库测试覆盖的边界行为未显式写出，如 dotted keys、数组累积、原型相关防护与更细的短参数解析细节。"
+    },
+    "consistency": {
+      "score": 4.0,
+      "reason": "整体与真实实现和 README 基本一致，关于 --no-flag、数值转换、alias/default、stopEarly 等都没有明显冲突。主要不一致在于 prompt 将 -- 后参数统一描述为进入 _，而真实实现在 opts['--'] 为 true 时写入 argv['--']；同时 prompt 对 unknown flag 的表述偏简化，未反映源码按 argDefined 判定的实际逻辑。"
+    }
+  }
+}

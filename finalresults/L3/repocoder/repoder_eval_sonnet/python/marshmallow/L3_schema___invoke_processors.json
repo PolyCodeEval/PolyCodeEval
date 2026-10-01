@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "exit_code": 1,
+  "duration_seconds": 5.37,
+  "stdout": "f = <NestedSchema(many=True)>, data = [{'foo': 0}]\noriginal_data = [{'foo': 0}]\nkwargs = {'many': True, 'partial': None, 'pass_original': True, 'unknown': 'raise'}\n@py_assert1 = False\n@py_format3 = \"[{'foo': 0}] == {'foo': 0}\\n~\\n~Use -v to get more diff\"\n@py_format5 = \"assert [{'foo': 0}] == {'foo': 0}\\n~\\n~Use -v to get more diff\"\n\n    @post_load(pass_collection=False, pass_original=True)\n    def check_pass_original_when_pass_collection_false(\n        self, data, original_data, **kwargs\n    ):\n>       assert data == expected_data\nE       AssertionError: assert [{'foo': 0}] == {'foo': 0}\nE         \nE         Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:914: AssertionError\n__________________ test_post_load_method_that_appends_to_data __________________\n\n    def test_post_load_method_that_appends_to_data():\n        class MySchema(Schema):\n            foo = fields.Int()\n    \n            @post_load(pass_collection=True)\n            def append_to_data(self, data, **kwargs):\n                data.append({\"foo\": 42})\n                return data\n    \n            @post_load(pass_collection=False, pass_original=True)\n            def noop(self, data, original_data, **kwargs):\n                if original_data is None:  # added item\n                    assert data == {\"foo\": 42}\n                else:\n                    assert original_data == {\"foo\": 24}\n                    assert data == {\"foo\": 24}\n                return data\n    \n        schema = MySchema(many=True)\n>       assert schema.load([{\"foo\": 24}]) == [{\"foo\": 24}, {\"foo\": 42}]\n\ntests/unit_tests/test_decorators.py:987: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:930: in _do_load\n    result = self._invoke_load_processors(\nsrc/marshmallow/schema.py:1115: in _invoke_load_processors\n    return self._invoke_processors(\nsrc/marshmallow/schema.py:1240: in _invoke_processors\n    processed_data = method(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MySchema(many=True)>, data = [{'foo': 24}, {'foo': 42}]\noriginal_data = [{'foo': 24}]\nkwargs = {'many': True, 'partial': None, 'pass_original': True, 'unknown': 'raise'}\n@py_assert2 = {'foo': 24}, @py_assert1 = False\n@py_format4 = \"[{'foo': 24}] == {'foo': 24}\\n~\\n~Use -v to get more diff\"\n@py_format6 = \"assert [{'foo': 24}] == {'foo': 24}\\n~\\n~Use -v to get more diff\"\n\n    @post_load(pass_collection=False, pass_original=True)\n    def noop(self, data, original_data, **kwargs):\n        if original_data is None:  # added item\n            assert data == {\"foo\": 42}\n        else:\n>           assert original_data == {\"foo\": 24}\nE           AssertionError: assert [{'foo': 24}] == {'foo': 24}\nE             \nE             Use -v to get more diff\n\ntests/unit_tests/test_decorators.py:982: AssertionError\n________________________________ test_load_many ________________________________\n\n    def test_load_many():\n        s = UserSchema()\n        in_data = [{\"name\": \"Mick\"}, {\"name\": \"Keith\"}]\n>       result = s.load(in_data, many=True)\n\ntests/unit_tests/test_schema.py:224: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:930: in _do_load\n    result = self._invoke_load_processors(\nsrc/marshmallow/schema.py:1115: in _invoke_load_processors\n    return self._invoke_processors(\nsrc/marshmallow/schema.py:1240: in _invoke_processors\n    processed_data = method(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <UserSchema(many=False)>, data = [{'name': 'Mick'}, {'name': 'Keith'}]\nkwargs = {'many': True, 'original_data': [{'name': 'Mick'}, {'name': 'Keith'}], 'partial': None, 'pass_original': False, ...}\n\n    @post_load\n    def make_user(self, data, **kwargs):\n>       return User(**data)\nE       TypeError: tests.base.User() argument after ** must be a mapping, not list\n\ntests/base.py:231: TypeError\n_______________________________ test_loads_many ________________________________\n\n    def test_loads_many():\n        s = UserSchema()\n        in_data = [{\"name\": \"Mick\"}, {\"name\": \"Keith\"}]\n        in_json_data = json.dumps(in_data)\n>       result = s.loads(in_json_data, many=True)\n\ntests/unit_tests/test_schema.py:301: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:772: in loads\n    return self.load(data, many=many, partial=partial, unknown=unknown)\nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:930: in _do_load\n    result = self._invoke_load_processors(\nsrc/marshmallow/schema.py:1115: in _invoke_load_processors\n    return self._invoke_processors(\nsrc/marshmallow/schema.py:1240: in _invoke_processors\n    processed_data = method(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <UserSchema(many=False)>, data = [{'name': 'Mick'}, {'name': 'Keith'}]\nkwargs = {'many': True, 'original_data': [{'name': 'Mick'}, {'name': 'Keith'}], 'partial': None, 'pass_original': False, ...}\n\n    @post_load\n    def make_user(self, data, **kwargs):\n>       return User(**data)\nE       TypeError: tests.base.User() argument after ** must be a mapping, not list\n\ntests/base.py:231: TypeError\n__________________________ test_default_many_symmetry __________________________\n\n    def test_default_many_symmetry():\n        \"\"\"The dump/load(s) methods should all default to the many value of the schema.\"\"\"\n        s_many = UserSchema(many=True, only=(\"name\",))\n        s_single = UserSchema(only=(\"name\",))\n        u1, u2 = User(\"King Arthur\"), User(\"Sir Lancelot\")\n        s_single.load(s_single.dump(u1))\n        s_single.loads(s_single.dumps(u1))\n>       s_many.load(s_many.dump([u1, u2]))\n\ntests/unit_tests/test_schema.py:332: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nsrc/marshmallow/schema.py:735: in load\n    return self._do_load(\nsrc/marshmallow/schema.py:930: in _do_load\n    result = self._invoke_load_processors(\nsrc/marshmallow/schema.py:1115: in _invoke_load_processors\n    return self._invoke_processors(\nsrc/marshmallow/schema.py:1240: in _invoke_processors\n    processed_data = method(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <UserSchema(many=True)>\ndata = [{'name': 'King Arthur'}, {'name': 'Sir Lancelot'}]\nkwargs = {'many': True, 'original_data': [{'name': 'King Arthur'}, {'name': 'Sir Lancelot'}], 'partial': None, 'pass_original': False, ...}\n\n    @post_load\n    def make_user(self, data, **kwargs):\n>       return User(**data)\nE       TypeError: tests.base.User() argument after ** must be a mapping, not list\n\ntests/base.py:231: TypeError\n=========================== short test summary info ============================\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[True]\nFAILED tests/unit_tests/test_decorators.py::test_decorated_processors[False]\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single\nFAILED tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many\nFAILED tests/unit_tests/test_decorators.py::test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]\nFAILED tests/unit_tests/test_decorators.py::test_decorator_post_load_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]\nFAILED tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data\nFAILED tests/unit_tests/test_schema.py::test_load_many - TypeError: tests.bas...\nFAILED tests/unit_tests/test_schema.py::test_loads_many - TypeError: tests.ba...\nFAILED tests/unit_tests/test_schema.py::test_default_many_symmetry - TypeErro...\n======================= 10 failed, 1169 passed in 4.47s ========================\n",
+  "stderr": "",
+  "task": "python/marshmallow/L3_schema___invoke_processors",
+  "solver": "generated_code",
+  "test_mode": "both",
+  "test_details": {
+    "tests": [
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[True]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorated_processors[False]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_single",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::TestPassOriginal::test_pass_original_many",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_post_dump_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_decorator_post_load_with_nested_original_and_pass_collection[data0-expected_data0-expected_original_data0]",
+        "passed": false
+      },
+      {
+        "name": "tests/unit_tests/test_decorators.py::test_post_load_method_that_appends_to_data",
+        "passed": false
+      }
+    ],
+    "passed": 0,
+    "failed": 7,
+    "total": 7
+  },
+  "compile_passed": true,
+  "full_passed": false,
+  "test_pass_ratio": 0.0,
+  "compile_score": 0.5,
+  "test_score": 0.0,
+  "score": 0.5
+}
